@@ -10,6 +10,8 @@ class Institucion extends Model
 {
     use HasFactory;
 
+    protected $table = 'instituciones';
+
     protected $fillable = [
         'nombre',
         'tipo',
@@ -55,7 +57,7 @@ class Institucion extends Model
             'documentos' => 'Documentos de identidad y académicos',
             'examen' => 'Examen de admisión (según la institución)',
         ];
-        
+
         // Agregar requisitos específicos según el tipo de institución
         switch ($this->tipo) {
             case 'universidad_publica':
@@ -68,7 +70,7 @@ class Institucion extends Model
                 $requisitos['practica'] = 'Práctica profesional previa (opcional)';
                 break;
         }
-        
+
         return $requisitos;
     }
 
@@ -92,7 +94,7 @@ class Institucion extends Model
     private function obtenerFechasImportantes(): array
     {
         $anoActual = date('Y');
-        
+
         return [
             'inscripciones_inicio' => "01 de enero de {$anoActual}",
             'inscripciones_fin' => "31 de marzo de {$anoActual}",
@@ -128,7 +130,7 @@ class Institucion extends Model
             'matricula' => 0,
             'mensualidad' => 0,
         ];
-        
+
         // Establecer costos según el tipo de institución
         switch ($this->tipo) {
             case 'universidad_publica':
@@ -147,7 +149,7 @@ class Institucion extends Model
                 $costos['mensualidad'] = 150;
                 break;
         }
-        
+
         return $costos;
     }
 
@@ -174,7 +176,7 @@ class Institucion extends Model
             'universidad_privada' => rand(1, 15),
             'instituto_tecnico' => rand(1, 20),
         ];
-        
+
         return [
             'posicion' => $rankings[$this->tipo] ?? rand(1, 25),
             'total_instituciones' => 100,
@@ -201,14 +203,14 @@ class Institucion extends Model
     {
         $areas = ['ingenieria', 'medicina', 'derecho', 'administracion', 'educacion'];
         $rankings = [];
-        
+
         foreach ($areas as $area) {
             $rankings[$area] = [
                 'posicion' => rand(1, 20),
                 'total_instituciones' => 50,
             ];
         }
-        
+
         return $rankings;
     }
 
@@ -222,7 +224,7 @@ class Institucion extends Model
             'universidad_privada' => 'Universidad Privada',
             'instituto_tecnico' => 'Instituto Técnico',
         ];
-        
+
         return $categorias[$this->tipo] ?? 'Institución Educativa';
     }
 
@@ -238,7 +240,7 @@ class Institucion extends Model
             'instituto_profesional' => 'Instituto Profesional',
             'centro_formacion' => 'Centro de Formación',
         ];
-        
+
         return $tipos[$this->tipo] ?? ucfirst(str_replace('_', ' ', $this->tipo));
     }
 

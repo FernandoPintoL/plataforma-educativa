@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class RecomendacionCarrera extends Model
 {
     use HasFactory;
+    protected $table = "recomendaciones_carrera";
 
     protected $fillable = [
         'estudiante_id',
@@ -44,29 +44,29 @@ class RecomendacionCarrera extends Model
      */
     public function detallarCompatibilidad(): array
     {
-        $perfil = $this->estudiante->perfilVocacional;
+        $perfil  = $this->estudiante->perfilVocacional;
         $carrera = $this->carrera;
-        
-        if (!$perfil || !$carrera) {
+
+        if (! $perfil || ! $carrera) {
             return [];
         }
-        
-        $detalles = [];
+
+        $detalles    = [];
         $perfilIdeal = $carrera->perfil_ideal;
-        
+
         foreach ($perfilIdeal as $criterio => $puntajeRequerido) {
-            $puntajeEstudiante = $perfil->obtenerPuntajeCriterio($criterio);
+            $puntajeEstudiante      = $perfil->obtenerPuntajeCriterio($criterio);
             $compatibilidadCriterio = min(1, $puntajeEstudiante / $puntajeRequerido);
-            
+
             $detalles[] = [
-                'criterio' => ucfirst(str_replace('_', ' ', $criterio)),
+                'criterio'           => ucfirst(str_replace('_', ' ', $criterio)),
                 'puntaje_estudiante' => $puntajeEstudiante,
-                'puntaje_requerido' => $puntajeRequerido,
-                'compatibilidad' => $compatibilidadCriterio,
-                'nivel' => $this->obtenerNivelCompatibilidad($compatibilidadCriterio),
+                'puntaje_requerido'  => $puntajeRequerido,
+                'compatibilidad'     => $compatibilidadCriterio,
+                'nivel'              => $this->obtenerNivelCompatibilidad($compatibilidadCriterio),
             ];
         }
-        
+
         return $detalles;
     }
 
@@ -75,11 +75,26 @@ class RecomendacionCarrera extends Model
      */
     private function obtenerNivelCompatibilidad(float $compatibilidad): string
     {
-        if ($compatibilidad >= 0.9) return 'Excelente';
-        if ($compatibilidad >= 0.8) return 'Muy Alta';
-        if ($compatibilidad >= 0.7) return 'Alta';
-        if ($compatibilidad >= 0.6) return 'Buena';
-        if ($compatibilidad >= 0.5) return 'Moderada';
+        if ($compatibilidad >= 0.9) {
+            return 'Excelente';
+        }
+
+        if ($compatibilidad >= 0.8) {
+            return 'Muy Alta';
+        }
+
+        if ($compatibilidad >= 0.7) {
+            return 'Alta';
+        }
+
+        if ($compatibilidad >= 0.6) {
+            return 'Buena';
+        }
+
+        if ($compatibilidad >= 0.5) {
+            return 'Moderada';
+        }
+
         return 'Baja';
     }
 
@@ -88,44 +103,44 @@ class RecomendacionCarrera extends Model
      */
     public function mostrarRecursosInformativos(): array
     {
-        $carrera = $this->carrera;
+        $carrera  = $this->carrera;
         $recursos = [];
-        
+
         // Recursos de la carrera
         $recursos[] = [
-            'tipo' => 'descripcion',
-            'titulo' => 'Descripción de la Carrera',
+            'tipo'      => 'descripcion',
+            'titulo'    => 'Descripción de la Carrera',
             'contenido' => $carrera->descripcion,
         ];
-        
+
         // Áreas de conocimiento
-        if (!empty($carrera->areas_conocimiento)) {
+        if (! empty($carrera->areas_conocimiento)) {
             $recursos[] = [
-                'tipo' => 'areas_conocimiento',
-                'titulo' => 'Áreas de Conocimiento',
+                'tipo'      => 'areas_conocimiento',
+                'titulo'    => 'Áreas de Conocimiento',
                 'contenido' => $carrera->getAreasConocimientoFormateadas(),
             ];
         }
-        
+
         // Oportunidades laborales
-        if (!empty($carrera->oportunidades_laborales)) {
+        if (! empty($carrera->oportunidades_laborales)) {
             $recursos[] = [
-                'tipo' => 'oportunidades_laborales',
-                'titulo' => 'Oportunidades Laborales',
+                'tipo'      => 'oportunidades_laborales',
+                'titulo'    => 'Oportunidades Laborales',
                 'contenido' => $carrera->getOportunidadesLaboralesFormateadas(),
             ];
         }
-        
+
         // Instituciones que ofrecen la carrera
         $instituciones = $carrera->obtenerInstitucionesOfertantes();
         if ($instituciones->isNotEmpty()) {
             $recursos[] = [
-                'tipo' => 'instituciones',
-                'titulo' => 'Instituciones que Ofrecen esta Carrera',
+                'tipo'      => 'instituciones',
+                'titulo'    => 'Instituciones que Ofrecen esta Carrera',
                 'contenido' => $instituciones->pluck('nombre')->toArray(),
             ];
         }
-        
+
         return $recursos;
     }
 
@@ -142,8 +157,14 @@ class RecomendacionCarrera extends Model
      */
     public function getColorCompatibilidad(): string
     {
-        if ($this->compatibilidad >= 0.8) return 'green';
-        if ($this->compatibilidad >= 0.6) return 'yellow';
+        if ($this->compatibilidad >= 0.8) {
+            return 'green';
+        }
+
+        if ($this->compatibilidad >= 0.6) {
+            return 'yellow';
+        }
+
         return 'red';
     }
 
@@ -177,20 +198,20 @@ class RecomendacionCarrera extends Model
     public function obtenerInformacion(): array
     {
         return [
-            'id' => $this->id,
-            'estudiante' => $this->estudiante->nombre_completo,
-            'carrera' => $this->carrera->obtenerInformacion(),
-            'compatibilidad' => $this->compatibilidad,
-            'nivel_compatibilidad' => $this->getNivelCompatibilidadTexto(),
-            'color_compatibilidad' => $this->getColorCompatibilidad(),
-            'justificacion' => $this->justificacion,
-            'fecha' => $this->fecha->format('d/m/Y H:i'),
-            'fuente' => $this->fuente,
-            'es_fuerte' => $this->esRecomendacionFuerte(),
-            'es_moderada' => $this->esRecomendacionModerada(),
-            'es_debil' => $this->esRecomendacionDebil(),
+            'id'                      => $this->id,
+            'estudiante'              => $this->estudiante->nombre_completo,
+            'carrera'                 => $this->carrera->obtenerInformacion(),
+            'compatibilidad'          => $this->compatibilidad,
+            'nivel_compatibilidad'    => $this->getNivelCompatibilidadTexto(),
+            'color_compatibilidad'    => $this->getColorCompatibilidad(),
+            'justificacion'           => $this->justificacion,
+            'fecha'                   => $this->fecha->format('d/m/Y H:i'),
+            'fuente'                  => $this->fuente,
+            'es_fuerte'               => $this->esRecomendacionFuerte(),
+            'es_moderada'             => $this->esRecomendacionModerada(),
+            'es_debil'                => $this->esRecomendacionDebil(),
             'detalles_compatibilidad' => $this->detallarCompatibilidad(),
-            'recursos_informativos' => $this->mostrarRecursosInformativos(),
+            'recursos_informativos'   => $this->mostrarRecursosInformativos(),
         ];
     }
 
@@ -232,18 +253,18 @@ class RecomendacionCarrera extends Model
      */
     public static function obtenerEstadisticas(): array
     {
-        $total = static::count();
-        $fuertes = static::where('compatibilidad', '>=', 0.8)->count();
+        $total     = static::count();
+        $fuertes   = static::where('compatibilidad', '>=', 0.8)->count();
         $moderadas = static::where('compatibilidad', '>=', 0.6)->where('compatibilidad', '<', 0.8)->count();
-        $debil = static::where('compatibilidad', '<', 0.6)->count();
-        
+        $debil     = static::where('compatibilidad', '<', 0.6)->count();
+
         return [
-            'total' => $total,
-            'fuertes' => $fuertes,
-            'moderadas' => $moderadas,
-            'debil' => $debil,
+            'total'                   => $total,
+            'fuertes'                 => $fuertes,
+            'moderadas'               => $moderadas,
+            'debil'                   => $debil,
             'promedio_compatibilidad' => static::avg('compatibilidad') ?? 0,
-            'porcentaje_fuertes' => $total > 0 ? ($fuertes / $total) * 100 : 0,
+            'porcentaje_fuertes'      => $total > 0 ? ($fuertes / $total) * 100 : 0,
         ];
     }
 
@@ -258,12 +279,12 @@ class RecomendacionCarrera extends Model
         string $fuente = 'sistema'
     ): self {
         return static::create([
-            'estudiante_id' => $estudiante->id,
-            'carrera_id' => $carrera->id,
+            'estudiante_id'  => $estudiante->id,
+            'carrera_id'     => $carrera->id,
             'compatibilidad' => $compatibilidad,
-            'justificacion' => $justificacion,
-            'fecha' => now(),
-            'fuente' => $fuente,
+            'justificacion'  => $justificacion,
+            'fecha'          => now(),
+            'fuente'         => $fuente,
         ]);
     }
 }

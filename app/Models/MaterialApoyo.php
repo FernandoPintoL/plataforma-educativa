@@ -10,6 +10,8 @@ class MaterialApoyo extends Model
 {
     use HasFactory;
 
+    protected $table = 'materiales_apoyo';
+
     protected $fillable = [
         'titulo',
         'tipo',
@@ -56,7 +58,7 @@ class MaterialApoyo extends Model
     {
         // Implementar registro de interacciones
         // Por ejemplo, incrementar contador de visualizaciones, descargas, etc.
-        
+
         switch ($tipo) {
             case 'visualizacion':
                 $this->increment('visualizaciones');
@@ -85,7 +87,7 @@ class MaterialApoyo extends Model
             'audio' => '🎵',
             'imagen' => '🖼️',
         ];
-        
+
         return $iconos[$this->tipo] ?? '📁';
     }
 
@@ -104,7 +106,7 @@ class MaterialApoyo extends Model
             'audio' => 'pink',
             'imagen' => 'teal',
         ];
-        
+
         return $colores[$this->tipo] ?? 'gray';
     }
 
@@ -120,7 +122,7 @@ class MaterialApoyo extends Model
             4 => 'Difícil',
             5 => 'Muy Difícil',
         ];
-        
+
         return $niveles[$this->nivel_dificultad] ?? 'Desconocido';
     }
 
@@ -136,7 +138,7 @@ class MaterialApoyo extends Model
             4 => 'orange',
             5 => 'red',
         ];
-        
+
         return $colores[$this->nivel_dificultad] ?? 'gray';
     }
 
@@ -157,7 +159,7 @@ class MaterialApoyo extends Model
         if ($this->url) {
             return $this->url;
         }
-        
+
         // Si es un archivo local, generar URL
         return route('material.download', $this->id);
     }
@@ -189,7 +191,7 @@ class MaterialApoyo extends Model
     public function obtenerEstadisticas(): array
     {
         $recomendaciones = $this->recomendacionesMaterial();
-        
+
         return [
             'total_recomendaciones' => $recomendaciones->count(),
             'total_asignaciones' => $recomendaciones->where('asignado', true)->count(),
@@ -236,12 +238,12 @@ class MaterialApoyo extends Model
     public static function getRecomendadosParaEstudiante(User $estudiante): \Illuminate\Database\Eloquent\Collection
     {
         $rendimiento = $estudiante->rendimientoAcademico;
-        $nivelEstudiante = $rendimiento ? 
-            ($rendimiento->promedio >= 90 ? 5 : 
-             ($rendimiento->promedio >= 80 ? 4 : 
-              ($rendimiento->promedio >= 70 ? 3 : 
-               ($rendimiento->promedio >= 60 ? 2 : 1)))) : 3;
-        
+        $nivelEstudiante = $rendimiento ?
+        ($rendimiento->promedio >= 90 ? 5 :
+            ($rendimiento->promedio >= 80 ? 4 :
+                ($rendimiento->promedio >= 70 ? 3 :
+                    ($rendimiento->promedio >= 60 ? 2 : 1)))) : 3;
+
         return static::where('activo', true)
             ->whereBetween('nivel_dificultad', [$nivelEstudiante - 1, $nivelEstudiante + 1])
             ->orderBy('nivel_dificultad')

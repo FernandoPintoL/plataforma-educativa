@@ -10,6 +10,8 @@ class Recurso extends Model
 {
     use HasFactory;
 
+    protected $table = 'recursos';
+
     protected $fillable = [
         'nombre',
         'tipo',
@@ -56,7 +58,7 @@ class Recurso extends Model
      */
     public function esArchivo(): bool
     {
-        return !empty($this->archivo_path);
+        return ! empty($this->archivo_path);
     }
 
     /**
@@ -64,7 +66,7 @@ class Recurso extends Model
      */
     public function esUrl(): bool
     {
-        return !empty($this->url);
+        return ! empty($this->url);
     }
 
     /**
@@ -72,18 +74,18 @@ class Recurso extends Model
      */
     public function getTamañoFormateado(): string
     {
-        if (!$this->tamaño) {
+        if (! $this->tamaño) {
             return 'N/A';
         }
 
         $bytes = $this->tamaño;
         $units = ['B', 'KB', 'MB', 'GB'];
-        
+
         for ($i = 0; $bytes > 1024 && $i < count($units) - 1; $i++) {
             $bytes /= 1024;
         }
 
-        return round($bytes, 2) . ' ' . $units[$i];
+        return round($bytes, 2).' '.$units[$i];
     }
 
     /**
@@ -142,7 +144,7 @@ class Recurso extends Model
         }
 
         if ($this->esArchivo()) {
-            return asset('storage/' . $this->archivo_path);
+            return asset('storage/'.$this->archivo_path);
         }
 
         return '#';

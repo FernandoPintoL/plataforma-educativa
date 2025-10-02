@@ -12,6 +12,8 @@ class Curso extends Model
 {
     use HasFactory;
 
+    protected $table = 'cursos';
+
     protected $fillable = [
         'nombre',
         'descripcion',
@@ -42,8 +44,8 @@ class Curso extends Model
     public function estudiantes(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'curso_estudiante', 'curso_id', 'estudiante_id')
-                    ->withPivot(['fecha_inscripcion', 'estado'])
-                    ->withTimestamps();
+            ->withPivot(['fecha_inscripcion', 'estado'])
+            ->withTimestamps();
     }
 
     /**
@@ -77,7 +79,7 @@ class Curso extends Model
     {
         $this->estudiantes()->attach($estudiante->id, [
             'fecha_inscripcion' => now(),
-            'estado' => 'activo'
+            'estado' => 'activo',
         ]);
     }
 
@@ -87,7 +89,7 @@ class Curso extends Model
     public function desinscribirEstudiante(User $estudiante): void
     {
         $this->estudiantes()->updateExistingPivot($estudiante->id, [
-            'estado' => 'inactivo'
+            'estado' => 'inactivo',
         ]);
     }
 
@@ -105,12 +107,12 @@ class Curso extends Model
     public function generarReporteRendimiento(): array
     {
         $estudiantes = $this->estudiantes()->with('trabajos.calificacion')->get();
-        
+
         $reporte = [
             'curso' => $this->nombre,
             'total_estudiantes' => $estudiantes->count(),
             'promedio_general' => 0,
-            'estudiantes' => []
+            'estudiantes' => [],
         ];
 
         $suma_promedios = 0;
@@ -119,7 +121,7 @@ class Curso extends Model
         foreach ($estudiantes as $estudiante) {
             $calificaciones = $estudiante->trabajos->pluck('calificacion.puntaje')->filter();
             $promedio = $calificaciones->avg();
-            
+
             if ($promedio !== null) {
                 $suma_promedios += $promedio;
                 $estudiantes_con_calificaciones++;
@@ -129,12 +131,12 @@ class Curso extends Model
                 'estudiante' => $estudiante->nombre_completo,
                 'promedio' => $promedio ?? 0,
                 'total_trabajos' => $estudiante->trabajos->count(),
-                'trabajos_entregados' => $estudiante->trabajos->where('estado', 'entregado')->count()
+                'trabajos_entregados' => $estudiante->trabajos->where('estado', 'entregado')->count(),
             ];
         }
 
-        $reporte['promedio_general'] = $estudiantes_con_calificaciones > 0 
-            ? $suma_promedios / $estudiantes_con_calificaciones 
+        $reporte['promedio_general'] = $estudiantes_con_calificaciones > 0
+            ? $suma_promedios / $estudiantes_con_calificaciones
             : 0;
 
         return $reporte;

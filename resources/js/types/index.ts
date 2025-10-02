@@ -274,13 +274,7 @@ export interface FormErrors {
 }
 
 // Tipos de navegación
-export interface MenuItem {
-  name: string;
-  route: string;
-  icon: string;
-  permission?: string;
-  children?: MenuItem[];
-}
+// Esta definición está obsoleta - usar la definición más abajo para elementos del menú lateral
 
 // Tipos de estadísticas
 export interface Estadisticas {
@@ -309,4 +303,18 @@ export interface Filtros {
 export interface Ordenamiento {
   campo: string;
   direccion: 'asc' | 'desc';
+}
+
+// Tipos para elementos del menú lateral
+export interface MenuItem {
+  title: string;
+  href: string;
+  icon: string;
+  children?: MenuItem[];
+}
+
+// Tipos para breadcrumb
+export interface BreadcrumbItem {
+  title: string;
+  href?: string;
 }

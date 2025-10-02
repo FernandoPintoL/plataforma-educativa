@@ -4,7 +4,6 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -54,22 +53,6 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
-    }
-
-    /**
-     * Relación con datos del empleado si es que los tiene
-     */
-    public function empleado(): HasOne
-    {
-        return $this->hasOne(Empleado::class);
-    }
-
-    /**
-     * Relación con datos del cliente si es que los tiene
-     */
-    public function cliente(): HasOne
-    {
-        return $this->hasOne(Cliente::class);
     }
 
     /**
@@ -145,7 +128,7 @@ class User extends Authenticatable
      */
     public function getNombreCompletoAttribute(): string
     {
-        return trim($this->name . ' ' . ($this->apellido ?? ''));
+        return trim($this->name.' '.($this->apellido ?? ''));
     }
 
     /**

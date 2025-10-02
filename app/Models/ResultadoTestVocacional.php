@@ -11,6 +11,8 @@ class ResultadoTestVocacional extends Model
 {
     use HasFactory;
 
+    protected $table = 'resultados_test_vocacional';
+
     protected $fillable = [
         'estudiante_id',
         'test_vocacional_id',
@@ -73,14 +75,14 @@ class ResultadoTestVocacional extends Model
     private function extraerIntereses(): array
     {
         $intereses = [];
-        
+
         foreach ($this->puntajes_por_categoria as $categoriaId => $puntaje) {
             $categoria = CategoriaTest::find($categoriaId);
             if ($categoria) {
                 $intereses[$categoria->nombre] = $puntaje;
             }
         }
-        
+
         return $intereses;
     }
 
@@ -97,9 +99,9 @@ class ResultadoTestVocacional extends Model
             'Deportes' => ['liderazgo', 'trabajo_equipo'],
             'Tecnología' => ['resolucion_problemas', 'adaptabilidad'],
         ];
-        
+
         $habilidades = [];
-        
+
         foreach ($this->puntajes_por_categoria as $categoriaId => $puntaje) {
             $categoria = CategoriaTest::find($categoriaId);
             if ($categoria && isset($mapeoHabilidades[$categoria->nombre])) {
@@ -108,7 +110,7 @@ class ResultadoTestVocacional extends Model
                 }
             }
         }
-        
+
         return $habilidades;
     }
 
@@ -125,9 +127,9 @@ class ResultadoTestVocacional extends Model
             'Social' => ['amabilidad', 'empatia'],
             'Técnico' => ['estabilidad', 'persistencia'],
         ];
-        
+
         $personalidad = [];
-        
+
         foreach ($this->puntajes_por_categoria as $categoriaId => $puntaje) {
             $categoria = CategoriaTest::find($categoriaId);
             if ($categoria && isset($mapeoPersonalidad[$categoria->nombre])) {
@@ -136,7 +138,7 @@ class ResultadoTestVocacional extends Model
                 }
             }
         }
-        
+
         return $personalidad;
     }
 
@@ -153,9 +155,9 @@ class ResultadoTestVocacional extends Model
             'Deportes' => ['coordinacion', 'resistencia'],
             'Tecnología' => ['programacion', 'diseno'],
         ];
-        
+
         $aptitudes = [];
-        
+
         foreach ($this->puntajes_por_categoria as $categoriaId => $puntaje) {
             $categoria = CategoriaTest::find($categoriaId);
             if ($categoria && isset($mapeoAptitudes[$categoria->nombre])) {
@@ -164,7 +166,7 @@ class ResultadoTestVocacional extends Model
                 }
             }
         }
-        
+
         return $aptitudes;
     }
 
@@ -174,13 +176,13 @@ class ResultadoTestVocacional extends Model
     public function generarRecomendaciones(): array
     {
         $recomendaciones = [];
-        
+
         // Obtener carreras compatibles
         $carreras = Carrera::where('activo', true)->get();
-        
+
         foreach ($carreras as $carrera) {
             $compatibilidad = $this->calcularCompatibilidadCarrera($carrera);
-            
+
             if ($compatibilidad > 0.6) {
                 $recomendaciones[] = [
                     'carrera' => $carrera,
@@ -189,10 +191,10 @@ class ResultadoTestVocacional extends Model
                 ];
             }
         }
-        
+
         // Ordenar por compatibilidad
-        usort($recomendaciones, fn($a, $b) => $b['compatibilidad'] <=> $a['compatibilidad']);
-        
+        usort($recomendaciones, fn ($a, $b) => $b['compatibilidad'] <=> $a['compatibilidad']);
+
         return array_slice($recomendaciones, 0, 5); // Top 5 recomendaciones
     }
 
@@ -204,7 +206,7 @@ class ResultadoTestVocacional extends Model
         $perfilIdeal = $carrera->perfil_ideal;
         $compatibilidad = 0;
         $totalCriterios = 0;
-        
+
         foreach ($perfilIdeal as $criterio => $puntajeRequerido) {
             $puntajeEstudiante = $this->obtenerPuntajeCriterio($criterio);
             if ($puntajeEstudiante > 0) {
@@ -212,7 +214,7 @@ class ResultadoTestVocacional extends Model
                 $totalCriterios++;
             }
         }
-        
+
         return $totalCriterios > 0 ? $compatibilidad / $totalCriterios : 0;
     }
 
@@ -225,11 +227,11 @@ class ResultadoTestVocacional extends Model
         $habilidades = $this->extraerHabilidades();
         $personalidad = $this->extraerPersonalidad();
         $aptitudes = $this->extraerAptitudes();
-        
-        return $intereses[$criterio] ?? 
-               $habilidades[$criterio] ?? 
-               $personalidad[$criterio] ?? 
-               $aptitudes[$criterio] ?? 0;
+
+        return $intereses[$criterio] ??
+        $habilidades[$criterio] ??
+        $personalidad[$criterio] ??
+        $aptitudes[$criterio] ?? 0;
     }
 
     /**
@@ -239,17 +241,17 @@ class ResultadoTestVocacional extends Model
     {
         $razones = [];
         $perfilIdeal = $carrera->perfil_ideal;
-        
+
         foreach ($perfilIdeal as $criterio => $puntajeRequerido) {
             $puntajeEstudiante = $this->obtenerPuntajeCriterio($criterio);
-            
+
             if ($puntajeEstudiante >= $puntajeRequerido * 0.8) {
                 $razones[] = "Fuerte en: {$criterio}";
             } elseif ($puntajeEstudiante >= $puntajeRequerido * 0.6) {
                 $razones[] = "Bueno en: {$criterio}";
             }
         }
-        
+
         return $razones;
     }
 
@@ -266,7 +268,7 @@ class ResultadoTestVocacional extends Model
             'perfil_vocacional' => $this->perfilVocacional?->obtenerInformacion(),
             'recomendaciones' => $this->generarRecomendaciones(),
         ];
-        
+
         return json_encode($datos, JSON_PRETTY_PRINT);
     }
 
@@ -295,10 +297,10 @@ class ResultadoTestVocacional extends Model
         if (empty($this->puntajes_por_categoria)) {
             return null;
         }
-        
+
         $categoriaId = array_search(max($this->puntajes_por_categoria), $this->puntajes_por_categoria);
         $categoria = CategoriaTest::find($categoriaId);
-        
+
         return $categoria?->nombre;
     }
 
@@ -310,10 +312,10 @@ class ResultadoTestVocacional extends Model
         if (empty($this->puntajes_por_categoria)) {
             return null;
         }
-        
+
         $categoriaId = array_search(min($this->puntajes_por_categoria), $this->puntajes_por_categoria);
         $categoria = CategoriaTest::find($categoriaId);
-        
+
         return $categoria?->nombre;
     }
 }

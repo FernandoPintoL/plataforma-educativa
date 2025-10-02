@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -33,11 +32,11 @@ class ModuloSidebar extends Model
     protected function casts(): array
     {
         return [
-            'activo' => 'boolean',
-            'es_submenu' => 'boolean',
+            'activo'            => 'boolean',
+            'es_submenu'        => 'boolean',
             'visible_dashboard' => 'boolean',
-            'permisos' => 'array',
-            'orden' => 'integer',
+            'permisos'          => 'array',
+            'orden'             => 'integer',
         ];
     }
 
@@ -99,9 +98,14 @@ class ModuloSidebar extends Model
 
     /**
      * Obtener módulos para el sidebar con estructura jerárquica
+     *
+     * @param \App\Models\User|null $usuario Usuario para el que se obtienen los módulos
+     * @return \Illuminate\Database\Eloquent\Collection
      */
-    public static function obtenerParaSidebar()
+    public static function obtenerParaSidebar($usuario = null)
     {
+        $usuario = $usuario ?? Auth::user();
+
         return self::activos()
             ->principales()
             ->ordenados()
@@ -109,13 +113,13 @@ class ModuloSidebar extends Model
                 $query->activos()->ordenados();
             }])
             ->get()
-            ->filter(function ($modulo) {
-                return $modulo->usuarioTienePermiso();
+            ->filter(function ($modulo) use ($usuario) {
+                return $modulo->usuarioTienePermiso($usuario);
             })
-            ->map(function ($modulo) {
+            ->map(function ($modulo) use ($usuario) {
                 // Filtrar submódulos que el usuario puede ver
-                $modulo->submodulos = $modulo->submodulos->filter(function ($submodulo) {
-                    return $submodulo->usuarioTienePermiso();
+                $modulo->submodulos = $modulo->submodulos->filter(function ($submodulo) use ($usuario) {
+                    return $submodulo->usuarioTienePermiso($usuario);
                 });
 
                 return $modulo;
@@ -155,14 +159,15 @@ class ModuloSidebar extends Model
     {
         $navItem = [
             'title' => $this->titulo,
-            'href' => $this->ruta,
-            'icon' => $this->icono,
+            'href'  => $this->ruta,
+            'icon'  => $this->icono,
         ];
 
         if ($this->submodulos->isNotEmpty()) {
+            $usuario             = Auth::user();
             $navItem['children'] = $this->submodulos
-                ->filter(fn ($submodulo) => $submodulo->usuarioTienePermiso())
-                ->map(fn ($submodulo) => $submodulo->toNavItem())
+                ->filter(fn($submodulo) => $submodulo->usuarioTienePermiso($usuario))
+                ->map(fn($submodulo) => $submodulo->toNavItem())
                 ->values()
                 ->toArray();
         }

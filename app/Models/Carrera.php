@@ -11,6 +11,8 @@ class Carrera extends Model
 {
     use HasFactory;
 
+    protected $table = 'carreras';
+
     protected $fillable = [
         'nombre',
         'descripcion',
@@ -68,13 +70,13 @@ class Carrera extends Model
     {
         $anos = floor($this->duracion_anos);
         $meses = round(($this->duracion_anos - $anos) * 12);
-        
+
         if ($anos > 0 && $meses > 0) {
-            return "{$anos} año" . ($anos > 1 ? 's' : '') . " y {$meses} mes" . ($meses > 1 ? 'es' : '');
+            return "{$anos} año".($anos > 1 ? 's' : '')." y {$meses} mes".($meses > 1 ? 'es' : '');
         } elseif ($anos > 0) {
-            return "{$anos} año" . ($anos > 1 ? 's' : '');
+            return "{$anos} año".($anos > 1 ? 's' : '');
         } else {
-            return "{$meses} mes" . ($meses > 1 ? 'es' : '');
+            return "{$meses} mes".($meses > 1 ? 'es' : '');
         }
     }
 
@@ -91,7 +93,7 @@ class Carrera extends Model
             'maestria' => 'Maestría',
             'doctorado' => 'Doctorado',
         ];
-        
+
         return $niveles[$this->nivel_educativo] ?? ucfirst($this->nivel_educativo);
     }
 
@@ -100,10 +102,10 @@ class Carrera extends Model
      */
     public function getAreasConocimientoFormateadas(): array
     {
-        if (!$this->areas_conocimiento) {
+        if (! $this->areas_conocimiento) {
             return [];
         }
-        
+
         return array_map('ucfirst', $this->areas_conocimiento);
     }
 
@@ -112,10 +114,10 @@ class Carrera extends Model
      */
     public function getOportunidadesLaboralesFormateadas(): array
     {
-        if (!$this->oportunidades_laborales) {
+        if (! $this->oportunidades_laborales) {
             return [];
         }
-        
+
         return array_map('ucfirst', $this->oportunidades_laborales);
     }
 
@@ -124,15 +126,15 @@ class Carrera extends Model
      */
     public function getPerfilIdealFormateado(): array
     {
-        if (!$this->perfil_ideal) {
+        if (! $this->perfil_ideal) {
             return [];
         }
-        
+
         $perfilFormateado = [];
         foreach ($this->perfil_ideal as $criterio => $puntaje) {
             $perfilFormateado[ucfirst(str_replace('_', ' ', $criterio))] = $puntaje;
         }
-        
+
         return $perfilFormateado;
     }
 
@@ -169,7 +171,7 @@ class Carrera extends Model
         $recomendacionesAltaCompatibilidad = $this->recomendacionesCarrera()
             ->where('compatibilidad', '>=', 0.8)
             ->count();
-        
+
         return [
             'total_recomendaciones' => $totalRecomendaciones,
             'recomendaciones_alta_compatibilidad' => $recomendacionesAltaCompatibilidad,
@@ -227,10 +229,10 @@ class Carrera extends Model
     {
         $carreras = static::where('activo', true)->get();
         $recomendaciones = [];
-        
+
         foreach ($carreras as $carrera) {
             $compatibilidad = $carrera->calcularCompatibilidad($perfil);
-            
+
             if ($compatibilidad > 0.5) {
                 $recomendaciones[] = [
                     'carrera' => $carrera,
@@ -238,10 +240,10 @@ class Carrera extends Model
                 ];
             }
         }
-        
+
         // Ordenar por compatibilidad
-        usort($recomendaciones, fn($a, $b) => $b['compatibilidad'] <=> $a['compatibilidad']);
-        
+        usort($recomendaciones, fn ($a, $b) => $b['compatibilidad'] <=> $a['compatibilidad']);
+
         return collect(array_slice($recomendaciones, 0, $limite))->pluck('carrera');
     }
 
@@ -259,9 +261,15 @@ class Carrera extends Model
     public function getNivelDificultad(): string
     {
         $duracion = $this->duracion_anos;
-        
-        if ($duracion >= 5) return 'Alta';
-        if ($duracion >= 3) return 'Media';
+
+        if ($duracion >= 5) {
+            return 'Alta';
+        }
+
+        if ($duracion >= 3) {
+            return 'Media';
+        }
+
         return 'Baja';
     }
 
@@ -271,8 +279,8 @@ class Carrera extends Model
     public function getColorNivelDificultad(): string
     {
         $nivel = $this->getNivelDificultad();
-        
-        return match($nivel) {
+
+        return match ($nivel) {
             'Alta' => 'red',
             'Media' => 'yellow',
             'Baja' => 'green',

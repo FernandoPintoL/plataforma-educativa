@@ -10,6 +10,8 @@ class RespuestaTest extends Model
 {
     use HasFactory;
 
+    protected $table = 'respuestas_test';
+
     protected $fillable = [
         'estudiante_id',
         'pregunta_test_id',
@@ -51,18 +53,18 @@ class RespuestaTest extends Model
      */
     public function getTiempoFormateado(): string
     {
-        if (!$this->tiempo) {
+        if (! $this->tiempo) {
             return 'N/A';
         }
-        
+
         $segundos = $this->tiempo;
         $minutos = floor($segundos / 60);
         $segundosRestantes = $segundos % 60;
-        
+
         if ($minutos > 0) {
             return "{$minutos}m {$segundosRestantes}s";
         }
-        
+
         return "{$segundosRestantes}s";
     }
 
@@ -71,8 +73,8 @@ class RespuestaTest extends Model
      */
     public function esValida(): bool
     {
-        return !empty($this->respuesta_seleccionada) && 
-               $this->preguntaTest->getPuntuacionPorRespuesta($this->respuesta_seleccionada) >= 0;
+        return ! empty($this->respuesta_seleccionada) &&
+        $this->preguntaTest->getPuntuacionPorRespuesta($this->respuesta_seleccionada) >= 0;
     }
 
     /**
@@ -124,7 +126,7 @@ class RespuestaTest extends Model
         $validas = static::whereHas('preguntaTest', function ($query) {
             $query->whereNotNull('enunciado');
         })->count();
-        
+
         return [
             'total' => $total,
             'validas' => $validas,

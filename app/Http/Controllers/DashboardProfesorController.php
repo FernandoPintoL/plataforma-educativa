@@ -1,12 +1,10 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\Curso;
+use App\Models\Evaluacion;
 use App\Models\Tarea;
 use App\Models\Trabajo;
-use App\Models\Evaluacion;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
@@ -23,56 +21,76 @@ class DashboardProfesorController extends Controller
 
         // Estadísticas generales
         $estadisticas = [
-            'total_cursos' => $cursos->count(),
-            'total_estudiantes' => $cursos->sum('estudiantes_count'),
-            'tareas_pendientes_revision' => Trabajo::whereHas('tarea', function ($query) use ($profesor) {
-                $query->whereHas('contenido.curso', function ($q) use ($profesor) {
-                    $q->where('profesor_id', $profesor->id);
-                });
+            'total_cursos'               => $cursos->count(),
+            'total_estudiantes'          => $cursos->sum('estudiantes_count'),
+            'tareas_pendientes_revision' => Trabajo::whereHas('contenido', function ($query) use ($profesor) {
+                $query->where('tipo', 'tarea')
+                    ->where('creador_id', $profesor->id);
             })
-            ->where('calificacion', null)
-            ->count(),
-            'evaluaciones_activas' => Evaluacion::whereHas('contenido.curso', function ($query) use ($profesor) {
-                $query->where('profesor_id', $profesor->id);
-            })
-            ->where('fecha_limite', '>=', now())
-            ->count(),
+                ->where('estado', 'entregado')
+                ->whereDoesntHave('calificacion')
+                ->count(),
+            'evaluaciones_activas'       => Evaluacion::join('contenidos', 'evaluaciones.contenido_id', '=', 'contenidos.id')
+                ->join('cursos', 'contenidos.curso_id', '=', 'cursos.id')
+                ->where('cursos.profesor_id', $profesor->id)
+                ->where('contenidos.fecha_limite', '>=', now())
+                ->count(),
         ];
 
         // Cursos con más estudiantes
         $cursosDestacados = $cursos->sortByDesc('estudiantes_count')->take(5);
 
         // Trabajos recientes pendientes de calificar
-        $trabajosPendientes = Trabajo::with(['estudiante', 'tarea.contenido.curso'])
-            ->whereHas('tarea.contenido.curso', function ($query) use ($profesor) {
-                $query->where('profesor_id', $profesor->id);
+        $trabajosPendientes = Trabajo::with(['estudiante', 'contenido', 'contenido.curso'])
+            ->whereHas('contenido', function ($query) use ($profesor) {
+                $query->where('tipo', 'tarea')
+                    ->where('creador_id', $profesor->id);
             })
-            ->where('calificacion', null)
+            ->where('estado', 'entregado')
+            ->whereDoesntHave('calificacion')
             ->orderBy('fecha_entrega', 'desc')
             ->limit(10)
             ->get();
 
         // Actividad reciente del profesor
         $actividadReciente = [
-            'tareas_creadas' => Tarea::whereHas('contenido.curso', function ($query) use ($profesor) {
-                $query->where('profesor_id', $profesor->id);
-            })
-            ->whereBetween('created_at', [now()->subDays(7), now()])
-            ->count(),
+            'tareas_creadas'       => Tarea::join('contenidos', 'tareas.contenido_id', '=', 'contenidos.id')
+                ->join('cursos', 'contenidos.curso_id', '=', 'cursos.id')
+                ->where('cursos.profesor_id', $profesor->id)
+                ->whereBetween('tareas.created_at', [now()->subDays(7), now()])
+                ->count(),
 
-            'trabajos_calificados' => Trabajo::whereHas('tarea.contenido.curso', function ($query) use ($profesor) {
-                $query->where('profesor_id', $profesor->id);
+            'trabajos_calificados' => Trabajo::whereHas('contenido', function ($query) use ($profesor) {
+                $query->where('creador_id', $profesor->id);
             })
-            ->whereNotNull('calificacion')
-            ->whereBetween('updated_at', [now()->subDays(7), now()])
-            ->count(),
+                ->where('estado', 'calificado')
+                ->whereBetween('updated_at', [now()->subDays(7), now()])
+                ->count(),
         ];
 
+        // Obtener los módulos del sidebar para el usuario actual
+        $modulosSidebar = $this->getMenuItems();
+
         return Inertia::render('Dashboard/Profesor', [
-            'estadisticas' => $estadisticas,
-            'cursos' => $cursosDestacados,
+            'estadisticas'       => $estadisticas,
+            'cursos'             => $cursosDestacados,
             'trabajosPendientes' => $trabajosPendientes,
-            'actividadReciente' => $actividadReciente,
+            'actividadReciente'  => $actividadReciente,
+            'modulosSidebar'     => $modulosSidebar, // Añadir los módulos del sidebar
         ]);
+    }
+
+    /**
+     * Obtener elementos del menú sidebar filtrados por permisos del usuario actual
+     */
+    private function getMenuItems()
+    {
+        // Obtener módulos del sidebar filtrados por permisos del usuario
+        $modulos = \App\Models\ModuloSidebar::obtenerParaSidebar();
+
+        // Convertir a formato para frontend
+        return $modulos->map(function ($modulo) {
+            return $modulo->toNavItem();
+        })->values()->toArray();
     }
 }

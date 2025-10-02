@@ -13,6 +13,8 @@ class Contenido extends Model
 {
     use HasFactory;
 
+    protected $table = 'contenidos';
+
     protected $fillable = [
         'titulo',
         'descripcion',
@@ -141,7 +143,7 @@ class Contenido extends Model
         $total_estudiantes = $this->curso->estudiantes()->count();
         $trabajos_entregados = $this->trabajos()->where('estado', 'entregado')->count();
         $trabajos_calificados = $this->trabajos()->whereHas('calificacion')->count();
-        
+
         return [
             'total_estudiantes' => $total_estudiantes,
             'trabajos_entregados' => $trabajos_entregados,

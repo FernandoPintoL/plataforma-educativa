@@ -10,6 +10,8 @@ class Calificacion extends Model
 {
     use HasFactory;
 
+    protected $table = 'calificaciones';
+
     protected $fillable = [
         'trabajo_id',
         'puntaje',
@@ -46,7 +48,7 @@ class Calificacion extends Model
     public function estudiante(): BelongsTo
     {
         return $this->belongsTo(User::class, 'estudiante_id', 'id')
-                    ->through('trabajo');
+            ->through('trabajo');
     }
 
     /**
@@ -54,10 +56,22 @@ class Calificacion extends Model
      */
     public function getCalificacionLetra(): string
     {
-        if ($this->puntaje >= 90) return 'A';
-        if ($this->puntaje >= 80) return 'B';
-        if ($this->puntaje >= 70) return 'C';
-        if ($this->puntaje >= 60) return 'D';
+        if ($this->puntaje >= 90) {
+            return 'A';
+        }
+
+        if ($this->puntaje >= 80) {
+            return 'B';
+        }
+
+        if ($this->puntaje >= 70) {
+            return 'C';
+        }
+
+        if ($this->puntaje >= 60) {
+            return 'D';
+        }
+
         return 'F';
     }
 
@@ -74,10 +88,22 @@ class Calificacion extends Model
      */
     public function getDescripcionCalificacion(): string
     {
-        if ($this->puntaje >= 90) return 'Excelente';
-        if ($this->puntaje >= 80) return 'Muy Bueno';
-        if ($this->puntaje >= 70) return 'Bueno';
-        if ($this->puntaje >= 60) return 'Satisfactorio';
+        if ($this->puntaje >= 90) {
+            return 'Excelente';
+        }
+
+        if ($this->puntaje >= 80) {
+            return 'Muy Bueno';
+        }
+
+        if ($this->puntaje >= 70) {
+            return 'Bueno';
+        }
+
+        if ($this->puntaje >= 60) {
+            return 'Satisfactorio';
+        }
+
         return 'Necesita Mejorar';
     }
 
@@ -86,8 +112,14 @@ class Calificacion extends Model
      */
     public function getColorCalificacion(): string
     {
-        if ($this->puntaje >= 80) return 'green';
-        if ($this->puntaje >= 60) return 'yellow';
+        if ($this->puntaje >= 80) {
+            return 'green';
+        }
+
+        if ($this->puntaje >= 60) {
+            return 'yellow';
+        }
+
         return 'red';
     }
 
@@ -96,7 +128,7 @@ class Calificacion extends Model
      */
     public function getCriteriosFormateados(): array
     {
-        if (!$this->criterios_evaluacion) {
+        if (! $this->criterios_evaluacion) {
             return [];
         }
 
@@ -105,7 +137,7 @@ class Calificacion extends Model
             $criterios[] = [
                 'criterio' => $criterio,
                 'puntaje' => $puntaje,
-                'maximo' => $this->obtenerPuntajeMaximoCriterio($criterio)
+                'maximo' => $this->obtenerPuntajeMaximoCriterio($criterio),
             ];
         }
 

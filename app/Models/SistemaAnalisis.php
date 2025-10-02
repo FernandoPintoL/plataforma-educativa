@@ -5,11 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SistemaAnalisis extends Model
 {
     use HasFactory;
+
+    protected $table = 'sistemas_analisis';
 
     protected $fillable = [
         'nombre',
@@ -42,10 +43,10 @@ class SistemaAnalisis extends Model
     {
         // Preparar datos para el análisis
         $datosTrabajo = $this->prepararDatosTrabajo($trabajo);
-        
+
         // Aplicar el modelo de análisis
         $resultado = $this->aplicarModelo($datosTrabajo);
-        
+
         // Crear resultado de análisis
         return ResultadoAnalisis::create([
             'trabajo_id' => $trabajo->id,
@@ -83,11 +84,11 @@ class SistemaAnalisis extends Model
     {
         // Implementar lógica del modelo de análisis
         // Por ahora, retornar un análisis básico
-        
+
         $areasFortaleza = [];
         $areasDebilidad = [];
         $recomendaciones = [];
-        
+
         // Análisis basado en tiempo
         if ($datos['tiempo_total'] < 30) {
             $areasFortaleza[] = 'Eficiencia en el tiempo';
@@ -95,7 +96,7 @@ class SistemaAnalisis extends Model
             $areasDebilidad[] = 'Necesita mejorar la gestión del tiempo';
             $recomendaciones[] = 'Practicar ejercicios de resolución rápida';
         }
-        
+
         // Análisis basado en intentos
         if ($datos['intentos'] == 1) {
             $areasFortaleza[] = 'Precisión en las respuestas';
@@ -103,7 +104,7 @@ class SistemaAnalisis extends Model
             $areasDebilidad[] = 'Dificultad en la comprensión del tema';
             $recomendaciones[] = 'Revisar material de apoyo adicional';
         }
-        
+
         // Análisis basado en consultas a material
         if ($datos['consultas_material'] > 5) {
             $areasDebilidad[] = 'Dependencia excesiva del material';
@@ -111,7 +112,7 @@ class SistemaAnalisis extends Model
         } else {
             $areasFortaleza[] = 'Independencia en el aprendizaje';
         }
-        
+
         return [
             'areas_fortaleza' => $areasFortaleza,
             'areas_debilidad' => $areasDebilidad,
@@ -131,20 +132,20 @@ class SistemaAnalisis extends Model
     private function calcularConfianza(array $datos): float
     {
         $confianza = 0.5; // Base
-        
+
         // Ajustar confianza basado en datos disponibles
-        if (!empty($datos['respuestas'])) {
+        if (! empty($datos['respuestas'])) {
             $confianza += 0.2;
         }
-        
+
         if ($datos['tiempo_total'] > 0) {
             $confianza += 0.1;
         }
-        
+
         if ($datos['intentos'] > 0) {
             $confianza += 0.1;
         }
-        
+
         return min(1.0, $confianza);
     }
 
@@ -154,15 +155,15 @@ class SistemaAnalisis extends Model
     public function generarRecomendaciones(User $estudiante, ResultadoAnalisis $resultado): array
     {
         $recomendaciones = [];
-        
+
         // Obtener materiales de apoyo relevantes
         $materiales = MaterialApoyo::where('activo', true)
             ->where('nivel_dificultad', '<=', $this->calcularNivelDificultad($estudiante))
             ->get();
-        
+
         foreach ($materiales as $material) {
             $relevancia = $this->calcularRelevanciaMaterial($material, $resultado);
-            
+
             if ($relevancia > 0.5) {
                 $recomendaciones[] = [
                     'material' => $material,
@@ -171,10 +172,10 @@ class SistemaAnalisis extends Model
                 ];
             }
         }
-        
+
         // Ordenar por relevancia
-        usort($recomendaciones, fn($a, $b) => $b['relevancia'] <=> $a['relevancia']);
-        
+        usort($recomendaciones, fn ($a, $b) => $b['relevancia'] <=> $a['relevancia']);
+
         return array_slice($recomendaciones, 0, 5); // Top 5 recomendaciones
     }
 
@@ -184,17 +185,29 @@ class SistemaAnalisis extends Model
     private function calcularNivelDificultad(User $estudiante): int
     {
         $rendimiento = $estudiante->rendimientoAcademico;
-        
-        if (!$rendimiento) {
+
+        if (! $rendimiento) {
             return 3; // Nivel medio por defecto
         }
-        
+
         $promedio = $rendimiento->promedio;
-        
-        if ($promedio >= 90) return 5;
-        if ($promedio >= 80) return 4;
-        if ($promedio >= 70) return 3;
-        if ($promedio >= 60) return 2;
+
+        if ($promedio >= 90) {
+            return 5;
+        }
+
+        if ($promedio >= 80) {
+            return 4;
+        }
+
+        if ($promedio >= 70) {
+            return 3;
+        }
+
+        if ($promedio >= 60) {
+            return 2;
+        }
+
         return 1;
     }
 
@@ -204,19 +217,19 @@ class SistemaAnalisis extends Model
     private function calcularRelevanciaMaterial(MaterialApoyo $material, ResultadoAnalisis $resultado): float
     {
         $relevancia = 0.0;
-        
+
         // Relevancia basada en áreas de debilidad
         foreach ($resultado->areas_debilidad as $area) {
             if (in_array($area, $material->conceptos_relacionados)) {
                 $relevancia += 0.3;
             }
         }
-        
+
         // Relevancia basada en nivel de dificultad
         $nivelEstudiante = $this->calcularNivelDificultad($resultado->trabajo->estudiante);
         $diferenciaNivel = abs($material->nivel_dificultad - $nivelEstudiante);
         $relevancia += max(0, 0.2 - ($diferenciaNivel * 0.05));
-        
+
         return min(1.0, $relevancia);
     }
 
@@ -226,17 +239,17 @@ class SistemaAnalisis extends Model
     private function generarRazonRecomendacion(MaterialApoyo $material, ResultadoAnalisis $resultado): string
     {
         $razones = [];
-        
+
         foreach ($resultado->areas_debilidad as $area) {
             if (in_array($area, $material->conceptos_relacionados)) {
                 $razones[] = "Ayuda con: {$area}";
             }
         }
-        
+
         if (empty($razones)) {
-            return "Material complementario para reforzar conocimientos";
+            return 'Material complementario para reforzar conocimientos';
         }
-        
+
         return implode(', ', $razones);
     }
 
@@ -249,14 +262,14 @@ class SistemaAnalisis extends Model
             ->whereHas('resultadoAnalisis')
             ->with('resultadoAnalisis')
             ->get();
-        
+
         $patrones = [
             'consistencia_tiempo' => $this->analizarConsistenciaTiempo($trabajos),
             'evolucion_desempeno' => $this->analizarEvolucionDesempeno($trabajos),
             'preferencias_contenido' => $this->analizarPreferenciasContenido($trabajos),
             'patrones_errores' => $this->analizarPatronesErrores($trabajos),
         ];
-        
+
         return $patrones;
     }
 
@@ -266,15 +279,15 @@ class SistemaAnalisis extends Model
     private function analizarConsistenciaTiempo($trabajos): array
     {
         $tiempos = $trabajos->pluck('tiempo_total')->filter()->toArray();
-        
+
         if (empty($tiempos)) {
             return ['consistencia' => 0, 'tendencia' => 'indefinida'];
         }
-        
+
         $promedio = array_sum($tiempos) / count($tiempos);
-        $varianza = array_sum(array_map(fn($t) => pow($t - $promedio, 2), $tiempos)) / count($tiempos);
+        $varianza = array_sum(array_map(fn ($t) => pow($t - $promedio, 2), $tiempos)) / count($tiempos);
         $desviacion = sqrt($varianza);
-        
+
         return [
             'consistencia' => max(0, 1 - ($desviacion / $promedio)),
             'tendencia' => $this->calcularTendencia($tiempos),
@@ -288,14 +301,14 @@ class SistemaAnalisis extends Model
     private function analizarEvolucionDesempeno($trabajos): array
     {
         $confianzas = $trabajos->pluck('resultadoAnalisis.confianza_predictiva')->filter()->toArray();
-        
+
         if (empty($confianzas)) {
             return ['tendencia' => 'indefinida', 'mejora' => 0];
         }
-        
+
         $tendencia = $this->calcularTendencia($confianzas);
         $mejora = $confianzas[count($confianzas) - 1] - $confianzas[0];
-        
+
         return [
             'tendencia' => $tendencia,
             'mejora' => $mejora,
@@ -310,12 +323,12 @@ class SistemaAnalisis extends Model
     {
         $tiposContenido = $trabajos->pluck('contenido.tipo')->countBy();
         $total = $trabajos->count();
-        
+
         $preferencias = [];
         foreach ($tiposContenido as $tipo => $cantidad) {
             $preferencias[$tipo] = $cantidad / $total;
         }
-        
+
         return $preferencias;
     }
 
@@ -327,7 +340,7 @@ class SistemaAnalisis extends Model
         $areasDebilidad = $trabajos->pluck('resultadoAnalisis.areas_debilidad')
             ->flatten()
             ->countBy();
-        
+
         return $areasDebilidad->toArray();
     }
 
@@ -339,10 +352,10 @@ class SistemaAnalisis extends Model
         if (count($valores) < 2) {
             return 'indefinida';
         }
-        
+
         $primero = $valores[0];
         $ultimo = $valores[count($valores) - 1];
-        
+
         if ($ultimo > $primero * 1.1) {
             return 'mejorando';
         } elseif ($ultimo < $primero * 0.9) {
@@ -359,7 +372,7 @@ class SistemaAnalisis extends Model
     {
         // Implementar lógica de entrenamiento del modelo
         // Por ahora, actualizar la fecha de último entrenamiento
-        
+
         $this->update([
             'ultimo_entrenamiento' => now(),
             'precision' => $this->calcularPrecision($datos),

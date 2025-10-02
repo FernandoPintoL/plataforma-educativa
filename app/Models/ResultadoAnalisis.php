@@ -11,6 +11,8 @@ class ResultadoAnalisis extends Model
 {
     use HasFactory;
 
+    protected $table = 'resultados_analisis';
+
     protected $fillable = [
         'trabajo_id',
         'sistema_analisis_id',
@@ -58,26 +60,26 @@ class ResultadoAnalisis extends Model
     public function obtenerFeedbackAutomatico(): string
     {
         $feedback = [];
-        
+
         // Feedback sobre fortalezas
-        if (!empty($this->areas_fortaleza)) {
-            $feedback[] = "¡Excelente trabajo en: " . implode(', ', $this->areas_fortaleza) . "!";
+        if (! empty($this->areas_fortaleza)) {
+            $feedback[] = '¡Excelente trabajo en: '.implode(', ', $this->areas_fortaleza).'!';
         }
-        
+
         // Feedback sobre debilidades
-        if (!empty($this->areas_debilidad)) {
-            $feedback[] = "Áreas para mejorar: " . implode(', ', $this->areas_debilidad) . ".";
+        if (! empty($this->areas_debilidad)) {
+            $feedback[] = 'Áreas para mejorar: '.implode(', ', $this->areas_debilidad).'.';
         }
-        
+
         // Feedback sobre confianza
         if ($this->confianza_predictiva >= 0.8) {
-            $feedback[] = "El análisis muestra alta confianza en los resultados.";
+            $feedback[] = 'El análisis muestra alta confianza en los resultados.';
         } elseif ($this->confianza_predictiva >= 0.6) {
-            $feedback[] = "El análisis muestra confianza moderada en los resultados.";
+            $feedback[] = 'El análisis muestra confianza moderada en los resultados.';
         } else {
-            $feedback[] = "El análisis muestra baja confianza. Se recomienda revisar el trabajo.";
+            $feedback[] = 'El análisis muestra baja confianza. Se recomienda revisar el trabajo.';
         }
-        
+
         return implode(' ', $feedback);
     }
 
@@ -87,13 +89,13 @@ class ResultadoAnalisis extends Model
     public function sugerirMaterialesApoyo(): array
     {
         $materiales = [];
-        
+
         // Buscar materiales relacionados con las áreas de debilidad
         foreach ($this->areas_debilidad as $area) {
             $materialesRelacionados = MaterialApoyo::where('activo', true)
                 ->whereJsonContains('conceptos_relacionados', $area)
                 ->get();
-            
+
             foreach ($materialesRelacionados as $material) {
                 $materiales[] = [
                     'material' => $material,
@@ -102,7 +104,7 @@ class ResultadoAnalisis extends Model
                 ];
             }
         }
-        
+
         // Ordenar por relevancia y eliminar duplicados
         $materiales = collect($materiales)
             ->unique('material.id')
@@ -110,7 +112,7 @@ class ResultadoAnalisis extends Model
             ->take(5)
             ->values()
             ->toArray();
-        
+
         return $materiales;
     }
 
@@ -120,22 +122,22 @@ class ResultadoAnalisis extends Model
     private function calcularRelevanciaMaterial(MaterialApoyo $material): float
     {
         $relevancia = 0.0;
-        
+
         // Relevancia basada en áreas de debilidad
         foreach ($this->areas_debilidad as $area) {
             if (in_array($area, $material->conceptos_relacionados)) {
                 $relevancia += 0.4;
             }
         }
-        
+
         // Relevancia basada en nivel de dificultad
         $nivelEstudiante = $this->calcularNivelEstudiante();
         $diferenciaNivel = abs($material->nivel_dificultad - $nivelEstudiante);
         $relevancia += max(0, 0.3 - ($diferenciaNivel * 0.1));
-        
+
         // Relevancia basada en tipo de material
         $relevancia += $this->calcularRelevanciaPorTipo($material);
-        
+
         return min(1.0, $relevancia);
     }
 
@@ -145,17 +147,29 @@ class ResultadoAnalisis extends Model
     private function calcularNivelEstudiante(): int
     {
         $rendimiento = $this->trabajo->estudiante->rendimientoAcademico;
-        
-        if (!$rendimiento) {
+
+        if (! $rendimiento) {
             return 3; // Nivel medio por defecto
         }
-        
+
         $promedio = $rendimiento->promedio;
-        
-        if ($promedio >= 90) return 5;
-        if ($promedio >= 80) return 4;
-        if ($promedio >= 70) return 3;
-        if ($promedio >= 60) return 2;
+
+        if ($promedio >= 90) {
+            return 5;
+        }
+
+        if ($promedio >= 80) {
+            return 4;
+        }
+
+        if ($promedio >= 70) {
+            return 3;
+        }
+
+        if ($promedio >= 60) {
+            return 2;
+        }
+
         return 1;
     }
 
@@ -171,7 +185,7 @@ class ResultadoAnalisis extends Model
             'simulacion' => 0.3,
             'enlace' => 0.1,
         ];
-        
+
         return $tipoRelevancia[$material->tipo] ?? 0.1;
     }
 
@@ -240,19 +254,19 @@ class ResultadoAnalisis extends Model
             'media' => [],
             'baja' => [],
         ];
-        
+
         foreach ($this->recomendaciones as $recomendacion) {
-            if (str_contains(strtolower($recomendacion), 'urgente') || 
+            if (str_contains(strtolower($recomendacion), 'urgente') ||
                 str_contains(strtolower($recomendacion), 'importante')) {
                 $prioridades['alta'][] = $recomendacion;
-            } elseif (str_contains(strtolower($recomendacion), 'recomendable') || 
-                     str_contains(strtolower($recomendacion), 'sugerido')) {
+            } elseif (str_contains(strtolower($recomendacion), 'recomendable') ||
+                str_contains(strtolower($recomendacion), 'sugerido')) {
                 $prioridades['media'][] = $recomendacion;
             } else {
                 $prioridades['baja'][] = $recomendacion;
             }
         }
-        
+
         return $prioridades;
     }
 

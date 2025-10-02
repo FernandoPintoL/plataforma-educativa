@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Middleware;
 
 use Illuminate\Foundation\Inspiring;
@@ -39,16 +38,18 @@ class HandleInertiaRequests extends Middleware
         [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
 
         return [
-            ...parent::share($request),
-            'name' => config('app.name'),
-            'quote' => ['message' => trim($message), 'author' => trim($author)],
-            'auth' => [
-                'user' => $request->user(),
-                'roles' => $request->user() ? $request->user()->getRoleNames() : [],
+             ...parent::share($request),
+            'name'           => config('app.name'),
+            'quote'          => ['message' => trim($message), 'author' => trim($author)],
+            'auth'           => [
+                'user'        => $request->user(),
+                'roles'       => $request->user() ? $request->user()->getRoleNames() : [],
                 // Optimización: Solo cargar permisos cuando sea necesario
                 'permissions' => $request->user() ? $this->getEssentialPermissions($request->user()) : [],
             ],
-            'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            'sidebarOpen'    => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            // Compartir módulos del sidebar globalmente
+            'modulosSidebar' => $request->user() ? $this->getModulosSidebar($request->user()) : [],
         ];
     }
 
@@ -60,5 +61,17 @@ class HandleInertiaRequests extends Middleware
         // Obtener todos los permisos del usuario directamente desde la BD
         // Esto es más escalable y no requiere mantenimiento manual
         return $user->getAllPermissions()->pluck('name')->toArray();
+    }
+
+    /**
+     * Obtener módulos del sidebar filtrados por permisos del usuario
+     */
+    private function getModulosSidebar($user): array
+    {
+        $modulos = \App\Models\ModuloSidebar::obtenerParaSidebar($user);
+
+        return $modulos->map(function ($modulo) {
+            return $modulo->toNavItem();
+        })->values()->toArray();
     }
 }

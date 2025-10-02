@@ -4,12 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Log;
 
 class Reporte extends Model
 {
     use HasFactory;
+
+    protected $table = 'reportes';
 
     protected $fillable = [
         'tipo',
@@ -64,7 +67,7 @@ class Reporte extends Model
     {
         // Implementar exportación a PDF
         // Por ahora, retornar ruta temporal
-        return 'reporte_' . $this->id . '.pdf';
+        return 'reporte_'.$this->id.'.pdf';
     }
 
     /**
@@ -74,7 +77,7 @@ class Reporte extends Model
     {
         // Implementar exportación a Excel
         // Por ahora, retornar ruta temporal
-        return 'reporte_' . $this->id . '.xlsx';
+        return 'reporte_'.$this->id.'.xlsx';
     }
 
     /**
@@ -84,7 +87,7 @@ class Reporte extends Model
     {
         // Implementar exportación a CSV
         // Por ahora, retornar ruta temporal
-        return 'reporte_' . $this->id . '.csv';
+        return 'reporte_'.$this->id.'.csv';
     }
 
     /**
@@ -103,7 +106,7 @@ class Reporte extends Model
         try {
             // Implementar lógica de envío
             // Por ejemplo, enviar por email a los destinatarios
-            
+
             foreach ($this->destinatarios as $destinatarioId) {
                 $usuario = User::find($destinatarioId);
                 if ($usuario) {
@@ -114,7 +117,8 @@ class Reporte extends Model
 
             return true;
         } catch (\Exception $e) {
-            \Log::error('Error enviando reporte: ' . $e->getMessage());
+            Log::error('Error enviando reporte: '.$e->getMessage());
+
             return false;
         }
     }
@@ -147,7 +151,7 @@ class Reporte extends Model
      */
     private function extraerDatosPrincipales(): array
     {
-        if (!$this->datos) {
+        if (! $this->datos) {
             return [];
         }
 
@@ -161,7 +165,7 @@ class Reporte extends Model
                     'porcentaje_aprobacion' => $this->datos['porcentaje_aprobacion'] ?? 0,
                 ];
                 break;
-            
+
             case 'rendimiento_estudiante':
                 $datosPrincipales = [
                     'promedio_estudiante' => $this->datos['promedio'] ?? 0,
@@ -169,7 +173,7 @@ class Reporte extends Model
                     'tendencia' => $this->datos['tendencia'] ?? 'estable',
                 ];
                 break;
-            
+
             case 'estadisticas_vocacionales':
                 $datosPrincipales = [
                     'total_tests' => $this->datos['total_tests'] ?? 0,

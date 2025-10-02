@@ -15,33 +15,33 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'Plataforma Educativa
   const { user } = useAuth();
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <>
       <Head title={title} />
-      
-      {/* Sidebar */}
-      <Sidebar 
-        isOpen={sidebarOpen} 
-        onClose={() => setSidebarOpen(false)} 
-      />
-      
-      {/* Main content */}
-      <div className="lg:pl-64">
-        {/* Header */}
-        <Header 
-          onMenuClick={() => setSidebarOpen(true)}
-          user={user}
+
+      <div className="flex h-screen overflow-hidden bg-gray-50">
+        {/* Sidebar */}
+        <Sidebar
+          isOpen={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
         />
-        
-        {/* Page content */}
-        <main className="py-6">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+
+        {/* Main content */}
+        <div className="flex flex-1 flex-col overflow-hidden">
+          {/* Header */}
+          <Header
+            onMenuClick={() => setSidebarOpen(true)}
+            user={user}
+          />
+
+          {/* Page content */}
+          <main className="flex-1 overflow-y-auto">
             {children}
-          </div>
-        </main>
+          </main>
+        </div>
       </div>
-      
+
       {/* Toast notifications */}
-      <Toaster 
+      <Toaster
         position="top-right"
         toastOptions={{
           duration: 4000,
@@ -65,7 +65,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'Plataforma Educativa
           },
         }}
       />
-    </div>
+    </>
   );
 };
 

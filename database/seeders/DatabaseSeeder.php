@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
     {
         // Primero crear roles y permisos educativos
         $this->call(RolesAndPermissionsSeeder::class);
+        $this->call(PermisosSeeder::class);
         $this->call(ModuloSidebarSeeder::class);
 
         // Create a default admin user if not exists

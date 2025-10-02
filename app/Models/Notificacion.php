@@ -10,6 +10,8 @@ class Notificacion extends Model
 {
     use HasFactory;
 
+    protected $table = 'notificaciones';
+
     protected $fillable = [
         'titulo',
         'contenido',
@@ -76,7 +78,7 @@ class Notificacion extends Model
             'error' => '❌',
             'info' => 'ℹ️',
         ];
-        
+
         return $iconos[$this->tipo] ?? '📢';
     }
 
@@ -97,7 +99,7 @@ class Notificacion extends Model
             'error' => 'red',
             'info' => 'blue',
         ];
-        
+
         return $colores[$this->tipo] ?? 'blue';
     }
 
@@ -107,17 +109,19 @@ class Notificacion extends Model
     public function getTiempoTranscurrido(): string
     {
         $diferencia = now()->diffInMinutes($this->fecha);
-        
+
         if ($diferencia < 1) {
             return 'Hace un momento';
         } elseif ($diferencia < 60) {
             return "Hace {$diferencia} minutos";
         } elseif ($diferencia < 1440) {
             $horas = floor($diferencia / 60);
-            return "Hace {$horas} hora" . ($horas > 1 ? 's' : '');
+
+            return "Hace {$horas} hora".($horas > 1 ? 's' : '');
         } elseif ($diferencia < 10080) {
             $dias = floor($diferencia / 1440);
-            return "Hace {$dias} día" . ($dias > 1 ? 's' : '');
+
+            return "Hace {$dias} día".($dias > 1 ? 's' : '');
         } else {
             return $this->fecha->format('d/m/Y');
         }
@@ -213,7 +217,7 @@ class Notificacion extends Model
         $leidas = static::where('leido', true)->count();
         $noLeidas = static::where('leido', false)->count();
         $recientes = static::where('fecha', '>=', now()->subHours(24))->count();
-        
+
         return [
             'total' => $total,
             'leidas' => $leidas,

@@ -10,6 +10,8 @@ class RecomendacionMaterial extends Model
 {
     use HasFactory;
 
+    protected $table = 'recomendaciones_material';
+
     protected $fillable = [
         'resultado_analisis_id',
         'material_apoyo_id',
@@ -175,7 +177,7 @@ class RecomendacionMaterial extends Model
         $asignadas = static::where('asignado', true)->count();
         $pendientes = static::where('asignado', false)->count();
         $relevantes = static::where('relevancia', '>=', 0.5)->count();
-        
+
         return [
             'total' => $total,
             'asignadas' => $asignadas,

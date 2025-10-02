@@ -40,10 +40,10 @@ it('puede obtener módulos usando el modelo', function () {
 it('convierte correctamente un módulo a formato NavItem', function () {
     // Crear un módulo de prueba
     $modulo = ModuloSidebar::factory()->create([
-        'titulo' => 'Test Module',
-        'ruta' => '/test',
-        'icono' => 'Package',
-        'activo' => true,
+        'titulo'     => 'Test Module',
+        'ruta'       => '/test',
+        'icono'      => 'Package',
+        'activo'     => true,
         'es_submenu' => false,
     ]);
 
@@ -51,28 +51,28 @@ it('convierte correctamente un módulo a formato NavItem', function () {
 
     expect($navItem)->toEqual([
         'title' => 'Test Module',
-        'href' => '/test',
-        'icon' => 'Package',
+        'href'  => '/test',
+        'icon'  => 'Package',
     ]);
 });
 
 it('incluye submódulos en el formato NavItem', function () {
     // Crear módulo padre
     $padre = ModuloSidebar::factory()->create([
-        'titulo' => 'Parent Module',
-        'ruta' => '/parent',
-        'icono' => 'Package',
-        'activo' => true,
+        'titulo'     => 'Parent Module',
+        'ruta'       => '/parent',
+        'icono'      => 'Package',
+        'activo'     => true,
         'es_submenu' => false,
     ]);
 
     // Crear submódulo
     $submodulo = ModuloSidebar::factory()->create([
-        'titulo' => 'Child Module',
-        'ruta' => '/parent/child',
-        'icono' => 'Tags',
-        'activo' => true,
-        'es_submenu' => true,
+        'titulo'          => 'Child Module',
+        'ruta'            => '/parent/child',
+        'icono'           => 'Tags',
+        'activo'          => true,
+        'es_submenu'      => true,
         'modulo_padre_id' => $padre->id,
     ]);
 
@@ -81,7 +81,31 @@ it('incluye submódulos en el formato NavItem', function () {
     expect($navItem['children'])->toHaveCount(1);
     expect($navItem['children'][0])->toEqual([
         'title' => 'Child Module',
-        'href' => '/parent/child',
-        'icon' => 'Tags',
+        'href'  => '/parent/child',
+        'icon'  => 'Tags',
     ]);
+});
+
+it('comparte modulosSidebar globalmente a través de Inertia', function () {
+    // Crear un usuario con permisos
+    $user = User::factory()->create();
+
+    // Crear algunos módulos de prueba
+    ModuloSidebar::factory()->create([
+        'titulo'     => 'Dashboard',
+        'ruta'       => '/dashboard',
+        'icono'      => 'Home',
+        'activo'     => true,
+        'es_submenu' => false,
+        'permisos'   => null, // Sin permisos, todos pueden ver
+    ]);
+
+    // Actuar como el usuario autenticado
+    $this->actingAs($user);
+
+    // Hacer una petición a cualquier ruta de Inertia (como dashboard)
+    $response = $this->get('/dashboard');
+
+    // Verificar que la respuesta incluye modulosSidebar en las props compartidas
+    $response->assertInertia(fn($page) => $page->has('modulosSidebar'));
 });

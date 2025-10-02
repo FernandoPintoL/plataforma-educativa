@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\DashboardDirectorController::director
- * @see app/Http/Controllers/DashboardDirectorController.php:15
+ * @see app/Http/Controllers/DashboardDirectorController.php:12
  * @route '/dashboard/director'
  */
 export const director = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ director.definition = {
 
 /**
 * @see \App\Http\Controllers\DashboardDirectorController::director
- * @see app/Http/Controllers/DashboardDirectorController.php:15
+ * @see app/Http/Controllers/DashboardDirectorController.php:12
  * @route '/dashboard/director'
  */
 director.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ director.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\DashboardDirectorController::director
- * @see app/Http/Controllers/DashboardDirectorController.php:15
+ * @see app/Http/Controllers/DashboardDirectorController.php:12
  * @route '/dashboard/director'
  */
 director.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ director.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\DashboardDirectorController::director
- * @see app/Http/Controllers/DashboardDirectorController.php:15
+ * @see app/Http/Controllers/DashboardDirectorController.php:12
  * @route '/dashboard/director'
  */
 director.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ director.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\DashboardDirectorController::director
- * @see app/Http/Controllers/DashboardDirectorController.php:15
+ * @see app/Http/Controllers/DashboardDirectorController.php:12
  * @route '/dashboard/director'
  */
     const directorForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ director.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\DashboardDirectorController::director
- * @see app/Http/Controllers/DashboardDirectorController.php:15
+ * @see app/Http/Controllers/DashboardDirectorController.php:12
  * @route '/dashboard/director'
  */
         directorForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ director.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\DashboardDirectorController::director
- * @see app/Http/Controllers/DashboardDirectorController.php:15
+ * @see app/Http/Controllers/DashboardDirectorController.php:12
  * @route '/dashboard/director'
  */
         directorForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,7 +79,7 @@ director.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     director.form = directorForm
 /**
 * @see \App\Http\Controllers\DashboardProfesorController::profesor
- * @see app/Http/Controllers/DashboardProfesorController.php:15
+ * @see app/Http/Controllers/DashboardProfesorController.php:13
  * @route '/dashboard/profesor'
  */
 export const profesor = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ profesor.definition = {
 
 /**
 * @see \App\Http\Controllers\DashboardProfesorController::profesor
- * @see app/Http/Controllers/DashboardProfesorController.php:15
+ * @see app/Http/Controllers/DashboardProfesorController.php:13
  * @route '/dashboard/profesor'
  */
 profesor.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ profesor.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\DashboardProfesorController::profesor
- * @see app/Http/Controllers/DashboardProfesorController.php:15
+ * @see app/Http/Controllers/DashboardProfesorController.php:13
  * @route '/dashboard/profesor'
  */
 profesor.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -112,7 +112,7 @@ profesor.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\DashboardProfesorController::profesor
- * @see app/Http/Controllers/DashboardProfesorController.php:15
+ * @see app/Http/Controllers/DashboardProfesorController.php:13
  * @route '/dashboard/profesor'
  */
 profesor.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -122,7 +122,7 @@ profesor.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\DashboardProfesorController::profesor
- * @see app/Http/Controllers/DashboardProfesorController.php:15
+ * @see app/Http/Controllers/DashboardProfesorController.php:13
  * @route '/dashboard/profesor'
  */
     const profesorForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -132,7 +132,7 @@ profesor.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\DashboardProfesorController::profesor
- * @see app/Http/Controllers/DashboardProfesorController.php:15
+ * @see app/Http/Controllers/DashboardProfesorController.php:13
  * @route '/dashboard/profesor'
  */
         profesorForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -141,7 +141,7 @@ profesor.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\DashboardProfesorController::profesor
- * @see app/Http/Controllers/DashboardProfesorController.php:15
+ * @see app/Http/Controllers/DashboardProfesorController.php:13
  * @route '/dashboard/profesor'
  */
         profesorForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -157,7 +157,7 @@ profesor.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     profesor.form = profesorForm
 /**
 * @see \App\Http\Controllers\DashboardEstudianteController::estudiante
- * @see app/Http/Controllers/DashboardEstudianteController.php:16
+ * @see app/Http/Controllers/DashboardEstudianteController.php:15
  * @route '/dashboard/estudiante'
  */
 export const estudiante = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -172,7 +172,7 @@ estudiante.definition = {
 
 /**
 * @see \App\Http\Controllers\DashboardEstudianteController::estudiante
- * @see app/Http/Controllers/DashboardEstudianteController.php:16
+ * @see app/Http/Controllers/DashboardEstudianteController.php:15
  * @route '/dashboard/estudiante'
  */
 estudiante.url = (options?: RouteQueryOptions) => {
@@ -181,7 +181,7 @@ estudiante.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\DashboardEstudianteController::estudiante
- * @see app/Http/Controllers/DashboardEstudianteController.php:16
+ * @see app/Http/Controllers/DashboardEstudianteController.php:15
  * @route '/dashboard/estudiante'
  */
 estudiante.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -190,7 +190,7 @@ estudiante.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\DashboardEstudianteController::estudiante
- * @see app/Http/Controllers/DashboardEstudianteController.php:16
+ * @see app/Http/Controllers/DashboardEstudianteController.php:15
  * @route '/dashboard/estudiante'
  */
 estudiante.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -200,7 +200,7 @@ estudiante.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\DashboardEstudianteController::estudiante
- * @see app/Http/Controllers/DashboardEstudianteController.php:16
+ * @see app/Http/Controllers/DashboardEstudianteController.php:15
  * @route '/dashboard/estudiante'
  */
     const estudianteForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -210,7 +210,7 @@ estudiante.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\DashboardEstudianteController::estudiante
- * @see app/Http/Controllers/DashboardEstudianteController.php:16
+ * @see app/Http/Controllers/DashboardEstudianteController.php:15
  * @route '/dashboard/estudiante'
  */
         estudianteForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -219,7 +219,7 @@ estudiante.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\DashboardEstudianteController::estudiante
- * @see app/Http/Controllers/DashboardEstudianteController.php:16
+ * @see app/Http/Controllers/DashboardEstudianteController.php:15
  * @route '/dashboard/estudiante'
  */
         estudianteForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -235,7 +235,7 @@ estudiante.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     estudiante.form = estudianteForm
 /**
 * @see \App\Http\Controllers\DashboardPadreController::padre
- * @see app/Http/Controllers/DashboardPadreController.php:15
+ * @see app/Http/Controllers/DashboardPadreController.php:10
  * @route '/dashboard/padre'
  */
 export const padre = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -250,7 +250,7 @@ padre.definition = {
 
 /**
 * @see \App\Http\Controllers\DashboardPadreController::padre
- * @see app/Http/Controllers/DashboardPadreController.php:15
+ * @see app/Http/Controllers/DashboardPadreController.php:10
  * @route '/dashboard/padre'
  */
 padre.url = (options?: RouteQueryOptions) => {
@@ -259,7 +259,7 @@ padre.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\DashboardPadreController::padre
- * @see app/Http/Controllers/DashboardPadreController.php:15
+ * @see app/Http/Controllers/DashboardPadreController.php:10
  * @route '/dashboard/padre'
  */
 padre.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -268,7 +268,7 @@ padre.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\DashboardPadreController::padre
- * @see app/Http/Controllers/DashboardPadreController.php:15
+ * @see app/Http/Controllers/DashboardPadreController.php:10
  * @route '/dashboard/padre'
  */
 padre.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -278,7 +278,7 @@ padre.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\DashboardPadreController::padre
- * @see app/Http/Controllers/DashboardPadreController.php:15
+ * @see app/Http/Controllers/DashboardPadreController.php:10
  * @route '/dashboard/padre'
  */
     const padreForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -288,7 +288,7 @@ padre.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\DashboardPadreController::padre
- * @see app/Http/Controllers/DashboardPadreController.php:15
+ * @see app/Http/Controllers/DashboardPadreController.php:10
  * @route '/dashboard/padre'
  */
         padreForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -297,7 +297,7 @@ padre.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\DashboardPadreController::padre
- * @see app/Http/Controllers/DashboardPadreController.php:15
+ * @see app/Http/Controllers/DashboardPadreController.php:10
  * @route '/dashboard/padre'
  */
         padreForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Trabajo extends Model
 {
     use HasFactory;
+
+    protected $table = 'trabajos';
 
     protected $fillable = [
         'contenido_id',
@@ -25,9 +26,9 @@ class Trabajo extends Model
     ];
 
     protected $casts = [
-        'respuestas' => 'array',
+        'respuestas'    => 'array',
         'fecha_entrega' => 'datetime',
-        'fecha_inicio' => 'datetime',
+        'fecha_inicio'  => 'datetime',
     ];
 
     /**
@@ -47,6 +48,14 @@ class Trabajo extends Model
     }
 
     /**
+     * Relación con la tarea (a través de contenido)
+     */
+    public function tarea()
+    {
+        return $this->belongsTo(Tarea::class, 'contenido_id', 'contenido_id');
+    }
+
+    /**
      * Relación con la calificación
      */
     public function calificacion(): HasOne
@@ -60,7 +69,7 @@ class Trabajo extends Model
     public function curso(): BelongsTo
     {
         return $this->belongsTo(Curso::class, 'curso_id', 'id')
-                    ->through('contenido');
+            ->through('contenido');
     }
 
     /**
@@ -69,9 +78,9 @@ class Trabajo extends Model
     public function entregar(): void
     {
         $this->update([
-            'estado' => 'entregado',
+            'estado'        => 'entregado',
             'fecha_entrega' => now(),
-            'tiempo_total' => $this->calcularTiempoTotal(),
+            'tiempo_total'  => $this->calcularTiempoTotal(),
         ]);
     }
 
@@ -80,7 +89,7 @@ class Trabajo extends Model
      */
     private function calcularTiempoTotal(): int
     {
-        if (!$this->fecha_inicio) {
+        if (! $this->fecha_inicio) {
             return 0;
         }
 
@@ -140,12 +149,12 @@ class Trabajo extends Model
      */
     public function getTiempoTranscurridoFormateado(): string
     {
-        if (!$this->fecha_inicio) {
+        if (! $this->fecha_inicio) {
             return 'No iniciado';
         }
 
-        $tiempo = $this->tiempo_total ?? now()->diffInMinutes($this->fecha_inicio);
-        $horas = floor($tiempo / 60);
+        $tiempo  = $this->tiempo_total ?? now()->diffInMinutes($this->fecha_inicio);
+        $horas   = floor($tiempo / 60);
         $minutos = $tiempo % 60;
 
         if ($horas > 0) {
@@ -177,12 +186,12 @@ class Trabajo extends Model
     public function obtenerEstadisticas(): array
     {
         return [
-            'tiempo_total' => $this->tiempo_total ?? 0,
-            'intentos' => $this->intentos,
+            'tiempo_total'       => $this->tiempo_total ?? 0,
+            'intentos'           => $this->intentos,
             'consultas_material' => $this->consultas_material,
-            'puntaje' => $this->getPuntaje(),
-            'estado' => $this->estado,
-            'fecha_entrega' => $this->fecha_entrega?->format('d/m/Y H:i'),
+            'puntaje'            => $this->getPuntaje(),
+            'estado'             => $this->estado,
+            'fecha_entrega'      => $this->fecha_entrega?->format('d/m/Y H:i'),
         ];
     }
 }

@@ -4,12 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TestVocacional extends Model
 {
     use HasFactory;
+
+    protected $table = 'tests_vocacionales';
 
     protected $fillable = [
         'nombre',
@@ -52,7 +54,7 @@ class TestVocacional extends Model
     public function estudiantes(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'resultado_test_vocacional', 'test_vocacional_id', 'estudiante_id')
-                    ->withTimestamps();
+            ->withTimestamps();
     }
 
     /**
@@ -92,19 +94,19 @@ class TestVocacional extends Model
     public function calcularResultados(array $respuestas): ResultadoTestVocacional
     {
         $puntajesPorCategoria = [];
-        
+
         // Agrupar respuestas por categoría
         foreach ($respuestas as $respuesta) {
             $pregunta = PreguntaTest::find($respuesta['pregunta_id']);
             if ($pregunta) {
                 $categoriaId = $pregunta->categoria_test_id;
-                if (!isset($puntajesPorCategoria[$categoriaId])) {
+                if (! isset($puntajesPorCategoria[$categoriaId])) {
                     $puntajesPorCategoria[$categoriaId] = 0;
                 }
                 $puntajesPorCategoria[$categoriaId] += $pregunta->getPuntuacionPorRespuesta($respuesta['respuesta']);
             }
         }
-        
+
         // Crear resultado del test
         $resultado = ResultadoTestVocacional::create([
             'estudiante_id' => $respuestas[0]['estudiante_id'] ?? null,
@@ -112,10 +114,10 @@ class TestVocacional extends Model
             'fecha' => now(),
             'puntajes_por_categoria' => $puntajesPorCategoria,
         ]);
-        
+
         // Generar perfil vocacional
         $resultado->generarPerfilVocacional();
-        
+
         return $resultado;
     }
 
@@ -127,7 +129,7 @@ class TestVocacional extends Model
         $totalRespuestas = $this->respuestas()->count();
         $totalResultados = $this->resultados()->count();
         $totalPreguntas = $this->categorias()->withCount('preguntas')->get()->sum('preguntas_count');
-        
+
         return [
             'total_preguntas' => $totalPreguntas,
             'total_respuestas' => $totalRespuestas,
@@ -146,11 +148,11 @@ class TestVocacional extends Model
             ->whereNotNull('tiempo')
             ->pluck('tiempo')
             ->toArray();
-        
+
         if (empty($tiempos)) {
             return 0;
         }
-        
+
         return array_sum($tiempos) / count($tiempos);
     }
 
@@ -161,11 +163,11 @@ class TestVocacional extends Model
     {
         $totalPreguntas = $this->categorias()->withCount('preguntas')->get()->sum('preguntas_count');
         $totalRespuestas = $this->respuestas()->count();
-        
+
         if ($totalPreguntas == 0) {
             return 0;
         }
-        
+
         return ($totalRespuestas / $totalPreguntas) * 100;
     }
 
@@ -184,18 +186,18 @@ class TestVocacional extends Model
      */
     public function getDuracionFormateada(): string
     {
-        if (!$this->duracion_estimada) {
+        if (! $this->duracion_estimada) {
             return 'Sin límite de tiempo';
         }
-        
+
         $minutos = $this->duracion_estimada;
         $horas = floor($minutos / 60);
         $minutosRestantes = $minutos % 60;
-        
+
         if ($horas > 0) {
             return "{$horas}h {$minutosRestantes}m";
         }
-        
+
         return "{$minutos} minutos";
     }
 
@@ -205,6 +207,7 @@ class TestVocacional extends Model
     public function estaCompleto(): bool
     {
         $totalPreguntas = $this->categorias()->withCount('preguntas')->get()->sum('preguntas_count');
+
         return $totalPreguntas > 0;
     }
 

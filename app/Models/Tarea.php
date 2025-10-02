@@ -1,56 +1,52 @@
 <?php
-
 namespace App\Models;
 
+use App\Models\Abstracts\Contenido;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Tarea extends Model
+class Tarea extends Contenido
 {
     use HasFactory;
 
     protected $fillable = [
-        'contenido_id',
         'instrucciones',
         'puntuacion',
         'permite_archivos',
         'max_archivos',
         'tipo_archivo_permitido',
+        'fecha_limite',
     ];
 
     protected $casts = [
         'permite_archivos' => 'boolean',
+        'fecha_limite'     => 'datetime',
     ];
 
-    /**
-     * Relación con el contenido
-     */
-    public function contenido(): BelongsTo
+    public function publicar(): void
     {
-        return $this->belongsTo(Contenido::class);
+        $this->update(['estado' => 'publicado']);
     }
 
-    /**
-     * Relación con el curso a través del contenido
-     */
-    public function curso(): BelongsTo
+    public function modificar(): void
     {
-        return $this->belongsTo(Curso::class, 'curso_id', 'id')
-                    ->through('contenido');
+        $this->save();
+    }
+
+    public function eliminar(): void
+    {
+        $this->delete();
     }
 
     /**
      * Asignar la tarea a un estudiante
      */
-    public function asignarAEstudiante(User $estudiante): void
+    public function asignar(Estudiante $estudiante): void
     {
-        // Crear un trabajo para el estudiante
         Trabajo::create([
-            'contenido_id' => $this->contenido_id,
+            'contenido_id'  => $this->contenido_id,
             'estudiante_id' => $estudiante->id,
-            'estado' => 'en_progreso',
-            'fecha_inicio' => now(),
+            'estado'        => 'en_progreso',
+            'fecha_inicio'  => now(),
         ]);
     }
 
@@ -67,7 +63,7 @@ class Tarea extends Model
      */
     public function getTiposArchivoPermitidos(): array
     {
-        return $this->tipo_archivo_permitido 
+        return $this->tipo_archivo_permitido
             ? explode(',', $this->tipo_archivo_permitido)
             : [];
     }
@@ -78,6 +74,7 @@ class Tarea extends Model
     public function esTipoArchivoPermitido(string $tipo): bool
     {
         $tiposPermitidos = $this->getTiposArchivoPermitidos();
+
         return empty($tiposPermitidos) || in_array($tipo, $tiposPermitidos);
     }
 
@@ -86,7 +83,7 @@ class Tarea extends Model
      */
     public function trabajos()
     {
-        return $this->contenido->trabajos();
+        return $this->hasMany(Trabajo::class, 'contenido_id', 'contenido_id');
     }
 
     /**
@@ -94,15 +91,15 @@ class Tarea extends Model
      */
     public function obtenerEstadisticas(): array
     {
-        $trabajos = $this->trabajos()->get();
+        $trabajos          = $this->trabajos()->get();
         $total_estudiantes = $this->contenido->curso->estudiantes()->count();
-        
+
         return [
-            'total_estudiantes' => $total_estudiantes,
-            'trabajos_entregados' => $trabajos->where('estado', 'entregado')->count(),
+            'total_estudiantes'    => $total_estudiantes,
+            'trabajos_entregados'  => $trabajos->where('estado', 'entregado')->count(),
             'trabajos_calificados' => $trabajos->where('estado', 'calificado')->count(),
-            'promedio_puntaje' => $trabajos->whereHas('calificacion')->avg('calificacion.puntaje') ?? 0,
-            'porcentaje_entrega' => $total_estudiantes > 0 ? ($trabajos->where('estado', 'entregado')->count() / $total_estudiantes) * 100 : 0,
+            'promedio_puntaje'     => $trabajos->whereHas('calificacion')->avg('calificacion.puntaje') ?? 0,
+            'porcentaje_entrega'   => $total_estudiantes > 0 ? ($trabajos->where('estado', 'entregado')->count() / $total_estudiantes) * 100 : 0,
         ];
     }
 }

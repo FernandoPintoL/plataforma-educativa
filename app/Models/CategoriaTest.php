@@ -11,6 +11,8 @@ class CategoriaTest extends Model
 {
     use HasFactory;
 
+    protected $table = 'categoria_tests';
+
     protected $fillable = [
         'test_vocacional_id',
         'nombre',
@@ -21,7 +23,7 @@ class CategoriaTest extends Model
     /**
      * Relación con el test vocacional
      */
-    public function testVocacional(): BelongsTo
+    public function test_vocacional(): BelongsTo
     {
         return $this->belongsTo(TestVocacional::class);
     }
@@ -41,7 +43,7 @@ class CategoriaTest extends Model
     {
         $puntajeTotal = 0;
         $preguntasRespondidas = 0;
-        
+
         foreach ($respuestas as $respuesta) {
             $pregunta = $this->preguntas()->find($respuesta['pregunta_id']);
             if ($pregunta) {
@@ -49,11 +51,11 @@ class CategoriaTest extends Model
                 $preguntasRespondidas++;
             }
         }
-        
+
         if ($preguntasRespondidas == 0) {
             return 0;
         }
-        
+
         return $puntajeTotal / $preguntasRespondidas;
     }
 
@@ -67,7 +69,7 @@ class CategoriaTest extends Model
             ->withCount('respuestas')
             ->get()
             ->sum('respuestas_count');
-        
+
         return [
             'total_preguntas' => $totalPreguntas,
             'total_respuestas' => $totalRespuestas,

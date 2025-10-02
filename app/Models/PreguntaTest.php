@@ -11,6 +11,8 @@ class PreguntaTest extends Model
 {
     use HasFactory;
 
+    protected $table = 'pregunta_tests';
+
     protected $fillable = [
         'categoria_test_id',
         'enunciado',
@@ -61,17 +63,17 @@ class PreguntaTest extends Model
      */
     private function calcularPuntuacionOpcionMultiple(string $respuesta): float
     {
-        if (!$this->opciones) {
+        if (! $this->opciones) {
             return 0;
         }
-        
+
         // Buscar la opción seleccionada
         foreach ($this->opciones as $opcion) {
             if ($opcion['valor'] === $respuesta) {
                 return $opcion['puntuacion'] ?? 0;
             }
         }
-        
+
         return 0;
     }
 
@@ -87,7 +89,7 @@ class PreguntaTest extends Model
             'de_acuerdo' => 4,
             'totalmente_de_acuerdo' => 5,
         ];
-        
+
         return $escala[$respuesta] ?? 0;
     }
 
@@ -104,12 +106,12 @@ class PreguntaTest extends Model
      */
     public function getOpcionesFormateadas(): array
     {
-        if (!$this->opciones) {
+        if (! $this->opciones) {
             return [];
         }
-        
+
         $opcionesFormateadas = [];
-        
+
         switch ($this->tipo) {
             case 'opcion_multiple':
                 foreach ($this->opciones as $index => $opcion) {
@@ -120,7 +122,7 @@ class PreguntaTest extends Model
                     ];
                 }
                 break;
-                
+
             case 'escala_likert':
                 $opcionesFormateadas = [
                     ['valor' => 'totalmente_en_desacuerdo', 'texto' => 'Totalmente en desacuerdo', 'puntuacion' => 1],
@@ -130,7 +132,7 @@ class PreguntaTest extends Model
                     ['valor' => 'totalmente_de_acuerdo', 'texto' => 'Totalmente de acuerdo', 'puntuacion' => 5],
                 ];
                 break;
-                
+
             case 'verdadero_falso':
                 $opcionesFormateadas = [
                     ['valor' => 'verdadero', 'texto' => 'Verdadero', 'puntuacion' => 1],
@@ -138,7 +140,7 @@ class PreguntaTest extends Model
                 ];
                 break;
         }
-        
+
         return $opcionesFormateadas;
     }
 
@@ -153,7 +155,7 @@ class PreguntaTest extends Model
             ->groupBy('respuesta_seleccionada')
             ->pluck('count', 'respuesta_seleccionada')
             ->toArray();
-        
+
         return [
             'total_respuestas' => $totalRespuestas,
             'respuestas_por_opcion' => $respuestasPorOpcion,
@@ -169,7 +171,7 @@ class PreguntaTest extends Model
         if (empty($respuestasPorOpcion)) {
             return null;
         }
-        
+
         return array_search(max($respuestasPorOpcion), $respuestasPorOpcion);
     }
 
@@ -178,9 +180,9 @@ class PreguntaTest extends Model
      */
     public function esValida(): bool
     {
-        return !empty($this->enunciado) && 
-               !empty($this->tipo) && 
-               $this->tieneOpcionesValidas();
+        return ! empty($this->enunciado) &&
+        ! empty($this->tipo) &&
+        $this->tieneOpcionesValidas();
     }
 
     /**
@@ -190,7 +192,7 @@ class PreguntaTest extends Model
     {
         switch ($this->tipo) {
             case 'opcion_multiple':
-                return !empty($this->opciones) && count($this->opciones) >= 2;
+                return ! empty($this->opciones) && count($this->opciones) >= 2;
             case 'escala_likert':
             case 'verdadero_falso':
                 return true; // Estas opciones se generan automáticamente

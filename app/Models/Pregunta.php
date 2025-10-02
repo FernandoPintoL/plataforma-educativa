@@ -10,6 +10,8 @@ class Pregunta extends Model
 {
     use HasFactory;
 
+    protected $table = 'preguntas';
+
     protected $fillable = [
         'evaluacion_id',
         'enunciado',
@@ -41,13 +43,13 @@ class Pregunta extends Model
             case 'opcion_multiple':
             case 'verdadero_falso':
                 return strtolower(trim($respuesta)) === strtolower(trim($this->respuesta_correcta));
-            
+
             case 'respuesta_corta':
                 return $this->validarRespuestaCorta($respuesta);
-            
+
             case 'respuesta_larga':
                 return $this->validarRespuestaLarga($respuesta);
-            
+
             default:
                 return false;
         }
@@ -60,19 +62,19 @@ class Pregunta extends Model
     {
         $respuestaCorrecta = strtolower(trim($this->respuesta_correcta));
         $respuestaEstudiante = strtolower(trim($respuesta));
-        
+
         // Comparación exacta
         if ($respuestaCorrecta === $respuestaEstudiante) {
             return true;
         }
-        
+
         // Comparación con variaciones comunes
         $variaciones = [
             $respuestaCorrecta,
             str_replace(' ', '', $respuestaCorrecta),
             str_replace(['á', 'é', 'í', 'ó', 'ú'], ['a', 'e', 'i', 'o', 'u'], $respuestaCorrecta),
         ];
-        
+
         return in_array($respuestaEstudiante, $variaciones);
     }
 
@@ -83,7 +85,7 @@ class Pregunta extends Model
     {
         // Para respuestas largas, implementar análisis de palabras clave
         // Por ahora, retornar true si la respuesta no está vacía
-        return !empty(trim($respuesta));
+        return ! empty(trim($respuesta));
     }
 
     /**
@@ -91,7 +93,7 @@ class Pregunta extends Model
      */
     public function getOpcionesFormateadas(): array
     {
-        if (!$this->opciones) {
+        if (! $this->opciones) {
             return [];
         }
 
@@ -99,7 +101,7 @@ class Pregunta extends Model
         foreach ($this->opciones as $index => $opcion) {
             $opciones[] = [
                 'valor' => chr(65 + $index), // A, B, C, D...
-                'texto' => $opcion
+                'texto' => $opcion,
             ];
         }
 
@@ -111,11 +113,12 @@ class Pregunta extends Model
      */
     public function getLetraRespuestaCorrecta(): string
     {
-        if (!$this->opciones || !$this->respuesta_correcta) {
+        if (! $this->opciones || ! $this->respuesta_correcta) {
             return '';
         }
 
         $index = array_search($this->respuesta_correcta, $this->opciones);
+
         return $index !== false ? chr(65 + $index) : '';
     }
 
@@ -134,7 +137,7 @@ class Pregunta extends Model
         foreach ($trabajos as $trabajo) {
             $respuestas = $trabajo->respuestas ?? [];
             $respuesta = $respuestas[$this->id] ?? null;
-            
+
             if ($respuesta) {
                 $totalRespuestas++;
                 if ($this->validarRespuesta($respuesta)) {

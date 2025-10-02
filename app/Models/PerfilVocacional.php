@@ -11,6 +11,8 @@ class PerfilVocacional extends Model
 {
     use HasFactory;
 
+    protected $table = 'perfiles_vocacionales';
+
     protected $fillable = [
         'estudiante_id',
         'intereses',
@@ -66,22 +68,22 @@ class PerfilVocacional extends Model
     public function combinarConRendimientoAcademico(): void
     {
         $rendimiento = $this->estudiante->rendimientoAcademico;
-        
-        if (!$rendimiento) {
+
+        if (! $rendimiento) {
             return;
         }
-        
+
         // Obtener contribución del rendimiento académico
         $contribucion = $rendimiento->contribuirAlPerfilVocacional();
-        
+
         // Combinar aptitudes académicas con las existentes
         $aptitudesActuales = $this->aptitudes ?? [];
         $aptitudesAcademicas = $contribucion['aptitudes_academicas'] ?? [];
-        
+
         foreach ($aptitudesAcademicas as $aptitud) {
             $aptitudesActuales[$aptitud] = $rendimiento->promedio / 100; // Normalizar a 0-1
         }
-        
+
         $this->update([
             'aptitudes' => $aptitudesActuales,
             'fecha_actualizacion' => now(),
@@ -96,16 +98,16 @@ class PerfilVocacional extends Model
         $perfilIdeal = $carrera->perfil_ideal;
         $compatibilidad = 0;
         $totalCriterios = 0;
-        
+
         foreach ($perfilIdeal as $criterio => $puntajeRequerido) {
             $puntajeEstudiante = $this->obtenerPuntajeCriterio($criterio);
-            
+
             if ($puntajeEstudiante > 0) {
                 $compatibilidad += min(1, $puntajeEstudiante / $puntajeRequerido);
                 $totalCriterios++;
             }
         }
-        
+
         return $totalCriterios > 0 ? $compatibilidad / $totalCriterios : 0;
     }
 
@@ -114,10 +116,10 @@ class PerfilVocacional extends Model
      */
     private function obtenerPuntajeCriterio(string $criterio): float
     {
-        return $this->intereses[$criterio] ?? 
-               $this->habilidades[$criterio] ?? 
-               $this->personalidad[$criterio] ?? 
-               $this->aptitudes[$criterio] ?? 0;
+        return $this->intereses[$criterio] ??
+        $this->habilidades[$criterio] ??
+        $this->personalidad[$criterio] ??
+        $this->aptitudes[$criterio] ?? 0;
     }
 
     /**
@@ -125,11 +127,12 @@ class PerfilVocacional extends Model
      */
     public function getAreasMayorInteres(int $limite = 5): array
     {
-        if (!$this->intereses) {
+        if (! $this->intereses) {
             return [];
         }
-        
+
         arsort($this->intereses);
+
         return array_slice($this->intereses, 0, $limite, true);
     }
 
@@ -138,11 +141,12 @@ class PerfilVocacional extends Model
      */
     public function getHabilidadesMasDesarrolladas(int $limite = 5): array
     {
-        if (!$this->habilidades) {
+        if (! $this->habilidades) {
             return [];
         }
-        
+
         arsort($this->habilidades);
+
         return array_slice($this->habilidades, 0, $limite, true);
     }
 
@@ -151,11 +155,12 @@ class PerfilVocacional extends Model
      */
     public function getRasgosPersonalidadDominantes(int $limite = 5): array
     {
-        if (!$this->personalidad) {
+        if (! $this->personalidad) {
             return [];
         }
-        
+
         arsort($this->personalidad);
+
         return array_slice($this->personalidad, 0, $limite, true);
     }
 
@@ -164,11 +169,12 @@ class PerfilVocacional extends Model
      */
     public function getAptitudesMasFuertes(int $limite = 5): array
     {
-        if (!$this->aptitudes) {
+        if (! $this->aptitudes) {
             return [];
         }
-        
+
         arsort($this->aptitudes);
+
         return array_slice($this->aptitudes, 0, $limite, true);
     }
 
@@ -194,10 +200,10 @@ class PerfilVocacional extends Model
     {
         $carreras = Carrera::where('activo', true)->get();
         $recomendaciones = [];
-        
+
         foreach ($carreras as $carrera) {
             $compatibilidad = $this->calcularCompatibilidadCarrera($carrera);
-            
+
             if ($compatibilidad > 0.5) {
                 $recomendaciones[] = [
                     'carrera' => $carrera,
@@ -206,10 +212,10 @@ class PerfilVocacional extends Model
                 ];
             }
         }
-        
+
         // Ordenar por compatibilidad
-        usort($recomendaciones, fn($a, $b) => $b['compatibilidad'] <=> $a['compatibilidad']);
-        
+        usort($recomendaciones, fn ($a, $b) => $b['compatibilidad'] <=> $a['compatibilidad']);
+
         return array_slice($recomendaciones, 0, $limite);
     }
 
@@ -218,11 +224,26 @@ class PerfilVocacional extends Model
      */
     private function obtenerNivelCompatibilidad(float $compatibilidad): string
     {
-        if ($compatibilidad >= 0.9) return 'Excelente';
-        if ($compatibilidad >= 0.8) return 'Muy Alta';
-        if ($compatibilidad >= 0.7) return 'Alta';
-        if ($compatibilidad >= 0.6) return 'Buena';
-        if ($compatibilidad >= 0.5) return 'Moderada';
+        if ($compatibilidad >= 0.9) {
+            return 'Excelente';
+        }
+
+        if ($compatibilidad >= 0.8) {
+            return 'Muy Alta';
+        }
+
+        if ($compatibilidad >= 0.7) {
+            return 'Alta';
+        }
+
+        if ($compatibilidad >= 0.6) {
+            return 'Buena';
+        }
+
+        if ($compatibilidad >= 0.5) {
+            return 'Moderada';
+        }
+
         return 'Baja';
     }
 
@@ -267,10 +288,10 @@ class PerfilVocacional extends Model
      */
     private function calcularPromedio(?array $puntajes): float
     {
-        if (!$puntajes || empty($puntajes)) {
+        if (! $puntajes || empty($puntajes)) {
             return 0;
         }
-        
+
         return array_sum($puntajes) / count($puntajes);
     }
 
@@ -279,10 +300,10 @@ class PerfilVocacional extends Model
      */
     public function estaCompleto(): bool
     {
-        return !empty($this->intereses) && 
-               !empty($this->habilidades) && 
-               !empty($this->personalidad) && 
-               !empty($this->aptitudes);
+        return ! empty($this->intereses) &&
+        ! empty($this->habilidades) &&
+        ! empty($this->personalidad) &&
+        ! empty($this->aptitudes);
     }
 
     /**
@@ -291,13 +312,14 @@ class PerfilVocacional extends Model
     public function getNivelCompletitud(): float
     {
         $campos = [
-            'intereses' => !empty($this->intereses),
-            'habilidades' => !empty($this->habilidades),
-            'personalidad' => !empty($this->personalidad),
-            'aptitudes' => !empty($this->aptitudes),
+            'intereses' => ! empty($this->intereses),
+            'habilidades' => ! empty($this->habilidades),
+            'personalidad' => ! empty($this->personalidad),
+            'aptitudes' => ! empty($this->aptitudes),
         ];
-        
+
         $completos = array_sum($campos);
+
         return ($completos / count($campos)) * 100;
     }
 }

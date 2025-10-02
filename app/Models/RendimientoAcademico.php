@@ -10,6 +10,8 @@ class RendimientoAcademico extends Model
 {
     use HasFactory;
 
+    protected $table = 'rendimientos_academicos';
+
     protected $fillable = [
         'estudiante_id',
         'materias',
@@ -48,12 +50,12 @@ class RendimientoAcademico extends Model
             'consistencia' => 0,
         ];
 
-        if (!empty($this->materias)) {
+        if (! empty($this->materias)) {
             $puntajes = array_values($this->materias);
-            $indicadores['materias_aprobadas'] = count(array_filter($puntajes, fn($p) => $p >= 60));
-            $indicadores['materias_reprobadas'] = count(array_filter($puntajes, fn($p) => $p < 60));
-            
-            if (!empty($puntajes)) {
+            $indicadores['materias_aprobadas'] = count(array_filter($puntajes, fn ($p) => $p >= 60));
+            $indicadores['materias_reprobadas'] = count(array_filter($puntajes, fn ($p) => $p < 60));
+
+            if (! empty($puntajes)) {
                 $maxPuntaje = max($puntajes);
                 $minPuntaje = min($puntajes);
                 $indicadores['materia_mejor'] = array_search($maxPuntaje, $this->materias);
@@ -75,9 +77,9 @@ class RendimientoAcademico extends Model
         }
 
         $promedio = array_sum($puntajes) / count($puntajes);
-        $varianza = array_sum(array_map(fn($x) => pow($x - $promedio, 2), $puntajes)) / count($puntajes);
+        $varianza = array_sum(array_map(fn ($x) => pow($x - $promedio, 2), $puntajes)) / count($puntajes);
         $desviacion = sqrt($varianza);
-        
+
         // Normalizar entre 0 y 1 (1 = muy consistente, 0 = muy inconsistente)
         return max(0, 1 - ($desviacion / 50));
     }
@@ -110,10 +112,22 @@ class RendimientoAcademico extends Model
         $puntajes = array_values($this->materias);
         $promedio = array_sum($puntajes) / count($puntajes);
 
-        if ($promedio >= 90) return 'excelente';
-        if ($promedio >= 80) return 'bueno';
-        if ($promedio >= 70) return 'regular';
-        if ($promedio >= 60) return 'bajo';
+        if ($promedio >= 90) {
+            return 'excelente';
+        }
+
+        if ($promedio >= 80) {
+            return 'bueno';
+        }
+
+        if ($promedio >= 70) {
+            return 'regular';
+        }
+
+        if ($promedio >= 60) {
+            return 'bajo';
+        }
+
         return 'crítico';
     }
 
@@ -126,7 +140,7 @@ class RendimientoAcademico extends Model
             return [];
         }
 
-        return array_filter($this->materias, fn($puntaje) => $puntaje >= 80);
+        return array_filter($this->materias, fn ($puntaje) => $puntaje >= 80);
     }
 
     /**
@@ -138,7 +152,7 @@ class RendimientoAcademico extends Model
             return [];
         }
 
-        return array_filter($this->materias, fn($puntaje) => $puntaje < 70);
+        return array_filter($this->materias, fn ($puntaje) => $puntaje < 70);
     }
 
     /**
@@ -158,8 +172,8 @@ class RendimientoAcademico extends Model
             $recomendaciones[] = 'Excelente rendimiento, puede asumir desafíos mayores';
         }
 
-        if (!empty($this->debilidades)) {
-            $recomendaciones[] = 'Enfocar esfuerzos en: ' . implode(', ', array_keys($this->debilidades));
+        if (! empty($this->debilidades)) {
+            $recomendaciones[] = 'Enfocar esfuerzos en: '.implode(', ', array_keys($this->debilidades));
         }
 
         if ($this->tendencia_temporal === 'empeorando') {
@@ -191,7 +205,7 @@ class RendimientoAcademico extends Model
     {
         $aptitudes = [];
 
-        if (!empty($this->materias)) {
+        if (! empty($this->materias)) {
             foreach ($this->materias as $materia => $puntaje) {
                 if ($puntaje >= 85) {
                     $aptitudes[] = $materia;
@@ -209,7 +223,7 @@ class RendimientoAcademico extends Model
     {
         $intereses = [];
 
-        if (!empty($this->materias)) {
+        if (! empty($this->materias)) {
             foreach ($this->materias as $materia => $puntaje) {
                 if ($puntaje >= 75) {
                     $intereses[] = $materia;
