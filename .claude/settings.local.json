@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python:*)",
+      "Bash(java:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run build:*)",
+      "Bash(powershell:*)",
+      "Bash(mkdir:*)",
+      "Bash(php artisan migrate:fresh:*)",
+      "Bash(php artisan:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

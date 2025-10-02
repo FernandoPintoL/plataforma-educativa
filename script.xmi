@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="UTF-8"?><XMI xmlns:UML="href://org.omg/UML/1.3" xmi.version="1.1">
+    <XMI.header>
+        <XMI.documentation>
+            <XMI.exporter>PlantUML</XMI.exporter>
+            <XMI.exporterVersion>1.2024.3</XMI.exporterVersion>
+        </XMI.documentation>
+        <XMI.metamodel xmi.name="UML" xmi.version="1.4"/>
+    </XMI.header>
+    <XMI.content>
+        <UML:Model name="PlantUML" xmi.id="model1">
+            <UML:Namespace.ownedElement>
+                <UML:Class name="cache" xmi.id="cl0002">
+                    <UML:Classifier.feature>
+                        <UML:Attribute name="value : text COLLATE pg_catalog" xmi.id="att80"/>
+                        <UML:Attribute name="expiration : integer NOT NULL?" xmi.id="att81"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+                <UML:Class name="cache_locks" xmi.id="cl0003">
+                    <UML:Classifier.feature>
+                        <UML:Attribute name="expiration : integer NOT NULL?" xmi.id="att82"/>
+                        <UML:Operation name="owner : character varying(255) COLLATE pg_catalog" xmi.id="att83"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+                <UML:Class name="calificaciones" xmi.id="cl0004">
+                    <UML:Classifier.feature>
+                        <UML:Attribute name="trabajo_id : bigint NOT NULL «FK»" visibility="protected" xmi.id="att84"/>
+                        <UML:Attribute name="evaluador_id : bigint NOT NULL «FK»" visibility="protected" xmi.id="att85"/>
+                        <UML:Attribute name="id : bigserial NOT NULL?" xmi.id="att86"/>
+                        <UML:Attribute name="puntaje : double precision NOT NULL?" xmi.id="att87"/>
+                        <UML:Attribute name="comentario : text COLLATE pg_catalog?" xmi.id="att88"/>
+                        <UML:Attribute name="criterios_evaluacion : json?" xmi.id="att89"/>
+                        <UML:Operation name="fecha_calificacion : timestamp(0) without time zone NOT NULL?" xmi.id="att90"/>
+                        <UML:Operation name="created_at : timestamp(0) without time zone?" xmi.id="att91"/>
+                        <UML:Operation name="updated_at : timestamp(0) without time zone?" xmi.id="att92"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+                <UML:Class name="carreras" xmi.id="cl0005">
+                    <UML:Classifier.feature>
+                        <UML:Attribute name="id : bigserial NOT NULL?" xmi.id="att93"/>
+                        <UML:Attribute name="descripcion : text COLLATE pg_catalog" xmi.id="att94"/>
+                        <UML:Attribute name="duracion_anos : double precision NOT NULL?" xmi.id="att95"/>
+                        <UML:Attribute name="areas_conocimiento : json NOT NULL?" xmi.id="att96"/>
+                        <UML:Attribute name="perfil_ideal : json NOT NULL?" xmi.id="att97"/>
+                        <UML:Attribute name="oportunidades_laborales : json NOT NULL?" xmi.id="att98"/>
+                        <UML:Attribute name="activo : boolean NOT NULL DEFAULT true?" xmi.id="att99"/>
+                        <UML:Operation name="nombre : character varying(255) COLLATE pg_catalog" xmi.id="att100"/>
+                        <UML:Operation name="nivel_educativo : character varying(255) COLLATE pg_catalog" xmi.id="att101"/>
+                        <UML:Operation name="created_at : timestamp(0) without time zone?" xmi.id="att102"/>
+                        <UML:Operation name="updated_at : timestamp(0) without time zone?" xmi.id="att103"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+                <UML:Class name="categorias_test" xmi.id="cl0006">
+                    <UML:Classifier.feature>
+                        <UML:Attribute name="test_vocacional_id : bigint NOT NULL «FK»" visibility="protected" xmi.id="att104"/>
+                        <UML:Attribute name="id : bigserial NOT NULL?" xmi.id="att105"/>
+                        <UML:Attribute name="descripcion : text COLLATE pg_catalog?" xmi.id="att106"/>
+                        <UML:Attribute name="orden : integer NOT NULL DEFAULT 0?" xmi.id="att107"/>
+                        <UML:Operation name="nombre : character varying(255) COLLATE pg_catalog" xmi.id="att108"/>
+                        <UML:Operation name="created_at : timestamp(0) without time zone?" xmi.id="att109"/>
+                        <UML:Operation name="updated_at : timestamp(0) without time zone?" xmi.id="att110"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+                <UML:Class name="contenido_recurso" xmi.id="cl0007">
+                    <UML:Classifier.feature>
+                        <UML:Attribute name="contenido_id : bigint NOT NULL «FK»" visibility="protected" xmi.id="att111"/>
+                        <UML:Attribute name="recurso_id : bigint NOT NULL «FK»" visibility="protected" xmi.id="att112"/>
+                        <UML:Attribute name="id : bigserial NOT NULL?" xmi.id="att113"/>
+                        <UML:Operation name="created_at : timestamp(0) without time zone?" xmi.id="att114"/>
+                        <UML:Operation name="updated_at : timestamp(0) without time zone?" xmi.id="att115"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+                <UML:Class name="contenidos" xmi.id="cl0008">
+                    <UML:Classifier.feature>
+                        <UML:Attribute name="creador_id : bigint NOT NULL «FK»" visibility="protected" xmi.id="att116"/>
+                        <UML:Attribute name="curso_id : bigint NOT NULL «FK»" visibility="protected" xmi.id="att117"/>
+                        <UML:Attribute name="id : bigserial NOT NULL?" xmi.id="att118"/>
+                        <UML:Attribute name="descripcion : text COLLATE pg_catalog?" xmi.id="att119"/>
+                        <UML:Attribute name="fecha_creacion : date NOT NULL?" xmi.id="att120"/>
+                        <UML:Attribute name="fecha_limite : date?" xmi.id="att121"/>
+                        <UML:Operation name="titulo : character varying(255) COLLATE pg_catalog" xmi.id="att122"/>
+                        <UML:Operation name="tipo : character varying(255) COLLATE pg_catalog" xmi.id="att123"/>
+                        <UML:Operation name="estado : character varying(255) COLLATE pg_catalog" xmi.id="att124"/>
+                        <UML:Operation name="created_at : timestamp(0) without time zone?" xmi.id="att125"/>
+                        <UML:Operation name="updated_at : timestamp(0) without time zone?" xmi.id="att126"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+                <UML:Class name="curso_estudiante" xmi.id="cl0009">
+                    <UML:Classifier.feature>
+                        <UML:Attribute name="curso_id : bigint NOT NULL «FK»" visibility="protected" xmi.id="att127"/>
+                        <UML:Attribute name="estudiante_id : bigint NOT NULL «FK»" visibility="protected" xmi.id="att128"/>
+                        <UML:Attribute name="id : bigserial NOT NULL?" xmi.id="att129"/>
+                        <UML:Attribute name="fecha_inscripcion : date NOT NULL?" xmi.id="att130"/>
+                        <UML:Operation name="estado : character varying(255) COLLATE pg_catalog" xmi.id="att131"/>
+                        <UML:Operation name="created_at : timestamp(0) without time zone?" xmi.id="att132"/>
+                        <UML:Operation name="updated_at : timestamp(0) without time zone?" xmi.id="att133"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+                <UML:Class name="cursos" xmi.id="cl0010">
+                    <UML:Classifier.feature>
+                        <UML:Attribute name="profesor_id : bigint NOT NULL «FK»" visibility="protected" xmi.id="att134"/>
+                        <UML:Attribute name="id : bigserial NOT NULL?" xmi.id="att135"/>
+                        <UML:Attribute name="descripcion : text COLLATE pg_catalog?" xmi.id="att136"/>
+                        <UML:Attribute name="fecha_inicio : date?" xmi.id="att137"/>
+                        <UML:Attribute name="fecha_fin : date?" xmi.id="att138"/>
+                        <UML:Attribute name="capacidad_maxima : integer?" xmi.id="att139"/>
+                        <UML:Operation name="nombre : character varying(255) COLLATE pg_catalog" xmi.id="att140"/>
+                        <UML:Operation name="codigo : character varying(255) COLLATE pg_catalog" xmi.id="att141"/>
+                        <UML:Operation name="estado : character varying(255) COLLATE pg_catalog" xmi.id="att142"/>
+                        <UML:Operation name="created_at : timestamp(0) without time zone?" xmi.id="att143"/>
+                        <UML:Operation name="updated_at : timestamp(0) without time zone?" xmi.id="att144"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+                <UML:Class name="evaluaciones" xmi.id="cl0011">
+                    <UML:Classifier.feature>
+                        <UML:Attribute name="contenido_id : bigint NOT NULL «FK»" visibility="protected" xmi.id="att145"/>
+                        <UML:Attribute name="id : bigserial NOT NULL?" xmi.id="att146"/>
+                        <UML:Attribute name="puntuacion_total : integer NOT NULL DEFAULT 100?" xmi.id="att147"/>
+                        <UML:Attribute name="tiempo_limite : integer?" xmi.id="att148"/>
+                        <UML:Attribute name="calificacion_automatica : boolean NOT NULL DEFAULT false?" xmi.id="att149"/>
+                        <UML:Attribute name="mostrar_respuestas : boolean NOT NULL DEFAULT true?" xmi.id="att150"/>
+                        <UML:Attribute name="permite_reintento : boolean NOT NULL DEFAULT false?" xmi.id="att151"/>
+                        <UML:Attribute name="max_reintentos : integer NOT NULL DEFAULT 1?" xmi.id="att152"/>
+                        <UML:Operation name="tipo_evaluacion : character varying(255) COLLATE pg_catalog" xmi.id="att153"/>
+                        <UML:Operation name="created_at : timestamp(0) without time zone?" xmi.id="att154"/>
+                        <UML:Operation name="updated_at : timestamp(0) without time zone?" xmi.id="att155"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+                <UML:Class name="failed_jobs" xmi.id="cl0012">
+                    <UML:Classifier.feature>
+                        <UML:Attribute name="id : bigserial NOT NULL?" xmi.id="att156"/>
+                        <UML:Attribute name="connection : text COLLATE pg_catalog" xmi.id="att157"/>
+                        <UML:Attribute name="queue : text COLLATE pg_catalog" xmi.id="att158"/>
+                        <UML:Attribute name="payload : text COLLATE pg_catalog" xmi.id="att159"/>
+                        <UML:Attribute name="exception : text COLLATE pg_catalog" xmi.id="att160"/>
+                        <UML:Operation name="uuid : character varying(255) COLLATE pg_catalog" xmi.id="att161"/>
+                        <UML:Operation name="failed_at : timestamp(0) without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP?" xmi.id="att162"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+                <UML:Class name="job_batches" xmi.id="cl0013">
+                    <UML:Classifier.feature>
+                        <UML:Attribute name="total_jobs : integer NOT NULL?" xmi.id="att163"/>
+                        <UML:Attribute name="pending_jobs : integer NOT NULL?" xmi.id="att164"/>
+                        <UML:Attribute name="failed_jobs : integer NOT NULL?" xmi.id="att165"/>
+                        <UML:Attribute name="failed_job_ids : text COLLATE pg_catalog" xmi.id="att166"/>
+                        <UML:Attribute name="options : text COLLATE pg_catalog?" xmi.id="att167"/>
+                        <UML:Attribute name="cancelled_at : integer?" xmi.id="att168"/>
+                        <UML:Attribute name="created_at : integer NOT NULL?" xmi.id="att169"/>
+                        <UML:Attribute name="finished_at : integer?" xmi.id="att170"/>
+                        <UML:Operation name="id : character varying(255) COLLATE pg_catalog" xmi.id="att171"/>
+                        <UML:Operation name="name : character varying(255) COLLATE pg_catalog" xmi.id="att172"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+                <UML:Class name="jobs" xmi.id="cl0014">
+                    <UML:Classifier.feature>
+                        <UML:Attribute name="id : bigserial NOT NULL?" xmi.id="att173"/>
+                        <UML:Attribute name="payload : text COLLATE pg_catalog" xmi.id="att174"/>
+                        <UML:Attribute name="attempts : smallint NOT NULL?" xmi.id="att175"/>
+                        <UML:Attribute name="reserved_at : integer?" xmi.id="att176"/>
+                        <UML:Attribute name="available_at : integer NOT NULL?" xmi.id="att177"/>
+                        <UML:Attribute name="created_at : integer NOT NULL?" xmi.id="att178"/>
+                        <UML:Operation name="queue : character varying(255) COLLATE pg_catalog" xmi.id="att179"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+                <UML:Class name="materiales_apoyo" xmi.id="cl0015">
+                    <UML:Classifier.feature>
+                        <UML:Attribute name="id : bigserial NOT NULL?" xmi.id="att180"/>
+                        <UML:Attribute name="descripcion : text COLLATE pg_catalog" xmi.id="att181"/>
+                        <UML:Attribute name="nivel_dificultad : integer NOT NULL DEFAULT 1?" xmi.id="att182"/>
+                        <UML:Attribute name="conceptos_relacionados : json NOT NULL?" xmi.id="att183"/>
+                        <UML:Attribute name="activo : boolean NOT NULL DEFAULT true?" xmi.id="att184"/>
+                        <UML:Operation name="titulo : character varying(255) COLLATE pg_catalog" xmi.id="att185"/>
+                        <UML:Operation name="tipo : character varying(255) COLLATE pg_catalog" xmi.id="att186"/>
+                        <UML:Operation name="url : character varying(255) COLLATE pg_catalog?" xmi.id="att187"/>
+                        <UML:Operation name="created_at : timestamp(0) without time zone?" xmi.id="att188"/>
+                        <UML:Operation name="updated_at : timestamp(0) without time zone?" xmi.id="att189"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+                <UML:Class name="migrations" xmi.id="cl0016">
+                    <UML:Classifier.feature>
+                        <UML:Attribute name="id : serial NOT NULL?" xmi.id="att190"/>
+                        <UML:Attribute name="batch : integer NOT NULL?" xmi.id="att191"/>
+                        <UML:Operation name="migration : character varying(255) COLLATE pg_catalog" xmi.id="att192"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+                <UML:Class name="model_has_permissions" xmi.id="cl0017">
+                    <UML:Classifier.feature>
+                        <UML:Attribute name="permission_id : bigint NOT NULL «FK»" visibility="protected" xmi.id="att193"/>
+                        <UML:Attribute name="model_id : bigint NOT NULL?" xmi.id="att194"/>
+                        <UML:Operation name="model_type : character varying(255) COLLATE pg_catalog" xmi.id="att195"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+                <UML:Class name="model_has_roles" xmi.id="cl0018">
+                    <UML:Classifier.feature>
+                        <UML:Attribute name="role_id : bigint NOT NULL «FK»" visibility="protected" xmi.id="att196"/>
+                        <UML:Attribute name="model_id : bigint NOT NULL?" xmi.id="att197"/>
+                        <UML:Operation name="model_type : character varying(255) COLLATE pg_catalog" xmi.id="att198"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+                <UML:Class name="modulos_sidebar" xmi.id="cl0019">
+                    <UML:Classifier.feature>
+                        <UML:Attribute name="modulo_padre_id : bigint «FK»" visibility="protected" xmi.id="att199"/>
+                        <UML:Attribute name="id : bigserial NOT NULL?" xmi.id="att200"/>
+                        <UML:Attribute name="orden : integer NOT NULL DEFAULT 0?" xmi.id="att201"/>
+                        <UML:Attribute name="activo : boolean NOT NULL DEFAULT true?" xmi.id="att202"/>
+                        <UML:Attribute name="es_submenu : boolean NOT NULL DEFAULT false?" xmi.id="att203"/>
+                        <UML:Attribute name="permisos : json?" xmi.id="att204"/>
+                        <UML:Attribute name="visible_dashboard : boolean NOT NULL DEFAULT true?" xmi.id="att205"/>
+                        <UML:Operation name="titulo : character varying(255) COLLATE pg_catalog" xmi.id="att206"/>
+                        <UML:Operation name="ruta : character varying(255) COLLATE pg_catalog" xmi.id="att207"/>
+                        <UML:Operation name="icono : character varying(255) COLLATE pg_catalog?" xmi.id="att208"/>
+                        <UML:Operation name="descripcion : character varying(255) COLLATE pg_catalog?" xmi.id="att209"/>
+                        <UML:Operation name="color : character varying(255) COLLATE pg_catalog?" xmi.id="att210"/>
+                        <UML:Operation name="categoria : character varying(255) COLLATE pg_catalog?" xmi.id="att211"/>
+                        <UML:Operation name="created_at : timestamp(0) without time zone?" xmi.id="att212"/>
+                        <UML:Operation name="updated_at : timestamp(0) without time zone?" xmi.id="att213"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+                <UML:Class name="notificaciones" xmi.id="cl0020">
+                    <UML:Classifier.feature>
+                        <UML:Attribute name="destinatario_id : bigint NOT NULL «FK»" visibility="protected" xmi.id="att214"/>
+                        <UML:Attribute name="id : bigserial NOT NULL?" xmi.id="att215"/>
+                        <UML:Attribute name="contenido : text COLLATE pg_catalog" xmi.id="att216"/>
+                        <UML:Attribute name="leido : boolean NOT NULL DEFAULT false?" xmi.id="att217"/>
+                        <UML:Attribute name="datos_adicionales : json?" xmi.id="att218"/>
+                        <UML:Operation name="titulo : character varying(255) COLLATE pg_catalog" xmi.id="att219"/>
+                        <UML:Operation name="fecha : timestamp(0) without time zone NOT NULL?" xmi.id="att220"/>
+                        <UML:Operation name="tipo : character varying(255) COLLATE pg_catalog" xmi.id="att221"/>
+                        <UML:Operation name="created_at : timestamp(0) without time zone?" xmi.id="att222"/>
+                        <UML:Operation name="updated_at : timestamp(0) without time zone?" xmi.id="att223"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+                <UML:Class name="password_reset_tokens" xmi.id="cl0021">
+                    <UML:Classifier.feature>
+                        <UML:Operation name="email : character varying(255) COLLATE pg_catalog" xmi.id="att224"/>
+                        <UML:Operation name="token : character varying(255) COLLATE pg_catalog" xmi.id="att225"/>
+                        <UML:Operation name="created_at : timestamp(0) without time zone?" xmi.id="att226"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+                <UML:Class name="perfiles_vocacionales" xmi.id="cl0022">
+                    <UML:Classifier.feature>
+                        <UML:Attribute name="estudiante_id : bigint NOT NULL «FK»" visibility="protected" xmi.id="att227"/>
+                        <UML:Attribute name="id : bigserial NOT NULL?" xmi.id="att228"/>
+                        <UML:Attribute name="intereses : json NOT NULL?" xmi.id="att229"/>
+                        <UML:Attribute name="habilidades : json NOT NULL?" xmi.id="att230"/>
+                        <UML:Attribute name="personalidad : json NOT NULL?" xmi.id="att231"/>
+                        <UML:Attribute name="aptitudes : json NOT NULL?" xmi.id="att232"/>
+                        <UML:Operation name="fecha_creacion : timestamp(0) without time zone NOT NULL?" xmi.id="att233"/>
+                        <UML:Operation name="fecha_actualizacion : timestamp(0) without time zone NOT NULL?" xmi.id="att234"/>
+                        <UML:Operation name="created_at : timestamp(0) without time zone?" xmi.id="att235"/>
+                        <UML:Operation name="updated_at : timestamp(0) without time zone?" xmi.id="att236"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+                <UML:Class name="permissions" xmi.id="cl0023">
+                    <UML:Classifier.feature>
+                        <UML:Attribute name="id : bigserial NOT NULL?" xmi.id="att237"/>
+                        <UML:Operation name="name : character varying(255) COLLATE pg_catalog" xmi.id="att238"/>
+                        <UML:Operation name="guard_name : character varying(255) COLLATE pg_catalog" xmi.id="att239"/>
+                        <UML:Operation name="created_at : timestamp(0) without time zone?" xmi.id="att240"/>
+                        <UML:Operation name="updated_at : timestamp(0) without time zone?" xmi.id="att241"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+                <UML:Class name="preguntas" xmi.id="cl0024">
+                    <UML:Classifier.feature>
+                        <UML:Attribute name="evaluacion_id : bigint NOT NULL «FK»" visibility="protected" xmi.id="att242"/>
+                        <UML:Attribute name="id : bigserial NOT NULL?" xmi.id="att243"/>
+                        <UML:Attribute name="enunciado : text COLLATE pg_catalog" xmi.id="att244"/>
+                        <UML:Attribute name="opciones : json?" xmi.id="att245"/>
+                        <UML:Attribute name="puntos : integer NOT NULL DEFAULT 1?" xmi.id="att246"/>
+                        <UML:Attribute name="orden : integer NOT NULL DEFAULT 0?" xmi.id="att247"/>
+                        <UML:Operation name="tipo : character varying(255) COLLATE pg_catalog" xmi.id="att248"/>
+                        <UML:Operation name="respuesta_correcta : character varying(255) COLLATE pg_catalog?" xmi.id="att249"/>
+                        <UML:Operation name="created_at : timestamp(0) without time zone?" xmi.id="att250"/>
+                        <UML:Operation name="updated_at : timestamp(0) without time zone?" xmi.id="att251"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+                <UML:Class name="preguntas_test" xmi.id="cl0025">
+                    <UML:Classifier.feature>
+                        <UML:Attribute name="categoria_test_id : bigint NOT NULL «FK»" visibility="protected" xmi.id="att252"/>
+                        <UML:Attribute name="id : bigserial NOT NULL?" xmi.id="att253"/>
+                        <UML:Attribute name="enunciado : text COLLATE pg_catalog" xmi.id="att254"/>
+                        <UML:Attribute name="opciones : json?" xmi.id="att255"/>
+                        <UML:Attribute name="orden : integer NOT NULL DEFAULT 0?" xmi.id="att256"/>
+                        <UML:Operation name="tipo : character varying(255) COLLATE pg_catalog" xmi.id="att257"/>
+                        <UML:Operation name="created_at : timestamp(0) without time zone?" xmi.id="att258"/>
+                        <UML:Operation name="updated_at : timestamp(0) without time zone?" xmi.id="att259"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+                <UML:Class name="recomendaciones_carrera" xmi.id="cl0026">
+                    <UML:Classifier.feature>
+                        <UML:Attribute name="estudiante_id : bigint NOT NULL «FK»" visibility="protected" xmi.id="att260"/>
+                        <UML:Attribute name="carrera_id : bigint NOT NULL «FK»" visibility="protected" xmi.id="att261"/>
+                        <UML:Attribute name="id : bigserial NOT NULL?" xmi.id="att262"/>
+                        <UML:Attribute name="compatibilidad : double precision NOT NULL?" xmi.id="att263"/>
+                        <UML:Attribute name="justificacion : text COLLATE pg_catalog" xmi.id="att264"/>
+                        <UML:Operation name="fecha : timestamp(0) without time zone NOT NULL?" xmi.id="att265"/>
+                        <UML:Operation name="fuente : character varying(255) COLLATE pg_catalog" xmi.id="att266"/>
+                        <UML:Operation name="created_at : timestamp(0) without time zone?" xmi.id="att267"/>
+                        <UML:Operation name="updated_at : timestamp(0) without time zone?" xmi.id="att268"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+                <UML:Class name="recomendaciones_material" xmi.id="cl0027">
+                    <UML:Classifier.feature>
+                        <UML:Attribute name="resultado_analisis_id : bigint NOT NULL «FK»" visibility="protected" xmi.id="att269"/>
+                        <UML:Attribute name="material_apoyo_id : bigint NOT NULL «FK»" visibility="protected" xmi.id="att270"/>
+                        <UML:Attribute name="estudiante_id : bigint NOT NULL «FK»" visibility="protected" xmi.id="att271"/>
+                        <UML:Attribute name="id : bigserial NOT NULL?" xmi.id="att272"/>
+                        <UML:Attribute name="relevancia : double precision NOT NULL?" xmi.id="att273"/>
+                        <UML:Attribute name="asignado : boolean NOT NULL DEFAULT false?" xmi.id="att274"/>
+                        <UML:Operation name="fecha_asignacion : timestamp(0) without time zone?" xmi.id="att275"/>
+                        <UML:Operation name="created_at : timestamp(0) without time zone?" xmi.id="att276"/>
+                        <UML:Operation name="updated_at : timestamp(0) without time zone?" xmi.id="att277"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+                <UML:Class name="recursos" xmi.id="cl0028">
+                    <UML:Classifier.feature>
+                        <UML:Attribute name="id : bigserial NOT NULL?" xmi.id="att278"/>
+                        <UML:Attribute name="descripcion : text COLLATE pg_catalog?" xmi.id="att279"/>
+                        <UML:Attribute name="activo : boolean NOT NULL DEFAULT true?" xmi.id="att280"/>
+                        <UML:Operation name="nombre : character varying(255) COLLATE pg_catalog" xmi.id="att281"/>
+                        <UML:Operation name="tipo : character varying(255) COLLATE pg_catalog" xmi.id="att282"/>
+                        <UML:Operation name="url : character varying(255) COLLATE pg_catalog?" xmi.id="att283"/>
+                        <UML:Operation name="archivo_path : character varying(255) COLLATE pg_catalog?" xmi.id="att284"/>
+                        <UML:Operation name="mime_type : character varying(255) COLLATE pg_catalog?" xmi.id="att285"/>
+                        <UML:Operation name="created_at : timestamp(0) without time zone?" xmi.id="att286"/>
+                        <UML:Operation name="updated_at : timestamp(0) without time zone?" xmi.id="att287"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+                <UML:Class name="rendimiento_academico" xmi.id="cl0029">
+                    <UML:Classifier.feature>
+                        <UML:Attribute name="estudiante_id : bigint NOT NULL «FK»" visibility="protected" xmi.id="att288"/>
+                        <UML:Attribute name="id : bigserial NOT NULL?" xmi.id="att289"/>
+                        <UML:Attribute name="materias : json NOT NULL?" xmi.id="att290"/>
+                        <UML:Attribute name="promedio : double precision NOT NULL?" xmi.id="att291"/>
+                        <UML:Attribute name="fortalezas : json NOT NULL?" xmi.id="att292"/>
+                        <UML:Attribute name="debilidades : json NOT NULL?" xmi.id="att293"/>
+                        <UML:Operation name="tendencia_temporal : character varying(255) COLLATE pg_catalog" xmi.id="att294"/>
+                        <UML:Operation name="created_at : timestamp(0) without time zone?" xmi.id="att295"/>
+                        <UML:Operation name="updated_at : timestamp(0) without time zone?" xmi.id="att296"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+                <UML:Class name="respuestas_test" xmi.id="cl0030">
+                    <UML:Classifier.feature>
+                        <UML:Attribute name="estudiante_id : bigint NOT NULL «FK»" visibility="protected" xmi.id="att297"/>
+                        <UML:Attribute name="pregunta_test_id : bigint NOT NULL «FK»" visibility="protected" xmi.id="att298"/>
+                        <UML:Attribute name="id : bigserial NOT NULL?" xmi.id="att299"/>
+                        <UML:Attribute name="tiempo : integer?" xmi.id="att300"/>
+                        <UML:Operation name="respuesta_seleccionada : character varying(255) COLLATE pg_catalog" xmi.id="att301"/>
+                        <UML:Operation name="fecha_respuesta : timestamp(0) without time zone NOT NULL?" xmi.id="att302"/>
+                        <UML:Operation name="created_at : timestamp(0) without time zone?" xmi.id="att303"/>
+                        <UML:Operation name="updated_at : timestamp(0) without time zone?" xmi.id="att304"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+                <UML:Class name="resultados_analisis" xmi.id="cl0031">
+                    <UML:Classifier.feature>
+                        <UML:Attribute name="trabajo_id : bigint NOT NULL «FK»" visibility="protected" xmi.id="att305"/>
+                        <UML:Attribute name="sistema_analisis_id : bigint NOT NULL «FK»" visibility="protected" xmi.id="att306"/>
+                        <UML:Attribute name="id : bigserial NOT NULL?" xmi.id="att307"/>
+                        <UML:Attribute name="areas_fortaleza : json NOT NULL?" xmi.id="att308"/>
+                        <UML:Attribute name="areas_debilidad : json NOT NULL?" xmi.id="att309"/>
+                        <UML:Attribute name="confianza_predictiva : double precision NOT NULL?" xmi.id="att310"/>
+                        <UML:Attribute name="recomendaciones : json NOT NULL?" xmi.id="att311"/>
+                        <UML:Attribute name="metadatos : json?" xmi.id="att312"/>
+                        <UML:Operation name="created_at : timestamp(0) without time zone?" xmi.id="att313"/>
+                        <UML:Operation name="updated_at : timestamp(0) without time zone?" xmi.id="att314"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+                <UML:Class name="role_has_permissions" xmi.id="cl0032">
+                    <UML:Classifier.feature>
+                        <UML:Attribute name="permission_id : bigint NOT NULL «FK»" visibility="protected" xmi.id="att315"/>
+                        <UML:Attribute name="role_id : bigint NOT NULL «FK»" visibility="protected" xmi.id="att316"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+                <UML:Class name="roles" xmi.id="cl0033">
+                    <UML:Classifier.feature>
+                        <UML:Attribute name="id : bigserial NOT NULL?" xmi.id="att317"/>
+                        <UML:Operation name="name : character varying(255) COLLATE pg_catalog" xmi.id="att318"/>
+                        <UML:Operation name="guard_name : character varying(255) COLLATE pg_catalog" xmi.id="att319"/>
+                        <UML:Operation name="created_at : timestamp(0) without time zone?" xmi.id="att320"/>
+                        <UML:Operation name="updated_at : timestamp(0) without time zone?" xmi.id="att321"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+                <UML:Class name="sessions" xmi.id="cl0034">
+                    <UML:Classifier.feature>
+                        <UML:Attribute name="user_id : bigint?" xmi.id="att322"/>
+                        <UML:Attribute name="user_agent : text COLLATE pg_catalog?" xmi.id="att323"/>
+                        <UML:Attribute name="payload : text COLLATE pg_catalog" xmi.id="att324"/>
+                        <UML:Attribute name="last_activity : integer NOT NULL?" xmi.id="att325"/>
+                        <UML:Operation name="id : character varying(255) COLLATE pg_catalog" xmi.id="att326"/>
+                        <UML:Operation name="ip_address : character varying(45) COLLATE pg_catalog?" xmi.id="att327"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+                <UML:Class name="sistemas_analisis" xmi.id="cl0035">
+                    <UML:Classifier.feature>
+                        <UML:Attribute name="id : bigserial NOT NULL?" xmi.id="att328"/>
+                        <UML:Attribute name="descripcion : text COLLATE pg_catalog?" xmi.id="att329"/>
+                        <UML:Attribute name="parametros : json?" xmi.id="att330"/>
+                        <UML:Attribute name="activo : boolean NOT NULL DEFAULT true?" xmi.id="att331"/>
+                        <UML:Operation name="nombre : character varying(255) COLLATE pg_catalog" xmi.id="att332"/>
+                        <UML:Operation name="tipo_modelo : character varying(255) COLLATE pg_catalog" xmi.id="att333"/>
+                        <UML:Operation name="ultimo_entrenamiento : timestamp(0) without time zone?" xmi.id="att334"/>
+                        <UML:Operation name="created_at : timestamp(0) without time zone?" xmi.id="att335"/>
+                        <UML:Operation name="updated_at : timestamp(0) without time zone?" xmi.id="att336"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+                <UML:Class name="tareas" xmi.id="cl0036">
+                    <UML:Classifier.feature>
+                        <UML:Attribute name="contenido_id : bigint NOT NULL «FK»" visibility="protected" xmi.id="att337"/>
+                        <UML:Attribute name="id : bigserial NOT NULL?" xmi.id="att338"/>
+                        <UML:Attribute name="instrucciones : text COLLATE pg_catalog" xmi.id="att339"/>
+                        <UML:Attribute name="puntuacion : integer NOT NULL DEFAULT 100?" xmi.id="att340"/>
+                        <UML:Attribute name="permite_archivos : boolean NOT NULL DEFAULT true?" xmi.id="att341"/>
+                        <UML:Attribute name="max_archivos : integer NOT NULL DEFAULT 5?" xmi.id="att342"/>
+                        <UML:Operation name="tipo_archivo_permitido : character varying(255) COLLATE pg_catalog?" xmi.id="att343"/>
+                        <UML:Operation name="created_at : timestamp(0) without time zone?" xmi.id="att344"/>
+                        <UML:Operation name="updated_at : timestamp(0) without time zone?" xmi.id="att345"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+                <UML:Class name="tests_vocacionales" xmi.id="cl0037">
+                    <UML:Classifier.feature>
+                        <UML:Attribute name="id : bigserial NOT NULL?" xmi.id="att346"/>
+                        <UML:Attribute name="descripcion : text COLLATE pg_catalog?" xmi.id="att347"/>
+                        <UML:Attribute name="duracion_estimada : integer?" xmi.id="att348"/>
+                        <UML:Attribute name="activo : boolean NOT NULL DEFAULT true?" xmi.id="att349"/>
+                        <UML:Operation name="nombre : character varying(255) COLLATE pg_catalog" xmi.id="att350"/>
+                        <UML:Operation name="created_at : timestamp(0) without time zone?" xmi.id="att351"/>
+                        <UML:Operation name="updated_at : timestamp(0) without time zone?" xmi.id="att352"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+                <UML:Class name="trabajos" xmi.id="cl0038">
+                    <UML:Classifier.feature>
+                        <UML:Attribute name="contenido_id : bigint NOT NULL «FK»" visibility="protected" xmi.id="att353"/>
+                        <UML:Attribute name="estudiante_id : bigint NOT NULL «FK»" visibility="protected" xmi.id="att354"/>
+                        <UML:Attribute name="id : bigserial NOT NULL?" xmi.id="att355"/>
+                        <UML:Attribute name="respuestas : json?" xmi.id="att356"/>
+                        <UML:Attribute name="comentarios : text COLLATE pg_catalog?" xmi.id="att357"/>
+                        <UML:Attribute name="tiempo_total : integer?" xmi.id="att358"/>
+                        <UML:Attribute name="intentos : integer NOT NULL DEFAULT 0?" xmi.id="att359"/>
+                        <UML:Attribute name="consultas_material : integer NOT NULL DEFAULT 0?" xmi.id="att360"/>
+                        <UML:Operation name="estado : character varying(255) COLLATE pg_catalog" xmi.id="att361"/>
+                        <UML:Operation name="fecha_entrega : timestamp(0) without time zone?" xmi.id="att362"/>
+                        <UML:Operation name="fecha_inicio : timestamp(0) without time zone?" xmi.id="att363"/>
+                        <UML:Operation name="created_at : timestamp(0) without time zone?" xmi.id="att364"/>
+                        <UML:Operation name="updated_at : timestamp(0) without time zone?" xmi.id="att365"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+                <UML:Class name="users" xmi.id="cl0039">
+                    <UML:Classifier.feature>
+                        <UML:Attribute name="id : bigserial NOT NULL?" xmi.id="att366"/>
+                        <UML:Attribute name="fecha_nacimiento : date?" xmi.id="att367"/>
+                        <UML:Attribute name="direccion : text COLLATE pg_catalog?" xmi.id="att368"/>
+                        <UML:Attribute name="activo : boolean NOT NULL DEFAULT true?" xmi.id="att369"/>
+                        <UML:Operation name="name : character varying(255) COLLATE pg_catalog" xmi.id="att370"/>
+                        <UML:Operation name="usernick : character varying(255) COLLATE pg_catalog?" xmi.id="att371"/>
+                        <UML:Operation name="email : character varying(255) COLLATE pg_catalog?" xmi.id="att372"/>
+                        <UML:Operation name="email_verified_at : timestamp(0) without time zone?" xmi.id="att373"/>
+                        <UML:Operation name="password : character varying(255) COLLATE pg_catalog" xmi.id="att374"/>
+                        <UML:Operation name="remember_token : character varying(100) COLLATE pg_catalog?" xmi.id="att375"/>
+                        <UML:Operation name="created_at : timestamp(0) without time zone?" xmi.id="att376"/>
+                        <UML:Operation name="updated_at : timestamp(0) without time zone?" xmi.id="att377"/>
+                        <UML:Operation name="apellido : character varying(255) COLLATE pg_catalog?" xmi.id="att378"/>
+                        <UML:Operation name="telefono : character varying(255) COLLATE pg_catalog?" xmi.id="att379"/>
+                        <UML:Operation name="tipo_usuario : character varying(255) COLLATE pg_catalog" xmi.id="att380"/>
+                    </UML:Classifier.feature>
+                </UML:Class>
+            </UML:Namespace.ownedElement>
+        </UML:Model>
+    </XMI.content>
+</XMI>

@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Api\TipoMermaController::index
- * @see app/Http/Controllers/Api/TipoMermaController.php:13
+ * @see [unknown]:0
  * @route '/api/tipo-mermas'
  */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\TipoMermaController::index
- * @see app/Http/Controllers/Api/TipoMermaController.php:13
+ * @see [unknown]:0
  * @route '/api/tipo-mermas'
  */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\TipoMermaController::index
- * @see app/Http/Controllers/Api/TipoMermaController.php:13
+ * @see [unknown]:0
  * @route '/api/tipo-mermas'
  */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\TipoMermaController::index
- * @see app/Http/Controllers/Api/TipoMermaController.php:13
+ * @see [unknown]:0
  * @route '/api/tipo-mermas'
  */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\TipoMermaController::index
- * @see app/Http/Controllers/Api/TipoMermaController.php:13
+ * @see [unknown]:0
  * @route '/api/tipo-mermas'
  */
     const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\TipoMermaController::index
- * @see app/Http/Controllers/Api/TipoMermaController.php:13
+ * @see [unknown]:0
  * @route '/api/tipo-mermas'
  */
         indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\TipoMermaController::index
- * @see app/Http/Controllers/Api/TipoMermaController.php:13
+ * @see [unknown]:0
  * @route '/api/tipo-mermas'
  */
         indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,7 +79,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Api\TipoMermaController::store
- * @see app/Http/Controllers/Api/TipoMermaController.php:23
+ * @see [unknown]:0
  * @route '/api/tipo-mermas'
  */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -94,7 +94,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\TipoMermaController::store
- * @see app/Http/Controllers/Api/TipoMermaController.php:23
+ * @see [unknown]:0
  * @route '/api/tipo-mermas'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\TipoMermaController::store
- * @see app/Http/Controllers/Api/TipoMermaController.php:23
+ * @see [unknown]:0
  * @route '/api/tipo-mermas'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -113,7 +113,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\TipoMermaController::store
- * @see app/Http/Controllers/Api/TipoMermaController.php:23
+ * @see [unknown]:0
  * @route '/api/tipo-mermas'
  */
     const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -123,7 +123,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\TipoMermaController::store
- * @see app/Http/Controllers/Api/TipoMermaController.php:23
+ * @see [unknown]:0
  * @route '/api/tipo-mermas'
  */
         storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -134,7 +134,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\Api\TipoMermaController::show
- * @see app/Http/Controllers/Api/TipoMermaController.php:42
+ * @see [unknown]:0
  * @route '/api/tipo-mermas/{tipo_merma}'
  */
 export const show = (args: { tipo_merma: string | number } | [tipo_merma: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -149,7 +149,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\TipoMermaController::show
- * @see app/Http/Controllers/Api/TipoMermaController.php:42
+ * @see [unknown]:0
  * @route '/api/tipo-mermas/{tipo_merma}'
  */
 show.url = (args: { tipo_merma: string | number } | [tipo_merma: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -177,7 +177,7 @@ show.url = (args: { tipo_merma: string | number } | [tipo_merma: string | number
 
 /**
 * @see \App\Http\Controllers\Api\TipoMermaController::show
- * @see app/Http/Controllers/Api/TipoMermaController.php:42
+ * @see [unknown]:0
  * @route '/api/tipo-mermas/{tipo_merma}'
  */
 show.get = (args: { tipo_merma: string | number } | [tipo_merma: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -186,7 +186,7 @@ show.get = (args: { tipo_merma: string | number } | [tipo_merma: string | number
 })
 /**
 * @see \App\Http\Controllers\Api\TipoMermaController::show
- * @see app/Http/Controllers/Api/TipoMermaController.php:42
+ * @see [unknown]:0
  * @route '/api/tipo-mermas/{tipo_merma}'
  */
 show.head = (args: { tipo_merma: string | number } | [tipo_merma: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -196,7 +196,7 @@ show.head = (args: { tipo_merma: string | number } | [tipo_merma: string | numbe
 
     /**
 * @see \App\Http\Controllers\Api\TipoMermaController::show
- * @see app/Http/Controllers/Api/TipoMermaController.php:42
+ * @see [unknown]:0
  * @route '/api/tipo-mermas/{tipo_merma}'
  */
     const showForm = (args: { tipo_merma: string | number } | [tipo_merma: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -206,7 +206,7 @@ show.head = (args: { tipo_merma: string | number } | [tipo_merma: string | numbe
 
             /**
 * @see \App\Http\Controllers\Api\TipoMermaController::show
- * @see app/Http/Controllers/Api/TipoMermaController.php:42
+ * @see [unknown]:0
  * @route '/api/tipo-mermas/{tipo_merma}'
  */
         showForm.get = (args: { tipo_merma: string | number } | [tipo_merma: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -215,7 +215,7 @@ show.head = (args: { tipo_merma: string | number } | [tipo_merma: string | numbe
         })
             /**
 * @see \App\Http\Controllers\Api\TipoMermaController::show
- * @see app/Http/Controllers/Api/TipoMermaController.php:42
+ * @see [unknown]:0
  * @route '/api/tipo-mermas/{tipo_merma}'
  */
         showForm.head = (args: { tipo_merma: string | number } | [tipo_merma: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -231,7 +231,7 @@ show.head = (args: { tipo_merma: string | number } | [tipo_merma: string | numbe
     show.form = showForm
 /**
 * @see \App\Http\Controllers\Api\TipoMermaController::update
- * @see app/Http/Controllers/Api/TipoMermaController.php:50
+ * @see [unknown]:0
  * @route '/api/tipo-mermas/{tipo_merma}'
  */
 export const update = (args: { tipo_merma: string | number } | [tipo_merma: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -246,7 +246,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\TipoMermaController::update
- * @see app/Http/Controllers/Api/TipoMermaController.php:50
+ * @see [unknown]:0
  * @route '/api/tipo-mermas/{tipo_merma}'
  */
 update.url = (args: { tipo_merma: string | number } | [tipo_merma: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -274,7 +274,7 @@ update.url = (args: { tipo_merma: string | number } | [tipo_merma: string | numb
 
 /**
 * @see \App\Http\Controllers\Api\TipoMermaController::update
- * @see app/Http/Controllers/Api/TipoMermaController.php:50
+ * @see [unknown]:0
  * @route '/api/tipo-mermas/{tipo_merma}'
  */
 update.put = (args: { tipo_merma: string | number } | [tipo_merma: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -283,7 +283,7 @@ update.put = (args: { tipo_merma: string | number } | [tipo_merma: string | numb
 })
 /**
 * @see \App\Http\Controllers\Api\TipoMermaController::update
- * @see app/Http/Controllers/Api/TipoMermaController.php:50
+ * @see [unknown]:0
  * @route '/api/tipo-mermas/{tipo_merma}'
  */
 update.patch = (args: { tipo_merma: string | number } | [tipo_merma: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -293,7 +293,7 @@ update.patch = (args: { tipo_merma: string | number } | [tipo_merma: string | nu
 
     /**
 * @see \App\Http\Controllers\Api\TipoMermaController::update
- * @see app/Http/Controllers/Api/TipoMermaController.php:50
+ * @see [unknown]:0
  * @route '/api/tipo-mermas/{tipo_merma}'
  */
     const updateForm = (args: { tipo_merma: string | number } | [tipo_merma: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -308,7 +308,7 @@ update.patch = (args: { tipo_merma: string | number } | [tipo_merma: string | nu
 
             /**
 * @see \App\Http\Controllers\Api\TipoMermaController::update
- * @see app/Http/Controllers/Api/TipoMermaController.php:50
+ * @see [unknown]:0
  * @route '/api/tipo-mermas/{tipo_merma}'
  */
         updateForm.put = (args: { tipo_merma: string | number } | [tipo_merma: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -322,7 +322,7 @@ update.patch = (args: { tipo_merma: string | number } | [tipo_merma: string | nu
         })
             /**
 * @see \App\Http\Controllers\Api\TipoMermaController::update
- * @see app/Http/Controllers/Api/TipoMermaController.php:50
+ * @see [unknown]:0
  * @route '/api/tipo-mermas/{tipo_merma}'
  */
         updateForm.patch = (args: { tipo_merma: string | number } | [tipo_merma: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -338,7 +338,7 @@ update.patch = (args: { tipo_merma: string | number } | [tipo_merma: string | nu
     update.form = updateForm
 /**
 * @see \App\Http\Controllers\Api\TipoMermaController::destroy
- * @see app/Http/Controllers/Api/TipoMermaController.php:69
+ * @see [unknown]:0
  * @route '/api/tipo-mermas/{tipo_merma}'
  */
 export const destroy = (args: { tipo_merma: string | number } | [tipo_merma: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -353,7 +353,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\TipoMermaController::destroy
- * @see app/Http/Controllers/Api/TipoMermaController.php:69
+ * @see [unknown]:0
  * @route '/api/tipo-mermas/{tipo_merma}'
  */
 destroy.url = (args: { tipo_merma: string | number } | [tipo_merma: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -381,7 +381,7 @@ destroy.url = (args: { tipo_merma: string | number } | [tipo_merma: string | num
 
 /**
 * @see \App\Http\Controllers\Api\TipoMermaController::destroy
- * @see app/Http/Controllers/Api/TipoMermaController.php:69
+ * @see [unknown]:0
  * @route '/api/tipo-mermas/{tipo_merma}'
  */
 destroy.delete = (args: { tipo_merma: string | number } | [tipo_merma: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -391,7 +391,7 @@ destroy.delete = (args: { tipo_merma: string | number } | [tipo_merma: string | 
 
     /**
 * @see \App\Http\Controllers\Api\TipoMermaController::destroy
- * @see app/Http/Controllers/Api/TipoMermaController.php:69
+ * @see [unknown]:0
  * @route '/api/tipo-mermas/{tipo_merma}'
  */
     const destroyForm = (args: { tipo_merma: string | number } | [tipo_merma: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -406,7 +406,7 @@ destroy.delete = (args: { tipo_merma: string | number } | [tipo_merma: string | 
 
             /**
 * @see \App\Http\Controllers\Api\TipoMermaController::destroy
- * @see app/Http/Controllers/Api/TipoMermaController.php:69
+ * @see [unknown]:0
  * @route '/api/tipo-mermas/{tipo_merma}'
  */
         destroyForm.delete = (args: { tipo_merma: string | number } | [tipo_merma: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

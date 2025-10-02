@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\EnvioController::enviosCliente
- * @see app/Http/Controllers/EnvioController.php:462
+ * @see [unknown]:0
  * @route '/api/app/cliente/envios'
  */
 export const enviosCliente = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ enviosCliente.definition = {
 
 /**
 * @see \App\Http\Controllers\EnvioController::enviosCliente
- * @see app/Http/Controllers/EnvioController.php:462
+ * @see [unknown]:0
  * @route '/api/app/cliente/envios'
  */
 enviosCliente.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ enviosCliente.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\EnvioController::enviosCliente
- * @see app/Http/Controllers/EnvioController.php:462
+ * @see [unknown]:0
  * @route '/api/app/cliente/envios'
  */
 enviosCliente.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ enviosCliente.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\EnvioController::enviosCliente
- * @see app/Http/Controllers/EnvioController.php:462
+ * @see [unknown]:0
  * @route '/api/app/cliente/envios'
  */
 enviosCliente.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ enviosCliente.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => (
 
     /**
 * @see \App\Http\Controllers\EnvioController::enviosCliente
- * @see app/Http/Controllers/EnvioController.php:462
+ * @see [unknown]:0
  * @route '/api/app/cliente/envios'
  */
     const enviosClienteForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ enviosCliente.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => (
 
             /**
 * @see \App\Http\Controllers\EnvioController::enviosCliente
- * @see app/Http/Controllers/EnvioController.php:462
+ * @see [unknown]:0
  * @route '/api/app/cliente/envios'
  */
         enviosClienteForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ enviosCliente.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => (
         })
             /**
 * @see \App\Http\Controllers\EnvioController::enviosCliente
- * @see app/Http/Controllers/EnvioController.php:462
+ * @see [unknown]:0
  * @route '/api/app/cliente/envios'
  */
         enviosClienteForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,10 +79,10 @@ enviosCliente.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => (
     enviosCliente.form = enviosClienteForm
 /**
 * @see \App\Http\Controllers\EnvioController::seguimientoApi
- * @see app/Http/Controllers/EnvioController.php:482
+ * @see [unknown]:0
  * @route '/api/app/envios/{envio}/seguimiento'
  */
-export const seguimientoApi = (args: { envio: string | number | { id: string | number } } | [envio: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const seguimientoApi = (args: { envio: string | number } | [envio: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: seguimientoApi.url(args, options),
     method: 'get',
 })
@@ -94,17 +94,14 @@ seguimientoApi.definition = {
 
 /**
 * @see \App\Http\Controllers\EnvioController::seguimientoApi
- * @see app/Http/Controllers/EnvioController.php:482
+ * @see [unknown]:0
  * @route '/api/app/envios/{envio}/seguimiento'
  */
-seguimientoApi.url = (args: { envio: string | number | { id: string | number } } | [envio: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+seguimientoApi.url = (args: { envio: string | number } | [envio: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { envio: args }
     }
 
-            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-            args = { envio: args.id }
-        }
     
     if (Array.isArray(args)) {
         args = {
@@ -115,9 +112,7 @@ seguimientoApi.url = (args: { envio: string | number | { id: string | number } }
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        envio: typeof args.envio === 'object'
-                ? args.envio.id
-                : args.envio,
+                        envio: args.envio,
                 }
 
     return seguimientoApi.definition.url
@@ -127,48 +122,48 @@ seguimientoApi.url = (args: { envio: string | number | { id: string | number } }
 
 /**
 * @see \App\Http\Controllers\EnvioController::seguimientoApi
- * @see app/Http/Controllers/EnvioController.php:482
+ * @see [unknown]:0
  * @route '/api/app/envios/{envio}/seguimiento'
  */
-seguimientoApi.get = (args: { envio: string | number | { id: string | number } } | [envio: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+seguimientoApi.get = (args: { envio: string | number } | [envio: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: seguimientoApi.url(args, options),
     method: 'get',
 })
 /**
 * @see \App\Http\Controllers\EnvioController::seguimientoApi
- * @see app/Http/Controllers/EnvioController.php:482
+ * @see [unknown]:0
  * @route '/api/app/envios/{envio}/seguimiento'
  */
-seguimientoApi.head = (args: { envio: string | number | { id: string | number } } | [envio: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+seguimientoApi.head = (args: { envio: string | number } | [envio: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: seguimientoApi.url(args, options),
     method: 'head',
 })
 
     /**
 * @see \App\Http\Controllers\EnvioController::seguimientoApi
- * @see app/Http/Controllers/EnvioController.php:482
+ * @see [unknown]:0
  * @route '/api/app/envios/{envio}/seguimiento'
  */
-    const seguimientoApiForm = (args: { envio: string | number | { id: string | number } } | [envio: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const seguimientoApiForm = (args: { envio: string | number } | [envio: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: seguimientoApi.url(args, options),
         method: 'get',
     })
 
             /**
 * @see \App\Http\Controllers\EnvioController::seguimientoApi
- * @see app/Http/Controllers/EnvioController.php:482
+ * @see [unknown]:0
  * @route '/api/app/envios/{envio}/seguimiento'
  */
-        seguimientoApiForm.get = (args: { envio: string | number | { id: string | number } } | [envio: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        seguimientoApiForm.get = (args: { envio: string | number } | [envio: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: seguimientoApi.url(args, options),
             method: 'get',
         })
             /**
 * @see \App\Http\Controllers\EnvioController::seguimientoApi
- * @see app/Http/Controllers/EnvioController.php:482
+ * @see [unknown]:0
  * @route '/api/app/envios/{envio}/seguimiento'
  */
-        seguimientoApiForm.head = (args: { envio: string | number | { id: string | number } } | [envio: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        seguimientoApiForm.head = (args: { envio: string | number } | [envio: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: seguimientoApi.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -181,10 +176,10 @@ seguimientoApi.head = (args: { envio: string | number | { id: string | number } 
     seguimientoApi.form = seguimientoApiForm
 /**
 * @see \App\Http\Controllers\EnvioController::actualizarUbicacion
- * @see app/Http/Controllers/EnvioController.php:508
+ * @see [unknown]:0
  * @route '/api/app/envios/{envio}/ubicacion'
  */
-export const actualizarUbicacion = (args: { envio: string | number | { id: string | number } } | [envio: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const actualizarUbicacion = (args: { envio: string | number } | [envio: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: actualizarUbicacion.url(args, options),
     method: 'post',
 })
@@ -196,17 +191,14 @@ actualizarUbicacion.definition = {
 
 /**
 * @see \App\Http\Controllers\EnvioController::actualizarUbicacion
- * @see app/Http/Controllers/EnvioController.php:508
+ * @see [unknown]:0
  * @route '/api/app/envios/{envio}/ubicacion'
  */
-actualizarUbicacion.url = (args: { envio: string | number | { id: string | number } } | [envio: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+actualizarUbicacion.url = (args: { envio: string | number } | [envio: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { envio: args }
     }
 
-            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-            args = { envio: args.id }
-        }
     
     if (Array.isArray(args)) {
         args = {
@@ -217,9 +209,7 @@ actualizarUbicacion.url = (args: { envio: string | number | { id: string | numbe
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        envio: typeof args.envio === 'object'
-                ? args.envio.id
-                : args.envio,
+                        envio: args.envio,
                 }
 
     return actualizarUbicacion.definition.url
@@ -229,30 +219,30 @@ actualizarUbicacion.url = (args: { envio: string | number | { id: string | numbe
 
 /**
 * @see \App\Http\Controllers\EnvioController::actualizarUbicacion
- * @see app/Http/Controllers/EnvioController.php:508
+ * @see [unknown]:0
  * @route '/api/app/envios/{envio}/ubicacion'
  */
-actualizarUbicacion.post = (args: { envio: string | number | { id: string | number } } | [envio: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+actualizarUbicacion.post = (args: { envio: string | number } | [envio: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: actualizarUbicacion.url(args, options),
     method: 'post',
 })
 
     /**
 * @see \App\Http\Controllers\EnvioController::actualizarUbicacion
- * @see app/Http/Controllers/EnvioController.php:508
+ * @see [unknown]:0
  * @route '/api/app/envios/{envio}/ubicacion'
  */
-    const actualizarUbicacionForm = (args: { envio: string | number | { id: string | number } } | [envio: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const actualizarUbicacionForm = (args: { envio: string | number } | [envio: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: actualizarUbicacion.url(args, options),
         method: 'post',
     })
 
             /**
 * @see \App\Http\Controllers\EnvioController::actualizarUbicacion
- * @see app/Http/Controllers/EnvioController.php:508
+ * @see [unknown]:0
  * @route '/api/app/envios/{envio}/ubicacion'
  */
-        actualizarUbicacionForm.post = (args: { envio: string | number | { id: string | number } } | [envio: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        actualizarUbicacionForm.post = (args: { envio: string | number } | [envio: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: actualizarUbicacion.url(args, options),
             method: 'post',
         })
@@ -260,7 +250,7 @@ actualizarUbicacion.post = (args: { envio: string | number | { id: string | numb
     actualizarUbicacion.form = actualizarUbicacionForm
 /**
 * @see \App\Http\Controllers\EnvioController::dashboardStats
- * @see app/Http/Controllers/EnvioController.php:364
+ * @see [unknown]:0
  * @route '/api/logistica/dashboard/stats'
  */
 export const dashboardStats = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -275,7 +265,7 @@ dashboardStats.definition = {
 
 /**
 * @see \App\Http\Controllers\EnvioController::dashboardStats
- * @see app/Http/Controllers/EnvioController.php:364
+ * @see [unknown]:0
  * @route '/api/logistica/dashboard/stats'
  */
 dashboardStats.url = (options?: RouteQueryOptions) => {
@@ -284,7 +274,7 @@ dashboardStats.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\EnvioController::dashboardStats
- * @see app/Http/Controllers/EnvioController.php:364
+ * @see [unknown]:0
  * @route '/api/logistica/dashboard/stats'
  */
 dashboardStats.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -293,7 +283,7 @@ dashboardStats.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\EnvioController::dashboardStats
- * @see app/Http/Controllers/EnvioController.php:364
+ * @see [unknown]:0
  * @route '/api/logistica/dashboard/stats'
  */
 dashboardStats.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -303,7 +293,7 @@ dashboardStats.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => 
 
     /**
 * @see \App\Http\Controllers\EnvioController::dashboardStats
- * @see app/Http/Controllers/EnvioController.php:364
+ * @see [unknown]:0
  * @route '/api/logistica/dashboard/stats'
  */
     const dashboardStatsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -313,7 +303,7 @@ dashboardStats.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => 
 
             /**
 * @see \App\Http\Controllers\EnvioController::dashboardStats
- * @see app/Http/Controllers/EnvioController.php:364
+ * @see [unknown]:0
  * @route '/api/logistica/dashboard/stats'
  */
         dashboardStatsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -322,7 +312,7 @@ dashboardStats.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => 
         })
             /**
 * @see \App\Http\Controllers\EnvioController::dashboardStats
- * @see app/Http/Controllers/EnvioController.php:364
+ * @see [unknown]:0
  * @route '/api/logistica/dashboard/stats'
  */
         dashboardStatsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -338,7 +328,7 @@ dashboardStats.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => 
     dashboardStats.form = dashboardStatsForm
 /**
 * @see \App\Http\Controllers\EnvioController::index
- * @see app/Http/Controllers/EnvioController.php:19
+ * @see [unknown]:0
  * @route '/api/envios'
  */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -353,7 +343,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\EnvioController::index
- * @see app/Http/Controllers/EnvioController.php:19
+ * @see [unknown]:0
  * @route '/api/envios'
  */
 index.url = (options?: RouteQueryOptions) => {
@@ -362,7 +352,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\EnvioController::index
- * @see app/Http/Controllers/EnvioController.php:19
+ * @see [unknown]:0
  * @route '/api/envios'
  */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -371,7 +361,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\EnvioController::index
- * @see app/Http/Controllers/EnvioController.php:19
+ * @see [unknown]:0
  * @route '/api/envios'
  */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -381,7 +371,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\EnvioController::index
- * @see app/Http/Controllers/EnvioController.php:19
+ * @see [unknown]:0
  * @route '/api/envios'
  */
     const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -391,7 +381,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\EnvioController::index
- * @see app/Http/Controllers/EnvioController.php:19
+ * @see [unknown]:0
  * @route '/api/envios'
  */
         indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -400,7 +390,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\EnvioController::index
- * @see app/Http/Controllers/EnvioController.php:19
+ * @see [unknown]:0
  * @route '/api/envios'
  */
         indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -416,10 +406,10 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\EnvioController::seguimiento
- * @see app/Http/Controllers/EnvioController.php:383
+ * @see [unknown]:0
  * @route '/api/envios/{envio}/seguimiento'
  */
-export const seguimiento = (args: { envio: string | number | { id: string | number } } | [envio: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const seguimiento = (args: { envio: string | number } | [envio: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: seguimiento.url(args, options),
     method: 'get',
 })
@@ -431,17 +421,14 @@ seguimiento.definition = {
 
 /**
 * @see \App\Http\Controllers\EnvioController::seguimiento
- * @see app/Http/Controllers/EnvioController.php:383
+ * @see [unknown]:0
  * @route '/api/envios/{envio}/seguimiento'
  */
-seguimiento.url = (args: { envio: string | number | { id: string | number } } | [envio: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+seguimiento.url = (args: { envio: string | number } | [envio: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { envio: args }
     }
 
-            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-            args = { envio: args.id }
-        }
     
     if (Array.isArray(args)) {
         args = {
@@ -452,9 +439,7 @@ seguimiento.url = (args: { envio: string | number | { id: string | number } } | 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        envio: typeof args.envio === 'object'
-                ? args.envio.id
-                : args.envio,
+                        envio: args.envio,
                 }
 
     return seguimiento.definition.url
@@ -464,48 +449,48 @@ seguimiento.url = (args: { envio: string | number | { id: string | number } } | 
 
 /**
 * @see \App\Http\Controllers\EnvioController::seguimiento
- * @see app/Http/Controllers/EnvioController.php:383
+ * @see [unknown]:0
  * @route '/api/envios/{envio}/seguimiento'
  */
-seguimiento.get = (args: { envio: string | number | { id: string | number } } | [envio: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+seguimiento.get = (args: { envio: string | number } | [envio: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: seguimiento.url(args, options),
     method: 'get',
 })
 /**
 * @see \App\Http\Controllers\EnvioController::seguimiento
- * @see app/Http/Controllers/EnvioController.php:383
+ * @see [unknown]:0
  * @route '/api/envios/{envio}/seguimiento'
  */
-seguimiento.head = (args: { envio: string | number | { id: string | number } } | [envio: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+seguimiento.head = (args: { envio: string | number } | [envio: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: seguimiento.url(args, options),
     method: 'head',
 })
 
     /**
 * @see \App\Http\Controllers\EnvioController::seguimiento
- * @see app/Http/Controllers/EnvioController.php:383
+ * @see [unknown]:0
  * @route '/api/envios/{envio}/seguimiento'
  */
-    const seguimientoForm = (args: { envio: string | number | { id: string | number } } | [envio: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const seguimientoForm = (args: { envio: string | number } | [envio: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: seguimiento.url(args, options),
         method: 'get',
     })
 
             /**
 * @see \App\Http\Controllers\EnvioController::seguimiento
- * @see app/Http/Controllers/EnvioController.php:383
+ * @see [unknown]:0
  * @route '/api/envios/{envio}/seguimiento'
  */
-        seguimientoForm.get = (args: { envio: string | number | { id: string | number } } | [envio: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        seguimientoForm.get = (args: { envio: string | number } | [envio: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: seguimiento.url(args, options),
             method: 'get',
         })
             /**
 * @see \App\Http\Controllers\EnvioController::seguimiento
- * @see app/Http/Controllers/EnvioController.php:383
+ * @see [unknown]:0
  * @route '/api/envios/{envio}/seguimiento'
  */
-        seguimientoForm.head = (args: { envio: string | number | { id: string | number } } | [envio: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        seguimientoForm.head = (args: { envio: string | number } | [envio: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: seguimiento.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -518,10 +503,10 @@ seguimiento.head = (args: { envio: string | number | { id: string | number } } |
     seguimiento.form = seguimientoForm
 /**
 * @see \App\Http\Controllers\EnvioController::actualizarEstado
- * @see app/Http/Controllers/EnvioController.php:399
+ * @see [unknown]:0
  * @route '/api/envios/{envio}/estado'
  */
-export const actualizarEstado = (args: { envio: string | number | { id: string | number } } | [envio: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const actualizarEstado = (args: { envio: string | number } | [envio: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: actualizarEstado.url(args, options),
     method: 'post',
 })
@@ -533,17 +518,14 @@ actualizarEstado.definition = {
 
 /**
 * @see \App\Http\Controllers\EnvioController::actualizarEstado
- * @see app/Http/Controllers/EnvioController.php:399
+ * @see [unknown]:0
  * @route '/api/envios/{envio}/estado'
  */
-actualizarEstado.url = (args: { envio: string | number | { id: string | number } } | [envio: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+actualizarEstado.url = (args: { envio: string | number } | [envio: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { envio: args }
     }
 
-            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-            args = { envio: args.id }
-        }
     
     if (Array.isArray(args)) {
         args = {
@@ -554,9 +536,7 @@ actualizarEstado.url = (args: { envio: string | number | { id: string | number }
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        envio: typeof args.envio === 'object'
-                ? args.envio.id
-                : args.envio,
+                        envio: args.envio,
                 }
 
     return actualizarEstado.definition.url
@@ -566,30 +546,30 @@ actualizarEstado.url = (args: { envio: string | number | { id: string | number }
 
 /**
 * @see \App\Http\Controllers\EnvioController::actualizarEstado
- * @see app/Http/Controllers/EnvioController.php:399
+ * @see [unknown]:0
  * @route '/api/envios/{envio}/estado'
  */
-actualizarEstado.post = (args: { envio: string | number | { id: string | number } } | [envio: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+actualizarEstado.post = (args: { envio: string | number } | [envio: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: actualizarEstado.url(args, options),
     method: 'post',
 })
 
     /**
 * @see \App\Http\Controllers\EnvioController::actualizarEstado
- * @see app/Http/Controllers/EnvioController.php:399
+ * @see [unknown]:0
  * @route '/api/envios/{envio}/estado'
  */
-    const actualizarEstadoForm = (args: { envio: string | number | { id: string | number } } | [envio: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const actualizarEstadoForm = (args: { envio: string | number } | [envio: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: actualizarEstado.url(args, options),
         method: 'post',
     })
 
             /**
 * @see \App\Http\Controllers\EnvioController::actualizarEstado
- * @see app/Http/Controllers/EnvioController.php:399
+ * @see [unknown]:0
  * @route '/api/envios/{envio}/estado'
  */
-        actualizarEstadoForm.post = (args: { envio: string | number | { id: string | number } } | [envio: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        actualizarEstadoForm.post = (args: { envio: string | number } | [envio: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: actualizarEstado.url(args, options),
             method: 'post',
         })

@@ -1,15 +1,16 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
-// Ruta principal: dashboard educativo
+// Ruta principal: redirige a dashboard
 Route::get('/', function () {
-    if (\Illuminate\Support\Facades\Auth::check()) {
-        return Inertia::render('Educacion/Dashboard');
+    if (Auth::check()) {
+        return redirect()->route('dashboard');
     }
     return redirect()->route('login');
-})->name('dashboard');
+});
 
 // Ruta de prueba para verificar CSRF token
 Route::post('/test-csrf', function () {
@@ -50,3 +51,47 @@ Route::middleware(['auth', 'verified'])->group(function () {
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
 require __DIR__ . '/test.php';
+
+// ==================== GESTIÓN DE USUARIOS (DIRECTOR) ====================
+Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
+    Route::resource('usuarios', \App\Http\Controllers\GestionUsuariosController::class);
+    Route::post('usuarios/{usuario}/reactivar', [\App\Http\Controllers\GestionUsuariosController::class, 'reactivar'])
+        ->name('usuarios.reactivar');
+    Route::post('usuarios/{usuario}/reset-password', [\App\Http\Controllers\GestionUsuariosController::class, 'resetPassword'])
+        ->name('usuarios.reset-password');
+});
+
+// ==================== DASHBOARDS POR ROL ====================
+Route::middleware(['auth', 'verified'])->group(function () {
+    // Dashboard principal - redirige según el rol
+    Route::get('/dashboard', function () {
+        $user = Auth::user();
+        
+        // Redirigir según el tipo de usuario
+        if ($user->esDirector() || $user->hasRole('director')) {
+            return redirect()->route('dashboard.director');
+        } elseif ($user->esProfesor() || $user->hasRole('profesor')) {
+            return redirect()->route('dashboard.profesor');
+        } elseif ($user->esEstudiante() || $user->hasRole('estudiante')) {
+            return redirect()->route('dashboard.estudiante');
+        } elseif ($user->esPadre() || $user->hasRole('padre')) {
+            return redirect()->route('dashboard.padre');
+        }
+        
+        // Por defecto, usar el dashboard general
+        return Inertia::render('Educacion/Dashboard');
+    })->name('dashboard');
+
+    // Dashboards específicos por rol
+    Route::get('/dashboard/director', [\App\Http\Controllers\DashboardDirectorController::class, 'index'])
+        ->name('dashboard.director');
+    
+    Route::get('/dashboard/profesor', [\App\Http\Controllers\DashboardProfesorController::class, 'index'])
+        ->name('dashboard.profesor');
+    
+    Route::get('/dashboard/estudiante', [\App\Http\Controllers\DashboardEstudianteController::class, 'index'])
+        ->name('dashboard.estudiante');
+    
+    Route::get('/dashboard/padre', [\App\Http\Controllers\DashboardPadreController::class, 'index'])
+        ->name('dashboard.padre');
+});

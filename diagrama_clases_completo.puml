@@ -1,0 +1,411 @@
+@startuml
+
+skinparam classAttributeIconSize 0
+skinparam classFontSize 14
+skinparam classFontName Arial
+skinparam classBackgroundColor #F0F8FF
+skinparam classBorderColor #4169E1
+skinparam arrowColor #2F4F4F
+skinparam packageBackgroundColor #EEEEEE
+
+' =================== PAQUETE USUARIOS ===================
+package "Usuarios" {
+  abstract class Usuario {
+    -id: String
+    -nombre: String
+    -apellido: String
+    -email: String
+    -contraseña: String
+    +iniciarSesion(): boolean
+    +cerrarSesion(): void
+    +actualizarPerfil(): void
+  }
+
+  class Profesor {
+    -departamento: String
+    -especialidad: String
+    +crearTarea(curso: Curso): Tarea
+    +crearEvaluacion(curso: Curso): Evaluacion
+    +calificarTrabajo(trabajo: Trabajo): void
+    +revisarAnalisisRendimiento(): Reporte
+  }
+
+  class Estudiante {
+    -matricula: String
+    -nivel: String
+    +realizarTarea(tarea: Tarea): Trabajo
+    +realizarEvaluacion(evaluacion: Evaluacion): Trabajo
+    +verRecomendaciones(): List<MaterialApoyo>
+    +verCalificaciones(): List<Calificacion>
+    +verPerfilVocacional(): PerfilVocacional
+  }
+
+  class Director {
+    -cargo: String
+    +verEstadisticasGlobales(): List<Reporte>
+    +gestionarCursos(): void
+    +aprobarContenido(contenido: Contenido): void
+    +verEstadisticasVocacionales(): Map<String, Object>
+  }
+
+  class Padre {
+    -hijos: List<Estudiante>
+    +verProgresoHijo(estudiante: Estudiante): Reporte
+    +comunicarseConProfesor(profesor: Profesor): void
+    +recibirNotificaciones(): List<Notificacion>
+    +verRecomendacionesVocacionales(estudiante: Estudiante): List<RecomendacionCarrera>
+  }
+
+  Usuario <|-- Profesor
+  Usuario <|-- Estudiante
+  Usuario <|-- Director
+  Usuario <|-- Padre
+}
+
+' =================== PAQUETE CONTENIDO EDUCATIVO ===================
+package "Contenido Educativo" {
+  abstract class Contenido {
+    -id: String
+    -titulo: String
+    -descripcion: String
+    -fechaCreacion: Date
+    -fechaLimite: Date
+    -creador: Profesor
+    -curso: Curso
+    +publicar(): void
+    +modificar(): void
+    +eliminar(): void
+  }
+
+  class Tarea {
+    -instrucciones: String
+    -recursos: List<Recurso>
+    -puntuacion: int
+    +asignar(estudiante: Estudiante): void
+  }
+
+  class Evaluacion {
+    -tipoEvaluacion: String
+    -preguntas: List<Pregunta>
+    -puntuacionTotal: int
+    -tiempoLimite: int
+    +calificarAutomaticamente(): void
+  }
+
+  class Pregunta {
+    -enunciado: String
+    -tipo: String
+    -opciones: List<String>
+    -respuestaCorrecta: String
+    -puntos: int
+    +validarRespuesta(respuesta: String): boolean
+  }
+
+  class Trabajo {
+    -contenido: Contenido
+    -estudiante: Estudiante
+    -respuestas: List<String>
+    -archivosAdjuntos: List<Archivo>
+    -estado: String
+    -calificacion: Calificacion
+    -fechaEntrega: Date
+    +entregar(): void
+    +recibirRetroalimentacion(retroalimentacion: String): void
+  }
+
+  class Calificacion {
+    -puntaje: double
+    -comentario: String
+    -fechaCalificacion: Date
+    -evaluador: Usuario
+  }
+
+  class Recurso {
+    -id: String
+    -nombre: String
+    -tipo: String
+    -url: String
+    -descripcion: String
+    +acceder(): void
+    +descargar(): void
+  }
+
+  Contenido <|-- Tarea
+  Contenido <|-- Evaluacion
+  Evaluacion "1" *-- "many" Pregunta
+  Contenido "1" -- "many" Trabajo
+  Trabajo "1" -- "1" Calificacion
+  Contenido "1" -- "many" Recurso
+}
+
+' =================== PAQUETE ESTRUCTURA EDUCATIVA ===================
+package "Estructura Educativa" {
+  class Curso {
+    -id: String
+    -nombre: String
+    -descripcion: String
+    -profesor: Profesor
+    -estudiantes: List<Estudiante>
+    -contenidos: List<Contenido>
+    +inscribirEstudiante(estudiante: Estudiante): void
+    +agregarContenido(contenido: Contenido): void
+    +generarReporteRendimiento(): Reporte
+  }
+
+  class Reporte {
+    -tipo: String
+    -datos: Map<String, Object>
+    -fechaGeneracion: Date
+    -destinatarios: List<Usuario>
+    +exportar(formato: String): File
+    +enviar(): void
+  }
+
+  class RendimientoAcademico {
+    -id: String
+    -estudiante: Estudiante
+    -materias: Map<String, double>
+    -promedio: double
+    -fortalezas: List<String>
+    -debilidades: List<String>
+    -tendenciaTemporal: String
+    +calcularIndicadoresDesempeño(): Map<String, double>
+    +identificarPatrones(): void
+    +contribuirAlPerfilVocacional(): void
+  }
+}
+
+' =================== PAQUETE SISTEMA INTELIGENTE ===================
+package "Sistema Inteligente" {
+  class SistemaAnalisis {
+    -modelo: ModeloML
+    +analizarTrabajo(trabajo: Trabajo): ResultadoAnalisis
+    +generarRecomendaciones(estudiante: Estudiante, resultado: ResultadoAnalisis): List<MaterialApoyo>
+    +detectarPatronesAprendizaje(estudiante: Estudiante): Map<String, Object>
+    +entrenarModelo(datos: List<Trabajo>): void
+  }
+
+  class ModeloML {
+    -tipo: String
+    -parametros: Map<String, Object>
+    -ultimoEntrenamiento: Date
+    -precision: double
+    +predecir(datos: Object): Object
+    +evaluarRendimiento(): Map<String, double>
+    +actualizarParametros(parametros: Map<String, Object>): void
+  }
+
+  class ResultadoAnalisis {
+    -trabajo: Trabajo
+    -areasFortaleza: List<String>
+    -areasDebilidad: List<String>
+    -confianzaPredictiva: double
+    -recomendaciones: List<String>
+    +obtenerFeedbackAutomatico(): String
+    +sugerirMaterialesApoyo(): List<MaterialApoyo>
+  }
+
+  class MaterialApoyo {
+    -id: String
+    -titulo: String
+    -tipo: String
+    -url: String
+    -descripcion: String
+    -nivelDificultad: int
+    -conceptosRelacionados: List<String>
+    +asignarAEstudiante(estudiante: Estudiante): void
+    +registrarInteraccion(tipo: String): void
+  }
+
+  class Notificacion {
+    -id: String
+    -titulo: String
+    -contenido: String
+    -fecha: Date
+    -destinatario: Usuario
+    -leido: boolean
+    +marcarLeido(): void
+    +responder(mensaje: String): void
+  }
+
+  SistemaAnalisis "1" -- "1" ModeloML
+  Trabajo "1" -- "1" ResultadoAnalisis
+  ResultadoAnalisis "1" -- "many" MaterialApoyo
+  Usuario "1" -- "many" Notificacion
+}
+
+' =================== PAQUETE ORIENTACIÓN VOCACIONAL ===================
+package "Orientación Vocacional" {
+  class TestVocacional {
+    -id: String
+    -nombre: String
+    -descripcion: String
+    -categorias: List<CategoriaTest>
+    -duracionEstimada: int
+    +crearTest(): void
+    +publicarTest(): void
+    +asignarTest(estudiante: Estudiante): void
+    +calcularResultados(respuestas: List<RespuestaTest>): ResultadoTestVocacional
+  }
+
+  class CategoriaTest {
+    -id: String
+    -nombre: String
+    -descripcion: String
+    -preguntas: List<PreguntaTest>
+    +calcularPuntaje(respuestas: List<RespuestaTest>): double
+  }
+
+  class PreguntaTest {
+    -id: String
+    -enunciado: String
+    -tipo: String
+    -opciones: List<OpcionRespuestaTest>
+    +getPuntuacionPorRespuesta(respuesta: String): double
+  }
+
+  class OpcionRespuestaTest {
+    -id: String
+    -texto: String
+    -valor: double
+    -categoria: CategoriaAptitud
+  }
+
+  class RespuestaTest {
+    -estudiante: Estudiante
+    -pregunta: PreguntaTest
+    -respuestaSeleccionada: String
+    -tiempo: int
+    -fechaRespuesta: Date
+    +calcularPuntuacion(): double
+  }
+
+  class ResultadoTestVocacional {
+    -id: String
+    -estudiante: Estudiante
+    -test: TestVocacional
+    -fecha: Date
+    -puntajesPorCategoria: Map<CategoriaAptitud, double>
+    -perfilVocacional: PerfilVocacional
+    +generarRecomendaciones(): void
+    +exportarResultados(): File
+  }
+
+  class CategoriaAptitud {
+    -id: String
+    -nombre: String
+    -descripcion: String
+    -carreras: List<Carrera>
+    +calcularCompatibilidad(perfil: PerfilVocacional): double
+  }
+
+  class PerfilVocacional {
+    -id: String
+    -estudiante: Estudiante
+    -intereses: Map<String, double>
+    -habilidades: Map<String, double>
+    -personalidad: Map<String, double>
+    -aptitudes: Map<String, double>
+    -fechaCreacion: Date
+    -fechaActualizacion: Date
+    +actualizarPerfil(resultadoTest: ResultadoTestVocacional): void
+    +combinarConRendimientoAcademico(): void
+    +calcularCompatibilidadCarrera(carrera: Carrera): double
+  }
+
+  class Carrera {
+    -id: String
+    -nombre: String
+    -descripcion: String
+    -nivelEducativo: String
+    -duracionAños: double
+    -areasConocimiento: List<String>
+    -perfilIdeal: Map<String, double>
+    -oportunidadesLaborales: List<String>
+    +calcularCompatibilidad(perfil: PerfilVocacional): double
+    +obtenerInstitucionesOfertantes(): List<Institucion>
+  }
+
+  class RecomendacionCarrera {
+    -id: String
+    -estudiante: Estudiante
+    -carrera: Carrera
+    -compatibilidad: double
+    -justificacion: String
+    -fecha: Date
+    -fuente: String
+    +detallarCompatibilidad(): Map<String, Object>
+    +mostrarRecursosInformativos(): List<Recurso>
+  }
+
+  class ModeloRecomendacionVocacional {
+    -tipo: String
+    -parametros: Map<String, Object>
+    -precision: double
+    -ultimoEntrenamiento: Date
+    +entrenar(datos: List<PerfilVocacional>, carreras: List<Carrera>): void
+    +predecirCompatibilidad(perfil: PerfilVocacional): List<RecomendacionCarrera>
+    +explicarRecomendacion(recomendacion: RecomendacionCarrera): String
+  }
+
+  class Institucion {
+    -id: String
+    -nombre: String
+    -tipo: String
+    -ubicacion: String
+    -carreras: List<Carrera>
+    -sitioWeb: String
+    -contacto: String
+    +obtenerInformacionAdmision(): Map<String, Object>
+    +mostrarRanking(): Map<String, double>
+  }
+
+  ' Conexiones internas del módulo
+  TestVocacional "1" *-- "many" CategoriaTest
+  CategoriaTest "1" *-- "many" PreguntaTest
+  PreguntaTest "1" *-- "many" OpcionRespuestaTest
+  TestVocacional "1" -- "many" RespuestaTest
+  RespuestaTest "many" -- "1" PreguntaTest
+  TestVocacional "1" -- "many" ResultadoTestVocacional
+  ResultadoTestVocacional "1" -- "1" PerfilVocacional
+  CategoriaAptitud "1" -- "many" Carrera
+  PerfilVocacional "1" -- "many" RecomendacionCarrera
+  RecomendacionCarrera "many" -- "1" Carrera
+  ModeloRecomendacionVocacional -- PerfilVocacional
+  ModeloRecomendacionVocacional -- RecomendacionCarrera
+  Carrera "many" -- "many" Institucion
+  OpcionRespuestaTest -- CategoriaAptitud
+}
+
+' =================== CONEXIONES ENTRE PAQUETES ===================
+
+' Conexiones Usuario-Estructura
+Profesor "1" -- "many" Curso
+Curso "1" -- "many" Estudiante
+Padre "1" -- "many" Estudiante
+Director -- Reporte
+
+' Conexiones Contenido-Estructura
+Contenido "many" -- "1" Curso
+
+' Conexiones Usuario-Contenido
+Trabajo "many" -- "1" Estudiante
+
+' Conexiones Sistema Inteligente-Contenido
+SistemaAnalisis -- Trabajo
+
+' Conexiones Usuario-Vocacional
+Estudiante "1" -- "1" PerfilVocacional
+Estudiante "1" -- "many" ResultadoTestVocacional
+Estudiante "1" -- "many" RecomendacionCarrera
+RespuestaTest "many" -- "1" Estudiante
+
+' Conexiones Estructura-Vocacional
+RendimientoAcademico "1" -- "1" Estudiante
+RendimientoAcademico -- PerfilVocacional
+
+' Conexiones entre sistemas inteligentes
+ModeloML -- ModeloRecomendacionVocacional
+ResultadoAnalisis -- PerfilVocacional
+
+@enduml

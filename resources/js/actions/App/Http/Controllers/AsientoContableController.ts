@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\AsientoContableController::indexApi
- * @see app/Http/Controllers/AsientoContableController.php:64
+ * @see [unknown]:0
  * @route '/api/contabilidad/asientos'
  */
 export const indexApi = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ indexApi.definition = {
 
 /**
 * @see \App\Http\Controllers\AsientoContableController::indexApi
- * @see app/Http/Controllers/AsientoContableController.php:64
+ * @see [unknown]:0
  * @route '/api/contabilidad/asientos'
  */
 indexApi.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ indexApi.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\AsientoContableController::indexApi
- * @see app/Http/Controllers/AsientoContableController.php:64
+ * @see [unknown]:0
  * @route '/api/contabilidad/asientos'
  */
 indexApi.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ indexApi.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\AsientoContableController::indexApi
- * @see app/Http/Controllers/AsientoContableController.php:64
+ * @see [unknown]:0
  * @route '/api/contabilidad/asientos'
  */
 indexApi.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ indexApi.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\AsientoContableController::indexApi
- * @see app/Http/Controllers/AsientoContableController.php:64
+ * @see [unknown]:0
  * @route '/api/contabilidad/asientos'
  */
     const indexApiForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ indexApi.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\AsientoContableController::indexApi
- * @see app/Http/Controllers/AsientoContableController.php:64
+ * @see [unknown]:0
  * @route '/api/contabilidad/asientos'
  */
         indexApiForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ indexApi.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\AsientoContableController::indexApi
- * @see app/Http/Controllers/AsientoContableController.php:64
+ * @see [unknown]:0
  * @route '/api/contabilidad/asientos'
  */
         indexApiForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,10 +79,10 @@ indexApi.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     indexApi.form = indexApiForm
 /**
 * @see \App\Http\Controllers\AsientoContableController::showApi
- * @see app/Http/Controllers/AsientoContableController.php:91
+ * @see [unknown]:0
  * @route '/api/contabilidad/asientos/{asientoContable}'
  */
-export const showApi = (args: { asientoContable: string | number | { id: string | number } } | [asientoContable: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const showApi = (args: { asientoContable: string | number } | [asientoContable: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: showApi.url(args, options),
     method: 'get',
 })
@@ -94,17 +94,14 @@ showApi.definition = {
 
 /**
 * @see \App\Http\Controllers\AsientoContableController::showApi
- * @see app/Http/Controllers/AsientoContableController.php:91
+ * @see [unknown]:0
  * @route '/api/contabilidad/asientos/{asientoContable}'
  */
-showApi.url = (args: { asientoContable: string | number | { id: string | number } } | [asientoContable: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+showApi.url = (args: { asientoContable: string | number } | [asientoContable: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { asientoContable: args }
     }
 
-            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-            args = { asientoContable: args.id }
-        }
     
     if (Array.isArray(args)) {
         args = {
@@ -115,9 +112,7 @@ showApi.url = (args: { asientoContable: string | number | { id: string | number 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        asientoContable: typeof args.asientoContable === 'object'
-                ? args.asientoContable.id
-                : args.asientoContable,
+                        asientoContable: args.asientoContable,
                 }
 
     return showApi.definition.url
@@ -127,48 +122,48 @@ showApi.url = (args: { asientoContable: string | number | { id: string | number 
 
 /**
 * @see \App\Http\Controllers\AsientoContableController::showApi
- * @see app/Http/Controllers/AsientoContableController.php:91
+ * @see [unknown]:0
  * @route '/api/contabilidad/asientos/{asientoContable}'
  */
-showApi.get = (args: { asientoContable: string | number | { id: string | number } } | [asientoContable: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+showApi.get = (args: { asientoContable: string | number } | [asientoContable: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: showApi.url(args, options),
     method: 'get',
 })
 /**
 * @see \App\Http\Controllers\AsientoContableController::showApi
- * @see app/Http/Controllers/AsientoContableController.php:91
+ * @see [unknown]:0
  * @route '/api/contabilidad/asientos/{asientoContable}'
  */
-showApi.head = (args: { asientoContable: string | number | { id: string | number } } | [asientoContable: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+showApi.head = (args: { asientoContable: string | number } | [asientoContable: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: showApi.url(args, options),
     method: 'head',
 })
 
     /**
 * @see \App\Http\Controllers\AsientoContableController::showApi
- * @see app/Http/Controllers/AsientoContableController.php:91
+ * @see [unknown]:0
  * @route '/api/contabilidad/asientos/{asientoContable}'
  */
-    const showApiForm = (args: { asientoContable: string | number | { id: string | number } } | [asientoContable: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const showApiForm = (args: { asientoContable: string | number } | [asientoContable: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: showApi.url(args, options),
         method: 'get',
     })
 
             /**
 * @see \App\Http\Controllers\AsientoContableController::showApi
- * @see app/Http/Controllers/AsientoContableController.php:91
+ * @see [unknown]:0
  * @route '/api/contabilidad/asientos/{asientoContable}'
  */
-        showApiForm.get = (args: { asientoContable: string | number | { id: string | number } } | [asientoContable: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showApiForm.get = (args: { asientoContable: string | number } | [asientoContable: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: showApi.url(args, options),
             method: 'get',
         })
             /**
 * @see \App\Http\Controllers\AsientoContableController::showApi
- * @see app/Http/Controllers/AsientoContableController.php:91
+ * @see [unknown]:0
  * @route '/api/contabilidad/asientos/{asientoContable}'
  */
-        showApiForm.head = (args: { asientoContable: string | number | { id: string | number } } | [asientoContable: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showApiForm.head = (args: { asientoContable: string | number } | [asientoContable: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: showApi.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',

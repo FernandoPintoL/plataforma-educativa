@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\ProveedorController::storeApi
- * @see app/Http/Controllers/ProveedorController.php:164
+ * @see [unknown]:0
  * @route '/api/proveedores'
  */
 export const storeApi = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -16,7 +16,7 @@ storeApi.definition = {
 
 /**
 * @see \App\Http\Controllers\ProveedorController::storeApi
- * @see app/Http/Controllers/ProveedorController.php:164
+ * @see [unknown]:0
  * @route '/api/proveedores'
  */
 storeApi.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ storeApi.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\ProveedorController::storeApi
- * @see app/Http/Controllers/ProveedorController.php:164
+ * @see [unknown]:0
  * @route '/api/proveedores'
  */
 storeApi.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -35,7 +35,7 @@ storeApi.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\ProveedorController::storeApi
- * @see app/Http/Controllers/ProveedorController.php:164
+ * @see [unknown]:0
  * @route '/api/proveedores'
  */
     const storeApiForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -45,7 +45,7 @@ storeApi.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\ProveedorController::storeApi
- * @see app/Http/Controllers/ProveedorController.php:164
+ * @see [unknown]:0
  * @route '/api/proveedores'
  */
         storeApiForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -56,7 +56,7 @@ storeApi.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     storeApi.form = storeApiForm
 /**
 * @see \App\Http\Controllers\ProveedorController::buscarApi
- * @see app/Http/Controllers/ProveedorController.php:70
+ * @see [unknown]:0
  * @route '/api/proveedores/buscar'
  */
 export const buscarApi = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -71,7 +71,7 @@ buscarApi.definition = {
 
 /**
 * @see \App\Http\Controllers\ProveedorController::buscarApi
- * @see app/Http/Controllers/ProveedorController.php:70
+ * @see [unknown]:0
  * @route '/api/proveedores/buscar'
  */
 buscarApi.url = (options?: RouteQueryOptions) => {
@@ -80,7 +80,7 @@ buscarApi.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\ProveedorController::buscarApi
- * @see app/Http/Controllers/ProveedorController.php:70
+ * @see [unknown]:0
  * @route '/api/proveedores/buscar'
  */
 buscarApi.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -89,7 +89,7 @@ buscarApi.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\ProveedorController::buscarApi
- * @see app/Http/Controllers/ProveedorController.php:70
+ * @see [unknown]:0
  * @route '/api/proveedores/buscar'
  */
 buscarApi.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -99,7 +99,7 @@ buscarApi.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\ProveedorController::buscarApi
- * @see app/Http/Controllers/ProveedorController.php:70
+ * @see [unknown]:0
  * @route '/api/proveedores/buscar'
  */
     const buscarApiForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -109,7 +109,7 @@ buscarApi.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\ProveedorController::buscarApi
- * @see app/Http/Controllers/ProveedorController.php:70
+ * @see [unknown]:0
  * @route '/api/proveedores/buscar'
  */
         buscarApiForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -118,7 +118,7 @@ buscarApi.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\ProveedorController::buscarApi
- * @see app/Http/Controllers/ProveedorController.php:70
+ * @see [unknown]:0
  * @route '/api/proveedores/buscar'
  */
         buscarApiForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

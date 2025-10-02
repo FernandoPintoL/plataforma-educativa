@@ -17,6 +17,11 @@ import RoleController from './RoleController'
 import PermissionController from './PermissionController'
 import Settings from './Settings'
 import Auth from './Auth'
+import GestionUsuariosController from './GestionUsuariosController'
+import DashboardDirectorController from './DashboardDirectorController'
+import DashboardProfesorController from './DashboardProfesorController'
+import DashboardEstudianteController from './DashboardEstudianteController'
+import DashboardPadreController from './DashboardPadreController'
 const Controllers = {
     Api,
 ModuloSidebarController,
@@ -37,6 +42,11 @@ RoleController,
 PermissionController,
 Settings,
 Auth,
+GestionUsuariosController,
+DashboardDirectorController,
+DashboardProfesorController,
+DashboardEstudianteController,
+DashboardPadreController,
 }
 
 export default Controllers

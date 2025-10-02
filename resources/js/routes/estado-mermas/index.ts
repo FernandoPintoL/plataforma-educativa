@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\Api\EstadoMermaController::index
- * @see app/Http/Controllers/Api/EstadoMermaController.php:13
+ * @see [unknown]:0
  * @route '/api/estado-mermas'
  */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\EstadoMermaController::index
- * @see app/Http/Controllers/Api/EstadoMermaController.php:13
+ * @see [unknown]:0
  * @route '/api/estado-mermas'
  */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\EstadoMermaController::index
- * @see app/Http/Controllers/Api/EstadoMermaController.php:13
+ * @see [unknown]:0
  * @route '/api/estado-mermas'
  */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\EstadoMermaController::index
- * @see app/Http/Controllers/Api/EstadoMermaController.php:13
+ * @see [unknown]:0
  * @route '/api/estado-mermas'
  */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\EstadoMermaController::index
- * @see app/Http/Controllers/Api/EstadoMermaController.php:13
+ * @see [unknown]:0
  * @route '/api/estado-mermas'
  */
     const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\EstadoMermaController::index
- * @see app/Http/Controllers/Api/EstadoMermaController.php:13
+ * @see [unknown]:0
  * @route '/api/estado-mermas'
  */
         indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\EstadoMermaController::index
- * @see app/Http/Controllers/Api/EstadoMermaController.php:13
+ * @see [unknown]:0
  * @route '/api/estado-mermas'
  */
         indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,7 +79,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Api\EstadoMermaController::store
- * @see app/Http/Controllers/Api/EstadoMermaController.php:23
+ * @see [unknown]:0
  * @route '/api/estado-mermas'
  */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -94,7 +94,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\EstadoMermaController::store
- * @see app/Http/Controllers/Api/EstadoMermaController.php:23
+ * @see [unknown]:0
  * @route '/api/estado-mermas'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\EstadoMermaController::store
- * @see app/Http/Controllers/Api/EstadoMermaController.php:23
+ * @see [unknown]:0
  * @route '/api/estado-mermas'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -113,7 +113,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\EstadoMermaController::store
- * @see app/Http/Controllers/Api/EstadoMermaController.php:23
+ * @see [unknown]:0
  * @route '/api/estado-mermas'
  */
     const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -123,7 +123,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\EstadoMermaController::store
- * @see app/Http/Controllers/Api/EstadoMermaController.php:23
+ * @see [unknown]:0
  * @route '/api/estado-mermas'
  */
         storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -134,7 +134,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\Api\EstadoMermaController::show
- * @see app/Http/Controllers/Api/EstadoMermaController.php:44
+ * @see [unknown]:0
  * @route '/api/estado-mermas/{estado_merma}'
  */
 export const show = (args: { estado_merma: string | number } | [estado_merma: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -149,7 +149,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\EstadoMermaController::show
- * @see app/Http/Controllers/Api/EstadoMermaController.php:44
+ * @see [unknown]:0
  * @route '/api/estado-mermas/{estado_merma}'
  */
 show.url = (args: { estado_merma: string | number } | [estado_merma: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -177,7 +177,7 @@ show.url = (args: { estado_merma: string | number } | [estado_merma: string | nu
 
 /**
 * @see \App\Http\Controllers\Api\EstadoMermaController::show
- * @see app/Http/Controllers/Api/EstadoMermaController.php:44
+ * @see [unknown]:0
  * @route '/api/estado-mermas/{estado_merma}'
  */
 show.get = (args: { estado_merma: string | number } | [estado_merma: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -186,7 +186,7 @@ show.get = (args: { estado_merma: string | number } | [estado_merma: string | nu
 })
 /**
 * @see \App\Http\Controllers\Api\EstadoMermaController::show
- * @see app/Http/Controllers/Api/EstadoMermaController.php:44
+ * @see [unknown]:0
  * @route '/api/estado-mermas/{estado_merma}'
  */
 show.head = (args: { estado_merma: string | number } | [estado_merma: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -196,7 +196,7 @@ show.head = (args: { estado_merma: string | number } | [estado_merma: string | n
 
     /**
 * @see \App\Http\Controllers\Api\EstadoMermaController::show
- * @see app/Http/Controllers/Api/EstadoMermaController.php:44
+ * @see [unknown]:0
  * @route '/api/estado-mermas/{estado_merma}'
  */
     const showForm = (args: { estado_merma: string | number } | [estado_merma: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -206,7 +206,7 @@ show.head = (args: { estado_merma: string | number } | [estado_merma: string | n
 
             /**
 * @see \App\Http\Controllers\Api\EstadoMermaController::show
- * @see app/Http/Controllers/Api/EstadoMermaController.php:44
+ * @see [unknown]:0
  * @route '/api/estado-mermas/{estado_merma}'
  */
         showForm.get = (args: { estado_merma: string | number } | [estado_merma: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -215,7 +215,7 @@ show.head = (args: { estado_merma: string | number } | [estado_merma: string | n
         })
             /**
 * @see \App\Http\Controllers\Api\EstadoMermaController::show
- * @see app/Http/Controllers/Api/EstadoMermaController.php:44
+ * @see [unknown]:0
  * @route '/api/estado-mermas/{estado_merma}'
  */
         showForm.head = (args: { estado_merma: string | number } | [estado_merma: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -231,7 +231,7 @@ show.head = (args: { estado_merma: string | number } | [estado_merma: string | n
     show.form = showForm
 /**
 * @see \App\Http\Controllers\Api\EstadoMermaController::update
- * @see app/Http/Controllers/Api/EstadoMermaController.php:52
+ * @see [unknown]:0
  * @route '/api/estado-mermas/{estado_merma}'
  */
 export const update = (args: { estado_merma: string | number } | [estado_merma: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -246,7 +246,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\EstadoMermaController::update
- * @see app/Http/Controllers/Api/EstadoMermaController.php:52
+ * @see [unknown]:0
  * @route '/api/estado-mermas/{estado_merma}'
  */
 update.url = (args: { estado_merma: string | number } | [estado_merma: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -274,7 +274,7 @@ update.url = (args: { estado_merma: string | number } | [estado_merma: string | 
 
 /**
 * @see \App\Http\Controllers\Api\EstadoMermaController::update
- * @see app/Http/Controllers/Api/EstadoMermaController.php:52
+ * @see [unknown]:0
  * @route '/api/estado-mermas/{estado_merma}'
  */
 update.put = (args: { estado_merma: string | number } | [estado_merma: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -283,7 +283,7 @@ update.put = (args: { estado_merma: string | number } | [estado_merma: string | 
 })
 /**
 * @see \App\Http\Controllers\Api\EstadoMermaController::update
- * @see app/Http/Controllers/Api/EstadoMermaController.php:52
+ * @see [unknown]:0
  * @route '/api/estado-mermas/{estado_merma}'
  */
 update.patch = (args: { estado_merma: string | number } | [estado_merma: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -293,7 +293,7 @@ update.patch = (args: { estado_merma: string | number } | [estado_merma: string 
 
     /**
 * @see \App\Http\Controllers\Api\EstadoMermaController::update
- * @see app/Http/Controllers/Api/EstadoMermaController.php:52
+ * @see [unknown]:0
  * @route '/api/estado-mermas/{estado_merma}'
  */
     const updateForm = (args: { estado_merma: string | number } | [estado_merma: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -308,7 +308,7 @@ update.patch = (args: { estado_merma: string | number } | [estado_merma: string 
 
             /**
 * @see \App\Http\Controllers\Api\EstadoMermaController::update
- * @see app/Http/Controllers/Api/EstadoMermaController.php:52
+ * @see [unknown]:0
  * @route '/api/estado-mermas/{estado_merma}'
  */
         updateForm.put = (args: { estado_merma: string | number } | [estado_merma: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -322,7 +322,7 @@ update.patch = (args: { estado_merma: string | number } | [estado_merma: string 
         })
             /**
 * @see \App\Http\Controllers\Api\EstadoMermaController::update
- * @see app/Http/Controllers/Api/EstadoMermaController.php:52
+ * @see [unknown]:0
  * @route '/api/estado-mermas/{estado_merma}'
  */
         updateForm.patch = (args: { estado_merma: string | number } | [estado_merma: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -338,7 +338,7 @@ update.patch = (args: { estado_merma: string | number } | [estado_merma: string 
     update.form = updateForm
 /**
 * @see \App\Http\Controllers\Api\EstadoMermaController::destroy
- * @see app/Http/Controllers/Api/EstadoMermaController.php:73
+ * @see [unknown]:0
  * @route '/api/estado-mermas/{estado_merma}'
  */
 export const destroy = (args: { estado_merma: string | number } | [estado_merma: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -353,7 +353,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\EstadoMermaController::destroy
- * @see app/Http/Controllers/Api/EstadoMermaController.php:73
+ * @see [unknown]:0
  * @route '/api/estado-mermas/{estado_merma}'
  */
 destroy.url = (args: { estado_merma: string | number } | [estado_merma: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -381,7 +381,7 @@ destroy.url = (args: { estado_merma: string | number } | [estado_merma: string |
 
 /**
 * @see \App\Http\Controllers\Api\EstadoMermaController::destroy
- * @see app/Http/Controllers/Api/EstadoMermaController.php:73
+ * @see [unknown]:0
  * @route '/api/estado-mermas/{estado_merma}'
  */
 destroy.delete = (args: { estado_merma: string | number } | [estado_merma: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -391,7 +391,7 @@ destroy.delete = (args: { estado_merma: string | number } | [estado_merma: strin
 
     /**
 * @see \App\Http\Controllers\Api\EstadoMermaController::destroy
- * @see app/Http/Controllers/Api/EstadoMermaController.php:73
+ * @see [unknown]:0
  * @route '/api/estado-mermas/{estado_merma}'
  */
     const destroyForm = (args: { estado_merma: string | number } | [estado_merma: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -406,7 +406,7 @@ destroy.delete = (args: { estado_merma: string | number } | [estado_merma: strin
 
             /**
 * @see \App\Http\Controllers\Api\EstadoMermaController::destroy
- * @see app/Http/Controllers/Api/EstadoMermaController.php:73
+ * @see [unknown]:0
  * @route '/api/estado-mermas/{estado_merma}'
  */
         destroyForm.delete = (args: { estado_merma: string | number } | [estado_merma: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
