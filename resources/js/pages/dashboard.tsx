@@ -2,9 +2,9 @@ import React from 'react';
 import Layout from '../components/Layout/Layout';
 import { useAuth } from '../contexts/AuthContext';
 import {
-  BookOpenIcon, 
-  UserGroupIcon, 
-  AcademicCapIcon, 
+  BookOpenIcon,
+  UserGroupIcon,
+  AcademicCapIcon,
   ChartBarIcon,
   ClockIcon,
   CheckCircleIcon
@@ -84,7 +84,7 @@ const Dashboard: React.FC = () => {
 
   const getRoleSpecificContent = () => {
     if (isProfesor()) {
-    return (
+      return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="bg-white rounded-lg shadow p-6">
             <h3 className="text-lg font-medium text-gray-900 mb-4">Mis Cursos</h3>
@@ -101,7 +101,7 @@ const Dashboard: React.FC = () => {
               <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                 <div>
                   <p className="font-medium text-gray-900">Física General</p>
-                  <p className="text-sm text-gray-500">18 estudiantes</p>
+                  <p className="text-sm text-gray-500">0 estudiantes</p>
                 </div>
                 <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
                   Activo
@@ -114,14 +114,14 @@ const Dashboard: React.FC = () => {
             <h3 className="text-lg font-medium text-gray-900 mb-4">Tareas por Calificar</h3>
             <div className="space-y-3">
               <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
-                    <div>
+                <div>
                   <p className="font-medium text-gray-900">Ejercicios de Álgebra</p>
                   <p className="text-sm text-gray-500">15 trabajos pendientes</p>
                 </div>
                 <span className="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full">
                   Pendiente
                 </span>
-                    </div>
+              </div>
               <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
                 <div>
                   <p className="font-medium text-gray-900">Problemas de Física</p>
@@ -265,7 +265,7 @@ const Dashboard: React.FC = () => {
                 </span>
               </div>
             </div>
-                </div>
+          </div>
 
           <div className="bg-white rounded-lg shadow p-6">
             <h3 className="text-lg font-medium text-gray-900 mb-4">Actividad Reciente</h3>
@@ -315,9 +315,8 @@ const Dashboard: React.FC = () => {
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-500">{stat.name}</p>
                   <p className="text-2xl font-semibold text-gray-900">{stat.value}</p>
-                  <p className={`text-sm ${
-                    stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
-                  }`}>
+                  <p className={`text-sm ${stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
+                    }`}>
                     {stat.change} desde la semana pasada
                   </p>
                 </div>

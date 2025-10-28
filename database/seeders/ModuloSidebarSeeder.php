@@ -30,18 +30,20 @@ class ModuloSidebarSeeder extends Seeder
         $estudiantes = ModuloSidebar::firstOrCreate(
             ['titulo' => 'Estudiantes', 'ruta' => '/estudiantes', 'es_submenu' => false],
             [
-                'icono'       => 'User',
-                'descripcion' => 'Gestión de estudiantes',
-                'orden'       => 2,
-                'categoria'   => 'Académico',
-                'activo'      => true,
-                'permisos'    => ['estudiantes.index', 'ver-estudiantes'], // Requiere uno de estos permisos
+                'icono'             => 'User',
+                'descripcion'       => 'Gestión de estudiantes',
+                'orden'             => 2,
+                'categoria'         => 'Académico',
+                'activo'            => true,
+                'permisos'          => ['estudiantes.index', 'ver-estudiantes'], // Requiere uno de estos permisos
+                'visible_dashboard' => true,
             ]
         );
 
         $submenuEstudiantes = [
-            ['titulo' => 'Listado', 'ruta' => '/estudiantes', 'icono' => 'List', 'orden' => 1, 'permisos' => ['estudiantes.index']],
-            ['titulo' => 'Inscripciones', 'ruta' => '/estudiantes/inscripciones', 'icono' => 'Clipboard', 'orden' => 2, 'permisos' => ['inscripciones.index']],
+            ['titulo' => 'Listado', 'ruta' => '/estudiantes', 'icono' => 'List', 'orden' => 1, 'permisos' => ['estudiantes.index', 'ver-estudiantes']],
+            ['titulo' => 'Nuevo estudiante', 'ruta' => '/estudiantes/create', 'icono' => 'UserPlus', 'orden' => 2, 'permisos' => ['estudiantes.create', 'gestionar-estudiantes']],
+            ['titulo' => 'Inscripciones', 'ruta' => '/estudiantes/inscripciones', 'icono' => 'Clipboard', 'orden' => 3, 'permisos' => ['inscripciones.index']],
         ];
 
         foreach ($submenuEstudiantes as $submenu) {
@@ -65,18 +67,20 @@ class ModuloSidebarSeeder extends Seeder
         $profesores = ModuloSidebar::firstOrCreate(
             ['titulo' => 'Profesores', 'ruta' => '/profesores', 'es_submenu' => false],
             [
-                'icono'       => 'UserCheck',
-                'descripcion' => 'Gestión de profesores',
-                'orden'       => 3,
-                'categoria'   => 'Académico',
-                'activo'      => true,
-                'permisos'    => ['profesores.index', 'gestionar-profesores'],
+                'icono'             => 'UserCheck',
+                'descripcion'       => 'Gestión de profesores',
+                'orden'             => 3,
+                'categoria'         => 'Académico',
+                'activo'            => true,
+                'permisos'          => ['profesores.index', 'gestionar-profesores'],
+                'visible_dashboard' => true,
             ]
         );
 
         $submenuProfesores = [
-            ['titulo' => 'Listado', 'ruta' => '/profesores', 'icono' => 'List', 'orden' => 1, 'permisos' => ['profesores.index']],
-            ['titulo' => 'Asignaciones', 'ruta' => '/profesores/asignaciones', 'icono' => 'BookOpen', 'orden' => 2, 'permisos' => ['asignaciones.index']],
+            ['titulo' => 'Listado', 'ruta' => '/profesores', 'icono' => 'List', 'orden' => 1, 'permisos' => ['profesores.index', 'gestionar-profesores']],
+            ['titulo' => 'Nuevo profesor', 'ruta' => '/profesores/create', 'icono' => 'UserPlus', 'orden' => 2, 'permisos' => ['profesores.create', 'gestionar-profesores']],
+            ['titulo' => 'Asignaciones', 'ruta' => '/profesores/asignaciones', 'icono' => 'BookOpen', 'orden' => 3, 'permisos' => ['asignaciones.index']],
         ];
 
         foreach ($submenuProfesores as $submenu) {

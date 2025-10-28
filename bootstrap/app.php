@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureUserHasRole;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Foundation\Application;
@@ -7,7 +8,6 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
 use Spatie\Permission\Middleware\PermissionMiddleware;
-use Spatie\Permission\Middleware\RoleMiddleware;
 use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -37,9 +37,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'test-csrf',
         ]);
 
-        // Aliases for Spatie Permission middlewares
+        // Aliases for middleware
+        // Usamos nuestro middleware personalizado para 'role' que valida tanto tipo_usuario como roles de Spatie
         $middleware->alias([
-            'role' => RoleMiddleware::class,
+            'role' => EnsureUserHasRole::class,
             'permission' => PermissionMiddleware::class,
             'role_or_permission' => RoleOrPermissionMiddleware::class,
         ]);

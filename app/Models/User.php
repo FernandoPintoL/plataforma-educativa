@@ -9,6 +9,29 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
+/**
+ * ARQUITECTURA DEL SISTEMA DE USUARIOS
+ *
+ * Este sistema utiliza una tabla única 'users' para todos los tipos de usuarios.
+ * El campo 'tipo_usuario' determina el rol base: 'profesor', 'estudiante', 'director', 'padre'
+ *
+ * Se utiliza Spatie Permissions (https://spatie.be/docs/laravel-permission) para:
+ * - Gestión avanzada de roles y permisos
+ * - Control de acceso granular a recursos
+ * - Asignación dinámica de permisos
+ *
+ * Ventajas de esta arquitectura:
+ * - Simplicidad en el modelo de datos
+ * - Facilidad para cambiar roles de usuarios
+ * - Un usuario puede tener múltiples roles simultáneamente
+ * - Gestión centralizada de autenticación
+ *
+ * @property string $tipo_usuario Tipo base del usuario (profesor|estudiante|director|padre)
+ * @property bool $activo Estado del usuario
+ * @property string $name Nombre del usuario
+ * @property string $apellido Apellido del usuario
+ * @property string $email Email del usuario
+ */
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -173,9 +196,10 @@ class User extends Authenticatable
 
     /**
      * Relación con hijos (para padres)
+     * Retorna usuarios de tipo estudiante que tienen este usuario como padre
      */
     public function hijos()
     {
-        return $this->hasMany(Estudiante::class, 'padre_id');
+        return $this->hasMany(User::class, 'padre_id')->where('tipo_usuario', 'estudiante');
     }
 }

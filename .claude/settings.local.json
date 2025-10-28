@@ -1,14 +1,17 @@
 {
   "permissions": {
     "allow": [
-      "Bash(python:*)",
-      "Bash(java:*)",
-      "Bash(npm install:*)",
+      "Bash(findstr:*)",
       "Bash(npm run build:*)",
-      "Bash(powershell:*)",
-      "Bash(mkdir:*)",
-      "Bash(php artisan migrate:fresh:*)",
-      "Bash(php artisan:*)"
+      "Bash(npm install:*)",
+      "Bash(php artisan:*)",
+      "Bash(python convert_puml_to_xmi_fixed.py:*)",
+      "Bash(java:*)",
+      "Bash(cat:*)",
+      "Bash(python puml_to_xmi_parser.py:*)",
+      "Bash(python puml_sequence_to_xmi.py:*)",
+      "Bash(python generar_graficos_sprint.py:*)",
+      "Bash(pip install:*)"
     ],
     "deny": [],
     "ask": []

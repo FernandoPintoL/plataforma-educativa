@@ -1,20 +1,8 @@
-import Api from './Api'
-import ModuloSidebarController from './ModuloSidebarController'
-import ProductoController from './ProductoController'
-import VentaController from './VentaController'
-import EnvioController from './EnvioController'
-import CompraController from './CompraController'
-import AsientoContableController from './AsientoContableController'
-import InventarioController from './InventarioController'
-import ReporteInventarioApiController from './ReporteInventarioApiController'
-import ClienteController from './ClienteController'
-import DireccionClienteApiController from './DireccionClienteApiController'
-import LocalidadController from './LocalidadController'
-import CategoriaClienteController from './CategoriaClienteController'
-import ProveedorController from './ProveedorController'
 import UserController from './UserController'
 import RoleController from './RoleController'
 import PermissionController from './PermissionController'
+import EstudianteController from './EstudianteController'
+import ProfesorController from './ProfesorController'
 import Settings from './Settings'
 import Auth from './Auth'
 import GestionUsuariosController from './GestionUsuariosController'
@@ -22,24 +10,18 @@ import DashboardDirectorController from './DashboardDirectorController'
 import DashboardProfesorController from './DashboardProfesorController'
 import DashboardEstudianteController from './DashboardEstudianteController'
 import DashboardPadreController from './DashboardPadreController'
+import TareaController from './TareaController'
+import TrabajoController from './TrabajoController'
+import CalificacionController from './CalificacionController'
+import RecursoController from './RecursoController'
+import EvaluacionController from './EvaluacionController'
+import PreguntaController from './PreguntaController'
 const Controllers = {
-    Api,
-ModuloSidebarController,
-ProductoController,
-VentaController,
-EnvioController,
-CompraController,
-AsientoContableController,
-InventarioController,
-ReporteInventarioApiController,
-ClienteController,
-DireccionClienteApiController,
-LocalidadController,
-CategoriaClienteController,
-ProveedorController,
-UserController,
+    UserController,
 RoleController,
 PermissionController,
+EstudianteController,
+ProfesorController,
 Settings,
 Auth,
 GestionUsuariosController,
@@ -47,6 +29,12 @@ DashboardDirectorController,
 DashboardProfesorController,
 DashboardEstudianteController,
 DashboardPadreController,
+TareaController,
+TrabajoController,
+CalificacionController,
+RecursoController,
+EvaluacionController,
+PreguntaController,
 }
 
 export default Controllers

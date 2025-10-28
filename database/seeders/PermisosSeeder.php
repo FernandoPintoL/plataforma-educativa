@@ -84,14 +84,16 @@ class PermisosSeeder extends Seeder
     protected function crearPermisosEstudiantes()
     {
         $permisos = [
-            'estudiantes.index'     => 'Listar estudiantes',
-            'estudiantes.show'      => 'Ver detalles de estudiante',
-            'estudiantes.create'    => 'Crear estudiante',
-            'estudiantes.edit'      => 'Editar estudiante',
-            'estudiantes.delete'    => 'Eliminar estudiante',
-            'gestionar-estudiantes' => 'Gestionar estudiantes (CRUD completo)',
-            'importar-estudiantes'  => 'Importar estudiantes desde archivo',
-            'exportar-estudiantes'  => 'Exportar listado de estudiantes',
+            'estudiantes.index'         => 'Listar estudiantes',
+            'estudiantes.show'          => 'Ver detalles de estudiante',
+            'estudiantes.create'        => 'Crear estudiante',
+            'estudiantes.edit'          => 'Editar estudiante',
+            'estudiantes.delete'        => 'Eliminar estudiante',
+            'estudiantes.toggle-status' => 'Activar/Desactivar estudiante',
+            'ver-estudiantes'           => 'Ver estudiantes',
+            'gestionar-estudiantes'     => 'Gestionar estudiantes (CRUD completo)',
+            'importar-estudiantes'      => 'Importar estudiantes desde archivo',
+            'exportar-estudiantes'      => 'Exportar listado de estudiantes',
         ];
 
         $this->crearPermisos($permisos);
@@ -103,13 +105,14 @@ class PermisosSeeder extends Seeder
     protected function crearPermisosProfesor()
     {
         $permisos = [
-            'profesores.index'        => 'Listar profesores',
-            'profesores.show'         => 'Ver detalles de profesor',
-            'profesores.create'       => 'Crear profesor',
-            'profesores.edit'         => 'Editar profesor',
-            'profesores.delete'       => 'Eliminar profesor',
-            'gestionar-profesores'    => 'Gestionar profesores (CRUD completo)',
-            'asignar-cursos-profesor' => 'Asignar cursos a profesor',
+            'profesores.index'         => 'Listar profesores',
+            'profesores.show'          => 'Ver detalles de profesor',
+            'profesores.create'        => 'Crear profesor',
+            'profesores.edit'          => 'Editar profesor',
+            'profesores.delete'        => 'Eliminar profesor',
+            'profesores.toggle-status' => 'Activar/Desactivar profesor',
+            'gestionar-profesores'     => 'Gestionar profesores (CRUD completo)',
+            'asignar-cursos-profesor'  => 'Asignar cursos a profesor',
         ];
 
         $this->crearPermisos($permisos);
@@ -309,12 +312,13 @@ class PermisosSeeder extends Seeder
             'ver-dashboard', 'ver-dashboard-director',
 
             // Estudiantes
-            'estudiantes.index', 'estudiantes.show', 'estudiantes.create', 'estudiantes.edit',
-            'gestionar-estudiantes', 'importar-estudiantes', 'exportar-estudiantes',
+            'estudiantes.index', 'estudiantes.show', 'estudiantes.create', 'estudiantes.edit', 'estudiantes.delete',
+            'estudiantes.toggle-status', 'ver-estudiantes', 'gestionar-estudiantes',
+            'importar-estudiantes', 'exportar-estudiantes',
 
             // Profesores
-            'profesores.index', 'profesores.show', 'profesores.create', 'profesores.edit',
-            'gestionar-profesores', 'asignar-cursos-profesor',
+            'profesores.index', 'profesores.show', 'profesores.create', 'profesores.edit', 'profesores.delete',
+            'profesores.toggle-status', 'gestionar-profesores', 'asignar-cursos-profesor',
 
             // Cursos
             'cursos.index', 'cursos.show', 'cursos.create', 'cursos.edit',
@@ -360,7 +364,7 @@ class PermisosSeeder extends Seeder
             'ver-dashboard', 'ver-dashboard-profesor',
 
             // Estudiantes
-            'estudiantes.index', 'estudiantes.show',
+            'estudiantes.index', 'estudiantes.show', 'ver-estudiantes',
 
             // Cursos
             'cursos.index', 'cursos.show', 'ver-mis-cursos', 'gestionar-material',

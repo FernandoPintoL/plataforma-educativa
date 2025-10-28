@@ -36,6 +36,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('permissions', \App\Http\Controllers\PermissionController::class);
 
+    // Módulo de estudiantes
+    Route::resource('estudiantes', \App\Http\Controllers\EstudianteController::class);
+    Route::patch('estudiantes/{estudiante}/toggle-status', [\App\Http\Controllers\EstudianteController::class, 'toggleStatus'])->name('estudiantes.toggle-status');
+
+    // Módulo de profesores
+    Route::resource('profesores', \App\Http\Controllers\ProfesorController::class);
+    Route::patch('profesores/{profesor}/toggle-status', [\App\Http\Controllers\ProfesorController::class, 'toggleStatus'])->name('profesores.toggle-status');
+
     // Rutas para prototipos educativos
     Route::get('educacion/dashboard', function () {
         return Inertia::render('Educacion/Dashboard');
@@ -55,8 +63,8 @@ require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
 require __DIR__ . '/test.php';
 
-// ==================== GESTIÓN DE USUARIOS (DIRECTOR) ====================
-Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
+// ==================== GESTIÓN DE USUARIOS (SOLO DIRECTOR/ADMIN) ====================
+Route::middleware(['auth', 'verified', 'role:director|admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::resource('usuarios', \App\Http\Controllers\GestionUsuariosController::class);
     Route::post('usuarios/{usuario}/reactivar', [\App\Http\Controllers\GestionUsuariosController::class, 'reactivar'])
         ->name('usuarios.reactivar');
@@ -85,16 +93,105 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('Educacion/Dashboard');
     })->name('dashboard');
 
-    // Dashboards específicos por rol
+    // Dashboards específicos por rol (protegidos con middleware)
     Route::get('/dashboard/director', [\App\Http\Controllers\DashboardDirectorController::class, 'index'])
+        ->middleware('role:director')
         ->name('dashboard.director');
 
     Route::get('/dashboard/profesor', [\App\Http\Controllers\DashboardProfesorController::class, 'index'])
+        ->middleware('role:profesor')
         ->name('dashboard.profesor');
 
     Route::get('/dashboard/estudiante', [\App\Http\Controllers\DashboardEstudianteController::class, 'index'])
+        ->middleware('role:estudiante')
         ->name('dashboard.estudiante');
 
     Route::get('/dashboard/padre', [\App\Http\Controllers\DashboardPadreController::class, 'index'])
+        ->middleware('role:padre')
         ->name('dashboard.padre');
+});
+
+// ==================== TAREAS Y TRABAJOS ====================
+Route::middleware(['auth', 'verified'])->group(function () {
+    // Rutas de Tareas (solo profesores pueden crear/editar/eliminar)
+    Route::resource('tareas', \App\Http\Controllers\TareaController::class)->only(['index', 'show']);
+    Route::resource('tareas', \App\Http\Controllers\TareaController::class)
+        ->except(['index', 'show'])
+        ->middleware('role:profesor|director');
+
+    // Rutas de Trabajos
+    Route::resource('trabajos', \App\Http\Controllers\TrabajoController::class);
+
+    // Estudiantes pueden entregar trabajos
+    Route::post('tareas/{tarea}/entregar', [\App\Http\Controllers\TrabajoController::class, 'store'])
+        ->middleware('role:estudiante')
+        ->name('trabajos.entregar');
+
+    // Solo profesores pueden calificar
+    Route::get('trabajos/{trabajo}/calificar', [\App\Http\Controllers\TrabajoController::class, 'calificar'])
+        ->middleware('role:profesor|director')
+        ->name('trabajos.calificar');
+
+    Route::get('trabajos/{trabajo}/archivo/{archivoIndex}', [\App\Http\Controllers\TrabajoController::class, 'descargarArchivo'])
+        ->name('trabajos.descargar-archivo');
+
+    // Rutas de Calificaciones (solo profesores)
+    Route::resource('calificaciones', \App\Http\Controllers\CalificacionController::class)
+        ->except(['create', 'edit', 'store']);
+
+    Route::post('trabajos/{trabajo}/calificar', [\App\Http\Controllers\CalificacionController::class, 'store'])
+        ->middleware('role:profesor|director')
+        ->name('trabajos.calificacion.store');
+
+    Route::get('calificaciones/exportar', [\App\Http\Controllers\CalificacionController::class, 'exportar'])
+        ->middleware('role:profesor|director')
+        ->name('calificaciones.exportar');
+
+    // Rutas de Recursos (archivos adjuntos)
+    Route::get('recursos/{recurso}/descargar', [\App\Http\Controllers\RecursoController::class, 'descargar'])
+        ->name('recursos.descargar');
+    Route::get('recursos/{recurso}/ver', [\App\Http\Controllers\RecursoController::class, 'ver'])
+        ->name('recursos.ver');
+    Route::delete('recursos/{recurso}', [\App\Http\Controllers\RecursoController::class, 'destroy'])
+        ->middleware('role:profesor|director')
+        ->name('recursos.destroy');
+});
+
+// ==================== EVALUACIONES ====================
+Route::middleware(['auth', 'verified'])->group(function () {
+    // Rutas de Evaluaciones (lectura para todos, escritura solo profesores)
+    Route::resource('evaluaciones', \App\Http\Controllers\EvaluacionController::class)->only(['index', 'show']);
+    Route::resource('evaluaciones', \App\Http\Controllers\EvaluacionController::class)
+        ->except(['index', 'show'])
+        ->middleware('role:profesor|director');
+
+    // Rutas especiales para estudiantes
+    Route::get('evaluaciones/{evaluacione}/take', [\App\Http\Controllers\EvaluacionController::class, 'take'])
+        ->middleware('role:estudiante')
+        ->name('evaluaciones.take');
+
+    Route::post('evaluaciones/{evaluacione}/submit', [\App\Http\Controllers\EvaluacionController::class, 'submitRespuestas'])
+        ->middleware('role:estudiante')
+        ->name('evaluaciones.submit');
+
+    Route::get('evaluaciones/{evaluacione}/results', [\App\Http\Controllers\EvaluacionController::class, 'results'])
+        ->middleware('role:estudiante')
+        ->name('evaluaciones.results');
+
+    // Rutas de Preguntas (solo profesores)
+    Route::post('preguntas', [\App\Http\Controllers\PreguntaController::class, 'store'])
+        ->middleware('role:profesor|director')
+        ->name('preguntas.store');
+
+    Route::put('preguntas/{pregunta}', [\App\Http\Controllers\PreguntaController::class, 'update'])
+        ->middleware('role:profesor|director')
+        ->name('preguntas.update');
+
+    Route::delete('preguntas/{pregunta}', [\App\Http\Controllers\PreguntaController::class, 'destroy'])
+        ->middleware('role:profesor|director')
+        ->name('preguntas.destroy');
+
+    Route::post('evaluaciones/{evaluacion}/preguntas/reorder', [\App\Http\Controllers\PreguntaController::class, 'reorder'])
+        ->middleware('role:profesor|director')
+        ->name('preguntas.reorder');
 });
