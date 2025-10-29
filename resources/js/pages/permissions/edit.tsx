@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import InputError from '@/components/input-error'
-import toast from 'react-hot-toast'
+import NotificationService from '@/services/notification.service'
 import { ArrowLeft, Save } from 'lucide-react'
 import { type BreadcrumbItem } from '@/types'
 
@@ -52,10 +52,10 @@ export default function Edit({ permission, roles }: PageProps) {
 
         put(`/permissions/${permission.id}`, {
             onSuccess: () => {
-                toast.success('Permiso actualizado exitosamente.')
+                NotificationService.success('Permiso actualizado exitosamente.')
             },
             onError: () => {
-                toast.error('Error al actualizar el permiso.')
+                NotificationService.error('Error al actualizar el permiso.')
             },
         })
     }

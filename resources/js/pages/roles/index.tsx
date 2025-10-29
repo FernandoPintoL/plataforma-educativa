@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import toast from 'react-hot-toast'
+import NotificationService from '@/services/notification.service'
 import { Trash2, Pencil, Plus, Search, Users, Shield } from 'lucide-react'
 import Can from '@/components/auth/Can'
 import { type BreadcrumbItem } from '@/types'
@@ -74,17 +74,17 @@ export default function Index() {
 
     const handleDelete = (role: Role) => {
         if (role.users_count > 0) {
-            toast.error(`No se puede eliminar el rol "${role.name}" porque tiene ${role.users_count} usuario(s) asignado(s).`)
+            NotificationService.error(`No se puede eliminar el rol "${role.name}" porque tiene ${role.users_count} usuario(s) asignado(s).`)
             return
         }
 
         if (confirm(`¿Estás seguro de que quieres eliminar el rol "${role.name}"?`)) {
             router.delete(`/roles/${role.id}`, {
                 onSuccess: () => {
-                    toast.success('Rol eliminado exitosamente.')
+                    NotificationService.success('Rol eliminado exitosamente.')
                 },
                 onError: () => {
-                    toast.error('Ocurrió un error al eliminar el rol.')
+                    NotificationService.error('Ocurrió un error al eliminar el rol.')
                 }
             })
         }

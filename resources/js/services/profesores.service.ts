@@ -1,7 +1,7 @@
 // Service Layer: Profesores data access
 import { router } from '@inertiajs/react'
 import type { ProfesorFilters } from '@/domain/profesores'
-import toast from 'react-hot-toast'
+import NotificationService from '@/services/notification.service'
 
 export class ProfesoresService {
     private readonly baseUrl = '/profesores'
@@ -16,7 +16,7 @@ export class ProfesoresService {
             preserveState: true,
             preserveScroll: true,
             onError: () => {
-                toast.error('Error al cargar los profesores')
+                NotificationService.error('Error al cargar los profesores')
             }
         })
     }
@@ -50,18 +50,18 @@ export class ProfesoresService {
             return
         }
 
-        const loadingToast = toast.loading('Eliminando profesor...')
+        const loadingToast = NotificationService.loading('Eliminando profesor...')
 
         router.delete(`${this.baseUrl}/${id}`, {
             preserveState: true,
             onSuccess: () => {
-                toast.dismiss(loadingToast)
-                toast.success('Profesor eliminado exitosamente')
+                NotificationService.dismiss(loadingToast)
+                NotificationService.success('Profesor eliminado exitosamente')
                 onSuccess?.()
             },
             onError: () => {
-                toast.dismiss(loadingToast)
-                toast.error('Error al eliminar el profesor')
+                NotificationService.dismiss(loadingToast)
+                NotificationService.error('Error al eliminar el profesor')
             }
         })
     }
@@ -80,10 +80,10 @@ export class ProfesoresService {
             preserveState: true,
             preserveScroll: true,
             onSuccess: () => {
-                toast.success(`Profesor ${currentStatus ? 'desactivado' : 'activado'} exitosamente`)
+                NotificationService.success(`Profesor ${currentStatus ? 'desactivado' : 'activado'} exitosamente`)
             },
             onError: () => {
-                toast.error(`Error al ${action} el profesor`)
+                NotificationService.error(`Error al ${action} el profesor`)
             }
         })
     }

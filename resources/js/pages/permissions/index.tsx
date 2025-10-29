@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import toast from 'react-hot-toast'
+import NotificationService from '@/services/notification.service'
 import { Trash2, Pencil, Plus, Search, Shield, Users, Eye } from 'lucide-react'
 import Can from '@/components/auth/Can'
 import { type BreadcrumbItem } from '@/types'
@@ -115,17 +115,17 @@ export default function Index() {
 
     const handleDelete = (permission: Permission) => {
         if (permission.roles_count > 0 || permission.users_count > 0) {
-            toast.error(`No se puede eliminar el permiso "${permission.name}" porque está asignado a ${permission.roles_count} rol(es) y ${permission.users_count} usuario(s).`)
+            NotificationService.error(`No se puede eliminar el permiso "${permission.name}" porque está asignado a ${permission.roles_count} rol(es) y ${permission.users_count} usuario(s).`)
             return
         }
 
         if (confirm(`¿Estás seguro de que quieres eliminar el permiso "${permission.name}"?`)) {
             router.delete(`/permissions/${permission.id}`, {
                 onSuccess: () => {
-                    toast.success('Permiso eliminado exitosamente')
+                    NotificationService.success('Permiso eliminado exitosamente')
                 },
                 onError: () => {
-                    toast.error('Error al eliminar el permiso')
+                    NotificationService.error('Error al eliminar el permiso')
                 }
             })
         }

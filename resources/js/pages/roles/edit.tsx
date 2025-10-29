@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import InputError from '@/components/input-error'
-import toast from 'react-hot-toast'
+import NotificationService from '@/services/notification.service'
 import { ArrowLeft, Save } from 'lucide-react'
 import { type BreadcrumbItem } from '@/types'
 
@@ -56,10 +56,10 @@ export default function Edit({ role, permissions }: PageProps) {
 
         put(`/roles/${role.id}`, {
             onSuccess: () => {
-                toast.success('Rol actualizado exitosamente.')
+                NotificationService.success('Rol actualizado exitosamente.')
             },
             onError: () => {
-                toast.error('Error al actualizar el rol.')
+                NotificationService.error('Error al actualizar el rol.')
             },
         })
     }

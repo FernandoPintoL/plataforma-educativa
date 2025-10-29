@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import toast from 'react-hot-toast';
+import NotificationService from '@/services/notification.service';
 
 interface AperturaCaja {
     id: number;
@@ -39,13 +39,13 @@ export default function CierreCajaModal({ show, onClose, cajaAbierta, montoEsper
 
         post('/cajas/cerrar', {
             onSuccess: () => {
-                toast.success('Caja cerrada exitosamente');
+                NotificationService.success('Caja cerrada exitosamente');
                 reset();
                 onClose();
             },
             onError: (errors) => {
                 Object.values(errors).forEach(error => {
-                    toast.error(error as string);
+                    NotificationService.error(error as string);
                 });
             }
         });

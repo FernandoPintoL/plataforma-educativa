@@ -78,7 +78,7 @@ export default function ModernTable<T extends BaseEntity>({
             case 'number':
                 return (
                     <span className="font-mono text-sm">
-                        {typeof value === 'number' ? value.toLocaleString() : value || '-'}
+                        {typeof value === 'number' ? value.toLocaleString() : (value != null ? String(value) : '-')}
                     </span>
                 );
 
@@ -175,8 +175,8 @@ export default function ModernTable<T extends BaseEntity>({
                             <TableHead
                                 key={String(column.key)}
                                 className={`font-semibold text-foreground ${column.sortable && onSort
-                                        ? 'cursor-pointer hover:bg-muted/70 transition-colors select-none'
-                                        : ''
+                                    ? 'cursor-pointer hover:bg-muted/70 transition-colors select-none'
+                                    : ''
                                     }`}
                                 onClick={() => handleHeaderClick(String(column.key))}
                             >

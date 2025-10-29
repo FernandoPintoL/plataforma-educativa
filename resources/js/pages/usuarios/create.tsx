@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import InputError from '@/components/input-error'
-import toast from 'react-hot-toast'
+import NotificationService from '@/services/notification.service'
 import { ArrowLeft, Save } from 'lucide-react'
 import { type BreadcrumbItem } from '@/types'
 
@@ -49,10 +49,10 @@ export default function Create({ roles, permissions }: PageProps) {
         post('/usuarios', {
             onSuccess: () => {
                 reset()
-                toast.success('Usuario creado exitosamente.')
+                NotificationService.success('Usuario creado exitosamente.')
             },
             onError: () => {
-                toast.error('Ocurrió un error al crear el usuario.')
+                NotificationService.error('Ocurrió un error al crear el usuario.')
             }
         })
     }

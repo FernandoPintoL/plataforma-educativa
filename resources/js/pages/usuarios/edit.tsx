@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import InputError from '@/components/input-error'
-import toast from 'react-hot-toast'
+import NotificationService from '@/services/notification.service'
 import { ArrowLeft, Save } from 'lucide-react'
 import { type BreadcrumbItem } from '@/types'
 
@@ -66,10 +66,10 @@ export default function Edit({ user, roles, userRoles, permissions, userPermissi
 
         put(`/usuarios/${user.id}`, {
             onSuccess: () => {
-                toast.success('Usuario actualizado exitosamente.')
+                NotificationService.success('Usuario actualizado exitosamente.')
             },
             onError: () => {
-                toast.error('Ocurrió un error al actualizar el usuario.')
+                NotificationService.error('Ocurrió un error al actualizar el usuario.')
             }
         })
     }

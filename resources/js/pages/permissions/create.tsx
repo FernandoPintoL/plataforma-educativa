@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import toast from 'react-hot-toast'
+import NotificationService from '@/services/notification.service'
 import { ArrowLeft, Save, Shield } from 'lucide-react'
 import { type BreadcrumbItem } from '@/types'
 
@@ -39,12 +39,12 @@ export default function Create() {
 
         post('/permissions', {
             onSuccess: () => {
-                toast.success('Permiso creado exitosamente')
+                NotificationService.success('Permiso creado exitosamente')
                 router.visit('/permissions')
             },
             onError: (errors) => {
                 console.error('Error creating permission:', errors)
-                toast.error('Error al crear el permiso')
+                NotificationService.error('Error al crear el permiso')
             }
         })
     }

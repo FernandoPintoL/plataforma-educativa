@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import InputError from '@/components/input-error'
-import toast from 'react-hot-toast'
+import NotificationService from '@/services/notification.service'
 import { ArrowLeft, Save } from 'lucide-react'
 import { type BreadcrumbItem } from '@/types'
 
@@ -49,10 +49,10 @@ export default function Create({ permissions }: PageProps) {
         post('/roles', {
             onSuccess: () => {
                 reset()
-                toast.success('Rol creado exitosamente.')
+                NotificationService.success('Rol creado exitosamente.')
             },
             onError: () => {
-                toast.error('Error al crear el rol.')
+                NotificationService.error('Error al crear el rol.')
             },
         })
     }

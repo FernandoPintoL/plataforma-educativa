@@ -2,7 +2,7 @@
 import { useForm } from '@inertiajs/react'
 import { useCallback } from 'react'
 import type { ProfesorFormData } from '@/domain/profesores'
-import toast from 'react-hot-toast'
+import NotificationService from '@/services/notification.service'
 
 interface UseProfesorFormProps {
     initialData?: Partial<ProfesorFormData>
@@ -49,14 +49,14 @@ export function useProfesorForm({ initialData, profesorId, mode }: UseProfesorFo
                 if (mode === 'create') {
                     reset()
                 }
-                toast.success(
+                NotificationService.success(
                     mode === 'create'
                         ? 'Profesor creado exitosamente'
                         : 'Profesor actualizado exitosamente'
                 )
             },
             onError: () => {
-                toast.error(
+                NotificationService.error(
                     mode === 'create'
                         ? 'Error al crear el profesor'
                         : 'Error al actualizar el profesor'

@@ -1,6 +1,8 @@
 // Domain Layer: Estudiantes types and interfaces
+import type { BaseEntity, BaseFormData } from './generic'
+import type { Pagination, Filters } from './shared'
 
-export interface Estudiante {
+export interface Estudiante extends BaseEntity {
     id: number
     name: string
     apellido?: string
@@ -67,7 +69,7 @@ export interface RendimientoAcademico {
     asistencia: number
 }
 
-export interface EstudianteFormData {
+export interface EstudianteFormData extends BaseFormData {
     name: string
     apellido: string
     usernick: string
@@ -127,6 +129,6 @@ export interface EstudianteShowPageProps {
 }
 
 export interface EstudianteIndexPageProps {
-    estudiantes: EstudiantesPaginated
-    filters: EstudianteFilters
+    estudiantes: Pagination<Estudiante>
+    filters: Filters
 }

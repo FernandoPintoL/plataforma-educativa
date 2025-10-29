@@ -2,7 +2,7 @@
 import { useForm } from '@inertiajs/react'
 import { useCallback } from 'react'
 import type { EstudianteFormData } from '@/domain/estudiantes'
-import toast from 'react-hot-toast'
+import NotificationService from '@/services/notification.service'
 
 interface UseEstudianteFormProps {
     initialData?: Partial<EstudianteFormData>
@@ -49,14 +49,14 @@ export function useEstudianteForm({ initialData, estudianteId, mode }: UseEstudi
                 if (mode === 'create') {
                     reset()
                 }
-                toast.success(
+                NotificationService.success(
                     mode === 'create'
                         ? 'Estudiante creado exitosamente'
                         : 'Estudiante actualizado exitosamente'
                 )
             },
             onError: () => {
-                toast.error(
+                NotificationService.error(
                     mode === 'create'
                         ? 'Error al crear el estudiante'
                         : 'Error al actualizar el estudiante'

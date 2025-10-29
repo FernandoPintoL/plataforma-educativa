@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import toast from 'react-hot-toast'
+import NotificationService from '@/services/notification.service'
 import { Trash2, Pencil, Plus, Search } from 'lucide-react'
 import Can from '@/components/auth/Can'
 import { type BreadcrumbItem } from '@/types'
@@ -84,10 +84,10 @@ export default function Index() {
         if (confirm(`¿Estás seguro de que quieres eliminar al usuario ${user.name}?`)) {
             router.delete(`/usuarios/${user.id}`, {
                 onSuccess: () => {
-                    toast.success('Usuario eliminado exitosamente.')
+                    NotificationService.success('Usuario eliminado exitosamente.')
                 },
                 onError: () => {
-                    toast.error('Ocurrió un error al eliminar el usuario.')
+                    NotificationService.error('Ocurrió un error al eliminar el usuario.')
                 }
             })
         }

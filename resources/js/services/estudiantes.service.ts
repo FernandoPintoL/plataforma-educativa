@@ -1,10 +1,62 @@
 // Service Layer: Estudiantes data access
 import { router } from '@inertiajs/react'
-import type { EstudianteFilters } from '@/domain/estudiantes'
-import toast from 'react-hot-toast'
+import type { Estudiante, EstudianteFilters, EstudianteFormData } from '@/domain/estudiantes'
+import type { BaseService, Filters } from '@/domain/generic'
+import type { Id } from '@/domain/shared'
+import NotificationService from '@/services/notification.service'
 
-export class EstudiantesService {
+export class EstudiantesService implements BaseService<Estudiante, EstudianteFormData> {
     private readonly baseUrl = '/estudiantes'
+
+    // Métodos requeridos por BaseService
+    indexUrl(params?: { query?: Filters }): string {
+        return this.baseUrl
+    }
+
+    createUrl(): string {
+        return `${this.baseUrl}/create`
+    }
+
+    editUrl(id: Id): string {
+        return `${this.baseUrl}/${id}/edit`
+    }
+
+    storeUrl(): string {
+        return this.baseUrl
+    }
+
+    updateUrl(id: Id): string {
+        return `${this.baseUrl}/${id}`
+    }
+
+    destroyUrl(id: Id): string {
+        return `${this.baseUrl}/${id}`
+    }
+
+    search(filters: Filters): void {
+        const queryParams = filters ? this.buildQueryParams(filters as EstudianteFilters) : {}
+        router.get(this.baseUrl, queryParams, {
+            preserveState: true,
+            preserveScroll: true,
+            onError: () => {
+                NotificationService.error('Error al cargar los estudiantes')
+            }
+        })
+    }
+
+    validateData(data: EstudianteFormData): string[] {
+        const errors: string[] = []
+        if (!data.name || data.name.trim().length === 0) {
+            errors.push('El nombre es requerido')
+        }
+        if (!data.email || data.email.trim().length === 0) {
+            errors.push('El email es requerido')
+        }
+        if (!data.usernick || data.usernick.trim().length === 0) {
+            errors.push('El nombre de usuario es requerido')
+        }
+        return errors
+    }
 
     /**
      * Navega al listado de estudiantes con filtros
@@ -16,7 +68,7 @@ export class EstudiantesService {
             preserveState: true,
             preserveScroll: true,
             onError: () => {
-                toast.error('Error al cargar los estudiantes')
+                NotificationService.error('Error al cargar los estudiantes')
             }
         })
     }
@@ -31,37 +83,37 @@ export class EstudiantesService {
     /**
      * Navega a la página de editar estudiante
      */
-    edit(id: number) {
+    edit(id: Id) {
         router.get(`${this.baseUrl}/${id}/edit`)
     }
 
     /**
      * Navega a la página de ver estudiante
      */
-    show(id: number) {
+    show(id: Id) {
         router.get(`${this.baseUrl}/${id}`)
     }
 
     /**
      * Elimina un estudiante
      */
-    destroy(id: number, onSuccess?: () => void) {
+    destroy(id: Id, onSuccess?: () => void) {
         if (!confirm('¿Estás seguro de que quieres eliminar este estudiante?')) {
             return
         }
 
-        const loadingToast = toast.loading('Eliminando estudiante...')
+        const loadingToast = NotificationService.loading('Eliminando estudiante...')
 
         router.delete(`${this.baseUrl}/${id}`, {
             preserveState: true,
             onSuccess: () => {
-                toast.dismiss(loadingToast)
-                toast.success('Estudiante eliminado exitosamente')
+                NotificationService.dismiss(loadingToast)
+                NotificationService.success('Estudiante eliminado exitosamente')
                 onSuccess?.()
             },
             onError: () => {
-                toast.dismiss(loadingToast)
-                toast.error('Error al eliminar el estudiante')
+                NotificationService.dismiss(loadingToast)
+                NotificationService.error('Error al eliminar el estudiante')
             }
         })
     }
@@ -80,10 +132,10 @@ export class EstudiantesService {
             preserveState: true,
             preserveScroll: true,
             onSuccess: () => {
-                toast.success(`Estudiante ${currentStatus ? 'desactivado' : 'activado'} exitosamente`)
+                NotificationService.success(`Estudiante ${currentStatus ? 'desactivado' : 'activado'} exitosamente`)
             },
             onError: () => {
-                toast.error(`Error al ${action} el estudiante`)
+                NotificationService.error(`Error al ${action} el estudiante`)
             }
         })
     }

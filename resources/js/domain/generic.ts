@@ -141,5 +141,58 @@ export interface GenericFormProps<T extends BaseEntity> {
   entity?: T | null;
 }
 
+// CRUD Configuration - Simplified for quick setup
+export interface CrudConfig<T extends BaseEntity = BaseEntity> {
+  // Module identification
+  name: string;                    // singular: 'estudiante'
+  pluralName: string;              // plural: 'estudiantes'
+
+  // Display configuration
+  title?: string;                  // Override default title
+  description?: string;            // Subtitle/description
+
+  // Table configuration
+  columns: TableColumn<T>[];
+
+  // Filters configuration (optional)
+  filters?: FilterField[];
+
+  // Search configuration (optional)
+  searchPlaceholder?: string;
+  searchFields?: string[];         // Fields to search in
+
+  // Permissions (optional)
+  permissions?: CrudPermissions;
+
+  // Custom actions (optional)
+  customActions?: CustomAction<T>[];
+
+  // URLs (optional - auto-generated from name if not provided)
+  urls?: {
+    index?: string;
+    create?: string;
+    edit?: (id: Id) => string;
+    show?: (id: Id) => string;
+  };
+}
+
+// CRUD Permissions
+export interface CrudPermissions {
+  create?: string;                 // Permission name for create
+  edit?: string;                   // Permission name for edit
+  delete?: string;                 // Permission name for delete
+  view?: string;                   // Permission name for view
+}
+
+// Custom Action Configuration
+export interface CustomAction<T extends BaseEntity> {
+  label: string;
+  icon?: React.ComponentType<{ className?: string }>;
+  onClick: (entity: T) => void;
+  variant?: 'default' | 'ghost' | 'outline' | 'destructive';
+  permission?: string;             // Optional permission check
+  visible?: (entity: T) => boolean; // Conditional visibility
+}
+
 // Export Filters type for convenience
 export type { Filters };

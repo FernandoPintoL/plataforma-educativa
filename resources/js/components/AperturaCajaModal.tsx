@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import toast from 'react-hot-toast';
+import NotificationService from '@/services/notification.service';
 
 interface Caja {
     id: number;
@@ -34,13 +34,13 @@ export default function AperturaCajaModal({ show, onClose, cajas }: Props) {
 
         post('/cajas/abrir', {
             onSuccess: () => {
-                toast.success('Caja abierta exitosamente');
+                NotificationService.success('Caja abierta exitosamente');
                 reset();
                 onClose();
             },
             onError: (errors) => {
                 Object.values(errors).forEach(error => {
-                    toast.error(error as string);
+                    NotificationService.error(error as string);
                 });
             }
         });
