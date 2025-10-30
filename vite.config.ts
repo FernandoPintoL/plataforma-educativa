@@ -19,7 +19,7 @@ export default defineConfig({
     ],
     server: {
         // Listen on all network interfaces so you can access from other devices and any Wi‑Fi network
-        host: '192.168.1.35',
+        host: '192.168.1.23',
         port: 5437,
     },
     esbuild: {

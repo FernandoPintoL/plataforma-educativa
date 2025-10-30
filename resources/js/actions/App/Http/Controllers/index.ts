@@ -18,28 +18,27 @@ import EvaluacionController from './EvaluacionController'
 import PreguntaController from './PreguntaController'
 import ModuloEducativoController from './ModuloEducativoController'
 import LeccionController from './LeccionController'
-
 const Controllers = {
     UserController,
-    RoleController,
-    PermissionController,
-    EstudianteController,
-    ProfesorController,
-    Settings,
-    Auth,
-    GestionUsuariosController,
-    DashboardDirectorController,
-    DashboardProfesorController,
-    DashboardEstudianteController,
-    DashboardPadreController,
-    TareaController,
-    TrabajoController,
-    CalificacionController,
-    RecursoController,
-    EvaluacionController,
-    PreguntaController,
-    ModuloEducativoController,
-    LeccionController,
+RoleController,
+PermissionController,
+EstudianteController,
+ProfesorController,
+Settings,
+Auth,
+GestionUsuariosController,
+DashboardDirectorController,
+DashboardProfesorController,
+DashboardEstudianteController,
+DashboardPadreController,
+TareaController,
+TrabajoController,
+CalificacionController,
+RecursoController,
+EvaluacionController,
+PreguntaController,
+ModuloEducativoController,
+LeccionController,
 }
 
 export default Controllers

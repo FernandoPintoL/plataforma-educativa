@@ -196,10 +196,35 @@ class User extends Authenticatable
 
     /**
      * Relación con hijos (para padres)
-     * Retorna usuarios de tipo estudiante que tienen este usuario como padre
+     * Retorna estudiantes vinculados a este padre a través de la tabla pivot padre_estudiante
      */
     public function hijos()
     {
-        return $this->hasMany(User::class, 'padre_id')->where('tipo_usuario', 'estudiante');
+        return $this->belongsToMany(
+            User::class,
+            'padre_estudiante',
+            'padre_id',
+            'estudiante_id'
+        )
+            ->withPivot('relacion', 'activo')
+            ->wherePivot('activo', true)
+            ->where('tipo_usuario', 'estudiante');
+    }
+
+    /**
+     * Relación con padres (para estudiantes)
+     * Retorna padres/apoderados vinculados a este estudiante
+     */
+    public function padres()
+    {
+        return $this->belongsToMany(
+            User::class,
+            'padre_estudiante',
+            'estudiante_id',
+            'padre_id'
+        )
+            ->withPivot('relacion', 'activo')
+            ->wherePivot('activo', true)
+            ->where('tipo_usuario', 'padre');
     }
 }

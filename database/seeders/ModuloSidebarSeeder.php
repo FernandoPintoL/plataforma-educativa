@@ -267,10 +267,11 @@ class ModuloSidebarSeeder extends Seeder
         // Submódulos de Administración
         $submenuAdministracion = [
             ['titulo' => 'Usuarios', 'ruta' => '/usuarios', 'icono' => 'Users', 'orden' => 1, 'permisos' => ['usuarios.index']],
-            ['titulo' => 'Roles', 'ruta' => '/roles', 'icono' => 'Shield', 'orden' => 2, 'permisos' => ['roles.index']],
-            ['titulo' => 'Permisos', 'ruta' => '/permissions', 'icono' => 'Key', 'orden' => 3, 'permisos' => ['permissions.index']],
-            // ['titulo' => 'Módulos Sidebar', 'ruta' => '/modulos-sidebar', 'icono' => 'Layout', 'orden' => 4],
-            // ['titulo' => 'Configuración Global', 'ruta' => '/configuracion-global', 'icono' => 'Cog', 'orden' => 4, 'permisos' => ['configuracion-global.index']],
+            ['titulo' => 'Gestionar Usuarios (Admin)', 'ruta' => '/admin/usuarios', 'icono' => 'UserCog', 'orden' => 2, 'permisos' => ['admin.usuarios.index']],
+            ['titulo' => 'Roles', 'ruta' => '/roles', 'icono' => 'Shield', 'orden' => 3, 'permisos' => ['roles.index']],
+            ['titulo' => 'Permisos', 'ruta' => '/permissions', 'icono' => 'Key', 'orden' => 4, 'permisos' => ['permissions.index']],
+            // ['titulo' => 'Módulos Sidebar', 'ruta' => '/modulos-sidebar', 'icono' => 'Layout', 'orden' => 5],
+            // ['titulo' => 'Configuración Global', 'ruta' => '/configuracion-global', 'icono' => 'Cog', 'orden' => 5, 'permisos' => ['configuracion-global.index']],
         ];
 
         foreach ($submenuAdministracion as $submenu) {
@@ -289,5 +290,115 @@ class ModuloSidebarSeeder extends Seeder
                 ]
             );
         }
+
+        // ==================== MÓDULOS ESPECÍFICOS PARA PADRES ====================
+
+        // Módulo de Trabajos/Entregas - Para ver entregas y calificar trabajos
+        $trabajos = ModuloSidebar::firstOrCreate(
+            ['titulo' => 'Entregas', 'ruta' => '/trabajos', 'es_submenu' => false],
+            [
+                'icono'             => 'FileCheck',
+                'descripcion'       => 'Gestión de entregas y trabajos de estudiantes',
+                'orden'             => 5,
+                'categoria'         => 'Académico',
+                'activo'            => true,
+                'permisos'          => ['trabajos.ver'],
+                'visible_dashboard' => true,
+            ]
+        );
+
+        // Submódulos de Trabajos
+        $submenuTrabajos = [
+            ['titulo' => 'Mis Entregas', 'ruta' => '/trabajos', 'icono' => 'DocumentText', 'orden' => 1, 'permisos' => ['trabajos.ver']],
+            ['titulo' => 'Calificar Trabajos', 'ruta' => '/trabajos/calificacion', 'icono' => 'CheckCircle', 'orden' => 2, 'permisos' => ['trabajos.calificar']],
+        ];
+
+        foreach ($submenuTrabajos as $submenu) {
+            ModuloSidebar::firstOrCreate(
+                [
+                    'titulo'          => $submenu['titulo'],
+                    'ruta'            => $submenu['ruta'],
+                    'es_submenu'      => true,
+                    'modulo_padre_id' => $trabajos->id,
+                ],
+                [
+                    'icono'    => $submenu['icono'],
+                    'orden'    => $submenu['orden'],
+                    'activo'   => true,
+                    'permisos' => $submenu['permisos'],
+                ]
+            );
+        }
+
+        // Módulo de Reportes Académicos - Para directores/admin ver análisis de rendimiento
+        $reportes = ModuloSidebar::firstOrCreate(
+            ['titulo' => 'Reportes', 'ruta' => '/reportes', 'es_submenu' => false],
+            [
+                'icono'             => 'BarChart3',
+                'descripcion'       => 'Sistema completo de reportes académicos',
+                'orden'             => 8,
+                'categoria'         => 'Académico',
+                'activo'            => true,
+                'permisos'          => ['reportes.ver', 'admin.usuarios'],
+                'visible_dashboard' => true,
+            ]
+        );
+
+        // Submódulos de Reportes
+        $submenuReportes = [
+            ['titulo' => 'Todos los Reportes', 'ruta' => '/reportes', 'icono' => 'BarChart3', 'orden' => 1, 'permisos' => ['reportes.ver', 'admin.usuarios']],
+            ['titulo' => 'Desempeño por Estudiante', 'ruta' => '/reportes/desempeno', 'icono' => 'User', 'orden' => 2, 'permisos' => ['reportes.ver', 'admin.usuarios']],
+            ['titulo' => 'Progreso por Curso', 'ruta' => '/reportes/cursos', 'icono' => 'AcademicCap', 'orden' => 3, 'permisos' => ['reportes.ver', 'admin.usuarios']],
+            ['titulo' => 'Análisis Comparativo', 'ruta' => '/reportes/analisis', 'icono' => 'TrendingUp', 'orden' => 4, 'permisos' => ['reportes.ver', 'admin.usuarios']],
+            ['titulo' => 'Métricas Institucionales', 'ruta' => '/reportes/metricas', 'icono' => 'SparklesIcon', 'orden' => 5, 'permisos' => ['reportes.ver', 'admin.usuarios']],
+        ];
+
+        foreach ($submenuReportes as $submenu) {
+            ModuloSidebar::firstOrCreate(
+                [
+                    'titulo'          => $submenu['titulo'],
+                    'ruta'            => $submenu['ruta'],
+                    'es_submenu'      => true,
+                    'modulo_padre_id' => $reportes->id,
+                ],
+                [
+                    'icono'    => $submenu['icono'],
+                    'orden'    => $submenu['orden'],
+                    'activo'   => true,
+                    'permisos' => $submenu['permisos'],
+                ]
+            );
+        }
+
+        // Módulo de Orientación Vocacional - TODO: Implementar rutas backend en web.php
+        // Comentado hasta que se implementen las rutas necesarias
+        /*
+        ModuloSidebar::firstOrCreate(
+            ['titulo' => 'Orientación Vocacional', 'ruta' => '/vocacional', 'es_submenu' => false],
+            [
+                'icono'             => 'Compass',
+                'descripcion'       => 'Pruebas y recomendaciones vocacionales',
+                'orden'             => 10,
+                'categoria'         => 'Académico',
+                'activo'            => true,
+                'permisos'          => ['vocacional.ver_tests', 'vocacional.ver_resultados', 'vocacional.ver_recomendaciones'],
+                'visible_dashboard' => true,
+            ]
+        );
+        */
+
+        // Módulo de Perfil - Visible para todos los usuarios autenticados
+        ModuloSidebar::firstOrCreate(
+            ['titulo' => 'Mi Perfil', 'ruta' => '/profile', 'es_submenu' => false],
+            [
+                'icono'             => 'User',
+                'descripcion'       => 'Configuración de perfil y contraseña',
+                'orden'             => 99,
+                'categoria'         => 'Usuario',
+                'activo'            => true,
+                'permisos'          => [], // Accesible para todos los autenticados
+                'visible_dashboard' => false,
+            ]
+        );
     }
 }

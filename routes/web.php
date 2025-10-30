@@ -215,6 +215,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('preguntas.reorder');
 });
 
+// ==================== REPORTES EDUCATIVOS ====================
+Route::middleware(['auth', 'verified', 'role:director|admin'])->group(function () {
+    Route::get('reportes', [\App\Http\Controllers\ReportesController::class, 'index'])->name('reportes.index');
+    Route::get('reportes/desempeno', [\App\Http\Controllers\ReportesController::class, 'desempenioPorEstudiante'])->name('reportes.desempeno');
+    Route::get('reportes/cursos', [\App\Http\Controllers\ReportesController::class, 'progresoPorCurso'])->name('reportes.cursos');
+    Route::get('reportes/analisis', [\App\Http\Controllers\ReportesController::class, 'analisisComparativo'])->name('reportes.analisis');
+    Route::get('reportes/metricas', [\App\Http\Controllers\ReportesController::class, 'metricasInstitucionales'])->name('reportes.metricas');
+});
+
 // ==================== MÓDULOS EDUCATIVOS Y LECCIONES ====================
 Route::middleware(['auth', 'verified'])->group(function () {
     // Rutas de Módulos Educativos (lectura para todos, escritura solo profesores)

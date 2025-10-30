@@ -168,7 +168,6 @@ class RolesAndPermissionsSeeder extends Seeder
             'cursos.ver',
             'contenido.ver',
             'recursos.ver',
-            'evaluaciones.ver',
             'trabajos.ver',
             'analisis.ver',
             'vocacional.ver_tests', 'vocacional.ver_resultados', 'vocacional.ver_recomendaciones',

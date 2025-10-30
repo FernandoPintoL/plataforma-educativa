@@ -1,9 +1,9 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\CalificacionController::index
-* @see app/Http/Controllers/CalificacionController.php:17
-* @route '/calificaciones'
-*/
+ * @see app/Http/Controllers/CalificacionController.php:17
+ * @route '/calificaciones'
+ */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index.url(options),
     method: 'get',
@@ -16,75 +16,72 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\CalificacionController::index
-* @see app/Http/Controllers/CalificacionController.php:17
-* @route '/calificaciones'
-*/
+ * @see app/Http/Controllers/CalificacionController.php:17
+ * @route '/calificaciones'
+ */
 index.url = (options?: RouteQueryOptions) => {
     return index.definition.url + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\CalificacionController::index
-* @see app/Http/Controllers/CalificacionController.php:17
-* @route '/calificaciones'
-*/
+ * @see app/Http/Controllers/CalificacionController.php:17
+ * @route '/calificaciones'
+ */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index.url(options),
     method: 'get',
 })
-
 /**
 * @see \App\Http\Controllers\CalificacionController::index
-* @see app/Http/Controllers/CalificacionController.php:17
-* @route '/calificaciones'
-*/
+ * @see app/Http/Controllers/CalificacionController.php:17
+ * @route '/calificaciones'
+ */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: index.url(options),
     method: 'head',
 })
 
-/**
+    /**
 * @see \App\Http\Controllers\CalificacionController::index
-* @see app/Http/Controllers/CalificacionController.php:17
-* @route '/calificaciones'
-*/
-const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: index.url(options),
-    method: 'get',
-})
+ * @see app/Http/Controllers/CalificacionController.php:17
+ * @route '/calificaciones'
+ */
+    const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: index.url(options),
+        method: 'get',
+    })
 
-/**
+            /**
 * @see \App\Http\Controllers\CalificacionController::index
-* @see app/Http/Controllers/CalificacionController.php:17
-* @route '/calificaciones'
-*/
-indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: index.url(options),
-    method: 'get',
-})
-
-/**
+ * @see app/Http/Controllers/CalificacionController.php:17
+ * @route '/calificaciones'
+ */
+        indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: index.url(options),
+            method: 'get',
+        })
+            /**
 * @see \App\Http\Controllers\CalificacionController::index
-* @see app/Http/Controllers/CalificacionController.php:17
-* @route '/calificaciones'
-*/
-indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: index.url({
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-index.form = indexForm
-
+ * @see app/Http/Controllers/CalificacionController.php:17
+ * @route '/calificaciones'
+ */
+        indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: index.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    index.form = indexForm
 /**
 * @see \App\Http\Controllers\CalificacionController::show
-* @see app/Http/Controllers/CalificacionController.php:126
-* @route '/calificaciones/{calificacione}'
-*/
+ * @see app/Http/Controllers/CalificacionController.php:126
+ * @route '/calificaciones/{calificacione}'
+ */
 export const show = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
@@ -97,25 +94,26 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\CalificacionController::show
-* @see app/Http/Controllers/CalificacionController.php:126
-* @route '/calificaciones/{calificacione}'
-*/
+ * @see app/Http/Controllers/CalificacionController.php:126
+ * @route '/calificaciones/{calificacione}'
+ */
 show.url = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { calificacione: args }
     }
 
+    
     if (Array.isArray(args)) {
         args = {
-            calificacione: args[0],
-        }
+                    calificacione: args[0],
+                }
     }
 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-        calificacione: args.calificacione,
-    }
+                        calificacione: args.calificacione,
+                }
 
     return show.definition.url
             .replace('{calificacione}', parsedArgs.calificacione.toString())
@@ -124,66 +122,63 @@ show.url = (args: { calificacione: string | number } | [calificacione: string | 
 
 /**
 * @see \App\Http\Controllers\CalificacionController::show
-* @see app/Http/Controllers/CalificacionController.php:126
-* @route '/calificaciones/{calificacione}'
-*/
+ * @see app/Http/Controllers/CalificacionController.php:126
+ * @route '/calificaciones/{calificacione}'
+ */
 show.get = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
-
 /**
 * @see \App\Http\Controllers\CalificacionController::show
-* @see app/Http/Controllers/CalificacionController.php:126
-* @route '/calificaciones/{calificacione}'
-*/
+ * @see app/Http/Controllers/CalificacionController.php:126
+ * @route '/calificaciones/{calificacione}'
+ */
 show.head = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
 
-/**
+    /**
 * @see \App\Http\Controllers\CalificacionController::show
-* @see app/Http/Controllers/CalificacionController.php:126
-* @route '/calificaciones/{calificacione}'
-*/
-const showForm = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: show.url(args, options),
-    method: 'get',
-})
+ * @see app/Http/Controllers/CalificacionController.php:126
+ * @route '/calificaciones/{calificacione}'
+ */
+    const showForm = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: show.url(args, options),
+        method: 'get',
+    })
 
-/**
+            /**
 * @see \App\Http\Controllers\CalificacionController::show
-* @see app/Http/Controllers/CalificacionController.php:126
-* @route '/calificaciones/{calificacione}'
-*/
-showForm.get = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: show.url(args, options),
-    method: 'get',
-})
-
-/**
+ * @see app/Http/Controllers/CalificacionController.php:126
+ * @route '/calificaciones/{calificacione}'
+ */
+        showForm.get = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: show.url(args, options),
+            method: 'get',
+        })
+            /**
 * @see \App\Http\Controllers\CalificacionController::show
-* @see app/Http/Controllers/CalificacionController.php:126
-* @route '/calificaciones/{calificacione}'
-*/
-showForm.head = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: show.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-show.form = showForm
-
+ * @see app/Http/Controllers/CalificacionController.php:126
+ * @route '/calificaciones/{calificacione}'
+ */
+        showForm.head = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: show.url(args, {
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    show.form = showForm
 /**
 * @see \App\Http\Controllers\CalificacionController::update
-* @see app/Http/Controllers/CalificacionController.php:154
-* @route '/calificaciones/{calificacione}'
-*/
+ * @see app/Http/Controllers/CalificacionController.php:154
+ * @route '/calificaciones/{calificacione}'
+ */
 export const update = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
@@ -196,25 +191,26 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\CalificacionController::update
-* @see app/Http/Controllers/CalificacionController.php:154
-* @route '/calificaciones/{calificacione}'
-*/
+ * @see app/Http/Controllers/CalificacionController.php:154
+ * @route '/calificaciones/{calificacione}'
+ */
 update.url = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { calificacione: args }
     }
 
+    
     if (Array.isArray(args)) {
         args = {
-            calificacione: args[0],
-        }
+                    calificacione: args[0],
+                }
     }
 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-        calificacione: args.calificacione,
-    }
+                        calificacione: args.calificacione,
+                }
 
     return update.definition.url
             .replace('{calificacione}', parsedArgs.calificacione.toString())
@@ -223,76 +219,73 @@ update.url = (args: { calificacione: string | number } | [calificacione: string 
 
 /**
 * @see \App\Http\Controllers\CalificacionController::update
-* @see app/Http/Controllers/CalificacionController.php:154
-* @route '/calificaciones/{calificacione}'
-*/
+ * @see app/Http/Controllers/CalificacionController.php:154
+ * @route '/calificaciones/{calificacione}'
+ */
 update.put = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
-
 /**
 * @see \App\Http\Controllers\CalificacionController::update
-* @see app/Http/Controllers/CalificacionController.php:154
-* @route '/calificaciones/{calificacione}'
-*/
+ * @see app/Http/Controllers/CalificacionController.php:154
+ * @route '/calificaciones/{calificacione}'
+ */
 update.patch = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
 
-/**
+    /**
 * @see \App\Http\Controllers\CalificacionController::update
-* @see app/Http/Controllers/CalificacionController.php:154
-* @route '/calificaciones/{calificacione}'
-*/
-const updateForm = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: update.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'PUT',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
+ * @see app/Http/Controllers/CalificacionController.php:154
+ * @route '/calificaciones/{calificacione}'
+ */
+    const updateForm = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        action: update.url(args, {
+                    [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                        _method: 'PUT',
+                        ...(options?.query ?? options?.mergeQuery ?? {}),
+                    }
+                }),
+        method: 'post',
+    })
 
-/**
+            /**
 * @see \App\Http\Controllers\CalificacionController::update
-* @see app/Http/Controllers/CalificacionController.php:154
-* @route '/calificaciones/{calificacione}'
-*/
-updateForm.put = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: update.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'PUT',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-/**
+ * @see app/Http/Controllers/CalificacionController.php:154
+ * @route '/calificaciones/{calificacione}'
+ */
+        updateForm.put = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+            action: update.url(args, {
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'PUT',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'post',
+        })
+            /**
 * @see \App\Http\Controllers\CalificacionController::update
-* @see app/Http/Controllers/CalificacionController.php:154
-* @route '/calificaciones/{calificacione}'
-*/
-updateForm.patch = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: update.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'PATCH',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-update.form = updateForm
-
+ * @see app/Http/Controllers/CalificacionController.php:154
+ * @route '/calificaciones/{calificacione}'
+ */
+        updateForm.patch = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+            action: update.url(args, {
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'PATCH',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'post',
+        })
+    
+    update.form = updateForm
 /**
 * @see \App\Http\Controllers\CalificacionController::destroy
-* @see app/Http/Controllers/CalificacionController.php:208
-* @route '/calificaciones/{calificacione}'
-*/
+ * @see app/Http/Controllers/CalificacionController.php:208
+ * @route '/calificaciones/{calificacione}'
+ */
 export const destroy = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
@@ -305,25 +298,26 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\CalificacionController::destroy
-* @see app/Http/Controllers/CalificacionController.php:208
-* @route '/calificaciones/{calificacione}'
-*/
+ * @see app/Http/Controllers/CalificacionController.php:208
+ * @route '/calificaciones/{calificacione}'
+ */
 destroy.url = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { calificacione: args }
     }
 
+    
     if (Array.isArray(args)) {
         args = {
-            calificacione: args[0],
-        }
+                    calificacione: args[0],
+                }
     }
 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-        calificacione: args.calificacione,
-    }
+                        calificacione: args.calificacione,
+                }
 
     return destroy.definition.url
             .replace('{calificacione}', parsedArgs.calificacione.toString())
@@ -332,51 +326,50 @@ destroy.url = (args: { calificacione: string | number } | [calificacione: string
 
 /**
 * @see \App\Http\Controllers\CalificacionController::destroy
-* @see app/Http/Controllers/CalificacionController.php:208
-* @route '/calificaciones/{calificacione}'
-*/
+ * @see app/Http/Controllers/CalificacionController.php:208
+ * @route '/calificaciones/{calificacione}'
+ */
 destroy.delete = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
 
-/**
+    /**
 * @see \App\Http\Controllers\CalificacionController::destroy
-* @see app/Http/Controllers/CalificacionController.php:208
-* @route '/calificaciones/{calificacione}'
-*/
-const destroyForm = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: destroy.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'DELETE',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
+ * @see app/Http/Controllers/CalificacionController.php:208
+ * @route '/calificaciones/{calificacione}'
+ */
+    const destroyForm = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        action: destroy.url(args, {
+                    [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                        _method: 'DELETE',
+                        ...(options?.query ?? options?.mergeQuery ?? {}),
+                    }
+                }),
+        method: 'post',
+    })
 
-/**
+            /**
 * @see \App\Http\Controllers\CalificacionController::destroy
-* @see app/Http/Controllers/CalificacionController.php:208
-* @route '/calificaciones/{calificacione}'
-*/
-destroyForm.delete = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: destroy.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'DELETE',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-destroy.form = destroyForm
-
+ * @see app/Http/Controllers/CalificacionController.php:208
+ * @route '/calificaciones/{calificacione}'
+ */
+        destroyForm.delete = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+            action: destroy.url(args, {
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'DELETE',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'post',
+        })
+    
+    destroy.form = destroyForm
 /**
 * @see \App\Http\Controllers\CalificacionController::store
-* @see app/Http/Controllers/CalificacionController.php:61
-* @route '/trabajos/{trabajo}/calificar'
-*/
+ * @see app/Http/Controllers/CalificacionController.php:61
+ * @route '/trabajos/{trabajo}/calificar'
+ */
 export const store = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(args, options),
     method: 'post',
@@ -389,31 +382,31 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\CalificacionController::store
-* @see app/Http/Controllers/CalificacionController.php:61
-* @route '/trabajos/{trabajo}/calificar'
-*/
+ * @see app/Http/Controllers/CalificacionController.php:61
+ * @route '/trabajos/{trabajo}/calificar'
+ */
 store.url = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { trabajo: args }
     }
 
-    if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-        args = { trabajo: args.id }
-    }
-
+            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
+            args = { trabajo: args.id }
+        }
+    
     if (Array.isArray(args)) {
         args = {
-            trabajo: args[0],
-        }
+                    trabajo: args[0],
+                }
     }
 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-        trabajo: typeof args.trabajo === 'object'
-        ? args.trabajo.id
-        : args.trabajo,
-    }
+                        trabajo: typeof args.trabajo === 'object'
+                ? args.trabajo.id
+                : args.trabajo,
+                }
 
     return store.definition.url
             .replace('{trabajo}', parsedArgs.trabajo.toString())
@@ -422,41 +415,40 @@ store.url = (args: { trabajo: number | { id: number } } | [trabajo: number | { i
 
 /**
 * @see \App\Http\Controllers\CalificacionController::store
-* @see app/Http/Controllers/CalificacionController.php:61
-* @route '/trabajos/{trabajo}/calificar'
-*/
+ * @see app/Http/Controllers/CalificacionController.php:61
+ * @route '/trabajos/{trabajo}/calificar'
+ */
 store.post = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(args, options),
     method: 'post',
 })
 
-/**
+    /**
 * @see \App\Http\Controllers\CalificacionController::store
-* @see app/Http/Controllers/CalificacionController.php:61
-* @route '/trabajos/{trabajo}/calificar'
-*/
-const storeForm = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: store.url(args, options),
-    method: 'post',
-})
+ * @see app/Http/Controllers/CalificacionController.php:61
+ * @route '/trabajos/{trabajo}/calificar'
+ */
+    const storeForm = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        action: store.url(args, options),
+        method: 'post',
+    })
 
-/**
+            /**
 * @see \App\Http\Controllers\CalificacionController::store
-* @see app/Http/Controllers/CalificacionController.php:61
-* @route '/trabajos/{trabajo}/calificar'
-*/
-storeForm.post = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: store.url(args, options),
-    method: 'post',
-})
-
-store.form = storeForm
-
+ * @see app/Http/Controllers/CalificacionController.php:61
+ * @route '/trabajos/{trabajo}/calificar'
+ */
+        storeForm.post = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+            action: store.url(args, options),
+            method: 'post',
+        })
+    
+    store.form = storeForm
 /**
 * @see \App\Http\Controllers\CalificacionController::exportar
-* @see app/Http/Controllers/CalificacionController.php:244
-* @route '/calificaciones/exportar'
-*/
+ * @see app/Http/Controllers/CalificacionController.php:244
+ * @route '/calificaciones/exportar'
+ */
 export const exportar = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: exportar.url(options),
     method: 'get',
@@ -469,70 +461,67 @@ exportar.definition = {
 
 /**
 * @see \App\Http\Controllers\CalificacionController::exportar
-* @see app/Http/Controllers/CalificacionController.php:244
-* @route '/calificaciones/exportar'
-*/
+ * @see app/Http/Controllers/CalificacionController.php:244
+ * @route '/calificaciones/exportar'
+ */
 exportar.url = (options?: RouteQueryOptions) => {
     return exportar.definition.url + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\CalificacionController::exportar
-* @see app/Http/Controllers/CalificacionController.php:244
-* @route '/calificaciones/exportar'
-*/
+ * @see app/Http/Controllers/CalificacionController.php:244
+ * @route '/calificaciones/exportar'
+ */
 exportar.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: exportar.url(options),
     method: 'get',
 })
-
 /**
 * @see \App\Http\Controllers\CalificacionController::exportar
-* @see app/Http/Controllers/CalificacionController.php:244
-* @route '/calificaciones/exportar'
-*/
+ * @see app/Http/Controllers/CalificacionController.php:244
+ * @route '/calificaciones/exportar'
+ */
 exportar.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: exportar.url(options),
     method: 'head',
 })
 
-/**
+    /**
 * @see \App\Http\Controllers\CalificacionController::exportar
-* @see app/Http/Controllers/CalificacionController.php:244
-* @route '/calificaciones/exportar'
-*/
-const exportarForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: exportar.url(options),
-    method: 'get',
-})
+ * @see app/Http/Controllers/CalificacionController.php:244
+ * @route '/calificaciones/exportar'
+ */
+    const exportarForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: exportar.url(options),
+        method: 'get',
+    })
 
-/**
+            /**
 * @see \App\Http\Controllers\CalificacionController::exportar
-* @see app/Http/Controllers/CalificacionController.php:244
-* @route '/calificaciones/exportar'
-*/
-exportarForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: exportar.url(options),
-    method: 'get',
-})
-
-/**
+ * @see app/Http/Controllers/CalificacionController.php:244
+ * @route '/calificaciones/exportar'
+ */
+        exportarForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: exportar.url(options),
+            method: 'get',
+        })
+            /**
 * @see \App\Http\Controllers\CalificacionController::exportar
-* @see app/Http/Controllers/CalificacionController.php:244
-* @route '/calificaciones/exportar'
-*/
-exportarForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: exportar.url({
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-exportar.form = exportarForm
-
+ * @see app/Http/Controllers/CalificacionController.php:244
+ * @route '/calificaciones/exportar'
+ */
+        exportarForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: exportar.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    exportar.form = exportarForm
 const CalificacionController = { index, show, update, destroy, store, exportar }
 
 export default CalificacionController

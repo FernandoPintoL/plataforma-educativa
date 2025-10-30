@@ -2,6 +2,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Tarea;
+use App\Models\Trabajo;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
@@ -11,72 +14,105 @@ class DashboardPadreController extends Controller
     {
         $padre = Auth::user();
 
-        // TODO: Implementar relación padre-hijo cuando se agregue la tabla
-        // Por ahora, mostramos información general
+        // Obtener hijos reales del padre
+        $hijos = $padre->hijos()
+            ->with(['cursosComoEstudiante', 'rendimientoAcademico', 'trabajos.calificacion'])
+            ->get();
 
-        // En el futuro, obtener hijos del padre:
-        // $hijos = $padre->hijos()->with('cursosComoEstudiante')->get();
-
-        // Simulación temporal - en producción esto vendrá de la relación padre-hijo
-        $hijosInfo = $this->getHijosInfo($padre);
+        // Obtener información detallada de cada hijo
+        $hijosInfo = $this->getHijosInfo($hijos);
 
         // Estadísticas generales de los hijos
         $estadisticas = [
-            'total_hijos'       => count($hijosInfo),
+            'total_hijos'       => $hijos->count(),
             'total_cursos'      => collect($hijosInfo)->sum('total_cursos'),
             'tareas_pendientes' => collect($hijosInfo)->sum('tareas_pendientes'),
-            'promedio_general'  => collect($hijosInfo)->avg('promedio'),
+            'promedio_general'  => collect($hijosInfo)->avg('promedio') ?? 0,
         ];
 
         // Notificaciones importantes
         $notificaciones = $this->getNotificacionesImportantes($hijosInfo);
 
         // Calendario de próximas evaluaciones
-        $proximasEvaluaciones = $this->getProximasEvaluaciones($hijosInfo);
+        $proximasEvaluaciones = $this->getProximasEvaluaciones($hijos);
 
         // Resumen de rendimiento por hijo
         $rendimientoPorHijo = collect($hijosInfo)->map(function ($hijo) {
             return [
+                'id'                => $hijo['id'],
                 'nombre'            => $hijo['nombre'],
                 'promedio'          => $hijo['promedio'],
                 'cursos'            => $hijo['total_cursos'],
                 'tareas_pendientes' => $hijo['tareas_pendientes'],
-                'asistencia'        => $hijo['asistencia'], // Por implementar
             ];
-        });
+        })->values();
 
         // Obtener los módulos del sidebar para el usuario actual
         $modulosSidebar = $this->getMenuItems();
 
         return Inertia::render('Dashboard/Padre', [
             'estadisticas'         => $estadisticas,
-            'hijos'                => $hijosInfo,
+            'hijos'                => $rendimientoPorHijo,
+            'hijosInfo'            => $hijosInfo,
             'notificaciones'       => $notificaciones,
             'proximasEvaluaciones' => $proximasEvaluaciones,
-            'rendimientoPorHijo'   => $rendimientoPorHijo,
-            'modulosSidebar'       => $modulosSidebar, // Añadir los módulos del sidebar
+            'modulosSidebar'       => $modulosSidebar,
         ]);
     }
 
-    private function getHijosInfo($padre)
+    /**
+     * Obtener información detallada de cada hijo
+     */
+    private function getHijosInfo($hijos)
     {
-        // TODO: Implementar cuando se agregue la relación padre-hijo
-        // Por ahora retornamos datos de ejemplo
+        return $hijos->map(function ($hijo) {
+            $cursos = $hijo->cursosComoEstudiante;
+            $trabajos = $hijo->trabajos;
+            $rendimiento = $hijo->rendimientoAcademico;
 
-        // En producción esto sería:
-        // return $padre->hijos->map(function ($hijo) { ... });
+            // Contar tareas pendientes (trabajos sin calificar)
+            $tareasPendientes = $trabajos
+                ->filter(function ($trabajo) {
+                    return $trabajo->estado === 'en_progreso' || $trabajo->estado === 'entregado';
+                })
+                ->count();
 
-        // Datos de ejemplo temporal
-        return [
-            [
-                'id'                => 1,
-                'nombre'            => 'Hijo 1',
-                'total_cursos'      => 5,
-                'tareas_pendientes' => 3,
-                'promedio'          => 85.5,
-                'asistencia'        => 95,
-            ],
-        ];
+            // Obtener promedio
+            $promedio = $rendimiento?->promedio ?? 0;
+
+            // Obtener calificaciones recientes
+            $calificacionesRecientes = $trabajos
+                ->filter(function ($trabajo) {
+                    return $trabajo->calificacion !== null;
+                })
+                ->sortByDesc(function ($trabajo) {
+                    return $trabajo->calificacion->fecha_calificacion;
+                })
+                ->take(5)
+                ->map(function ($trabajo) {
+                    return [
+                        'tarea_titulo' => $trabajo->contenido?->titulo ?? 'Sin título',
+                        'puntaje' => $trabajo->calificacion->puntaje,
+                        'fecha' => $trabajo->calificacion->fecha_calificacion,
+                        'comentario' => $trabajo->calificacion->comentario,
+                    ];
+                })
+                ->values()
+                ->toArray();
+
+            return [
+                'id'                      => $hijo->id,
+                'nombre'                  => $hijo->nombre_completo,
+                'email'                   => $hijo->email,
+                'total_cursos'            => $cursos->count(),
+                'tareas_pendientes'       => $tareasPendientes,
+                'promedio'                => round($promedio, 2),
+                'calificaciones_recientes' => $calificacionesRecientes,
+                'fortalezas'              => $rendimiento?->fortalezas ?? [],
+                'debilidades'             => $rendimiento?->debilidades ?? [],
+                'tendencia'               => $rendimiento?->tendencia_temporal ?? 'estable',
+            ];
+        })->toArray();
     }
 
     private function getNotificacionesImportantes($hijosInfo)
@@ -115,20 +151,32 @@ class DashboardPadreController extends Controller
         return $notificaciones;
     }
 
-    private function getProximasEvaluaciones($hijosInfo)
+    /**
+     * Obtener próximas evaluaciones/tareas con fecha límite
+     */
+    private function getProximasEvaluaciones($hijos)
     {
-        // TODO: Implementar con datos reales de evaluaciones
-        // Por ahora retornamos array vacío
+        $hijosIds = $hijos->pluck('id')->toArray();
 
-        // En producción:
-        // return Evaluacion::whereHas('contenido.curso.estudiantes', function ($query) use ($hijosIds) {
-        //     $query->whereIn('users.id', $hijosIds);
-        // })
-        // ->where('fecha_limite', '>=', now())
-        // ->orderBy('fecha_limite', 'asc')
-        // ->get();
+        // Obtener próximas tareas no entregadas
+        $tareasProximas = Tarea::whereHas('contenido.curso.estudiantes', function ($query) use ($hijosIds) {
+            $query->whereIn('users.id', $hijosIds);
+        })
+            ->where('fecha_limite', '>=', now())
+            ->orderBy('fecha_limite', 'asc')
+            ->limit(10)
+            ->get()
+            ->map(function ($tarea) {
+                return [
+                    'titulo' => $tarea->contenido?->titulo,
+                    'tipo' => 'tarea',
+                    'curso' => $tarea->contenido?->curso?->nombre,
+                    'fecha_limite' => $tarea->fecha_limite,
+                    'dias_restantes' => now()->diffInDays($tarea->fecha_limite),
+                ];
+            });
 
-        return [];
+        return $tareasProximas->toArray();
     }
 
     /**

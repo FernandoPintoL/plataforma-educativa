@@ -4,7 +4,6 @@ import AppLayout from '@/layouts/app-layout';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -21,10 +20,11 @@ import {
   ChartBarIcon,
   ArrowDownTrayIcon,
   PaperAirplaneIcon,
-  XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { FileUploadModal, formatBytes } from '@/components/FileUploadModal';
+import NotificationService from '@/services/notification.service';
 
 interface Recurso {
   id: number;
@@ -109,37 +109,78 @@ export default function Show({ tarea, trabajo, estadisticas }: Props) {
   const esEstudiante = !estadisticas;
   const esProfesor = !!estadisticas;
 
+  // Estado del modal de upload
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [isSubmittingFiles, setIsSubmittingFiles] = useState(false);
+
   const { data, setData, post, processing, errors } = useForm({
     comentarios: trabajo?.comentarios || '',
     archivos: [] as File[],
   });
 
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  /**
+   * Maneja el envío de archivos desde el modal
+   */
+  const handleFileSubmit = async (files: File[]) => {
+    try {
+      setIsSubmittingFiles(true);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const files = Array.from(e.target.files);
-      const maxFiles = tarea.max_archivos - (trabajo?.respuestas?.archivos?.length || 0);
+      // Crea un nuevo formulario con comentarios y archivos
+      const formData = new FormData();
+      formData.append('comentarios', data.comentarios);
 
-      if (files.length > maxFiles) {
-        alert(`Solo puedes subir ${maxFiles} archivos más`);
-        return;
+      // Agrega los nuevos archivos
+      files.forEach((file) => {
+        formData.append('archivos[]', file);
+      });
+
+      // Agrega archivos existentes si los hay
+      if (trabajo?.respuestas?.archivos) {
+        trabajo.respuestas.archivos.forEach((archivo) => {
+          formData.append('existing_archivos[]', JSON.stringify(archivo));
+        });
       }
 
-      setSelectedFiles([...selectedFiles, ...files]);
-      setData('archivos', [...selectedFiles, ...files]);
+      // Realiza el POST con Inertia.js
+      router.post(`/tareas/${tarea.id}/entregar`, formData, {
+        onSuccess: () => {
+          NotificationService.success('Archivos subidos correctamente');
+          setShowUploadModal(false);
+          setData('archivos', []);
+        },
+        onError: (errors) => {
+          const errorMessages = Object.values(errors).join(', ');
+          NotificationService.error(
+            `Error al subir archivos: ${errorMessages}`
+          );
+        },
+      });
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Error desconocido';
+      NotificationService.error(`Error: ${message}`);
+    } finally {
+      setIsSubmittingFiles(false);
     }
   };
 
-  const removeFile = (index: number) => {
-    const newFiles = selectedFiles.filter((_, i) => i !== index);
-    setSelectedFiles(newFiles);
-    setData('archivos', newFiles);
-  };
-
   const handleEntregar = () => {
-    if (confirm('¿Estás seguro de entregar este trabajo? No podrás modificarlo después.')) {
-      post(`/tareas/${tarea.id}/entregar`);
+    if (
+      confirm(
+        '¿Estás seguro de entregar este trabajo? No podrás modificarlo después.'
+      )
+    ) {
+      post(`/tareas/${tarea.id}/entregar`, {
+        onSuccess: () => {
+          NotificationService.success('Trabajo entregado correctamente');
+        },
+        onError: (errors) => {
+          const errorMessages = Object.values(errors).join(', ');
+          NotificationService.error(
+            `Error al entregar: ${errorMessages}`
+          );
+        },
+      });
     }
   };
 
@@ -176,14 +217,6 @@ export default function Show({ tarea, trabajo, estadisticas }: Props) {
         {config.label}
       </Badge>
     );
-  };
-
-  const formatBytes = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
   };
 
   return (
@@ -305,53 +338,53 @@ export default function Show({ tarea, trabajo, estadisticas }: Props) {
 
                   {/* Subir Archivos */}
                   {tarea.permite_archivos && (
-                    <div>
-                      <Label htmlFor="archivos">
-                        Archivos (Máximo {tarea.max_archivos})
-                      </Label>
-                      <Input
-                        id="archivos"
-                        type="file"
-                        multiple
-                        onChange={handleFileChange}
-                        className="mt-1"
-                        disabled={processing}
-                      />
-                      {tarea.tipo_archivo_permitido && (
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Tipos permitidos: {tarea.tipo_archivo_permitido}
+                    <>
+                      <div>
+                        <Label>
+                          Archivos (Máximo {tarea.max_archivos})
+                        </Label>
+                        <p className="text-xs text-muted-foreground mt-1 mb-3">
+                          {tarea.tipo_archivo_permitido && (
+                            <>Tipos permitidos: <strong>{tarea.tipo_archivo_permitido}</strong></>
+                          )}
                         </p>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Lista de archivos seleccionados */}
-                  {selectedFiles.length > 0 && (
-                    <div className="space-y-2">
-                      <Label>Archivos seleccionados:</Label>
-                      {selectedFiles.map((file, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center justify-between p-2 bg-muted rounded"
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => setShowUploadModal(true)}
+                          disabled={processing || isSubmittingFiles}
+                          className="w-full"
                         >
-                          <span className="text-sm truncate flex-1">{file.name}</span>
-                          <span className="text-xs text-muted-foreground mx-2">
-                            {formatBytes(file.size)}
-                          </span>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => removeFile(index)}
-                            disabled={processing}
-                          >
-                            <XMarkIcon className="h-4 w-4" />
-                          </Button>
+                          <PaperClipIcon className="h-4 w-4 mr-2" />
+                          Seleccionar Archivos
+                        </Button>
+                      </div>
+
+                      {/* Archivos ya subidos en esta entrega */}
+                      {data.archivos && data.archivos.length > 0 && (
+                        <div className="space-y-2 p-3 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
+                          <Label className="text-green-900 dark:text-green-400">
+                            ✓ Archivos listos para entregar ({data.archivos.length})
+                          </Label>
+                          <div className="space-y-2">
+                            {data.archivos.map((file, index) => (
+                              <div
+                                key={index}
+                                className="flex items-center justify-between p-2 bg-white dark:bg-green-900/30 rounded text-sm"
+                              >
+                                <span className="truncate flex-1">{file.name}</span>
+                                <span className="text-xs text-muted-foreground mx-2">
+                                  {formatBytes(file.size)}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
                         </div>
-                      ))}
-                    </div>
+                      )}
+                    </>
                   )}
 
+                  {/* Errores de validación */}
                   {errors && Object.keys(errors).length > 0 && (
                     <Alert variant="destructive">
                       <AlertDescription>
@@ -362,13 +395,40 @@ export default function Show({ tarea, trabajo, estadisticas }: Props) {
                     </Alert>
                   )}
 
-                  <Button onClick={handleEntregar} disabled={processing} className="w-full">
+                  {/* Botón de entrega final */}
+                  <Button
+                    onClick={handleEntregar}
+                    disabled={processing || isSubmittingFiles}
+                    className="w-full"
+                  >
                     <PaperAirplaneIcon className="h-4 w-4 mr-2" />
                     {processing ? 'Entregando...' : 'Entregar Trabajo'}
                   </Button>
                 </CardContent>
               </Card>
             )}
+
+            {/* Modal de Upload */}
+            <FileUploadModal
+              open={showUploadModal}
+              onOpenChange={setShowUploadModal}
+              maxFiles={tarea.max_archivos}
+              maxFileSize={50 * 1024 * 1024} // 50MB
+              acceptedFileTypes={
+                tarea.tipo_archivo_permitido
+                  ? tarea.tipo_archivo_permitido.split(',').map((t) => t.trim())
+                  : undefined
+              }
+              onSubmit={handleFileSubmit}
+              onError={(error) => {
+                NotificationService.error(error);
+              }}
+              title="Subir Archivos"
+              description="Selecciona los archivos que deseas entregar"
+              submitButtonText="Agregar Archivos"
+              isLoading={isSubmittingFiles}
+            />
+
 
             {/* Estado del Trabajo (Estudiante) */}
             {esEstudiante && trabajo && trabajo.estaEntregado && (
