@@ -26,6 +26,7 @@ class CalificacionController extends Controller
                 ->with([
                     'trabajo.contenido.curso',
                     'trabajo.contenido.tarea',
+                    'trabajo.estudiante',
                     'evaluador'
                 ])
                 ->orderBy('fecha_calificacion', 'desc')
@@ -34,7 +35,7 @@ class CalificacionController extends Controller
             // Obtener cursos del estudiante
             $cursos = $user->cursosComoEstudiante()->get();
 
-            return Inertia::render('Calificaciones/Index', [
+            return Inertia::render('Calificaciones/IndexEstudiante', [
                 'calificaciones' => $calificaciones,
                 'cursos' => $cursos,
             ]);
@@ -54,7 +55,7 @@ class CalificacionController extends Controller
             // Obtener cursos del profesor
             $cursos = $user->cursosComoProfesor()->get();
 
-            return Inertia::render('Calificaciones/Index', [
+            return Inertia::render('Calificaciones/IndexProfesor', [
                 'calificaciones' => $calificaciones,
                 'cursos' => $cursos,
             ]);

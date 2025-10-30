@@ -10,12 +10,12 @@ import DashboardDirectorController from './DashboardDirectorController'
 import DashboardProfesorController from './DashboardProfesorController'
 import DashboardEstudianteController from './DashboardEstudianteController'
 import DashboardPadreController from './DashboardPadreController'
+import EvaluacionController from './EvaluacionController'
+import PreguntaController from './PreguntaController'
 import TareaController from './TareaController'
 import TrabajoController from './TrabajoController'
 import CalificacionController from './CalificacionController'
 import RecursoController from './RecursoController'
-import EvaluacionController from './EvaluacionController'
-import PreguntaController from './PreguntaController'
 import ReportesController from './ReportesController'
 import ModuloEducativoController from './ModuloEducativoController'
 import LeccionController from './LeccionController'
@@ -32,12 +32,12 @@ DashboardDirectorController,
 DashboardProfesorController,
 DashboardEstudianteController,
 DashboardPadreController,
+EvaluacionController,
+PreguntaController,
 TareaController,
 TrabajoController,
 CalificacionController,
 RecursoController,
-EvaluacionController,
-PreguntaController,
 ReportesController,
 ModuloEducativoController,
 LeccionController,

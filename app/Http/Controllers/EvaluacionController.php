@@ -85,11 +85,20 @@ class EvaluacionController extends Controller
             ? $user->cursosComoProfesor()->get()
             : $user->cursosComoEstudiante()->get();
 
-        return Inertia::render('Evaluaciones/Index', [
-            'evaluaciones' => $evaluaciones,
-            'cursos' => $cursos,
-            'filters' => $request->only(['curso_id', 'estado', 'tipo_evaluacion', 'search', 'sort', 'direction']),
-        ]);
+        // Renderizar vista según el rol
+        if ($user->esProfesor()) {
+            return Inertia::render('Evaluaciones/IndexProfesor', [
+                'evaluaciones' => $evaluaciones,
+                'cursos' => $cursos,
+                'filters' => $request->only(['curso_id', 'estado', 'tipo_evaluacion', 'search', 'sort', 'direction']),
+            ]);
+        } else {
+            return Inertia::render('Evaluaciones/IndexEstudiante', [
+                'evaluaciones' => $evaluaciones,
+                'cursos' => $cursos,
+                'filters' => $request->only(['curso_id', 'search']),
+            ]);
+        }
     }
 
     /**
@@ -511,18 +520,7 @@ class EvaluacionController extends Controller
             abort(403);
         }
 
-        // Obtener el último trabajo del estudiante
-        $trabajo = $evaluacione->contenido->trabajos()
-            ->where('estudiante_id', $user->id)
-            ->with('calificacion')
-            ->latest()
-            ->first();
-
-        if (!$trabajo) {
-            return back()->withErrors(['error' => 'No has completado esta evaluación.']);
-        }
-
-        // Cargar preguntas
+        // Cargar relaciones necesarias
         $evaluacione->load([
             'contenido.curso',
             'preguntas' => function ($query) use ($evaluacione) {
@@ -541,6 +539,28 @@ class EvaluacionController extends Controller
                 }
             },
         ]);
+
+        // Verificar que la evaluación tiene contenido
+        if (!$evaluacione->contenido) {
+            abort(404, 'La evaluación no tiene contenido asociado.');
+        }
+
+        // Verificar que el estudiante está inscrito en el curso
+        $cursosIds = $user->cursosComoEstudiante()->pluck('cursos.id');
+        if (!$cursosIds->contains($evaluacione->contenido->curso_id)) {
+            abort(403, 'No tienes acceso a esta evaluación.');
+        }
+
+        // Obtener el último trabajo del estudiante
+        $trabajo = $evaluacione->contenido->trabajos()
+            ->where('estudiante_id', $user->id)
+            ->with('calificacion')
+            ->latest()
+            ->first();
+
+        if (!$trabajo) {
+            abort(404, 'No has completado esta evaluación aún.');
+        }
 
         return Inertia::render('Evaluaciones/Results', [
             'evaluacion' => $evaluacione,

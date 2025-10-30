@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, router } from '@inertiajs/react';
+import { router } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -26,7 +26,7 @@ import {
   FunnelIcon,
   CalendarIcon,
   StarIcon,
-  CheckCircleIcon,
+  UserIcon,
 } from '@heroicons/react/24/outline';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -39,11 +39,6 @@ interface Calificacion {
   trabajo: {
     id: number;
     estado: string;
-    estudiante: {
-      id: number;
-      name: string;
-      apellido: string;
-    };
     contenido: {
       id: number;
       titulo: string;
@@ -76,7 +71,7 @@ interface Props {
     per_page: number;
     total: number;
   };
-  cursos?: Curso[];
+  cursos: Curso[];
   filters?: {
     curso_id?: string;
     search?: string;
@@ -85,12 +80,12 @@ interface Props {
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
-    title: 'Calificaciones',
+    title: 'Mis Calificaciones',
     href: '/calificaciones',
   },
 ];
 
-export default function Index({ calificaciones, cursos = [], filters = {} }: Props) {
+export default function IndexEstudiante({ calificaciones, cursos, filters = {} }: Props) {
   const [search, setSearch] = useState(filters.search || '');
   const [cursoId, setCursoId] = useState(filters.curso_id || 'all');
 
@@ -116,7 +111,7 @@ export default function Index({ calificaciones, cursos = [], filters = {} }: Pro
 
   const formatFecha = (fecha: string) => {
     try {
-      return format(new Date(fecha), "d 'de' MMMM, yyyy 'a las' HH:mm", { locale: es });
+      return format(new Date(fecha), "d 'de' MMMM, yyyy", { locale: es });
     } catch {
       return fecha;
     }
@@ -130,8 +125,10 @@ export default function Index({ calificaciones, cursos = [], filters = {} }: Pro
     return { variant: 'destructive' as const, label: 'Insuficiente', color: 'bg-red-500' };
   };
 
-  const estudianteBadge = (calificacion: Calificacion) => {
-    return `${calificacion.trabajo.estudiante.name} ${calificacion.trabajo.estudiante.apellido}`;
+  const calcularPromedio = () => {
+    if (calificaciones.data.length === 0) return 0;
+    const suma = calificaciones.data.reduce((acc, cal) => acc + cal.puntaje, 0);
+    return (suma / calificaciones.data.length).toFixed(1);
   };
 
   return (
@@ -139,78 +136,98 @@ export default function Index({ calificaciones, cursos = [], filters = {} }: Pro
       <div className="container mx-auto py-8 px-4">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center gap-3">
-            <CheckCircleIcon className="h-8 w-8 text-primary" />
+          <div className="flex items-center gap-3 mb-6">
+            <StarIcon className="h-8 w-8 text-primary" />
             <div>
-              <h1 className="text-3xl font-bold">Calificaciones</h1>
+              <h1 className="text-3xl font-bold">Mis Calificaciones</h1>
               <p className="text-muted-foreground">
-                Visualiza y gestiona todas las calificaciones
+                Revisa todas tus calificaciones y desempeño académico
               </p>
             </div>
           </div>
+
+          {/* Estadísticas de Desempeño */}
+          {calificaciones.data.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div className="bg-card rounded-lg border p-4">
+                <div className="text-sm text-muted-foreground mb-1">Promedio General</div>
+                <div className="text-3xl font-bold text-primary">{calcularPromedio()}</div>
+              </div>
+              <div className="bg-card rounded-lg border p-4">
+                <div className="text-sm text-muted-foreground mb-1">Total de Calificaciones</div>
+                <div className="text-3xl font-bold">{calificaciones.total}</div>
+              </div>
+              <div className="bg-card rounded-lg border p-4">
+                <div className="text-sm text-muted-foreground mb-1">Última Calificación</div>
+                <div className="text-lg font-semibold">
+                  {calificaciones.data.length > 0
+                    ? `${calificaciones.data[0].puntaje} pts`
+                    : 'Sin calificaciones'}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Filtros */}
-        {cursos.length > 0 && (
-          <div className="bg-card rounded-lg border p-4 mb-6">
-            <div className="flex items-center gap-2 mb-4">
-              <FunnelIcon className="h-5 w-5 text-muted-foreground" />
-              <h3 className="font-semibold">Filtros</h3>
-            </div>
+        <div className="bg-card rounded-lg border p-4 mb-6">
+          <div className="flex items-center gap-2 mb-4">
+            <FunnelIcon className="h-5 w-5 text-muted-foreground" />
+            <h3 className="font-semibold">Filtros</h3>
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Búsqueda */}
-              <div className="md:col-span-2">
-                <div className="relative">
-                  <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Buscar por título o estudiante..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleFilter()}
-                    className="pl-10"
-                  />
-                </div>
-              </div>
-
-              {/* Curso */}
-              <div>
-                <Select value={cursoId} onValueChange={setCursoId}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Todos los cursos" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Todos los cursos</SelectItem>
-                    {cursos.map((curso) => (
-                      <SelectItem key={curso.id} value={curso.id.toString()}>
-                        {curso.nombre}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Búsqueda */}
+            <div className="md:col-span-2">
+              <div className="relative">
+                <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Buscar por título de tarea o evaluación..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleFilter()}
+                  className="pl-10"
+                />
               </div>
             </div>
 
-            <div className="flex gap-2 mt-4">
-              <Button onClick={handleFilter} size="sm">
-                Aplicar Filtros
-              </Button>
-              <Button onClick={clearFilters} size="sm" variant="outline">
-                Limpiar
-              </Button>
+            {/* Curso */}
+            <div>
+              <Select value={cursoId} onValueChange={setCursoId}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Todos los cursos" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos los cursos</SelectItem>
+                  {cursos.map((curso) => (
+                    <SelectItem key={curso.id} value={curso.id.toString()}>
+                      {curso.nombre}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
-        )}
 
-        {/* Tabla de Calificaciones */}
+          <div className="flex gap-2 mt-4">
+            <Button onClick={handleFilter} size="sm">
+              Aplicar Filtros
+            </Button>
+            <Button onClick={clearFilters} size="sm" variant="outline">
+              Limpiar
+            </Button>
+          </div>
+        </div>
+
+        {/* Tabla de Calificaciones del Estudiante */}
         <div className="bg-card rounded-lg border">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Estudiante</TableHead>
                 <TableHead>Tarea/Evaluación</TableHead>
                 <TableHead>Curso</TableHead>
                 <TableHead className="text-center">Puntaje</TableHead>
+                <TableHead>Profesor</TableHead>
                 <TableHead>Fecha de Calificación</TableHead>
                 <TableHead className="text-right">Acciones</TableHead>
               </TableRow>
@@ -220,7 +237,7 @@ export default function Index({ calificaciones, cursos = [], filters = {} }: Pro
                 <TableRow>
                   <TableCell colSpan={6} className="text-center py-8">
                     <DocumentTextIcon className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
-                    <p className="text-muted-foreground">No hay calificaciones disponibles</p>
+                    <p className="text-muted-foreground">No tienes calificaciones disponibles aún</p>
                   </TableCell>
                 </TableRow>
               ) : (
@@ -229,20 +246,10 @@ export default function Index({ calificaciones, cursos = [], filters = {} }: Pro
                   return (
                     <TableRow key={calificacion.id}>
                       <TableCell>
-                        <div className="text-sm">
-                          <div className="font-medium">
-                            {estudianteBadge(calificacion)}
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
                         <div>
-                          <Link
-                            href={`/tareas/${calificacion.trabajo.contenido.id}`}
-                            className="font-medium hover:underline"
-                          >
+                          <div className="font-medium">
                             {calificacion.trabajo.contenido.titulo}
-                          </Link>
+                          </div>
                           {calificacion.trabajo.contenido.descripcion && (
                             <p className="text-sm text-muted-foreground line-clamp-1">
                               {calificacion.trabajo.contenido.descripcion}
@@ -262,11 +269,22 @@ export default function Index({ calificaciones, cursos = [], filters = {} }: Pro
                       </TableCell>
                       <TableCell className="text-center">
                         <div className="flex items-center justify-center gap-2">
-                          <StarIcon className="h-4 w-4 text-amber-500" />
-                          <span className={`font-bold ${puntajeBadgeConfig.color} text-white rounded px-2 py-1`}>
+                          <span className={`font-bold ${puntajeBadgeConfig.color} text-white rounded px-3 py-1 text-sm`}>
                             {calificacion.puntaje}
                           </span>
                         </div>
+                      </TableCell>
+                      <TableCell>
+                        {calificacion.evaluador ? (
+                          <div className="flex items-center gap-2">
+                            <UserIcon className="h-4 w-4 text-muted-foreground" />
+                            <span className="text-sm">
+                              {calificacion.evaluador.name} {calificacion.evaluador.apellido}
+                            </span>
+                          </div>
+                        ) : (
+                          <span className="text-sm text-muted-foreground">No asignado</span>
+                        )}
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
@@ -275,18 +293,16 @@ export default function Index({ calificaciones, cursos = [], filters = {} }: Pro
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          {calificacion.comentario && (
-                            <Button size="sm" variant="outline" title={calificacion.comentario}>
-                              Ver Comentario
-                            </Button>
-                          )}
-                          <Link href={`/calificaciones/${calificacion.id}`}>
-                            <Button size="sm" variant="ghost">
-                              Ver Detalle
-                            </Button>
-                          </Link>
-                        </div>
+                        {calificacion.comentario && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            title={calificacion.comentario}
+                            onClick={() => alert(`Comentario del profesor:\n\n${calificacion.comentario}`)}
+                          >
+                            Ver Comentario
+                          </Button>
+                        )}
                       </TableCell>
                     </TableRow>
                   );
@@ -301,8 +317,8 @@ export default function Index({ calificaciones, cursos = [], filters = {} }: Pro
           <div className="mt-6 flex items-center justify-between">
             <p className="text-sm text-muted-foreground">
               Mostrando {(calificaciones.current_page - 1) * calificaciones.per_page + 1} a{' '}
-              {Math.min(calificaciones.current_page * calificaciones.per_page, calificaciones.total)} de {calificaciones.total}{' '}
-              calificaciones
+              {Math.min(calificaciones.current_page * calificaciones.per_page, calificaciones.total)} de{' '}
+              {calificaciones.total} calificaciones
             </p>
             <div className="flex gap-2">
               {Array.from({ length: calificaciones.last_page }, (_, i) => i + 1).map((page) => (
@@ -310,9 +326,7 @@ export default function Index({ calificaciones, cursos = [], filters = {} }: Pro
                   key={page}
                   variant={page === calificaciones.current_page ? 'default' : 'outline'}
                   size="sm"
-                  onClick={() =>
-                    router.get('/calificaciones', { ...filters, page })
-                  }
+                  onClick={() => router.get('/calificaciones', { ...filters, page })}
                 >
                   {page}
                 </Button>
