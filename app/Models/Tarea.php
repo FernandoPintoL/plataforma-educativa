@@ -3,10 +3,13 @@ namespace App\Models;
 
 use App\Models\Abstracts\Contenido;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Tarea extends Contenido
 {
     use HasFactory;
+
+    protected $table = 'tareas';
 
     protected $fillable = [
         'instrucciones',
@@ -21,6 +24,14 @@ class Tarea extends Contenido
         'permite_archivos' => 'boolean',
         'fecha_limite'     => 'datetime',
     ];
+
+    /**
+     * Relación con el contenido padre (clase concreta, no abstracta)
+     */
+    public function contenido(): BelongsTo
+    {
+        return $this->belongsTo('App\Models\Contenido', 'contenido_id', 'id');
+    }
 
     public function publicar(): void
     {

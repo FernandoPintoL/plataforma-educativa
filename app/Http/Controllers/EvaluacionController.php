@@ -208,6 +208,11 @@ class EvaluacionController extends Controller
             },
         ]);
 
+        // Verificar que la evaluación tiene contenido asociado
+        if (!$evaluacione->contenido) {
+            abort(404, 'La evaluación no tiene contenido asociado.');
+        }
+
         // Verificar permisos
         if ($user->esEstudiante()) {
             // Estudiante solo puede ver evaluaciones de sus cursos

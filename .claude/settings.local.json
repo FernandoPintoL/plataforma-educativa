@@ -34,7 +34,8 @@
       "Bash(xargs ls:*)",
       "Bash(sudo /usr/libexec/ApplicationFirewall/socketfilterfw:*)",
       "Bash(chmod:*)",
-      "Bash(php verify_routes.php:*)"
+      "Bash(php verify_routes.php:*)",
+      "Bash(dir \"D:\\PLATAFORMA EDUCATIVA\\plataforma-educativa\\resources\\js\\pages\")"
     ],
     "deny": [],
     "ask": []

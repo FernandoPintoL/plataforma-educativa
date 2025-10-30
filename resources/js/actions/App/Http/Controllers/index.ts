@@ -16,6 +16,7 @@ import CalificacionController from './CalificacionController'
 import RecursoController from './RecursoController'
 import EvaluacionController from './EvaluacionController'
 import PreguntaController from './PreguntaController'
+import ReportesController from './ReportesController'
 import ModuloEducativoController from './ModuloEducativoController'
 import LeccionController from './LeccionController'
 const Controllers = {
@@ -37,6 +38,7 @@ CalificacionController,
 RecursoController,
 EvaluacionController,
 PreguntaController,
+ReportesController,
 ModuloEducativoController,
 LeccionController,
 }

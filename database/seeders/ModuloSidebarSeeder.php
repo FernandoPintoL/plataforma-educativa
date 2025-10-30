@@ -387,18 +387,5 @@ class ModuloSidebarSeeder extends Seeder
         );
         */
 
-        // Módulo de Perfil - Visible para todos los usuarios autenticados
-        ModuloSidebar::firstOrCreate(
-            ['titulo' => 'Mi Perfil', 'ruta' => '/profile', 'es_submenu' => false],
-            [
-                'icono'             => 'User',
-                'descripcion'       => 'Configuración de perfil y contraseña',
-                'orden'             => 99,
-                'categoria'         => 'Usuario',
-                'activo'            => true,
-                'permisos'          => [], // Accesible para todos los autenticados
-                'visible_dashboard' => false,
-            ]
-        );
     }
 }

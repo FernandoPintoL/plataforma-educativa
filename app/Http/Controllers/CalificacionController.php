@@ -31,8 +31,12 @@ class CalificacionController extends Controller
                 ->orderBy('fecha_calificacion', 'desc')
                 ->paginate(15);
 
+            // Obtener cursos del estudiante
+            $cursos = $user->cursosComoEstudiante()->get();
+
             return Inertia::render('Calificaciones/Index', [
                 'calificaciones' => $calificaciones,
+                'cursos' => $cursos,
             ]);
         }
 
@@ -47,8 +51,12 @@ class CalificacionController extends Controller
                 ->orderBy('fecha_calificacion', 'desc')
                 ->paginate(15);
 
+            // Obtener cursos del profesor
+            $cursos = $user->cursosComoProfesor()->get();
+
             return Inertia::render('Calificaciones/Index', [
                 'calificaciones' => $calificaciones,
+                'cursos' => $cursos,
             ]);
         }
 

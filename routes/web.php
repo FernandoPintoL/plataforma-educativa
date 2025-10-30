@@ -178,24 +178,28 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 // ==================== EVALUACIONES ====================
 Route::middleware(['auth', 'verified'])->group(function () {
-    // Rutas de Evaluaciones (lectura para todos, escritura solo profesores)
-    Route::resource('evaluaciones', \App\Http\Controllers\EvaluacionController::class)->only(['index', 'show']);
-    Route::resource('evaluaciones', \App\Http\Controllers\EvaluacionController::class)
-        ->except(['index', 'show'])
-        ->middleware('role:profesor|director');
+    // Rutas de lectura para todos (index - must be first)
+    Route::get('evaluaciones', [\App\Http\Controllers\EvaluacionController::class, 'index'])->name('evaluaciones.index');
 
-    // Rutas especiales para estudiantes
-    Route::get('evaluaciones/{evaluacione}/take', [\App\Http\Controllers\EvaluacionController::class, 'take'])
-        ->middleware('role:estudiante')
-        ->name('evaluaciones.take');
+    // Rutas de escritura solo profesores/directores (BEFORE parameterized routes)
+    Route::middleware('role:profesor|director')->group(function () {
+        Route::get('evaluaciones/create', [\App\Http\Controllers\EvaluacionController::class, 'create'])->name('evaluaciones.create');
+        Route::post('evaluaciones', [\App\Http\Controllers\EvaluacionController::class, 'store'])->name('evaluaciones.store');
+        Route::get('evaluaciones/{evaluacion}/edit', [\App\Http\Controllers\EvaluacionController::class, 'edit'])->name('evaluaciones.edit');
+        Route::put('evaluaciones/{evaluacion}', [\App\Http\Controllers\EvaluacionController::class, 'update'])->name('evaluaciones.update');
+        Route::patch('evaluaciones/{evaluacion}', [\App\Http\Controllers\EvaluacionController::class, 'update']);
+        Route::delete('evaluaciones/{evaluacion}', [\App\Http\Controllers\EvaluacionController::class, 'destroy'])->name('evaluaciones.destroy');
+    });
 
-    Route::post('evaluaciones/{evaluacione}/submit', [\App\Http\Controllers\EvaluacionController::class, 'submitRespuestas'])
-        ->middleware('role:estudiante')
-        ->name('evaluaciones.submit');
+    // Rutas especiales para estudiantes (BEFORE generic {evaluacion} routes)
+    Route::middleware('role:estudiante')->group(function () {
+        Route::get('evaluaciones/{evaluacion}/take', [\App\Http\Controllers\EvaluacionController::class, 'take'])->name('evaluaciones.take');
+        Route::post('evaluaciones/{evaluacion}/submit', [\App\Http\Controllers\EvaluacionController::class, 'submitRespuestas'])->name('evaluaciones.submit');
+        Route::get('evaluaciones/{evaluacion}/results', [\App\Http\Controllers\EvaluacionController::class, 'results'])->name('evaluaciones.results');
+    });
 
-    Route::get('evaluaciones/{evaluacione}/results', [\App\Http\Controllers\EvaluacionController::class, 'results'])
-        ->middleware('role:estudiante')
-        ->name('evaluaciones.results');
+    // Rutas genéricas para todos (AFTER all specific routes)
+    Route::get('evaluaciones/{evaluacion}', [\App\Http\Controllers\EvaluacionController::class, 'show'])->name('evaluaciones.show');
 
     // Rutas de Preguntas (solo profesores)
     Route::post('preguntas', [\App\Http\Controllers\PreguntaController::class, 'store'])

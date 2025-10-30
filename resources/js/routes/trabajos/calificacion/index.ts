@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\CalificacionController::store
- * @see app/Http/Controllers/CalificacionController.php:61
+ * @see app/Http/Controllers/CalificacionController.php:69
  * @route '/trabajos/{trabajo}/calificar'
  */
 export const store = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -16,7 +16,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\CalificacionController::store
- * @see app/Http/Controllers/CalificacionController.php:61
+ * @see app/Http/Controllers/CalificacionController.php:69
  * @route '/trabajos/{trabajo}/calificar'
  */
 store.url = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -49,7 +49,7 @@ store.url = (args: { trabajo: number | { id: number } } | [trabajo: number | { i
 
 /**
 * @see \App\Http\Controllers\CalificacionController::store
- * @see app/Http/Controllers/CalificacionController.php:61
+ * @see app/Http/Controllers/CalificacionController.php:69
  * @route '/trabajos/{trabajo}/calificar'
  */
 store.post = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -59,7 +59,7 @@ store.post = (args: { trabajo: number | { id: number } } | [trabajo: number | { 
 
     /**
 * @see \App\Http\Controllers\CalificacionController::store
- * @see app/Http/Controllers/CalificacionController.php:61
+ * @see app/Http/Controllers/CalificacionController.php:69
  * @route '/trabajos/{trabajo}/calificar'
  */
     const storeForm = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -69,7 +69,7 @@ store.post = (args: { trabajo: number | { id: number } } | [trabajo: number | { 
 
             /**
 * @see \App\Http\Controllers\CalificacionController::store
- * @see app/Http/Controllers/CalificacionController.php:61
+ * @see app/Http/Controllers/CalificacionController.php:69
  * @route '/trabajos/{trabajo}/calificar'
  */
         storeForm.post = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
