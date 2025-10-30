@@ -1,6 +1,6 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
 /**
-* @see routes/web.php:48
+* @see [serialized-closure]:2
 * @route '/educacion/dashboard'
 */
 export const dashboard = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -14,7 +14,7 @@ dashboard.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see routes/web.php:48
+* @see [serialized-closure]:2
 * @route '/educacion/dashboard'
 */
 dashboard.url = (options?: RouteQueryOptions) => {
@@ -22,7 +22,7 @@ dashboard.url = (options?: RouteQueryOptions) => {
 }
 
 /**
-* @see routes/web.php:48
+* @see [serialized-closure]:2
 * @route '/educacion/dashboard'
 */
 dashboard.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -31,7 +31,7 @@ dashboard.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 
 /**
-* @see routes/web.php:48
+* @see [serialized-closure]:2
 * @route '/educacion/dashboard'
 */
 dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -40,7 +40,7 @@ dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
-* @see routes/web.php:48
+* @see [serialized-closure]:2
 * @route '/educacion/dashboard'
 */
 const dashboardForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -49,7 +49,7 @@ const dashboardForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> 
 })
 
 /**
-* @see routes/web.php:48
+* @see [serialized-closure]:2
 * @route '/educacion/dashboard'
 */
 dashboardForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -58,7 +58,7 @@ dashboardForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =>
 })
 
 /**
-* @see routes/web.php:48
+* @see [serialized-closure]:2
 * @route '/educacion/dashboard'
 */
 dashboardForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -74,7 +74,7 @@ dashboardForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =
 dashboard.form = dashboardForm
 
 /**
-* @see routes/web.php:51
+* @see [serialized-closure]:2
 * @route '/educacion/estudiantes'
 */
 export const estudiantes = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -88,7 +88,7 @@ estudiantes.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see routes/web.php:51
+* @see [serialized-closure]:2
 * @route '/educacion/estudiantes'
 */
 estudiantes.url = (options?: RouteQueryOptions) => {
@@ -96,7 +96,7 @@ estudiantes.url = (options?: RouteQueryOptions) => {
 }
 
 /**
-* @see routes/web.php:51
+* @see [serialized-closure]:2
 * @route '/educacion/estudiantes'
 */
 estudiantes.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -105,7 +105,7 @@ estudiantes.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 
 /**
-* @see routes/web.php:51
+* @see [serialized-closure]:2
 * @route '/educacion/estudiantes'
 */
 estudiantes.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -114,7 +114,7 @@ estudiantes.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
-* @see routes/web.php:51
+* @see [serialized-closure]:2
 * @route '/educacion/estudiantes'
 */
 const estudiantesForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -123,7 +123,7 @@ const estudiantesForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'
 })
 
 /**
-* @see routes/web.php:51
+* @see [serialized-closure]:2
 * @route '/educacion/estudiantes'
 */
 estudiantesForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -132,7 +132,7 @@ estudiantesForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> 
 })
 
 /**
-* @see routes/web.php:51
+* @see [serialized-closure]:2
 * @route '/educacion/estudiantes'
 */
 estudiantesForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -148,7 +148,7 @@ estudiantesForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'>
 estudiantes.form = estudiantesForm
 
 /**
-* @see routes/web.php:54
+* @see [serialized-closure]:2
 * @route '/educacion/profesores'
 */
 export const profesores = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -162,7 +162,7 @@ profesores.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see routes/web.php:54
+* @see [serialized-closure]:2
 * @route '/educacion/profesores'
 */
 profesores.url = (options?: RouteQueryOptions) => {
@@ -170,7 +170,7 @@ profesores.url = (options?: RouteQueryOptions) => {
 }
 
 /**
-* @see routes/web.php:54
+* @see [serialized-closure]:2
 * @route '/educacion/profesores'
 */
 profesores.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -179,7 +179,7 @@ profesores.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 
 /**
-* @see routes/web.php:54
+* @see [serialized-closure]:2
 * @route '/educacion/profesores'
 */
 profesores.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -188,7 +188,7 @@ profesores.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
-* @see routes/web.php:54
+* @see [serialized-closure]:2
 * @route '/educacion/profesores'
 */
 const profesoresForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -197,7 +197,7 @@ const profesoresForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'>
 })
 
 /**
-* @see routes/web.php:54
+* @see [serialized-closure]:2
 * @route '/educacion/profesores'
 */
 profesoresForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -206,7 +206,7 @@ profesoresForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =
 })
 
 /**
-* @see routes/web.php:54
+* @see [serialized-closure]:2
 * @route '/educacion/profesores'
 */
 profesoresForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -222,7 +222,7 @@ profesoresForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> 
 profesores.form = profesoresForm
 
 /**
-* @see routes/web.php:57
+* @see [serialized-closure]:2
 * @route '/educacion/cursos'
 */
 export const cursos = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -236,7 +236,7 @@ cursos.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see routes/web.php:57
+* @see [serialized-closure]:2
 * @route '/educacion/cursos'
 */
 cursos.url = (options?: RouteQueryOptions) => {
@@ -244,7 +244,7 @@ cursos.url = (options?: RouteQueryOptions) => {
 }
 
 /**
-* @see routes/web.php:57
+* @see [serialized-closure]:2
 * @route '/educacion/cursos'
 */
 cursos.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -253,7 +253,7 @@ cursos.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 
 /**
-* @see routes/web.php:57
+* @see [serialized-closure]:2
 * @route '/educacion/cursos'
 */
 cursos.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -262,7 +262,7 @@ cursos.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
-* @see routes/web.php:57
+* @see [serialized-closure]:2
 * @route '/educacion/cursos'
 */
 const cursosForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -271,7 +271,7 @@ const cursosForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => 
 })
 
 /**
-* @see routes/web.php:57
+* @see [serialized-closure]:2
 * @route '/educacion/cursos'
 */
 cursosForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -280,7 +280,7 @@ cursosForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 })
 
 /**
-* @see routes/web.php:57
+* @see [serialized-closure]:2
 * @route '/educacion/cursos'
 */
 cursosForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

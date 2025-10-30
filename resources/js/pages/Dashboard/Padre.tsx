@@ -1,5 +1,6 @@
 import React from 'react';
-import Layout from '../../components/Layout/Layout';
+import AppLayout from '@/layouts/app-layout';
+import { Head } from '@inertiajs/react';
 import {
   UserIcon,
   AcademicCapIcon,
@@ -39,7 +40,8 @@ export default function DashboardPadre({
   rendimientoPorHijo,
 }: Props) {
   return (
-    <Layout>
+    <AppLayout>
+      <Head title="Inicio - Padre" />
       <div className="bg-gradient-to-br from-slate-50 via-rose-50 to-slate-50 min-h-full">
         <div className="py-8">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -212,6 +214,6 @@ export default function DashboardPadre({
           </div>
         </div>
       </div>
-    </Layout>
+    </AppLayout>
   );
 }

@@ -113,11 +113,28 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 // ==================== TAREAS Y TRABAJOS ====================
 Route::middleware(['auth', 'verified'])->group(function () {
-    // Rutas de Tareas (solo profesores pueden crear/editar/eliminar)
-    Route::resource('tareas', \App\Http\Controllers\TareaController::class)->only(['index', 'show']);
-    Route::resource('tareas', \App\Http\Controllers\TareaController::class)
-        ->except(['index', 'show'])
-        ->middleware('role:profesor|director');
+    // Rutas de Tareas
+    // IMPORTANTE: Rutas específicas (create) ANTES de rutas con parámetros ({tarea})
+
+    // Index - accesible para todos
+    Route::get('tareas', [\App\Http\Controllers\TareaController::class, 'index'])->name('tareas.index');
+
+    // Create y Store - solo profesores y directores (ANTES de {tarea})
+    Route::middleware('role:profesor|director')->group(function () {
+        Route::get('tareas/create', [\App\Http\Controllers\TareaController::class, 'create'])->name('tareas.create');
+        Route::post('tareas', [\App\Http\Controllers\TareaController::class, 'store'])->name('tareas.store');
+    });
+
+    // Show - accesible para todos (DESPUÉS de create)
+    Route::get('tareas/{tarea}', [\App\Http\Controllers\TareaController::class, 'show'])->name('tareas.show');
+
+    // Edit, Update, Destroy - solo profesores y directores
+    Route::middleware('role:profesor|director')->group(function () {
+        Route::get('tareas/{tarea}/edit', [\App\Http\Controllers\TareaController::class, 'edit'])->name('tareas.edit');
+        Route::put('tareas/{tarea}', [\App\Http\Controllers\TareaController::class, 'update'])->name('tareas.update');
+        Route::patch('tareas/{tarea}', [\App\Http\Controllers\TareaController::class, 'update']);
+        Route::delete('tareas/{tarea}', [\App\Http\Controllers\TareaController::class, 'destroy'])->name('tareas.destroy');
+    });
 
     // Rutas de Trabajos
     Route::resource('trabajos', \App\Http\Controllers\TrabajoController::class);
@@ -148,13 +165,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('calificaciones.exportar');
 
     // Rutas de Recursos (archivos adjuntos)
+    // Rutas especiales primero (más específicas)
     Route::get('recursos/{recurso}/descargar', [\App\Http\Controllers\RecursoController::class, 'descargar'])
         ->name('recursos.descargar');
     Route::get('recursos/{recurso}/ver', [\App\Http\Controllers\RecursoController::class, 'ver'])
         ->name('recursos.ver');
-    Route::delete('recursos/{recurso}', [\App\Http\Controllers\RecursoController::class, 'destroy'])
-        ->middleware('role:profesor|director')
-        ->name('recursos.destroy');
+
+    // Rutas CRUD de recursos (solo para profesores y directores)
+    Route::resource('recursos', \App\Http\Controllers\RecursoController::class)
+        ->middleware('role:profesor|director');
 });
 
 // ==================== EVALUACIONES ====================
@@ -194,4 +213,53 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('evaluaciones/{evaluacion}/preguntas/reorder', [\App\Http\Controllers\PreguntaController::class, 'reorder'])
         ->middleware('role:profesor|director')
         ->name('preguntas.reorder');
+});
+
+// ==================== MÓDULOS EDUCATIVOS Y LECCIONES ====================
+Route::middleware(['auth', 'verified'])->group(function () {
+    // Rutas de Módulos Educativos (lectura para todos, escritura solo profesores)
+    Route::resource('modulos', \App\Http\Controllers\ModuloEducativoController::class)->only(['index', 'show']);
+    Route::resource('modulos', \App\Http\Controllers\ModuloEducativoController::class)
+        ->except(['index', 'show'])
+        ->middleware('role:profesor|director');
+
+    // Rutas especiales para módulos
+    Route::patch('modulos/{modulo}/publicar', [\App\Http\Controllers\ModuloEducativoController::class, 'publicar'])
+        ->middleware('role:profesor|director')
+        ->name('modulos.publicar');
+
+    Route::patch('modulos/{modulo}/archivar', [\App\Http\Controllers\ModuloEducativoController::class, 'archivar'])
+        ->middleware('role:profesor|director')
+        ->name('modulos.archivar');
+
+    Route::post('modulos/reordenar', [\App\Http\Controllers\ModuloEducativoController::class, 'reordenar'])
+        ->middleware('role:profesor|director')
+        ->name('modulos.reordenar');
+
+    Route::post('modulos/{modulo}/duplicar', [\App\Http\Controllers\ModuloEducativoController::class, 'duplicar'])
+        ->middleware('role:profesor|director')
+        ->name('modulos.duplicar');
+
+    // Rutas de Lecciones (lectura para todos, escritura solo profesores)
+    Route::resource('lecciones', \App\Http\Controllers\LeccionController::class)->only(['index', 'show']);
+    Route::resource('lecciones', \App\Http\Controllers\LeccionController::class)
+        ->except(['index', 'show'])
+        ->middleware('role:profesor|director');
+
+    // Rutas especiales para lecciones
+    Route::patch('lecciones/{leccione}/publicar', [\App\Http\Controllers\LeccionController::class, 'publicar'])
+        ->middleware('role:profesor|director')
+        ->name('lecciones.publicar');
+
+    Route::patch('lecciones/{leccione}/archivar', [\App\Http\Controllers\LeccionController::class, 'archivar'])
+        ->middleware('role:profesor|director')
+        ->name('lecciones.archivar');
+
+    Route::post('lecciones/reordenar', [\App\Http\Controllers\LeccionController::class, 'reordenar'])
+        ->middleware('role:profesor|director')
+        ->name('lecciones.reordenar');
+
+    Route::post('lecciones/{leccione}/duplicar', [\App\Http\Controllers\LeccionController::class, 'duplicar'])
+        ->middleware('role:profesor|director')
+        ->name('lecciones.duplicar');
 });

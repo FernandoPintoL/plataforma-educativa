@@ -81,111 +81,6 @@ indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 index.form = indexForm
 
 /**
-* @see \App\Http\Controllers\TareaController::show
-* @see app/Http/Controllers/TareaController.php:185
-* @route '/tareas/{tarea}'
-*/
-export const show = (args: { tarea: number | { id: number } } | [tarea: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: show.url(args, options),
-    method: 'get',
-})
-
-show.definition = {
-    methods: ["get","head"],
-    url: '/tareas/{tarea}',
-} satisfies RouteDefinition<["get","head"]>
-
-/**
-* @see \App\Http\Controllers\TareaController::show
-* @see app/Http/Controllers/TareaController.php:185
-* @route '/tareas/{tarea}'
-*/
-show.url = (args: { tarea: number | { id: number } } | [tarea: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
-    if (typeof args === 'string' || typeof args === 'number') {
-        args = { tarea: args }
-    }
-
-    if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-        args = { tarea: args.id }
-    }
-
-    if (Array.isArray(args)) {
-        args = {
-            tarea: args[0],
-        }
-    }
-
-    args = applyUrlDefaults(args)
-
-    const parsedArgs = {
-        tarea: typeof args.tarea === 'object'
-        ? args.tarea.id
-        : args.tarea,
-    }
-
-    return show.definition.url
-            .replace('{tarea}', parsedArgs.tarea.toString())
-            .replace(/\/+$/, '') + queryParams(options)
-}
-
-/**
-* @see \App\Http\Controllers\TareaController::show
-* @see app/Http/Controllers/TareaController.php:185
-* @route '/tareas/{tarea}'
-*/
-show.get = (args: { tarea: number | { id: number } } | [tarea: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: show.url(args, options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\TareaController::show
-* @see app/Http/Controllers/TareaController.php:185
-* @route '/tareas/{tarea}'
-*/
-show.head = (args: { tarea: number | { id: number } } | [tarea: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
-    url: show.url(args, options),
-    method: 'head',
-})
-
-/**
-* @see \App\Http\Controllers\TareaController::show
-* @see app/Http/Controllers/TareaController.php:185
-* @route '/tareas/{tarea}'
-*/
-const showForm = (args: { tarea: number | { id: number } } | [tarea: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: show.url(args, options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\TareaController::show
-* @see app/Http/Controllers/TareaController.php:185
-* @route '/tareas/{tarea}'
-*/
-showForm.get = (args: { tarea: number | { id: number } } | [tarea: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: show.url(args, options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\TareaController::show
-* @see app/Http/Controllers/TareaController.php:185
-* @route '/tareas/{tarea}'
-*/
-showForm.head = (args: { tarea: number | { id: number } } | [tarea: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: show.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-show.form = showForm
-
-/**
 * @see \App\Http\Controllers\TareaController::create
 * @see app/Http/Controllers/TareaController.php:79
 * @route '/tareas/create'
@@ -323,6 +218,111 @@ storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => (
 store.form = storeForm
 
 /**
+* @see \App\Http\Controllers\TareaController::show
+* @see app/Http/Controllers/TareaController.php:185
+* @route '/tareas/{tarea}'
+*/
+export const show = (args: { tarea: number | { id: number } } | [tarea: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: show.url(args, options),
+    method: 'get',
+})
+
+show.definition = {
+    methods: ["get","head"],
+    url: '/tareas/{tarea}',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\TareaController::show
+* @see app/Http/Controllers/TareaController.php:185
+* @route '/tareas/{tarea}'
+*/
+show.url = (args: { tarea: number | { id: number } } | [tarea: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { tarea: args }
+    }
+
+    if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
+        args = { tarea: args.id }
+    }
+
+    if (Array.isArray(args)) {
+        args = {
+            tarea: args[0],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+        tarea: typeof args.tarea === 'object'
+        ? args.tarea.id
+        : args.tarea,
+    }
+
+    return show.definition.url
+            .replace('{tarea}', parsedArgs.tarea.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\TareaController::show
+* @see app/Http/Controllers/TareaController.php:185
+* @route '/tareas/{tarea}'
+*/
+show.get = (args: { tarea: number | { id: number } } | [tarea: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: show.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\TareaController::show
+* @see app/Http/Controllers/TareaController.php:185
+* @route '/tareas/{tarea}'
+*/
+show.head = (args: { tarea: number | { id: number } } | [tarea: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: show.url(args, options),
+    method: 'head',
+})
+
+/**
+* @see \App\Http\Controllers\TareaController::show
+* @see app/Http/Controllers/TareaController.php:185
+* @route '/tareas/{tarea}'
+*/
+const showForm = (args: { tarea: number | { id: number } } | [tarea: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: show.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\TareaController::show
+* @see app/Http/Controllers/TareaController.php:185
+* @route '/tareas/{tarea}'
+*/
+showForm.get = (args: { tarea: number | { id: number } } | [tarea: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: show.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\TareaController::show
+* @see app/Http/Controllers/TareaController.php:185
+* @route '/tareas/{tarea}'
+*/
+showForm.head = (args: { tarea: number | { id: number } } | [tarea: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: show.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+show.form = showForm
+
+/**
 * @see \App\Http\Controllers\TareaController::edit
 * @see app/Http/Controllers/TareaController.php:239
 * @route '/tareas/{tarea}/edit'
@@ -432,22 +432,22 @@ edit.form = editForm
 * @see app/Http/Controllers/TareaController.php:261
 * @route '/tareas/{tarea}'
 */
-export const update = (args: { tarea: number | { id: number } } | [tarea: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
-    url: update.url(args, options),
+const update4a54e2dfee02fdfe7c497bc9f62299b2 = (args: { tarea: number | { id: number } } | [tarea: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+    url: update4a54e2dfee02fdfe7c497bc9f62299b2.url(args, options),
     method: 'put',
 })
 
-update.definition = {
-    methods: ["put","patch"],
+update4a54e2dfee02fdfe7c497bc9f62299b2.definition = {
+    methods: ["put"],
     url: '/tareas/{tarea}',
-} satisfies RouteDefinition<["put","patch"]>
+} satisfies RouteDefinition<["put"]>
 
 /**
 * @see \App\Http\Controllers\TareaController::update
 * @see app/Http/Controllers/TareaController.php:261
 * @route '/tareas/{tarea}'
 */
-update.url = (args: { tarea: number | { id: number } } | [tarea: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+update4a54e2dfee02fdfe7c497bc9f62299b2.url = (args: { tarea: number | { id: number } } | [tarea: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { tarea: args }
     }
@@ -470,7 +470,7 @@ update.url = (args: { tarea: number | { id: number } } | [tarea: number | { id: 
         : args.tarea,
     }
 
-    return update.definition.url
+    return update4a54e2dfee02fdfe7c497bc9f62299b2.definition.url
             .replace('{tarea}', parsedArgs.tarea.toString())
             .replace(/\/+$/, '') + queryParams(options)
 }
@@ -480,8 +480,8 @@ update.url = (args: { tarea: number | { id: number } } | [tarea: number | { id: 
 * @see app/Http/Controllers/TareaController.php:261
 * @route '/tareas/{tarea}'
 */
-update.put = (args: { tarea: number | { id: number } } | [tarea: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
-    url: update.url(args, options),
+update4a54e2dfee02fdfe7c497bc9f62299b2.put = (args: { tarea: number | { id: number } } | [tarea: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+    url: update4a54e2dfee02fdfe7c497bc9f62299b2.url(args, options),
     method: 'put',
 })
 
@@ -490,8 +490,87 @@ update.put = (args: { tarea: number | { id: number } } | [tarea: number | { id: 
 * @see app/Http/Controllers/TareaController.php:261
 * @route '/tareas/{tarea}'
 */
-update.patch = (args: { tarea: number | { id: number } } | [tarea: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
-    url: update.url(args, options),
+const update4a54e2dfee02fdfe7c497bc9f62299b2Form = (args: { tarea: number | { id: number } } | [tarea: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update4a54e2dfee02fdfe7c497bc9f62299b2.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PUT',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\TareaController::update
+* @see app/Http/Controllers/TareaController.php:261
+* @route '/tareas/{tarea}'
+*/
+update4a54e2dfee02fdfe7c497bc9f62299b2Form.put = (args: { tarea: number | { id: number } } | [tarea: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update4a54e2dfee02fdfe7c497bc9f62299b2.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PUT',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+update4a54e2dfee02fdfe7c497bc9f62299b2.form = update4a54e2dfee02fdfe7c497bc9f62299b2Form
+/**
+* @see \App\Http\Controllers\TareaController::update
+* @see app/Http/Controllers/TareaController.php:261
+* @route '/tareas/{tarea}'
+*/
+const update4a54e2dfee02fdfe7c497bc9f62299b2 = (args: { tarea: number | { id: number } } | [tarea: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+    url: update4a54e2dfee02fdfe7c497bc9f62299b2.url(args, options),
+    method: 'patch',
+})
+
+update4a54e2dfee02fdfe7c497bc9f62299b2.definition = {
+    methods: ["patch"],
+    url: '/tareas/{tarea}',
+} satisfies RouteDefinition<["patch"]>
+
+/**
+* @see \App\Http\Controllers\TareaController::update
+* @see app/Http/Controllers/TareaController.php:261
+* @route '/tareas/{tarea}'
+*/
+update4a54e2dfee02fdfe7c497bc9f62299b2.url = (args: { tarea: number | { id: number } } | [tarea: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { tarea: args }
+    }
+
+    if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
+        args = { tarea: args.id }
+    }
+
+    if (Array.isArray(args)) {
+        args = {
+            tarea: args[0],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+        tarea: typeof args.tarea === 'object'
+        ? args.tarea.id
+        : args.tarea,
+    }
+
+    return update4a54e2dfee02fdfe7c497bc9f62299b2.definition.url
+            .replace('{tarea}', parsedArgs.tarea.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\TareaController::update
+* @see app/Http/Controllers/TareaController.php:261
+* @route '/tareas/{tarea}'
+*/
+update4a54e2dfee02fdfe7c497bc9f62299b2.patch = (args: { tarea: number | { id: number } } | [tarea: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+    url: update4a54e2dfee02fdfe7c497bc9f62299b2.url(args, options),
     method: 'patch',
 })
 
@@ -500,38 +579,8 @@ update.patch = (args: { tarea: number | { id: number } } | [tarea: number | { id
 * @see app/Http/Controllers/TareaController.php:261
 * @route '/tareas/{tarea}'
 */
-const updateForm = (args: { tarea: number | { id: number } } | [tarea: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: update.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'PUT',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\TareaController::update
-* @see app/Http/Controllers/TareaController.php:261
-* @route '/tareas/{tarea}'
-*/
-updateForm.put = (args: { tarea: number | { id: number } } | [tarea: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: update.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'PUT',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\TareaController::update
-* @see app/Http/Controllers/TareaController.php:261
-* @route '/tareas/{tarea}'
-*/
-updateForm.patch = (args: { tarea: number | { id: number } } | [tarea: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: update.url(args, {
+const update4a54e2dfee02fdfe7c497bc9f62299b2Form = (args: { tarea: number | { id: number } } | [tarea: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update4a54e2dfee02fdfe7c497bc9f62299b2.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'PATCH',
             ...(options?.query ?? options?.mergeQuery ?? {}),
@@ -540,7 +589,27 @@ updateForm.patch = (args: { tarea: number | { id: number } } | [tarea: number | 
     method: 'post',
 })
 
-update.form = updateForm
+/**
+* @see \App\Http\Controllers\TareaController::update
+* @see app/Http/Controllers/TareaController.php:261
+* @route '/tareas/{tarea}'
+*/
+update4a54e2dfee02fdfe7c497bc9f62299b2Form.patch = (args: { tarea: number | { id: number } } | [tarea: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update4a54e2dfee02fdfe7c497bc9f62299b2.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PATCH',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+update4a54e2dfee02fdfe7c497bc9f62299b2.form = update4a54e2dfee02fdfe7c497bc9f62299b2Form
+
+export const update = {
+    '/tareas/{tarea}': update4a54e2dfee02fdfe7c497bc9f62299b2,
+    '/tareas/{tarea}': update4a54e2dfee02fdfe7c497bc9f62299b2,
+}
 
 /**
 * @see \App\Http\Controllers\TareaController::destroy
@@ -632,6 +701,6 @@ destroyForm.delete = (args: { tarea: number | { id: number } } | [tarea: number 
 
 destroy.form = destroyForm
 
-const TareaController = { index, show, create, store, edit, update, destroy }
+const TareaController = { index, create, store, show, edit, update, destroy }
 
 export default TareaController

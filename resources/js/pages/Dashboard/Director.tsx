@@ -1,6 +1,6 @@
 import React from 'react';
-import { Link } from '@inertiajs/react';
-import Layout from '../../components/Layout/Layout';
+import { Link, Head } from '@inertiajs/react';
+import AppLayout from '@/layouts/app-layout';
 import {
   UserGroupIcon,
   AcademicCapIcon,
@@ -21,7 +21,8 @@ interface Props {
 
 export default function DashboardDirector({ estadisticas }: Props) {
   return (
-    <Layout>
+    <AppLayout>
+      <Head title="Inicio - Director" />
       <div className="bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50 min-h-full">
         <div className="py-8">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -163,6 +164,6 @@ export default function DashboardDirector({ estadisticas }: Props) {
           </div>
         </div>
       </div>
-    </Layout>
+    </AppLayout>
   );
 }

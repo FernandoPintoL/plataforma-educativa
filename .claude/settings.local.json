@@ -30,7 +30,11 @@
       "Bash(then)",
       "Bash(echo:*)",
       "Bash(fi)",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(xargs ls:*)",
+      "Bash(sudo /usr/libexec/ApplicationFirewall/socketfilterfw:*)",
+      "Bash(chmod:*)",
+      "Bash(php verify_routes.php:*)"
     ],
     "deny": [],
     "ask": []

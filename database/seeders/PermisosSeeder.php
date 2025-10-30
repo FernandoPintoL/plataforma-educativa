@@ -39,6 +39,8 @@ class PermisosSeeder extends Seeder
         $this->crearPermisosTareas();
         $this->crearPermisosCalificaciones();
         $this->crearPermisosEvaluaciones();
+        $this->crearPermisosContenidoEducativo();
+        $this->crearPermisosRecursos();
         $this->crearPermisosAsistencia();
         $this->crearPermisosComunicaciones();
         $this->crearPermisosSeguimientoParental();
@@ -199,6 +201,62 @@ class PermisosSeeder extends Seeder
     }
 
     /**
+     * Crear permisos para el módulo de contenido educativo (módulos y lecciones)
+     */
+    protected function crearPermisosContenidoEducativo()
+    {
+        $permisos = [
+            // Módulos Educativos
+            'modulos.index'           => 'Listar módulos educativos',
+            'modulos.show'            => 'Ver detalles de módulo',
+            'modulos.create'          => 'Crear módulo educativo',
+            'modulos.edit'            => 'Editar módulo educativo',
+            'modulos.delete'          => 'Eliminar módulo educativo',
+            'gestionar-modulos'       => 'Gestionar módulos educativos (CRUD completo)',
+            'modulos.reordenar'       => 'Reordenar módulos',
+            'modulos.publicar'        => 'Publicar módulos',
+            'modulos.archivar'        => 'Archivar módulos',
+            'modulos.duplicar'        => 'Duplicar módulos',
+
+            // Lecciones
+            'lecciones.index'         => 'Listar lecciones',
+            'lecciones.show'          => 'Ver detalles de lección',
+            'lecciones.create'        => 'Crear lección',
+            'lecciones.edit'          => 'Editar lección',
+            'lecciones.delete'        => 'Eliminar lección',
+            'gestionar-lecciones'     => 'Gestionar lecciones (CRUD completo)',
+            'lecciones.reordenar'     => 'Reordenar lecciones',
+            'lecciones.publicar'      => 'Publicar lecciones',
+            'lecciones.archivar'      => 'Archivar lecciones',
+            'lecciones.duplicar'      => 'Duplicar lecciones',
+
+            // General
+            'ver-contenido-educativo' => 'Ver contenido educativo',
+        ];
+
+        $this->crearPermisos($permisos);
+    }
+
+    /**
+     * Crear permisos para el módulo de recursos
+     */
+    protected function crearPermisosRecursos()
+    {
+        $permisos = [
+            'recursos.index'      => 'Listar recursos',
+            'recursos.show'       => 'Ver detalles de recurso',
+            'recursos.create'     => 'Crear recurso',
+            'recursos.edit'       => 'Editar recurso',
+            'recursos.delete'     => 'Eliminar recurso',
+            'gestionar-recursos'  => 'Gestionar recursos (CRUD completo)',
+            'ver-recursos'        => 'Ver recursos',
+            'descargar-recursos'  => 'Descargar recursos',
+        ];
+
+        $this->crearPermisos($permisos);
+    }
+
+    /**
      * Crear permisos para el módulo de asistencia
      */
     protected function crearPermisosAsistencia()
@@ -333,6 +391,17 @@ class PermisosSeeder extends Seeder
             // Evaluaciones
             'evaluaciones.index', 'evaluaciones.show', 'ver-evaluaciones',
 
+            // Contenido Educativo (Módulos y Lecciones)
+            'modulos.index', 'modulos.show', 'modulos.create', 'modulos.edit', 'modulos.delete',
+            'gestionar-modulos', 'modulos.reordenar', 'modulos.publicar', 'modulos.archivar', 'modulos.duplicar',
+            'lecciones.index', 'lecciones.show', 'lecciones.create', 'lecciones.edit', 'lecciones.delete',
+            'gestionar-lecciones', 'lecciones.reordenar', 'lecciones.publicar', 'lecciones.archivar', 'lecciones.duplicar',
+            'ver-contenido-educativo',
+
+            // Recursos
+            'recursos.index', 'recursos.show', 'recursos.create', 'recursos.edit', 'recursos.delete',
+            'gestionar-recursos', 'ver-recursos', 'descargar-recursos',
+
             // Asistencia
             'asistencia.index', 'asistencia.reportes', 'ver-reportes-asistencia',
 
@@ -381,6 +450,17 @@ class PermisosSeeder extends Seeder
             'evaluaciones.index', 'evaluaciones.show', 'evaluaciones.create',
             'evaluaciones.edit', 'gestionar-evaluaciones', 'ver-evaluaciones',
             'gestionar-preguntas', 'preguntas.index',
+
+            // Contenido Educativo (Módulos y Lecciones)
+            'modulos.index', 'modulos.show', 'modulos.create', 'modulos.edit', 'modulos.delete',
+            'gestionar-modulos', 'modulos.reordenar', 'modulos.publicar', 'modulos.archivar', 'modulos.duplicar',
+            'lecciones.index', 'lecciones.show', 'lecciones.create', 'lecciones.edit', 'lecciones.delete',
+            'gestionar-lecciones', 'lecciones.reordenar', 'lecciones.publicar', 'lecciones.archivar', 'lecciones.duplicar',
+            'ver-contenido-educativo',
+
+            // Recursos
+            'recursos.index', 'recursos.show', 'recursos.create', 'recursos.edit', 'recursos.delete',
+            'gestionar-recursos', 'ver-recursos', 'descargar-recursos',
 
             // Asistencia
             'asistencia.index', 'asistencia.registrar', 'gestionar-asistencia',
