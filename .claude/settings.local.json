@@ -35,7 +35,8 @@
       "Bash(sudo /usr/libexec/ApplicationFirewall/socketfilterfw:*)",
       "Bash(chmod:*)",
       "Bash(php verify_routes.php:*)",
-      "Bash(dir \"D:\\PLATAFORMA EDUCATIVA\\plataforma-educativa\\resources\\js\\pages\")"
+      "Bash(dir \"D:\\PLATAFORMA EDUCATIVA\\plataforma-educativa\\resources\\js\\pages\")",
+      "Bash(php -l:*)"
     ],
     "deny": [],
     "ask": []

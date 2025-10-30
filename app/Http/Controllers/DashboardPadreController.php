@@ -16,7 +16,7 @@ class DashboardPadreController extends Controller
 
         // Obtener hijos reales del padre
         $hijos = $padre->hijos()
-            ->with(['cursosComoEstudiante', 'rendimientoAcademico', 'trabajos.calificacion'])
+            ->with(['cursosComoEstudiante', 'trabajos.calificacion'])
             ->get();
 
         // Obtener información detallada de cada hijo
@@ -68,7 +68,8 @@ class DashboardPadreController extends Controller
         return $hijos->map(function ($hijo) {
             $cursos = $hijo->cursosComoEstudiante;
             $trabajos = $hijo->trabajos;
-            $rendimiento = $hijo->rendimientoAcademico;
+            // Nota: rendimientoAcademico no se carga porque la tabla no existe aún
+            $rendimiento = null;
 
             // Contar tareas pendientes (trabajos sin calificar)
             $tareasPendientes = $trabajos
@@ -77,8 +78,18 @@ class DashboardPadreController extends Controller
                 })
                 ->count();
 
-            // Obtener promedio
-            $promedio = $rendimiento?->promedio ?? 0;
+            // Obtener calificaciones recientes para calcular promedio
+            $calificacionesTodas = $trabajos
+                ->filter(function ($trabajo) {
+                    return $trabajo->calificacion !== null;
+                })
+                ->pluck('calificacion.puntaje')
+                ->toArray();
+
+            // Calcular promedio desde las calificaciones
+            $promedio = count($calificacionesTodas) > 0
+                ? array_sum($calificacionesTodas) / count($calificacionesTodas)
+                : 0;
 
             // Obtener calificaciones recientes
             $calificacionesRecientes = $trabajos
