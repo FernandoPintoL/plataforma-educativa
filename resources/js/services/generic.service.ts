@@ -26,7 +26,7 @@ export abstract class GenericService<T extends BaseEntity, F extends BaseFormDat
       preserveScroll: true,
       onError: (errors) => {
         NotificationService.error('Error al realizar la búsqueda');
-        console.error('Search errors:', errors);
+        
       }
     });
   }
@@ -44,7 +44,7 @@ export abstract class GenericService<T extends BaseEntity, F extends BaseFormDat
       onError: (errors) => {
         NotificationService.dismiss(loadingToast);
         NotificationService.error('Error al eliminar el registro');
-        console.error('Delete errors:', errors);
+        
       }
     });
   }

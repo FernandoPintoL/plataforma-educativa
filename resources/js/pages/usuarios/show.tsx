@@ -50,7 +50,7 @@ export default function Show({ user }: PageProps) {
         // Log temporal para depuración: verificar qué objeto `user` llega al componente
         // Remover este log una vez confirmado en el navegador
          
-        console.log('[debug] usuarios/Show user prop:', user);
+        
     }, [user]);
     return (
         <AppLayout breadcrumbs={breadcrumbs}>

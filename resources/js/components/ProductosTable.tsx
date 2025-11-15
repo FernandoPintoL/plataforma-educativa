@@ -113,7 +113,7 @@ export default function ProductosTable({
     // Función para manejar errores del escáner
     const handleScannerError = (error: string) => {
         setScannerError(error);
-        console.warn('Error del escáner:', error);
+        
     };
 
     // Función para abrir el modal del escáner

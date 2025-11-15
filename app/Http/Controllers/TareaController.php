@@ -367,8 +367,10 @@ class TareaController extends Controller
 
             // Eliminar trabajos asociados y sus archivos
             foreach ($tarea->trabajos as $trabajo) {
-                // Eliminar archivos de entregas si existen
-                // TODO: implementar cuando se agregue el sistema de archivos en trabajos
+                // Eliminar adjuntos del trabajo (se eliminarán automáticamente los archivos)
+                foreach ($trabajo->adjuntos as $adjunto) {
+                    $adjunto->delete();
+                }
 
                 $trabajo->delete();
             }

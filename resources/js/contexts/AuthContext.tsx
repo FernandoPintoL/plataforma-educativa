@@ -47,7 +47,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
         password,
       });
     } catch (error) {
-      console.error('Error al iniciar sesión:', error);
+      
       throw error;
     } finally {
       setLoading(false);

@@ -279,3 +279,37 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('role:profesor|director')
         ->name('lecciones.duplicar');
 });
+
+// ==================== ORIENTACIÓN VOCACIONAL ====================
+Route::middleware(['auth', 'verified'])->group(function () {
+    // Listar y ver tests vocacionales (todos los usuarios)
+    Route::get('tests-vocacionales', [\App\Http\Controllers\TestVocacionalController::class, 'index'])
+        ->name('tests-vocacionales.index');
+    Route::get('tests-vocacionales/{testVocacional}', [\App\Http\Controllers\TestVocacionalController::class, 'show'])
+        ->name('tests-vocacionales.show');
+
+    // Estudiantes pueden resolver tests
+    Route::middleware('role:estudiante')->group(function () {
+        Route::get('tests-vocacionales/{testVocacional}/tomar', [\App\Http\Controllers\TestVocacionalController::class, 'take'])
+            ->name('tests-vocacionales.take');
+        Route::post('tests-vocacionales/{testVocacional}/enviar', [\App\Http\Controllers\TestVocacionalController::class, 'submitRespuestas'])
+            ->name('tests-vocacionales.submit');
+        Route::get('tests-vocacionales/{testVocacional}/resultados', [\App\Http\Controllers\TestVocacionalController::class, 'resultados'])
+            ->name('tests-vocacionales.resultados');
+    });
+
+    // Profesores y directores pueden crear/editar tests
+    Route::middleware('role:profesor|director')->group(function () {
+        Route::get('tests-vocacionales/crear', [\App\Http\Controllers\TestVocacionalController::class, 'create'])
+            ->name('tests-vocacionales.create');
+        Route::post('tests-vocacionales', [\App\Http\Controllers\TestVocacionalController::class, 'store'])
+            ->name('tests-vocacionales.store');
+        Route::get('tests-vocacionales/{testVocacional}/editar', [\App\Http\Controllers\TestVocacionalController::class, 'edit'])
+            ->name('tests-vocacionales.edit');
+        Route::put('tests-vocacionales/{testVocacional}', [\App\Http\Controllers\TestVocacionalController::class, 'update'])
+            ->name('tests-vocacionales.update');
+        Route::patch('tests-vocacionales/{testVocacional}', [\App\Http\Controllers\TestVocacionalController::class, 'update']);
+        Route::delete('tests-vocacionales/{testVocacional}', [\App\Http\Controllers\TestVocacionalController::class, 'destroy'])
+            ->name('tests-vocacionales.destroy');
+    });
+});

@@ -74,7 +74,7 @@ export function useSearchSelect<T extends Record<string, unknown>>({
       // Los resultados se manejarían actualizando el prop `data` desde el componente padre
       return results;
     } catch (error) {
-      console.error('Error en búsqueda externa:', error);
+      
     } finally {
       setIsLoading(false);
     }

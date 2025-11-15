@@ -34,7 +34,7 @@ import type { FileUploadModalProps } from './types';
  *   acceptedFileTypes={['application/pdf', 'image/*']}
  *   onSubmit={(files) => {
  *     // Maneja los archivos
- *     console.log(files);
+ *     
  *     setOpen(false);
  *   }}
  *   title="Subir Trabajo"

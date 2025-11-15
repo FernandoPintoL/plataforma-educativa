@@ -166,13 +166,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     return (props.modulosSidebar as MenuItem[]) || [];
   }, [props.modulosSidebar]);
 
-  // Debug: Log para verificar qué datos están llegando
+  // Verificar que los módulos estén disponibles
   React.useEffect(() => {
-    console.log('=== SIDEBAR DEBUG ===');
-    console.log('modulosSidebar:', modulosSidebar);
-    console.log('modulosSidebar length:', modulosSidebar?.length);
-    console.log('props completos:', props);
-    console.log('user:', user);
+    // Este efecto se usa para reaccionar a cambios en los módulos
+    // pero no es necesario loguear en desarrollo después de completar la depuración
   }, [modulosSidebar, props, user]);
 
   return (

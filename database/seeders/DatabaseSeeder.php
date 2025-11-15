@@ -95,6 +95,9 @@ class DatabaseSeeder extends Seeder
             $user->assignRole('padre');
         });
 
+        // Asignar relaciones padre-estudiante
+        $this->call(PadresEstudiantesSeeder::class);
+
         // Crear cursos, tareas y asignaciones DESPUÉS de crear los usuarios
         $this->call(CursosSeeder::class);
         $this->call(TareasSeeder::class);

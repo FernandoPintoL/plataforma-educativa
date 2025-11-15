@@ -50,7 +50,7 @@ export const ExportButtons: React.FC<ExportButtonsProps> = ({
             await exportService.export(data, exportOptions);
             onExportEnd?.();
         } catch (error) {
-            console.error(`Error exportando a ${format}:`, error);
+            
             onExportError?.(error as Error);
         }
     };
@@ -63,7 +63,7 @@ export const ExportButtons: React.FC<ExportButtonsProps> = ({
             window.print();
             onExportEnd?.();
         } catch (error) {
-            console.error('Error imprimiendo:', error);
+            
             onExportError?.(error as Error);
         }
     };

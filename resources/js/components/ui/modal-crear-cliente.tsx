@@ -83,7 +83,7 @@ export default function ModalCrearCliente({
                 });
 
                 const result = await response.json();
-                console.log('Respuesta del servidor:', result);
+                
 
                 if (result.success && result.data.cliente) {
                     // Mostrar mensaje de éxito con detalles del cliente
@@ -105,7 +105,7 @@ export default function ModalCrearCliente({
                     NotificationService.error(errorMessage);
                 }
             } catch (error) {
-                console.error('Error en la petición:', error);
+                
                 NotificationService.error('Error al crear el cliente. Intente nuevamente.');
             }
         };

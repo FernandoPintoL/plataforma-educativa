@@ -4,6 +4,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Trabajo extends Model
@@ -61,6 +62,14 @@ class Trabajo extends Model
     public function calificacion(): HasOne
     {
         return $this->hasOne(Calificacion::class);
+    }
+
+    /**
+     * Relación con los adjuntos
+     */
+    public function adjuntos(): HasMany
+    {
+        return $this->hasMany(AdjuntoTrabajo::class);
     }
 
     /**

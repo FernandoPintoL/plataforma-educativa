@@ -78,7 +78,7 @@ export function useApiSearch({
                 throw new Error('Formato de respuesta inválido');
             }
         } catch (error) {
-            console.error('Error en búsqueda:', error);
+            
             setError(error instanceof Error ? error.message : 'Error desconocido');
             return [];
         } finally {

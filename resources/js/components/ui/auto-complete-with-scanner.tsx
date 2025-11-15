@@ -82,7 +82,7 @@ export default function AutoCompleteWithScanner({
                 const results = await onSearch(searchQuery);
                 setFilteredOptions(results);
             } catch (error) {
-                console.error('Error en búsqueda:', error);
+                
                 setFilteredOptions([]);
             } finally {
                 setLoading(false);
@@ -144,7 +144,7 @@ export default function AutoCompleteWithScanner({
             // Inicializar detección de códigos de barras
             initBarcodeDetection();
         } catch (error) {
-            console.error('Error al acceder a la cámara:', error);
+            
             setScannerError('No se pudo acceder a la cámara. Verifique los permisos.');
         }
     };
@@ -176,7 +176,7 @@ export default function AutoCompleteWithScanner({
                                 return;
                             }
                         } catch (error) {
-                            console.error('Error detectando código de barras:', error);
+                            
                         }
                     }
 
@@ -191,7 +191,7 @@ export default function AutoCompleteWithScanner({
                 await initZXingDetection();
             }
         } catch (error) {
-            console.error('Error inicializando detección:', error);
+            
             setScannerError('Error al inicializar el scanner de códigos de barras');
         }
     };
@@ -222,13 +222,13 @@ export default function AutoCompleteWithScanner({
 
             detectZXing();
         } catch (error) {
-            console.error('Error con ZXing:', error);
+            
             setScannerError('Scanner no disponible en este dispositivo');
         }
     };
 
     const handleBarcodeDetected = async (barcode: string) => {
-        console.log('Código detectado:', barcode);
+        
 
         // Buscar el producto por código de barras
         if (onSearch) {

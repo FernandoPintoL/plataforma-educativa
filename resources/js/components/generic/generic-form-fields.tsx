@@ -39,7 +39,7 @@ export default function GenericFormFields<F extends BaseFormData>({
             const options = await loadOptions(String(field.key));
             newOptions[String(field.key)] = options;
           } catch (error) {
-            console.error(`Error loading options for ${String(field.key)}:`, error);
+            
             newOptions[String(field.key)] = [];
           }
         }

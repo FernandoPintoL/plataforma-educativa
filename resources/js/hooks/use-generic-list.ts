@@ -119,7 +119,7 @@ export function useGenericList<T extends BaseEntity, F>({
         } catch (error) {
             NotificationService.dismiss(loadingToast)
             NotificationService.error(`Error al eliminar ${config.name}`)
-            console.error('Delete error:', error)
+            
         }
     }, [config, service])
 

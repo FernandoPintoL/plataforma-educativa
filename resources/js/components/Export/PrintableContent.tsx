@@ -10,7 +10,7 @@ interface PrintableContentProps {
 
 export const PrintableContent = forwardRef<HTMLDivElement, PrintableContentProps>(
     ({ compra, title = 'Compra' }, ref) => {
-        console.log('PrintableContent renderizado con compra:', compra?.numero);
+        
 
         return (
             <div

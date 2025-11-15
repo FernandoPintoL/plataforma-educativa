@@ -93,7 +93,7 @@ export default function ModalCrearProveedor({
                 });
 
                 const result = await response.json();
-                console.log('Respuesta del servidor:', result);
+                
 
                 if (result.success && result.data.proveedor) {
                     // Mostrar mensaje de éxito con detalles del proveedor
@@ -115,7 +115,7 @@ export default function ModalCrearProveedor({
                     NotificationService.error(errorMessage);
                 }
             } catch (error) {
-                console.error('Error en la petición:', error);
+                
                 NotificationService.error('Error al crear el proveedor. Intente nuevamente.');
             }
         };

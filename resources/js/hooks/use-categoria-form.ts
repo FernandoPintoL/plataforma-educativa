@@ -37,7 +37,7 @@ export function useCategoriaForm(categoria?: Categoria | null) {
           // La redirección se maneja en el servidor
         },
         onError: (errors) => {
-          console.error('Error al actualizar categoría:', errors);
+          
         },
       });
     } else {
@@ -47,7 +47,7 @@ export function useCategoriaForm(categoria?: Categoria | null) {
           // La redirección se maneja en el servidor
         },
         onError: (errors) => {
-          console.error('Error al crear categoría:', errors);
+          
         },
       });
     }

@@ -45,9 +45,9 @@ export default function CompraShow({ compra }: CompraShowProps) {
                         showExcel={true}
                         showCSV={true}
                         showPrint={true}
-                        onExportStart={() => console.log('Iniciando exportación...')}
-                        onExportEnd={() => console.log('Exportación completada')}
-                        onExportError={(error) => console.error('Error en exportación:', error)}
+                        onExportStart={() => 
+                        onExportEnd={() => 
+                        onExportError={(error) => 
                     />
                 </div>
 

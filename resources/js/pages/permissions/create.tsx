@@ -43,7 +43,6 @@ export default function Create() {
                 router.visit('/permissions')
             },
             onError: (errors) => {
-                console.error('Error creating permission:', errors)
                 NotificationService.error('Error al crear el permiso')
             }
         })

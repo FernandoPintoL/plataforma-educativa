@@ -54,7 +54,7 @@ export default function AsyncSearchSelect({
       setOptions(searchOptions);
       setLastSearch(query);
     } catch (error) {
-      console.error('Error en búsqueda:', error);
+      
       setOptions([]);
     } finally {
       setLoading(false);

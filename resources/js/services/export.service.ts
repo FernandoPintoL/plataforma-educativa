@@ -36,12 +36,12 @@ export class ExportServiceImpl implements ExportService {
     }
 
     async print(elementId: string, options: Partial<ExportOptions> = {}): Promise<void> {
-        console.log('Buscando elemento con ID:', elementId);
+        
         const element = document.getElementById(elementId);
-        console.log('Elemento encontrado:', element);
+        
 
         if (!element) {
-            console.error(`Elemento con ID '${elementId}' no encontrado. Elementos disponibles:`, document.querySelectorAll('[id]'));
+            
             throw new Error(`Elemento con ID '${elementId}' no encontrado`);
         }
 
@@ -187,7 +187,7 @@ export class ExportServiceImpl implements ExportService {
             const blob = await this.generatePDF(data, options);
             this.downloadBlob(blob, `${filename}.pdf`);
         } catch (error) {
-            console.error('Error generando PDF:', error);
+            
             throw new Error('Error al generar el PDF');
         }
     }
@@ -197,7 +197,7 @@ export class ExportServiceImpl implements ExportService {
             const blob = await this.generateExcel(data, options);
             this.downloadBlob(blob, `${filename}.xlsx`);
         } catch (error) {
-            console.error('Error generando Excel:', error);
+            
             throw new Error('Error al generar el archivo Excel');
         }
     }
@@ -207,7 +207,7 @@ export class ExportServiceImpl implements ExportService {
             const blob = await this.generateCSV(data, options);
             this.downloadBlob(blob, `${filename}.csv`);
         } catch (error) {
-            console.error('Error generando CSV:', error);
+            
             throw new Error('Error al generar el archivo CSV');
         }
     }
@@ -265,7 +265,7 @@ export class ExportServiceImpl implements ExportService {
             const filename = options.filename || `export_${new Date().toISOString().split('T')[0]}`;
             pdf.save(`${filename}.pdf`);
         } catch (error) {
-            console.error('Error exportando desde HTML:', error);
+            
             throw new Error('Error al exportar desde HTML');
         }
     }

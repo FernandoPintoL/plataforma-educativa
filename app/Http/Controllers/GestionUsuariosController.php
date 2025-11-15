@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\CredencialesUsuarioMail;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
@@ -136,8 +138,7 @@ class GestionUsuariosController extends Controller
 
             // Enviar email con credenciales si se solicitó
             if ($validated['enviar_email'] ?? false) {
-                // TODO: Implementar envío de email
-                // Mail::to($user->email)->send(new CredencialesUsuarioMail($user, $password));
+                Mail::to($user->email)->send(new CredencialesUsuarioMail($user, $password));
             }
 
             return redirect()
@@ -329,10 +330,42 @@ class GestionUsuariosController extends Controller
 
     /**
      * Calcular promedio general de un estudiante
+     *
+     * Calcula el promedio ponderado de todas las calificaciones del estudiante
+     * basado en los trabajos/tareas calificados.
+     *
+     * @param User $estudiante El estudiante para el cual calcular el promedio
+     * @return float|null El promedio general (0-100) o null si no hay calificaciones
      */
     private function calcularPromedioEstudiante(User $estudiante): ?float
     {
-        // TODO: Implementar cálculo real de promedio desde calificaciones
-        return null;
+        // Obtener todos los trabajos del estudiante que tienen calificaciones
+        $trabajosCalificados = $estudiante->trabajos()
+            ->has('calificacion')
+            ->get();
+
+        // Si no hay trabajos calificados, retornar null
+        if ($trabajosCalificados->isEmpty()) {
+            return null;
+        }
+
+        // Calcular el promedio de los puntajes
+        $sumaPuntajes = 0;
+        $totalTrabajosCalificados = 0;
+
+        foreach ($trabajosCalificados as $trabajo) {
+            if ($trabajo->calificacion && $trabajo->calificacion->puntaje !== null) {
+                $sumaPuntajes += $trabajo->calificacion->puntaje;
+                $totalTrabajosCalificados++;
+            }
+        }
+
+        // Si no hay calificaciones válidas, retornar null
+        if ($totalTrabajosCalificados === 0) {
+            return null;
+        }
+
+        // Retornar el promedio redondeado a 2 decimales
+        return round($sumaPuntajes / $totalTrabajosCalificados, 2);
     }
 }

@@ -27,7 +27,7 @@ export default function GenericPagination({ links, isLoading = false }: GenericP
         preserveScroll: true,
         onError: (errors) => {
           NotificationService.error('Error al navegar entre páginas');
-          console.error('Pagination errors:', errors);
+          
         }
       });
     }

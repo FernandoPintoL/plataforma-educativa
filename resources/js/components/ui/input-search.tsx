@@ -88,7 +88,7 @@ export default function InputSearch({
                 setIsOpen(results.length > 0 || (query.length >= 2 && showCreateButton && !!onCreateClick));
                 setSelectedIndex(-1); // Reset selection when new results arrive
             } catch (error) {
-                console.error('Error en búsqueda:', error);
+                
                 setOptions([]);
                 setIsOpen(false);
             } finally {
@@ -206,7 +206,7 @@ export default function InputSearch({
             // Por ejemplo, @zxing/library o similar
 
         } catch (error) {
-            console.error('Error accediendo a la cámara:', error);
+            
             setScannerError('No se puede acceder a la cámara');
         }
     };
@@ -372,7 +372,7 @@ export default function InputSearch({
                                             <button
                                                 type="button"
                                                 onClick={() => {
-                                                    console.log('🖱️ Botón crear clickeado con query:', query);
+                                                    
                                                     onCreateClick(query);
                                                 }}
                                                 className="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors duration-150"
