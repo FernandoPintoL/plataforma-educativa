@@ -5,7 +5,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasMany as HasManyRelation;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Models\Role;
 
 class ModuloSidebar extends Model
 {
@@ -57,6 +59,15 @@ class ModuloSidebar extends Model
     }
 
     /**
+     * Obtener los accesos de roles para este módulo
+     * Relación con la nueva tabla role_modulo_acceso
+     */
+    public function rolesAcceso(): HasManyRelation
+    {
+        return $this->hasMany(RoleModuloAcceso::class, 'modulo_sidebar_id');
+    }
+
+    /**
      * Scope para obtener solo módulos activos
      */
     public function scopeActivos($query)
@@ -99,12 +110,28 @@ class ModuloSidebar extends Model
     /**
      * Obtener módulos para el sidebar con estructura jerárquica
      *
+     * ARQUITECTURA DE 3 CAPAS:
+     * Capa 3 (esta): ¿Puede VER el módulo? (role_modulo_acceso)
+     * Capa 2: ¿Puede HACER la acción? (Spatie role_has_permissions)
+     * Capa 1: ¿Quién eres? (Laravel Auth)
+     *
      * @param \App\Models\User|null $usuario Usuario para el que se obtienen los módulos
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public static function obtenerParaSidebar($usuario = null)
     {
         $usuario = $usuario ?? Auth::user();
+
+        if (!$usuario) {
+            return collect([]);
+        }
+
+        // Obtener roles del usuario
+        $rolesIds = $usuario->roles()->pluck('roles.id')->toArray();
+
+        if (empty($rolesIds)) {
+            return collect([]);
+        }
 
         return self::activos()
             ->principales()
@@ -113,13 +140,15 @@ class ModuloSidebar extends Model
                 $query->activos()->ordenados();
             }])
             ->get()
-            ->filter(function ($modulo) use ($usuario) {
-                return $modulo->usuarioTienePermiso($usuario);
+            ->filter(function ($modulo) use ($rolesIds, $usuario) {
+                // Filtro Capa 3: ¿Puede VER este módulo?
+                // Revisa tabla role_modulo_acceso
+                return $modulo->usuarioPuedeVerModulo($rolesIds);
             })
-            ->map(function ($modulo) use ($usuario) {
+            ->map(function ($modulo) use ($rolesIds, $usuario) {
                 // Filtrar submódulos que el usuario puede ver
-                $modulo->submodulos = $modulo->submodulos->filter(function ($submodulo) use ($usuario) {
-                    return $submodulo->usuarioTienePermiso($usuario);
+                $modulo->submodulos = $modulo->submodulos->filter(function ($submodulo) use ($rolesIds) {
+                    return $submodulo->usuarioPuedeVerModulo($rolesIds);
                 });
 
                 return $modulo;
@@ -127,29 +156,47 @@ class ModuloSidebar extends Model
     }
 
     /**
-     * Verificar si el usuario tiene permisos para este módulo
+     * Verificar si el usuario puede VER este módulo
+     *
+     * NUEVA LÓGICA (Capa 3): Revisa tabla role_modulo_acceso
+     * - Si existe entrada con visible=true → Usuario puede ver
+     * - Si NO existe entrada → Usuario NO puede ver
+     *
+     * @param array $rolesIds Array de IDs de roles del usuario
+     * @return bool
+     */
+    public function usuarioPuedeVerModulo(array $rolesIds): bool
+    {
+        if (empty($rolesIds)) {
+            return false;
+        }
+
+        // Verificar si alguno de los roles del usuario tiene acceso a este módulo
+        return RoleModuloAcceso::visibles()
+            ->whereIn('role_id', $rolesIds)
+            ->where('modulo_sidebar_id', $this->id)
+            ->exists();
+    }
+
+    /**
+     * Verificar si el usuario tiene permisos para este módulo (LEGACY)
+     *
+     * DEPRECATED: Mantener para backward compatibility
+     * Esta lógica será reemplazada por usuarioPuedeVerModulo()
+     *
+     * @deprecated Usar usuarioPuedeVerModulo() en su lugar
      */
     public function usuarioTienePermiso($usuario = null): bool
     {
         $usuario = $usuario ?? Auth::user();
 
-        // Si no hay permisos especificados, permitir acceso
-        if (empty($this->permisos) || ! is_array($this->permisos)) {
-            return true;
-        }
-
-        if (! $usuario) {
+        if (!$usuario) {
             return false;
         }
 
-        // Verificar permisos usando Spatie/Permission
-        foreach ($this->permisos as $permiso) {
-            if ($usuario->can($permiso)) {
-                return true;
-            }
-        }
-
-        return false;
+        // Usar la nueva lógica basada en role_modulo_acceso
+        $rolesIds = $usuario->roles()->pluck('roles.id')->toArray();
+        return $this->usuarioPuedeVerModulo($rolesIds);
     }
 
     /**

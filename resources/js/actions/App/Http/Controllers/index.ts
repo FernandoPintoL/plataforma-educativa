@@ -19,6 +19,7 @@ import RecursoController from './RecursoController'
 import ReportesController from './ReportesController'
 import ModuloEducativoController from './ModuloEducativoController'
 import LeccionController from './LeccionController'
+import TestVocacionalController from './TestVocacionalController'
 const Controllers = {
     UserController,
 RoleController,
@@ -41,6 +42,7 @@ RecursoController,
 ReportesController,
 ModuloEducativoController,
 LeccionController,
+TestVocacionalController,
 }
 
 export default Controllers

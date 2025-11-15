@@ -97,18 +97,50 @@ class RolesAndPermissionsSeeder extends Seeder
         ];
         $profesor->syncPermissions($profesorPerms);
 
+        /**
+         * PERMISOS PARA ESTUDIANTE
+         *
+         * IMPORTANTE: Los estudiantes NO tienen permisos sobre:
+         * - 'estudiantes.index' (ver listado de TODOS) ❌ REMOVIDO
+         * - 'estudiantes.show' (ver detalles de OTROS) ❌ REMOVIDO
+         * - 'estudiantes.create' (crear estudiantes) ❌ REMOVIDO
+         * - 'estudiantes.edit' (editar OTROS) ❌ REMOVIDO
+         *
+         * Solo pueden ver SU PROPIO:
+         * - 'estudiantes.inscripciones' (MIS inscripciones)
+         * - 'estudiantes.historial' (MI historial)
+         *
+         * Los módulos del sidebar están SEPARADOS (tabla role_modulo_acceso)
+         * Los permisos de Spatie controlan LAS ACCIONES
+         */
         $estudiantePerms = [
-            'estudiantes.index', 'estudiantes.show', 'estudiantes.inscripciones', 'estudiantes.historial',
-            'tareas.index', 'tareas.show', 'tareas.entregas', 'tareas.entregar',
-            'cursos.index', 'cursos.show', 'cursos.horarios', 'cursos.ver',
-            'calificaciones.index', 'calificaciones.show',
-            'contenido.ver',
-            'evaluaciones.ver', 'evaluaciones.tomar',
-            'trabajos.ver', 'trabajos.entregar',
-            'recursos.ver', 'recursos.descargar',
-            'analisis.ver', 'analisis.recomendaciones',
-            'vocacional.ver_tests', 'vocacional.tomar_tests', 'vocacional.ver_resultados', 'vocacional.ver_recomendaciones',
-            'notificaciones.ver',
+            // 🚫 REMOVIDOS: 'estudiantes.index', 'estudiantes.show', 'estudiantes.create', 'estudiantes.edit'
+            'estudiantes.inscripciones',    // Ver MIS inscripciones
+            'estudiantes.historial',        // Ver MI historial
+            'tareas.index',                 // Ver tareas
+            'tareas.show',                  // Ver detalle de tarea
+            'tareas.entregas',              // Ver entregas
+            'tareas.entregar',              // ENTREGAR tarea (no crear)
+            'cursos.index',                 // Ver cursos disponibles
+            'cursos.show',                  // Ver detalle de curso
+            'cursos.horarios',              // Ver horarios de cursos
+            'cursos.ver',                   // Acceso general a cursos
+            'calificaciones.index',         // Ver mis calificaciones
+            'calificaciones.show',          // Ver detalle de calificación
+            'contenido.ver',                // Ver contenido educativo
+            'evaluaciones.ver',             // Ver evaluaciones
+            'evaluaciones.tomar',           // Realizar evaluaciones
+            'trabajos.ver',                 // Ver trabajos
+            'trabajos.entregar',            // Entregar trabajos (no calificar)
+            'recursos.ver',                 // Ver recursos
+            'recursos.descargar',           // Descargar recursos
+            'analisis.ver',                 // Ver análisis
+            'analisis.recomendaciones',     // Ver recomendaciones
+            'vocacional.ver_tests',         // Ver tests vocacionales
+            'vocacional.tomar_tests',       // Tomar tests vocacionales
+            'vocacional.ver_resultados',    // Ver resultados vocacionales
+            'vocacional.ver_recomendaciones', // Ver recomendaciones vocacionales
+            'notificaciones.ver',           // Ver notificaciones
         ];
         $estudiante->syncPermissions($estudiantePerms);
 

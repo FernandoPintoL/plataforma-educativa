@@ -15,6 +15,8 @@ class DatabaseSeeder extends Seeder
         $this->call(RolesAndPermissionsSeeder::class);
         $this->call(PermisosSeeder::class);
         $this->call(ModuloSidebarSeeder::class);
+        // NUEVA CAPA 3: Configurar qué módulos ve cada rol
+        $this->call(RoleModuloAccesoSeeder::class);
 
         // Create a default admin user if not exists
         $admin = User::query()->where('email', 'admin@paucara.test')->first();

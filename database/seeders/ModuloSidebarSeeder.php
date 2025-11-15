@@ -26,19 +26,51 @@ class ModuloSidebarSeeder extends Seeder
             ]
         );
 
-        // Módulo de Estudiantes - Solo visible para directores y profesores
-        $estudiantes = ModuloSidebar::firstOrCreate(
-            ['titulo' => 'Estudiantes', 'ruta' => '/estudiantes', 'es_submenu' => false],
+        // Módulo de Gestión de Estudiantes - Solo visible para directores y coordinadores
+        // IMPORTANTE: El nombre cambió de 'Estudiantes' a 'Gestionar Estudiantes'
+        // para ser claro que es un módulo ADMINISTRATIVO, no para estudiantes
+        $gestEstudiantes = ModuloSidebar::firstOrCreate(
+            ['titulo' => 'Gestionar Estudiantes', 'ruta' => '/estudiantes', 'es_submenu' => false],
             [
-                'icono'             => 'User',
-                'descripcion'       => 'Gestión de estudiantes',
+                'icono'             => 'Users',
+                'descripcion'       => 'Gestión administrativa de estudiantes',
                 'orden'             => 2,
                 'categoria'         => 'Académico',
                 'activo'            => true,
-                'permisos'          => ['estudiantes.index', 'ver-estudiantes'], // Requiere uno de estos permisos
+                'permisos'          => ['estudiantes.index'], // Solo para spatie backup
                 'visible_dashboard' => true,
             ]
         );
+
+        // NUEVO: Módulo "Mi Perfil" para estudiantes ver sus datos
+        $miPerfil = ModuloSidebar::firstOrCreate(
+            ['titulo' => 'Mi Perfil', 'ruta' => '/perfil', 'es_submenu' => false],
+            [
+                'icono'             => 'User',
+                'descripcion'       => 'Ver y editar perfil personal',
+                'orden'             => 2,
+                'categoria'         => 'Personal',
+                'activo'            => true,
+                'permisos'          => [], // Visible para cualquiera autenticado
+                'visible_dashboard' => true,
+            ]
+        );
+
+        // NUEVO: Módulo "Mis Cursos" para estudiantes
+        $misCursos = ModuloSidebar::firstOrCreate(
+            ['titulo' => 'Mis Cursos', 'ruta' => '/mis-cursos', 'es_submenu' => false],
+            [
+                'icono'             => 'BookOpen',
+                'descripcion'       => 'Cursos en los que estoy inscrito',
+                'orden'             => 3,
+                'categoria'         => 'Académico',
+                'activo'            => true,
+                'permisos'          => [], // Visible para estudiantes
+                'visible_dashboard' => true,
+            ]
+        );
+
+        $estudiantes = $gestEstudiantes; // Para referencias posteriores
 
         $submenuEstudiantes = [
             ['titulo' => 'Listado', 'ruta' => '/estudiantes', 'icono' => 'List', 'orden' => 1, 'permisos' => ['estudiantes.index', 'ver-estudiantes']],
@@ -62,19 +94,21 @@ class ModuloSidebarSeeder extends Seeder
             );
         }
 
-        // Módulo de Profesores - Solo visible para directores
-        $profesores = ModuloSidebar::firstOrCreate(
-            ['titulo' => 'Profesores', 'ruta' => '/profesores', 'es_submenu' => false],
+        // Módulo de Gestión de Profesores - Solo visible para directores
+        $gestProfesores = ModuloSidebar::firstOrCreate(
+            ['titulo' => 'Gestionar Profesores', 'ruta' => '/profesores', 'es_submenu' => false],
             [
                 'icono'             => 'UserCheck',
-                'descripcion'       => 'Gestión de profesores',
-                'orden'             => 3,
+                'descripcion'       => 'Gestión administrativa de profesores',
+                'orden'             => 4,
                 'categoria'         => 'Académico',
                 'activo'            => true,
-                'permisos'          => ['profesores.index', 'gestionar-profesores'],
+                'permisos'          => ['profesores.index'],
                 'visible_dashboard' => true,
             ]
         );
+
+        $profesores = $gestProfesores; // Para referencias posteriores
 
         $submenuProfesores = [
             ['titulo' => 'Listado', 'ruta' => '/profesores', 'icono' => 'List', 'orden' => 1, 'permisos' => ['profesores.index', 'gestionar-profesores']],
