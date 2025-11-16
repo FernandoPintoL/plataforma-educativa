@@ -352,3 +352,81 @@ logout.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
         })
     
     logout.form = logoutForm
+/**
+* @see \App\Http\Controllers\AnalisisRiesgoController::analisisRiesgo
+ * @see [unknown]:0
+ * @route '/analisis-riesgo'
+ */
+export const analisisRiesgo = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: analisisRiesgo.url(options),
+    method: 'get',
+})
+
+analisisRiesgo.definition = {
+    methods: ["get","head"],
+    url: '/analisis-riesgo',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\AnalisisRiesgoController::analisisRiesgo
+ * @see [unknown]:0
+ * @route '/analisis-riesgo'
+ */
+analisisRiesgo.url = (options?: RouteQueryOptions) => {
+    return analisisRiesgo.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\AnalisisRiesgoController::analisisRiesgo
+ * @see [unknown]:0
+ * @route '/analisis-riesgo'
+ */
+analisisRiesgo.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: analisisRiesgo.url(options),
+    method: 'get',
+})
+/**
+* @see \App\Http\Controllers\AnalisisRiesgoController::analisisRiesgo
+ * @see [unknown]:0
+ * @route '/analisis-riesgo'
+ */
+analisisRiesgo.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: analisisRiesgo.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \App\Http\Controllers\AnalisisRiesgoController::analisisRiesgo
+ * @see [unknown]:0
+ * @route '/analisis-riesgo'
+ */
+    const analisisRiesgoForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: analisisRiesgo.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \App\Http\Controllers\AnalisisRiesgoController::analisisRiesgo
+ * @see [unknown]:0
+ * @route '/analisis-riesgo'
+ */
+        analisisRiesgoForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: analisisRiesgo.url(options),
+            method: 'get',
+        })
+            /**
+* @see \App\Http\Controllers\AnalisisRiesgoController::analisisRiesgo
+ * @see [unknown]:0
+ * @route '/analisis-riesgo'
+ */
+        analisisRiesgoForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: analisisRiesgo.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    analisisRiesgo.form = analisisRiesgoForm
