@@ -16,10 +16,19 @@ import json
 import joblib
 from datetime import datetime
 import numpy as np
+import pandas as pd
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from sklearn.model_selection import KFold, StratifiedKFold, cross_val_score, GridSearchCV
 from sklearn.pipeline import Pipeline
+
+try:
+    import shap
+    SHAP_AVAILABLE = True
+except ImportError:
+    SHAP_AVAILABLE = False
+    logger_temp = logging.getLogger(__name__)
+    logger_temp.warning("SHAP no está instalado. Instala con: pip install shap")
 
 from shared.config import MODELS_DIR, DEBUG
 
@@ -567,6 +576,234 @@ class BaseModel(ABC):
             Dict o None: Resultados de tuning si están disponibles
         """
         return self.metadata.get('hyperparameter_tuning', None)
+
+    # ===========================================
+    # MÉTODOS DE EXPLICABILIDAD (SHAP)
+    # ===========================================
+
+    def explain_prediction(self, X: np.ndarray, sample_index: int = 0,
+                          feature_names: List[str] = None, max_display: int = 10) -> Dict[str, Any]:
+        """
+        Explicar una predicción individual usando SHAP.
+
+        Args:
+            X (np.ndarray): Dataset de features
+            sample_index (int): Índice de la muestra a explicar
+            feature_names (List[str]): Nombres de features
+            max_display (int): Número máximo de features a mostrar
+
+        Retorna:
+            Dict: Explicación de la predicción
+            {
+                'prediction': valor,
+                'base_value': valor_base,
+                'shap_values': valores_SHAP,
+                'feature_contributions': contribuciones_ordenadas,
+                'explanation_text': texto_natural
+            }
+        """
+        if not SHAP_AVAILABLE:
+            logger.error("SHAP no está instalado")
+            return {}
+
+        if not self.is_trained:
+            logger.error("Modelo no entrenado")
+            return {}
+
+        try:
+            # Crear explainer basado en tipo de modelo
+            if hasattr(self.model, 'predict_proba'):
+                # Para clasificación
+                explainer = shap.TreeExplainer(self.model)
+            else:
+                # Para regresión
+                explainer = shap.TreeExplainer(self.model)
+
+            # Calcular SHAP values
+            if hasattr(X, 'values'):
+                X_array = X.values
+            else:
+                X_array = X
+
+            shap_values = explainer.shap_values(X_array)
+
+            # Manejar casos de clasificación multi-clase
+            if isinstance(shap_values, list):
+                shap_values = shap_values[1]  # Usar clase positiva
+
+            # Obtener predicción
+            if hasattr(self.model, 'predict_proba'):
+                prediction = self.model.predict_proba(X_array[sample_index:sample_index+1])[0]
+            else:
+                prediction = self.model.predict(X_array[sample_index:sample_index+1])[0]
+
+            # Nombres de features
+            if feature_names is None:
+                feature_names = self.features if self.features else [f"feature_{i}" for i in range(X_array.shape[1])]
+
+            # Obtener contribuciones
+            sample_shap = shap_values[sample_index]
+            feature_impact = [(feature_names[i], sample_shap[i]) for i in range(len(feature_names))]
+            feature_impact.sort(key=lambda x: abs(x[1]), reverse=True)
+
+            # Tomar top features
+            top_features = feature_impact[:max_display]
+
+            # Crear explicación textual
+            explanation_text = self._generate_explanation_text(
+                prediction, explainer.expected_value, top_features
+            )
+
+            result = {
+                'prediction': float(prediction) if isinstance(prediction, (int, float, np.number)) else prediction.tolist(),
+                'base_value': float(explainer.expected_value),
+                'shap_values': sample_shap.tolist(),
+                'feature_contributions': [
+                    {
+                        'feature': feature,
+                        'contribution': float(contribution),
+                        'impact': 'positivo' if contribution > 0 else 'negativo',
+                        'magnitude': abs(float(contribution))
+                    }
+                    for feature, contribution in top_features
+                ],
+                'explanation_text': explanation_text,
+                'top_features': [f[0] for f in top_features],
+                'feature_names': feature_names,
+            }
+
+            logger.info(f"Explicación SHAP calculada para {self.name}")
+            return result
+
+        except Exception as e:
+            logger.error(f"Error calculando SHAP values: {str(e)}")
+            return {}
+
+    def explain_predictions_batch(self, X: np.ndarray, feature_names: List[str] = None,
+                                 max_samples: int = 10) -> List[Dict[str, Any]]:
+        """
+        Explicar múltiples predicciones usando SHAP.
+
+        Args:
+            X (np.ndarray): Dataset de features
+            feature_names (List[str]): Nombres de features
+            max_samples (int): Número máximo de muestras a explicar
+
+        Retorna:
+            List: Lista de explicaciones
+        """
+        explanations = []
+
+        for i in range(min(max_samples, len(X))):
+            exp = self.explain_prediction(X, sample_index=i, feature_names=feature_names)
+            if exp:
+                explanations.append(exp)
+
+        logger.info(f"Explicaciones SHAP calculadas para {len(explanations)} muestras")
+        return explanations
+
+    def get_feature_importance_shap(self, X: np.ndarray, feature_names: List[str] = None) -> Dict[str, float]:
+        """
+        Obtener importancia global de features usando SHAP.
+
+        Args:
+            X (np.ndarray): Dataset de features
+            feature_names (List[str]): Nombres de features
+
+        Retorna:
+            Dict: {feature_name: importance_score}
+        """
+        if not SHAP_AVAILABLE:
+            logger.error("SHAP no está instalado")
+            return {}
+
+        if not self.is_trained:
+            logger.error("Modelo no entrenado")
+            return {}
+
+        try:
+            # Crear explainer
+            explainer = shap.TreeExplainer(self.model)
+
+            if hasattr(X, 'values'):
+                X_array = X.values
+            else:
+                X_array = X
+
+            # Calcular SHAP values
+            shap_values = explainer.shap_values(X_array)
+
+            # Manejar clasificación multi-clase
+            if isinstance(shap_values, list):
+                shap_values = shap_values[1]
+
+            # Calcular importancia media
+            feature_importance = np.abs(shap_values).mean(axis=0)
+
+            # Nombres de features
+            if feature_names is None:
+                feature_names = self.features if self.features else [f"feature_{i}" for i in range(X_array.shape[1])]
+
+            # Crear diccionario
+            importance_dict = {
+                feature_names[i]: float(feature_importance[i])
+                for i in range(len(feature_names))
+            }
+
+            # Normalizar a suma 100
+            total = sum(importance_dict.values())
+            if total > 0:
+                importance_dict = {k: (v / total) * 100 for k, v in importance_dict.items()}
+
+            # Almacenar en metadata
+            self.metadata['shap_feature_importance'] = importance_dict
+
+            logger.info(f"Importancia SHAP calculada para {self.name}")
+            return importance_dict
+
+        except Exception as e:
+            logger.error(f"Error calculando importancia SHAP: {str(e)}")
+            return {}
+
+    def _generate_explanation_text(self, prediction: Any, base_value: float,
+                                   top_features: List[Tuple[str, float]]) -> str:
+        """
+        Generar explicación en lenguaje natural.
+
+        Args:
+            prediction: Predicción del modelo
+            base_value: Valor base (expected value)
+            top_features: Top features con contribuciones
+
+        Retorna:
+            str: Explicación textual
+        """
+        if not top_features:
+            return "No hay features para explicar"
+
+        explanation = f"Predicción base: {base_value:.2f}\n"
+        explanation += f"Predicción final: {prediction:.2f}\n"
+        explanation += f"\nFactores principales:\n"
+
+        for feature, contribution in top_features[:3]:
+            direction = "aumentó" if contribution > 0 else "disminuyó"
+            magnitude = abs(contribution)
+            explanation += f"  • {feature}: {direction} la predicción en {magnitude:.4f}\n"
+
+        return explanation.strip()
+
+    def get_shap_summary(self) -> Optional[Dict[str, Any]]:
+        """
+        Obtener resumen de SHAP almacenado en metadata.
+
+        Retorna:
+            Dict: Información SHAP si está disponible
+        """
+        return {
+            'feature_importance': self.metadata.get('shap_feature_importance', {}),
+            'shap_available': SHAP_AVAILABLE,
+            'model_type': self.model_type
+        }
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}(name={self.name}, trained={self.is_trained})"
