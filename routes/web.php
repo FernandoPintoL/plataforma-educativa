@@ -337,3 +337,11 @@ Route::middleware(['auth', 'verified', 'role:director|profesor|admin'])->group(f
         return Inertia::render('AnalisisRiesgo/Estudiante', ['estudianteId' => $id]);
     })->name('riesgo.estudiante');
 });
+
+// ==================== NOTIFICACIONES EN TIEMPO REAL ====================
+Route::middleware(['auth', 'verified'])->group(function () {
+    // Centro de notificaciones
+    Route::get('notificaciones', function () {
+        return Inertia::render('Notificaciones/Index');
+    })->name('notificaciones.index');
+});

@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AnalisisRiesgoController;
 use App\Http\Controllers\Api\ExportarReportesController;
 use App\Http\Controllers\Api\MLPipelineController;
+use App\Http\Controllers\Api\NotificacionController;
 
 /**
  * API Routes
@@ -94,5 +95,42 @@ Route::middleware(['auth:sanctum'])->group(function () {
         // Obtener logs
         Route::get('logs', [MLPipelineController::class, 'logs'])
             ->name('logs');
+    });
+
+    /**
+     * Rutas para Notificaciones en Tiempo Real (todos los usuarios autenticados)
+     */
+    Route::prefix('notificaciones')->name('notificaciones.')->group(function () {
+        // Listar notificaciones del usuario
+        Route::get('/', [NotificacionController::class, 'index'])
+            ->name('index');
+
+        // Obtener notificaciones no leídas
+        Route::get('no-leidas', [NotificacionController::class, 'getNoLeidas'])
+            ->name('noLeidas');
+
+        // Stream de SSE (tiempo real)
+        Route::get('stream', [NotificacionController::class, 'stream'])
+            ->name('stream');
+
+        // Obtener estadísticas de notificaciones
+        Route::get('estadisticas', [NotificacionController::class, 'estadisticas'])
+            ->name('estadisticas');
+
+        // Marcar como leída
+        Route::put('{notificacion}/leido', [NotificacionController::class, 'marcarLeido'])
+            ->name('marcarLeido');
+
+        // Marcar como no leída
+        Route::put('{notificacion}/no-leido', [NotificacionController::class, 'marcarNoLeido'])
+            ->name('marcarNoLeido');
+
+        // Marcar todas como leídas
+        Route::put('marcar/todas-leidas', [NotificacionController::class, 'marcarTodasLeidas'])
+            ->name('marcarTodasLeidas');
+
+        // Eliminar notificación
+        Route::delete('{notificacion}', [NotificacionController::class, 'eliminar'])
+            ->name('eliminar');
     });
 });

@@ -7,6 +7,7 @@ use App\Models\PrediccionCarrera;
 use App\Models\PrediccionTendencia;
 use App\Models\User;
 use App\Models\Calificacion;
+use App\Models\Notificacion;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
@@ -79,11 +80,18 @@ class MLPipelineService
 
             Log::info('✅ Pipeline ML completado exitosamente', $results);
 
+            // PASO 7: Crear notificaciones para admins
+            $this->crearNotificacionesExito($results);
+
             return $results;
 
         } catch (\Exception $e) {
             $results['errors'][] = $e->getMessage();
             Log::error('❌ Error en pipeline ML', ['error' => $e->getMessage()]);
+
+            // Notificar del error
+            $this->crearNotificacionesError($results['errors']);
+
             return $results;
         }
     }
@@ -431,5 +439,166 @@ class MLPipelineService
             ],
             'timestamp' => Carbon::now(),
         ];
+    }
+
+    /**
+     * Crear notificaciones cuando el pipeline se completa exitosamente
+     */
+    private function crearNotificacionesExito(array $results): void
+    {
+        try {
+            // Obtener todos los admins
+            $admins = User::where('tipo_usuario', 'admin')
+                ->where('activo', true)
+                ->get();
+
+            if ($admins->isEmpty()) {
+                Log::warning('No hay admins para notificar del pipeline ML completado');
+                return;
+            }
+
+            $stats = $results['statistics'] ?? [];
+
+            $titulo = '🤖 Pipeline ML Completado';
+            $contenido = sprintf(
+                'Se completó el entrenamiento de modelos. Se generaron %d predicciones de riesgo, %d recomendaciones de carrera y %d tendencias.',
+                $stats['total_riesgo'] ?? 0,
+                $stats['total_carreras'] ?? 0,
+                $stats['total_tendencias'] ?? 0
+            );
+
+            $datosAdicionales = [
+                'pipeline_stats' => $stats,
+                'timestamp' => now()->toIso8601String(),
+                'url' => '/analisis-riesgo',
+            ];
+
+            // Crear notificación para cada admin
+            foreach ($admins as $admin) {
+                Notificacion::crearParaUsuario(
+                    $admin,
+                    $titulo,
+                    $contenido,
+                    'exito',
+                    $datosAdicionales
+                );
+
+                Log::info("Notificación de éxito enviada al admin {$admin->id}");
+            }
+
+            // También notificar a directores si existen
+            $directores = User::where('tipo_usuario', 'director')
+                ->where('activo', true)
+                ->get();
+
+            foreach ($directores as $director) {
+                Notificacion::crearParaUsuario(
+                    $director,
+                    $titulo,
+                    $contenido,
+                    'info',
+                    $datosAdicionales
+                );
+
+                Log::info("Notificación de éxito enviada al director {$director->id}");
+            }
+
+        } catch (\Exception $e) {
+            Log::error('Error creando notificaciones del pipeline', [
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    /**
+     * Crear notificaciones de error en el pipeline
+     */
+    public function crearNotificacionesError(array $errors): void
+    {
+        try {
+            $admins = User::where('tipo_usuario', 'admin')
+                ->where('activo', true)
+                ->get();
+
+            if ($admins->isEmpty()) {
+                return;
+            }
+
+            $titulo = '⚠️ Error en Pipeline ML';
+            $contenido = 'Se detectaron errores durante la ejecución del pipeline: ' .
+                implode(', ', array_slice($errors, 0, 3));
+
+            $datosAdicionales = [
+                'errores' => $errors,
+                'timestamp' => now()->toIso8601String(),
+            ];
+
+            foreach ($admins as $admin) {
+                Notificacion::crearParaUsuario(
+                    $admin,
+                    $titulo,
+                    $contenido,
+                    'alerta',
+                    $datosAdicionales
+                );
+            }
+
+            Log::info('Notificaciones de error enviadas');
+
+        } catch (\Exception $e) {
+            Log::error('Error creando notificaciones de error', [
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    /**
+     * Crear notificaciones cuando se detectan estudiantes en riesgo alto
+     */
+    public function crearNotificacionesRiesgoAlto(): void
+    {
+        try {
+            $riesgoAlto = PrediccionRiesgo::where('risk_level', 'alto')
+                ->where('updated_at', '>=', now()->subHours(1))
+                ->count();
+
+            if ($riesgoAlto === 0) {
+                return;
+            }
+
+            $profesores = User::where('tipo_usuario', 'profesor')
+                ->where('activo', true)
+                ->get();
+
+            if ($profesores->isEmpty()) {
+                return;
+            }
+
+            $titulo = '🚨 Estudiantes en Riesgo Alto';
+            $contenido = "Se identificaron {$riesgoAlto} estudiante(s) con riesgo académico alto en la última hora.";
+
+            $datosAdicionales = [
+                'cantidad_riesgo_alto' => $riesgoAlto,
+                'timestamp' => now()->toIso8601String(),
+                'url' => '/analisis-riesgo',
+            ];
+
+            foreach ($profesores as $profesor) {
+                Notificacion::crearParaUsuario(
+                    $profesor,
+                    $titulo,
+                    $contenido,
+                    'alerta',
+                    $datosAdicionales
+                );
+            }
+
+            Log::info("Notificaciones de riesgo alto creadas para {$profesores->count()} profesores");
+
+        } catch (\Exception $e) {
+            Log::error('Error creando notificaciones de riesgo', [
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 }
