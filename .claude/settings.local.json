@@ -15,7 +15,15 @@
       "Bash(xargs:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(nul)"
+      "Bash(nul)",
+      "Bash(npm run build:*)",
+      "Bash(tree:*)",
+      "Bash(git rm:*)",
+      "Bash(curl:*)",
+      "Bash(php -r:*)",
+      "Bash(php test_api.php:*)",
+      "Bash(python:*)",
+      "Bash(ls -la \"D:\\PLATAFORMA EDUCATIVA\\plataforma-educativa\\database\\seeders\"\" | grep -i \"prediccion|calificacion|asistencia \")"
     ],
     "deny": [],
     "ask": []

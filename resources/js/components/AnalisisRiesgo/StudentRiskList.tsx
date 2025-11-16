@@ -39,7 +39,7 @@ export function StudentRiskList({
       p.estudiante?.name?.toLowerCase().includes(search.toLowerCase()) ||
       p.estudiante?.email?.toLowerCase().includes(search.toLowerCase());
 
-    const matchFiltro = filtroNivel === 'todos' || p.nivel_riesgo === filtroNivel;
+    const matchFiltro = filtroNivel === 'todos' || (p.nivel_riesgo || 'bajo') === filtroNivel;
 
     return matchSearch && matchFiltro;
   });
@@ -190,9 +190,10 @@ export function StudentRiskList({
                 datosFiltrados.map((pred) => {
                   const tendencia = tendencias[pred.estudiante_id];
                   const percentage = Math.round(pred.score_riesgo * 100);
+                  const nivel = pred.nivel_riesgo || 'bajo';
 
                   return (
-                    <TableRow key={pred.id} className={`${getColorFila(pred.nivel_riesgo)} transition-colors`}>
+                    <TableRow key={pred.id} className={`${getColorFila(nivel)} transition-colors`}>
                       <TableCell>
                         <div>
                           <p className="font-medium">{pred.estudiante?.name || 'N/A'}</p>
@@ -201,9 +202,9 @@ export function StudentRiskList({
                       </TableCell>
 
                       <TableCell>
-                        <Badge className={`${getColorBadge(pred.nivel_riesgo)} flex items-center gap-1 w-fit`}>
-                          {getIconoRiesgo(pred.nivel_riesgo)}
-                          {pred.nivel_riesgo.charAt(0).toUpperCase() + pred.nivel_riesgo.slice(1)}
+                        <Badge className={`${getColorBadge(nivel)} flex items-center gap-1 w-fit`}>
+                          {getIconoRiesgo(nivel)}
+                          {nivel.charAt(0).toUpperCase() + nivel.slice(1)}
                         </Badge>
                       </TableCell>
 
@@ -213,9 +214,9 @@ export function StudentRiskList({
                           <div className="w-20 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mt-1">
                             <div
                               className={`h-full ${
-                                pred.nivel_riesgo === 'alto'
+                                nivel === 'alto'
                                   ? 'bg-red-500'
-                                  : pred.nivel_riesgo === 'medio'
+                                  : nivel === 'medio'
                                   ? 'bg-yellow-500'
                                   : 'bg-green-500'
                               }`}

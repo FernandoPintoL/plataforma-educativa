@@ -14,6 +14,7 @@ import {
   RefreshCw,
   Filter,
   Download,
+  Activity,
 } from 'lucide-react';
 import analisisRiesgoService from '@/services/analisis-riesgo.service';
 import type {
@@ -156,35 +157,33 @@ export default function Index({ initialCursos = [] }: IndexProps) {
             title="Total Estudiantes"
             value={metricas.total_estudiantes}
             icon={Users}
-            trend={0}
+            change={0}
           />
 
           <MetricCard
             title="Riesgo Alto"
             value={metricas.riesgo_alto}
             icon={AlertTriangle}
-            variant="destructive"
-            trend={metricas.porcentaje_alto_riesgo}
+            change={metricas.porcentaje_alto_riesgo}
           />
 
           <MetricCard
             title="Riesgo Medio"
             value={metricas.riesgo_medio}
             icon={TrendingUp}
-            variant="warning"
           />
 
           <MetricCard
             title="Riesgo Bajo"
             value={metricas.riesgo_bajo}
             icon={TrendingUp}
-            variant="success"
           />
 
           <MetricCard
             title="Score Promedio"
             value={`${(metricas.score_promedio * 100).toFixed(1)}%`}
-            description="De riesgo"
+            subtitle="De riesgo"
+            icon={Activity}
           />
         </div>
 

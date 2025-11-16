@@ -8,7 +8,7 @@ import {
     Users, BookOpen, GraduationCap, Home, Shield, Calendar, CheckSquare,
     FileText, ListChecks, Settings, Bell, Activity, UserCheck, User, BarChart2,
     Folder, MessageSquare, Clock, HelpCircle, Award, PlusCircle, Archive,
-    Clipboard, Layout, DollarSign, LucideIcon, ChevronDown, Layers
+    Clipboard, Layout, DollarSign, LucideIcon, ChevronDown, Layers, AlertTriangle, TrendingUp
 } from 'lucide-react';
 import AppLogo from './app-logo';
 import { cn } from '@/lib/utils';

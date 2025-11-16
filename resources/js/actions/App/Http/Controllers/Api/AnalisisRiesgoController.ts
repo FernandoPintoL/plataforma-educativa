@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::dashboard
  * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:21
@@ -682,15 +682,6 @@ generarPredicciones.post = (args: { estudianteId: string | number } | [estudiant
         })
     
     generarPredicciones.form = generarPrediccionesForm
-const analisisRiesgo = {
-    dashboard,
-index,
-porEstudiante,
-porCurso,
-tendencias,
-recomendacionesCarrera,
-update,
-generarPredicciones,
-}
+const AnalisisRiesgoController = { dashboard, index, porEstudiante, porCurso, tendencias, recomendacionesCarrera, update, generarPredicciones }
 
-export default analisisRiesgo
+export default AnalisisRiesgoController

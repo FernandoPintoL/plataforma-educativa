@@ -107,5 +107,8 @@ class DatabaseSeeder extends Seeder
         $this->call(RecursosSeeder::class);
         $this->call(ModulosEducativosSeeder::class);
         $this->call(EvaluacionesSeeder::class);
+
+        // Generar datos de predicciones para análisis de riesgo
+        $this->call(PrediccionesSeeder::class);
     }
 }

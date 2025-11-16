@@ -229,6 +229,7 @@ Route::middleware(['auth', 'verified', 'role:director|admin'])->group(function (
     Route::get('reportes/cursos', [\App\Http\Controllers\ReportesController::class, 'progresoPorCurso'])->name('reportes.cursos');
     Route::get('reportes/analisis', [\App\Http\Controllers\ReportesController::class, 'analisisComparativo'])->name('reportes.analisis');
     Route::get('reportes/metricas', [\App\Http\Controllers\ReportesController::class, 'metricasInstitucionales'])->name('reportes.metricas');
+    Route::get('reportes/riesgo', [\App\Http\Controllers\ReportesController::class, 'reportesRiesgo'])->name('reportes.riesgo');
 });
 
 // ==================== MÓDULOS EDUCATIVOS Y LECCIONES ====================
@@ -312,4 +313,27 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('tests-vocacionales/{testVocacional}', [\App\Http\Controllers\TestVocacionalController::class, 'destroy'])
             ->name('tests-vocacionales.destroy');
     });
+});
+
+// ==================== ANÁLISIS DE RIESGO ====================
+Route::middleware(['auth', 'verified', 'role:director|profesor|admin'])->group(function () {
+    // Dashboard principal de Análisis de Riesgo
+    Route::get('analisis-riesgo', function () {
+        return Inertia::render('AnalisisRiesgo/Index');
+    })->name('riesgo.dashboard');
+
+    // Análisis por curso
+    Route::get('analisis-riesgo/cursos', function () {
+        return Inertia::render('AnalisisRiesgo/Cursos');
+    })->name('riesgo.por-curso');
+
+    // Análisis de tendencias
+    Route::get('analisis-riesgo/tendencias', function () {
+        return Inertia::render('AnalisisRiesgo/Tendencias');
+    })->name('riesgo.tendencias');
+
+    // Análisis individual por estudiante (opcional)
+    Route::get('analisis-riesgo/estudiante/{id}', function ($id) {
+        return Inertia::render('AnalisisRiesgo/Estudiante', ['estudianteId' => $id]);
+    })->name('riesgo.estudiante');
 });

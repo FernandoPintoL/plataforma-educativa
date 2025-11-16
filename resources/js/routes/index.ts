@@ -1,6 +1,6 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../wayfinder'
 /**
- * @see [serialized-closure]:2
+ * @see routes/web.php:78
  * @route '/dashboard'
  */
 export const dashboard = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -14,7 +14,7 @@ dashboard.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see [serialized-closure]:2
+ * @see routes/web.php:78
  * @route '/dashboard'
  */
 dashboard.url = (options?: RouteQueryOptions) => {
@@ -22,7 +22,7 @@ dashboard.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see [serialized-closure]:2
+ * @see routes/web.php:78
  * @route '/dashboard'
  */
 dashboard.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -30,7 +30,7 @@ dashboard.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see [serialized-closure]:2
+ * @see routes/web.php:78
  * @route '/dashboard'
  */
 dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -39,7 +39,7 @@ dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see [serialized-closure]:2
+ * @see routes/web.php:78
  * @route '/dashboard'
  */
     const dashboardForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -48,7 +48,7 @@ dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see [serialized-closure]:2
+ * @see routes/web.php:78
  * @route '/dashboard'
  */
         dashboardForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -56,7 +56,7 @@ dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see [serialized-closure]:2
+ * @see routes/web.php:78
  * @route '/dashboard'
  */
         dashboardForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -71,7 +71,7 @@ dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     dashboard.form = dashboardForm
 /**
- * @see [serialized-closure]:2
+ * @see routes/settings.php:21
  * @route '/settings/appearance'
  */
 export const appearance = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -85,7 +85,7 @@ appearance.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see [serialized-closure]:2
+ * @see routes/settings.php:21
  * @route '/settings/appearance'
  */
 appearance.url = (options?: RouteQueryOptions) => {
@@ -93,7 +93,7 @@ appearance.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see [serialized-closure]:2
+ * @see routes/settings.php:21
  * @route '/settings/appearance'
  */
 appearance.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -101,7 +101,7 @@ appearance.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see [serialized-closure]:2
+ * @see routes/settings.php:21
  * @route '/settings/appearance'
  */
 appearance.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -110,7 +110,7 @@ appearance.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see [serialized-closure]:2
+ * @see routes/settings.php:21
  * @route '/settings/appearance'
  */
     const appearanceForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -119,7 +119,7 @@ appearance.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see [serialized-closure]:2
+ * @see routes/settings.php:21
  * @route '/settings/appearance'
  */
         appearanceForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -127,7 +127,7 @@ appearance.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see [serialized-closure]:2
+ * @see routes/settings.php:21
  * @route '/settings/appearance'
  */
         appearanceForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -352,81 +352,3 @@ logout.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
         })
     
     logout.form = logoutForm
-/**
-* @see \App\Http\Controllers\AnalisisRiesgoController::analisisRiesgo
- * @see [unknown]:0
- * @route '/analisis-riesgo'
- */
-export const analisisRiesgo = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: analisisRiesgo.url(options),
-    method: 'get',
-})
-
-analisisRiesgo.definition = {
-    methods: ["get","head"],
-    url: '/analisis-riesgo',
-} satisfies RouteDefinition<["get","head"]>
-
-/**
-* @see \App\Http\Controllers\AnalisisRiesgoController::analisisRiesgo
- * @see [unknown]:0
- * @route '/analisis-riesgo'
- */
-analisisRiesgo.url = (options?: RouteQueryOptions) => {
-    return analisisRiesgo.definition.url + queryParams(options)
-}
-
-/**
-* @see \App\Http\Controllers\AnalisisRiesgoController::analisisRiesgo
- * @see [unknown]:0
- * @route '/analisis-riesgo'
- */
-analisisRiesgo.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: analisisRiesgo.url(options),
-    method: 'get',
-})
-/**
-* @see \App\Http\Controllers\AnalisisRiesgoController::analisisRiesgo
- * @see [unknown]:0
- * @route '/analisis-riesgo'
- */
-analisisRiesgo.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
-    url: analisisRiesgo.url(options),
-    method: 'head',
-})
-
-    /**
-* @see \App\Http\Controllers\AnalisisRiesgoController::analisisRiesgo
- * @see [unknown]:0
- * @route '/analisis-riesgo'
- */
-    const analisisRiesgoForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-        action: analisisRiesgo.url(options),
-        method: 'get',
-    })
-
-            /**
-* @see \App\Http\Controllers\AnalisisRiesgoController::analisisRiesgo
- * @see [unknown]:0
- * @route '/analisis-riesgo'
- */
-        analisisRiesgoForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: analisisRiesgo.url(options),
-            method: 'get',
-        })
-            /**
-* @see \App\Http\Controllers\AnalisisRiesgoController::analisisRiesgo
- * @see [unknown]:0
- * @route '/analisis-riesgo'
- */
-        analisisRiesgoForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: analisisRiesgo.url({
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'HEAD',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'get',
-        })
-    
-    analisisRiesgo.form = analisisRiesgoForm

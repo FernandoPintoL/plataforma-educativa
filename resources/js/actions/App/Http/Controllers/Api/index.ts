@@ -1,6 +1,8 @@
-import PrediccionRiesgoController from './PrediccionRiesgoController'
+import AnalisisRiesgoController from './AnalisisRiesgoController'
+import ExportarReportesController from './ExportarReportesController'
 const Api = {
-    PrediccionRiesgoController,
+    AnalisisRiesgoController,
+ExportarReportesController,
 }
 
 export default Api

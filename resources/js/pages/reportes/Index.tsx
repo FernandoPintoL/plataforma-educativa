@@ -46,6 +46,16 @@ export default function ReportesIndex({ modulosSidebar }: Props) {
       estadisticas: ['Top 10', 'Bottom 10', 'Distribución'],
     },
     {
+      id: 'riesgo',
+      titulo: 'Análisis de Riesgo',
+      descripcion: 'Predicciones de riesgo académico y recomendaciones de carreras',
+      icono: SparklesIcon,
+      color: 'from-red-500 to-red-600',
+      bgColor: 'bg-red-50',
+      ruta: route('reportes.riesgo'),
+      estadisticas: ['Riesgo Alto', 'Tendencias', 'Carreras'],
+    },
+    {
       id: 'metricas',
       titulo: 'Métricas Institucionales',
       descripcion: 'Estadísticas generales y métricas de la institución',

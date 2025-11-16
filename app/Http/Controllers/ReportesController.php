@@ -185,6 +185,81 @@ class ReportesController extends Controller
     }
 
     /**
+     * Reportes integrados con análisis de riesgo
+     */
+    public function reportesRiesgo()
+    {
+        $modulosSidebar = $this->getMenuItems();
+
+        // Obtener datos del análisis de riesgo
+        $riesgoAlto = \App\Models\PrediccionRiesgo::where('risk_level', 'alto')->count();
+        $riesgoMedio = \App\Models\PrediccionRiesgo::where('risk_level', 'medio')->count();
+        $riesgoBajo = \App\Models\PrediccionRiesgo::where('risk_level', 'bajo')->count();
+
+        $scorePromedio = \App\Models\PrediccionRiesgo::avg('risk_score') ?? 0;
+
+        // Estudiantes con mayor riesgo
+        $estudiantesMayorRiesgo = \App\Models\PrediccionRiesgo::query()
+            ->with('estudiante')
+            ->where('risk_level', 'alto')
+            ->orderByDesc('risk_score')
+            ->limit(10)
+            ->get()
+            ->map(function ($pred) {
+                return [
+                    'id' => $pred->estudiante_id,
+                    'nombre' => $pred->estudiante?->name ?? 'N/A',
+                    'score_riesgo' => round($pred->risk_score, 3),
+                    'confianza' => round($pred->confidence_score, 3),
+                    'fecha_prediccion' => $pred->fecha_prediccion,
+                ];
+            });
+
+        // Tendencias de riesgo
+        $tendencias = \App\Models\PrediccionTendencia::query()
+            ->selectRaw('tendencia, COUNT(*) as cantidad')
+            ->groupBy('tendencia')
+            ->get()
+            ->mapWithKeys(fn($item) => [$item->tendencia => $item->cantidad]);
+
+        // Recomendaciones de carrera más frecuentes
+        $carrerasTop = \App\Models\PrediccionCarrera::query()
+            ->selectRaw('carrera_nombre, COUNT(*) as cantidad, AVG(compatibilidad) as compatibilidad_promedio')
+            ->groupBy('carrera_nombre')
+            ->orderByDesc('cantidad')
+            ->limit(5)
+            ->get();
+
+        return Inertia::render('Reportes/ReportesRiesgo', [
+            'estadisticas_riesgo' => [
+                'total_predicciones' => $riesgoAlto + $riesgoMedio + $riesgoBajo,
+                'riesgo_alto' => $riesgoAlto,
+                'riesgo_medio' => $riesgoMedio,
+                'riesgo_bajo' => $riesgoBajo,
+                'score_promedio' => round($scorePromedio, 3),
+            ],
+            'estudiantes_mayor_riesgo' => $estudiantesMayorRiesgo,
+            'distribucion_riesgo' => [
+                'alto' => $riesgoAlto,
+                'medio' => $riesgoMedio,
+                'bajo' => $riesgoBajo,
+            ],
+            'tendencias' => [
+                'mejorando' => $tendencias->get('mejorando', 0),
+                'estable' => $tendencias->get('estable', 0),
+                'declinando' => $tendencias->get('declinando', 0),
+                'fluctuando' => $tendencias->get('fluctuando', 0),
+            ],
+            'carreras_recomendadas' => $carrerasTop->map(fn($c) => [
+                'nombre' => $c->carrera_nombre,
+                'cantidad' => $c->cantidad,
+                'compatibilidad_promedio' => round($c->compatibilidad_promedio, 3),
+            ]),
+            'modulosSidebar' => $modulosSidebar,
+        ]);
+    }
+
+    /**
      * Métricas institucionales
      */
     public function metricasInstitucionales()

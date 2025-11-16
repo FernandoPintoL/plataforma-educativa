@@ -313,7 +313,7 @@ analisis.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     analisis.form = analisisForm
 /**
 * @see \App\Http\Controllers\ReportesController::metricas
- * @see app/Http/Controllers/ReportesController.php:190
+ * @see app/Http/Controllers/ReportesController.php:265
  * @route '/reportes/metricas'
  */
 export const metricas = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -328,7 +328,7 @@ metricas.definition = {
 
 /**
 * @see \App\Http\Controllers\ReportesController::metricas
- * @see app/Http/Controllers/ReportesController.php:190
+ * @see app/Http/Controllers/ReportesController.php:265
  * @route '/reportes/metricas'
  */
 metricas.url = (options?: RouteQueryOptions) => {
@@ -337,7 +337,7 @@ metricas.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\ReportesController::metricas
- * @see app/Http/Controllers/ReportesController.php:190
+ * @see app/Http/Controllers/ReportesController.php:265
  * @route '/reportes/metricas'
  */
 metricas.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -346,7 +346,7 @@ metricas.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\ReportesController::metricas
- * @see app/Http/Controllers/ReportesController.php:190
+ * @see app/Http/Controllers/ReportesController.php:265
  * @route '/reportes/metricas'
  */
 metricas.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -356,7 +356,7 @@ metricas.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\ReportesController::metricas
- * @see app/Http/Controllers/ReportesController.php:190
+ * @see app/Http/Controllers/ReportesController.php:265
  * @route '/reportes/metricas'
  */
     const metricasForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -366,7 +366,7 @@ metricas.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\ReportesController::metricas
- * @see app/Http/Controllers/ReportesController.php:190
+ * @see app/Http/Controllers/ReportesController.php:265
  * @route '/reportes/metricas'
  */
         metricasForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -375,7 +375,7 @@ metricas.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\ReportesController::metricas
- * @see app/Http/Controllers/ReportesController.php:190
+ * @see app/Http/Controllers/ReportesController.php:265
  * @route '/reportes/metricas'
  */
         metricasForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -389,12 +389,91 @@ metricas.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
     
     metricas.form = metricasForm
+/**
+* @see \App\Http\Controllers\ReportesController::riesgo
+ * @see app/Http/Controllers/ReportesController.php:190
+ * @route '/reportes/riesgo'
+ */
+export const riesgo = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: riesgo.url(options),
+    method: 'get',
+})
+
+riesgo.definition = {
+    methods: ["get","head"],
+    url: '/reportes/riesgo',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\ReportesController::riesgo
+ * @see app/Http/Controllers/ReportesController.php:190
+ * @route '/reportes/riesgo'
+ */
+riesgo.url = (options?: RouteQueryOptions) => {
+    return riesgo.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\ReportesController::riesgo
+ * @see app/Http/Controllers/ReportesController.php:190
+ * @route '/reportes/riesgo'
+ */
+riesgo.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: riesgo.url(options),
+    method: 'get',
+})
+/**
+* @see \App\Http\Controllers\ReportesController::riesgo
+ * @see app/Http/Controllers/ReportesController.php:190
+ * @route '/reportes/riesgo'
+ */
+riesgo.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: riesgo.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \App\Http\Controllers\ReportesController::riesgo
+ * @see app/Http/Controllers/ReportesController.php:190
+ * @route '/reportes/riesgo'
+ */
+    const riesgoForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: riesgo.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \App\Http\Controllers\ReportesController::riesgo
+ * @see app/Http/Controllers/ReportesController.php:190
+ * @route '/reportes/riesgo'
+ */
+        riesgoForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: riesgo.url(options),
+            method: 'get',
+        })
+            /**
+* @see \App\Http\Controllers\ReportesController::riesgo
+ * @see app/Http/Controllers/ReportesController.php:190
+ * @route '/reportes/riesgo'
+ */
+        riesgoForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: riesgo.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    riesgo.form = riesgoForm
 const reportes = {
     index,
 desempeno,
 cursos,
 analisis,
 metricas,
+riesgo,
 }
 
 export default reportes

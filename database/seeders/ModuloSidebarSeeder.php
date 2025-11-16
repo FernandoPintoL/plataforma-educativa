@@ -404,6 +404,45 @@ class ModuloSidebarSeeder extends Seeder
             );
         }
 
+        // ==================== MÓDULO DE ANÁLISIS DE RIESGO ====================
+        // Módulo de Análisis de Riesgo - Para directores y profesores
+        $analisisRiesgo = ModuloSidebar::firstOrCreate(
+            ['titulo' => 'Análisis de Riesgo', 'ruta' => '/analisis-riesgo', 'es_submenu' => false],
+            [
+                'icono'             => 'AlertTriangle',
+                'descripcion'       => 'Análisis predictivo y monitoreo de riesgo académico',
+                'orden'             => 9,
+                'categoria'         => 'Académico',
+                'activo'            => true,
+                'permisos'          => ['analisis-riesgo.ver', 'analisis-riesgo.index'],
+                'visible_dashboard' => true,
+            ]
+        );
+
+        // Submódulos de Análisis de Riesgo
+        $submenuAnalisisRiesgo = [
+            ['titulo' => 'Dashboard', 'ruta' => '/analisis-riesgo', 'icono' => 'AlertTriangle', 'orden' => 1, 'permisos' => ['analisis-riesgo.ver', 'analisis-riesgo.index']],
+            ['titulo' => 'Por Curso', 'ruta' => '/analisis-riesgo/cursos', 'icono' => 'BookOpen', 'orden' => 2, 'permisos' => ['analisis-riesgo.ver']],
+            ['titulo' => 'Tendencias', 'ruta' => '/analisis-riesgo/tendencias', 'icono' => 'TrendingUp', 'orden' => 3, 'permisos' => ['analisis-riesgo.ver']],
+        ];
+
+        foreach ($submenuAnalisisRiesgo as $submenu) {
+            ModuloSidebar::firstOrCreate(
+                [
+                    'titulo'          => $submenu['titulo'],
+                    'ruta'            => $submenu['ruta'],
+                    'es_submenu'      => true,
+                    'modulo_padre_id' => $analisisRiesgo->id,
+                ],
+                [
+                    'icono'    => $submenu['icono'],
+                    'orden'    => $submenu['orden'],
+                    'activo'   => true,
+                    'permisos' => $submenu['permisos'],
+                ]
+            );
+        }
+
         // Módulo de Orientación Vocacional - TODO: Implementar rutas backend en web.php
         // Comentado hasta que se implementen las rutas necesarias
         /*

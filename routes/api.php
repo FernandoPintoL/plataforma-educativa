@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AnalisisRiesgoController;
+use App\Http\Controllers\Api\ExportarReportesController;
 
 /**
  * API Routes
@@ -12,9 +13,9 @@ use App\Http\Controllers\Api\AnalisisRiesgoController;
 
 Route::middleware(['auth:sanctum'])->group(function () {
     /**
-     * Rutas para Análisis de Riesgo
+     * Rutas para Análisis de Riesgo (solo director, profesor, admin)
      */
-    Route::prefix('analisis-riesgo')->name('analisis-riesgo.')->group(function () {
+    Route::middleware('role:director|profesor|admin')->prefix('analisis-riesgo')->name('analisis-riesgo.')->group(function () {
         // Dashboard general
         Route::get('dashboard', [AnalisisRiesgoController::class, 'dashboard'])
             ->name('dashboard');
@@ -46,5 +47,30 @@ Route::middleware(['auth:sanctum'])->group(function () {
         // Generar nuevas predicciones
         Route::post('generar/{estudianteId}', [AnalisisRiesgoController::class, 'generarPredicciones'])
             ->name('generarPredicciones');
+    });
+
+    /**
+     * Rutas para Exportar Reportes (solo director, admin)
+     */
+    Route::middleware('role:director|admin')->prefix('exportar')->name('exportar.')->group(function () {
+        // Exportar análisis de riesgo
+        Route::get('riesgo', [ExportarReportesController::class, 'exportarRiesgo'])
+            ->name('riesgo');
+
+        // Exportar desempeño académico
+        Route::get('desempeno', [ExportarReportesController::class, 'exportarDesempeno'])
+            ->name('desempeno');
+
+        // Exportar carreras recomendadas
+        Route::get('carreras', [ExportarReportesController::class, 'exportarCarreras'])
+            ->name('carreras');
+
+        // Exportar tendencias
+        Route::get('tendencias', [ExportarReportesController::class, 'exportarTendencias'])
+            ->name('tendencias');
+
+        // Resumen general de reportes
+        Route::get('resumen', [ExportarReportesController::class, 'resumenGeneral'])
+            ->name('resumen');
     });
 });

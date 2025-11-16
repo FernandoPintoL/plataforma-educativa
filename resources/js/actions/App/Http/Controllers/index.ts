@@ -4,8 +4,6 @@ import RoleController from './RoleController'
 import PermissionController from './PermissionController'
 import EstudianteController from './EstudianteController'
 import ProfesorController from './ProfesorController'
-import CursoController from './CursoController'
-import MisCursosController from './MisCursosController'
 import Settings from './Settings'
 import Auth from './Auth'
 import GestionUsuariosController from './GestionUsuariosController'
@@ -23,7 +21,6 @@ import ReportesController from './ReportesController'
 import ModuloEducativoController from './ModuloEducativoController'
 import LeccionController from './LeccionController'
 import TestVocacionalController from './TestVocacionalController'
-import AnalisisRiesgoController from './AnalisisRiesgoController'
 const Controllers = {
     Api,
 UserController,
@@ -31,8 +28,6 @@ RoleController,
 PermissionController,
 EstudianteController,
 ProfesorController,
-CursoController,
-MisCursosController,
 Settings,
 Auth,
 GestionUsuariosController,
@@ -50,7 +45,6 @@ ReportesController,
 ModuloEducativoController,
 LeccionController,
 TestVocacionalController,
-AnalisisRiesgoController,
 }
 
 export default Controllers

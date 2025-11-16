@@ -313,7 +313,7 @@ analisisComparativo.head = (options?: RouteQueryOptions): RouteDefinition<'head'
     analisisComparativo.form = analisisComparativoForm
 /**
 * @see \App\Http\Controllers\ReportesController::metricasInstitucionales
- * @see app/Http/Controllers/ReportesController.php:190
+ * @see app/Http/Controllers/ReportesController.php:265
  * @route '/reportes/metricas'
  */
 export const metricasInstitucionales = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -328,7 +328,7 @@ metricasInstitucionales.definition = {
 
 /**
 * @see \App\Http\Controllers\ReportesController::metricasInstitucionales
- * @see app/Http/Controllers/ReportesController.php:190
+ * @see app/Http/Controllers/ReportesController.php:265
  * @route '/reportes/metricas'
  */
 metricasInstitucionales.url = (options?: RouteQueryOptions) => {
@@ -337,7 +337,7 @@ metricasInstitucionales.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\ReportesController::metricasInstitucionales
- * @see app/Http/Controllers/ReportesController.php:190
+ * @see app/Http/Controllers/ReportesController.php:265
  * @route '/reportes/metricas'
  */
 metricasInstitucionales.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -346,7 +346,7 @@ metricasInstitucionales.get = (options?: RouteQueryOptions): RouteDefinition<'ge
 })
 /**
 * @see \App\Http\Controllers\ReportesController::metricasInstitucionales
- * @see app/Http/Controllers/ReportesController.php:190
+ * @see app/Http/Controllers/ReportesController.php:265
  * @route '/reportes/metricas'
  */
 metricasInstitucionales.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -356,7 +356,7 @@ metricasInstitucionales.head = (options?: RouteQueryOptions): RouteDefinition<'h
 
     /**
 * @see \App\Http\Controllers\ReportesController::metricasInstitucionales
- * @see app/Http/Controllers/ReportesController.php:190
+ * @see app/Http/Controllers/ReportesController.php:265
  * @route '/reportes/metricas'
  */
     const metricasInstitucionalesForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -366,7 +366,7 @@ metricasInstitucionales.head = (options?: RouteQueryOptions): RouteDefinition<'h
 
             /**
 * @see \App\Http\Controllers\ReportesController::metricasInstitucionales
- * @see app/Http/Controllers/ReportesController.php:190
+ * @see app/Http/Controllers/ReportesController.php:265
  * @route '/reportes/metricas'
  */
         metricasInstitucionalesForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -375,7 +375,7 @@ metricasInstitucionales.head = (options?: RouteQueryOptions): RouteDefinition<'h
         })
             /**
 * @see \App\Http\Controllers\ReportesController::metricasInstitucionales
- * @see app/Http/Controllers/ReportesController.php:190
+ * @see app/Http/Controllers/ReportesController.php:265
  * @route '/reportes/metricas'
  */
         metricasInstitucionalesForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -389,6 +389,84 @@ metricasInstitucionales.head = (options?: RouteQueryOptions): RouteDefinition<'h
         })
     
     metricasInstitucionales.form = metricasInstitucionalesForm
-const ReportesController = { index, desempenioPorEstudiante, progresoPorCurso, analisisComparativo, metricasInstitucionales }
+/**
+* @see \App\Http\Controllers\ReportesController::reportesRiesgo
+ * @see app/Http/Controllers/ReportesController.php:190
+ * @route '/reportes/riesgo'
+ */
+export const reportesRiesgo = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: reportesRiesgo.url(options),
+    method: 'get',
+})
+
+reportesRiesgo.definition = {
+    methods: ["get","head"],
+    url: '/reportes/riesgo',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\ReportesController::reportesRiesgo
+ * @see app/Http/Controllers/ReportesController.php:190
+ * @route '/reportes/riesgo'
+ */
+reportesRiesgo.url = (options?: RouteQueryOptions) => {
+    return reportesRiesgo.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\ReportesController::reportesRiesgo
+ * @see app/Http/Controllers/ReportesController.php:190
+ * @route '/reportes/riesgo'
+ */
+reportesRiesgo.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: reportesRiesgo.url(options),
+    method: 'get',
+})
+/**
+* @see \App\Http\Controllers\ReportesController::reportesRiesgo
+ * @see app/Http/Controllers/ReportesController.php:190
+ * @route '/reportes/riesgo'
+ */
+reportesRiesgo.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: reportesRiesgo.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \App\Http\Controllers\ReportesController::reportesRiesgo
+ * @see app/Http/Controllers/ReportesController.php:190
+ * @route '/reportes/riesgo'
+ */
+    const reportesRiesgoForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: reportesRiesgo.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \App\Http\Controllers\ReportesController::reportesRiesgo
+ * @see app/Http/Controllers/ReportesController.php:190
+ * @route '/reportes/riesgo'
+ */
+        reportesRiesgoForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: reportesRiesgo.url(options),
+            method: 'get',
+        })
+            /**
+* @see \App\Http\Controllers\ReportesController::reportesRiesgo
+ * @see app/Http/Controllers/ReportesController.php:190
+ * @route '/reportes/riesgo'
+ */
+        reportesRiesgoForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: reportesRiesgo.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    reportesRiesgo.form = reportesRiesgoForm
+const ReportesController = { index, desempenioPorEstudiante, progresoPorCurso, analisisComparativo, metricasInstitucionales, reportesRiesgo }
 
 export default ReportesController

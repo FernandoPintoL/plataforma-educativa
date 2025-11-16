@@ -12,21 +12,22 @@ class PrediccionRiesgo extends Model
 
     protected $fillable = [
         'estudiante_id',
-        'score_riesgo',
-        'nivel_riesgo',
-        'confianza',
+        'risk_score',
+        'risk_level',
+        'confidence_score',
         'fecha_prediccion',
         'modelo_version',
-        'factores_influyentes',
+        'modelo_tipo',
+        'features_used',
+        'creado_por',
         'observaciones',
-        'fk_curso_id',
     ];
 
     protected $casts = [
-        'factores_influyentes' => AsCollection::class,
+        'features_used' => AsCollection::class,
         'fecha_prediccion' => 'datetime',
-        'score_riesgo' => 'float',
-        'confianza' => 'float',
+        'risk_score' => 'float',
+        'confidence_score' => 'float',
     ];
 
     /**
@@ -39,18 +40,19 @@ class PrediccionRiesgo extends Model
 
     /**
      * Relación con Curso
+     * Note: Not available until fk_curso_id column is added
      */
-    public function curso(): BelongsTo
-    {
-        return $this->belongsTo(Curso::class, 'fk_curso_id');
-    }
+    // public function curso(): BelongsTo
+    // {
+    //     return $this->belongsTo(Curso::class, 'fk_curso_id');
+    // }
 
     /**
      * Obtener etiqueta de nivel de riesgo
      */
     public function getNivelRiesgoLabelAttribute(): string
     {
-        return match ($this->nivel_riesgo) {
+        return match ($this->risk_level) {
             'alto' => 'Riesgo Alto',
             'medio' => 'Riesgo Medio',
             'bajo' => 'Riesgo Bajo',
@@ -63,7 +65,7 @@ class PrediccionRiesgo extends Model
      */
     public function getColorAttribute(): string
     {
-        return match ($this->nivel_riesgo) {
+        return match ($this->risk_level) {
             'alto' => 'red',
             'medio' => 'yellow',
             'bajo' => 'green',
@@ -76,7 +78,7 @@ class PrediccionRiesgo extends Model
      */
     public function getDescripcionAttribute(): string
     {
-        return match ($this->nivel_riesgo) {
+        return match ($this->risk_level) {
             'alto' => 'Requiere intervención inmediata. Probabilidad alta de bajo rendimiento.',
             'medio' => 'Monitoreo cercano recomendado. Apoyo académico sugerido.',
             'bajo' => 'Desempeño académico estable. Continuar con apoyo regular.',
@@ -89,15 +91,17 @@ class PrediccionRiesgo extends Model
      */
     public function scopeByNivelRiesgo($query, string $nivel)
     {
-        return $query->where('nivel_riesgo', $nivel);
+        return $query->where('risk_level', $nivel);
     }
 
     /**
      * Scope: Filtrar por curso
+     * Note: PrediccionRiesgo table doesn't have fk_curso_id column yet
      */
     public function scopeByCurso($query, int $cursoId)
     {
-        return $query->where('fk_curso_id', $cursoId);
+        // TODO: Implement when fk_curso_id is added to predicciones_riesgo table
+        return $query;
     }
 
     /**
@@ -113,7 +117,7 @@ class PrediccionRiesgo extends Model
      */
     public function scopeByScoreThreshold($query, float $threshold)
     {
-        return $query->where('score_riesgo', '>=', $threshold);
+        return $query->where('risk_score', '>=', $threshold);
     }
 
     /**
@@ -134,6 +138,6 @@ class PrediccionRiesgo extends Model
         return self::where('estudiante_id', $this->estudiante_id)
             ->orderBy('fecha_prediccion', 'desc')
             ->limit(12)
-            ->get(['fecha_prediccion', 'score_riesgo', 'nivel_riesgo']);
+            ->get(['fecha_prediccion', 'risk_score', 'risk_level']);
     }
 }
