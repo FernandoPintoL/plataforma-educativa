@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Head, useForm, usePage } from '@inertiajs/react';
-import AppLayout from '../../../components/Layout/AppLayout';
+import AppLayout from '@/layouts/app-layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card';
 import { Button } from '../../../components/ui/button';
 import { RadioGroup, RadioGroupItem } from '../../../components/ui/radio-group';
 import { Label } from '../../../components/ui/label';
-import { Progress } from '../../../components/ui/progress';
 import { Alert, AlertDescription } from '../../../components/ui/alert';
 import { Clock, AlertCircle, CheckCircle } from 'lucide-react';
 
@@ -158,10 +157,12 @@ export default function Take({ test, preguntas }: TakeProps) {
                     {respuestasCompletadas} de {totalPreguntas} respuestas
                   </span>
                 </div>
-                <Progress
-                  value={(respuestasCompletadas / totalPreguntas) * 100}
-                  className="h-2"
-                />
+                <div className="relative h-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-blue-500 transition-all"
+                    style={{ width: `${(respuestasCompletadas / totalPreguntas) * 100}%` }}
+                  />
+                </div>
               </div>
             </div>
           </CardContent>
