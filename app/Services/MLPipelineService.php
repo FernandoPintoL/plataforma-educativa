@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\PrediccionRiesgo;
 use App\Models\PrediccionCarrera;
 use App\Models\PrediccionTendencia;
+use App\Models\PrediccionProgreso;
 use App\Models\User;
 use App\Models\Calificacion;
 use App\Models\Notificacion;
@@ -73,15 +74,24 @@ class MLPipelineService
                 return $results;
             }
 
-            // PASO 6: Compilar estadísticas
+            // PASO 6: Generar predicciones de progreso
+            if (!$this->generateProgressPredictions($limit, $results)) {
+                $results['errors'][] = 'Fallo generando predicciones de progreso';
+                return $results;
+            }
+
+            // PASO 7: Compilar estadísticas
             $this->compileStatistics($results);
 
             $results['success'] = true;
 
             Log::info('✅ Pipeline ML completado exitosamente', $results);
 
-            // PASO 7: Crear notificaciones para admins
+            // PASO 8: Crear notificaciones para admins
             $this->crearNotificacionesExito($results);
+
+            // PASO 9: Crear notificaciones de riesgo en progreso
+            $this->crearNotificacionesProgresoEnRiesgo();
 
             return $results;
 
@@ -382,6 +392,113 @@ class MLPipelineService
     }
 
     /**
+     * Generar predicciones de progreso académico
+     */
+    private function generateProgressPredictions(int $limit, array &$results): bool
+    {
+        Log::info('[6/7] Generando predicciones de progreso...');
+
+        try {
+            $estudiantes = User::where('tipo_usuario', 'estudiante')
+                ->with('rendimientoAcademico')
+                ->limit($limit)
+                ->get();
+
+            $created = 0;
+            $updated = 0;
+
+            foreach ($estudiantes as $estudiante) {
+                // Obtener historial de calificaciones
+                $calificaciones = Calificacion::where('estudiante_id', $estudiante->id)
+                    ->orderBy('fecha_evaluacion', 'asc')
+                    ->pluck('calificacion')
+                    ->toArray();
+
+                if (count($calificaciones) < 3) {
+                    continue; // Necesita mínimo 3 calificaciones para análisis
+                }
+
+                // Calcular tendencia simple
+                $promedio = array_sum($calificaciones) / count($calificaciones);
+                $ultimasNotas = array_slice($calificaciones, -3); // Últimas 3 notas
+                $promedioReciente = array_sum($ultimasNotas) / count($ultimasNotas);
+
+                // Velocidad de aprendizaje (pendiente)
+                $velocidad = ($promedioReciente - $promedio) / count($ultimasNotas);
+
+                // Determinar tendencia
+                if ($velocidad > 2) {
+                    $tendencia = 'mejorando';
+                    $confianza = 0.85;
+                } elseif ($velocidad > 0.5) {
+                    $tendencia = 'mejorando';
+                    $confianza = 0.70;
+                } elseif ($velocidad > -0.5) {
+                    $tendencia = 'estable';
+                    $confianza = 0.80;
+                } elseif ($velocidad > -2) {
+                    $tendencia = 'declinando';
+                    $confianza = 0.70;
+                } else {
+                    $tendencia = 'declinando';
+                    $confianza = 0.85;
+                }
+
+                // Proyectar nota final (optimista pero realista)
+                $notaProyectada = min(100, max(0, $promedioReciente + ($velocidad * 5)));
+
+                // Calcular varianza
+                $varianza = 0;
+                if (count($calificaciones) > 1) {
+                    $deviations = array_map(fn($x) => pow($x - $promedio, 2), $calificaciones);
+                    $varianza = sqrt(array_sum($deviations) / count($deviations));
+                }
+
+                // Crear o actualizar predicción
+                $prediccion = PrediccionProgreso::updateOrCreate(
+                    ['estudiante_id' => $estudiante->id],
+                    [
+                        'nota_proyectada' => round($notaProyectada, 2),
+                        'velocidad_aprendizaje' => round($velocidad, 4),
+                        'tendencia_progreso' => $tendencia,
+                        'confianza_prediccion' => round($confianza, 4),
+                        'semanas_analizadas' => count($calificaciones),
+                        'varianza_notas' => round($varianza, 4),
+                        'promedio_historico' => round($promedio, 2),
+                        'fecha_prediccion' => Carbon::now(),
+                        'modelo_version' => 'v1.1-pipeline',
+                        'features_usado' => json_encode([
+                            'calificaciones_historicas',
+                            'velocidad_aprendizaje',
+                            'varianza_desempeno',
+                        ]),
+                        'creado_por' => 1,
+                    ]
+                );
+
+                if ($prediccion->wasRecentlyCreated) {
+                    $created++;
+                } else {
+                    $updated++;
+                }
+            }
+
+            $results['steps'][] = [
+                'name' => 'Predicciones Progreso',
+                'status' => 'success',
+                'data' => ['created' => $created, 'updated' => $updated],
+            ];
+
+            Log::info("✓ Predicciones de progreso generadas: {$created} nuevas, {$updated} actualizadas");
+            return true;
+
+        } catch (\Exception $e) {
+            $results['errors'][] = 'Error generando progreso: ' . $e->getMessage();
+            return false;
+        }
+    }
+
+    /**
      * Compilar estadísticas finales
      */
     private function compileStatistics(array &$results): void
@@ -597,6 +714,71 @@ class MLPipelineService
 
         } catch (\Exception $e) {
             Log::error('Error creando notificaciones de riesgo', [
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    /**
+     * Crear notificaciones de estudiantes con tendencia DECLINANDO en progreso
+     */
+    public function crearNotificacionesProgresoEnRiesgo(): void
+    {
+        try {
+            // Obtener estudiantes declinando
+            $estudiantesEnRiesgo = PrediccionProgreso::where('tendencia_progreso', 'declinando')
+                ->where('confianza_prediccion', '>=', 0.7)
+                ->where('nota_proyectada', '<', 60)
+                ->with('estudiante')
+                ->get();
+
+            if ($estudiantesEnRiesgo->isEmpty()) {
+                Log::info('No hay estudiantes con declive en progreso para notificar');
+                return;
+            }
+
+            // Obtener todos los profesores
+            $profesores = User::where('tipo_usuario', 'profesor')
+                ->where('activo', true)
+                ->get();
+
+            if ($profesores->isEmpty()) {
+                return;
+            }
+
+            $titulo = '📉 Alerta: Estudiantes en Declive de Progreso';
+            $contenido = sprintf(
+                'Se detectaron %d estudiante(s) con tendencia declinante en sus calificaciones. Proyectados a nota final < 60.',
+                $estudiantesEnRiesgo->count()
+            );
+
+            $datosAdicionales = [
+                'estudiantes_en_riesgo' => $estudiantesEnRiesgo->count(),
+                'timestamp' => now()->toIso8601String(),
+                'url' => '/analisis-riesgo',
+                'detalles' => $estudiantesEnRiesgo->map(fn($p) => [
+                    'estudiante_id' => $p->estudiante_id,
+                    'nombre' => $p->estudiante?->name,
+                    'velocidad' => $p->velocidad_aprendizaje,
+                    'nota_proyectada' => $p->nota_proyectada,
+                ]),
+            ];
+
+            // Notificar a todos los profesores
+            foreach ($profesores as $profesor) {
+                Notificacion::crearParaUsuario(
+                    $profesor,
+                    $titulo,
+                    $contenido,
+                    'alerta',
+                    $datosAdicionales
+                );
+            }
+
+            Log::info("Notificaciones de progreso en riesgo creadas para {$profesores->count()} profesores");
+
+        } catch (\Exception $e) {
+            Log::error('Error creando notificaciones de progreso en riesgo', [
                 'error' => $e->getMessage(),
             ]);
         }
