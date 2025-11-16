@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AnalisisRiesgoController;
 use App\Http\Controllers\Api\ExportarReportesController;
+use App\Http\Controllers\Api\MLPipelineController;
 
 /**
  * API Routes
@@ -72,5 +73,26 @@ Route::middleware(['auth:sanctum'])->group(function () {
         // Resumen general de reportes
         Route::get('resumen', [ExportarReportesController::class, 'resumenGeneral'])
             ->name('resumen');
+    });
+
+    /**
+     * Rutas para ML Pipeline (solo admin)
+     */
+    Route::middleware('role:admin')->prefix('ml-pipeline')->name('ml-pipeline.')->group(function () {
+        // Ejecutar pipeline ML
+        Route::post('execute', [MLPipelineController::class, 'execute'])
+            ->name('execute');
+
+        // Obtener estado del pipeline
+        Route::get('status', [MLPipelineController::class, 'status'])
+            ->name('status');
+
+        // Obtener estadísticas
+        Route::get('statistics', [MLPipelineController::class, 'statistics'])
+            ->name('statistics');
+
+        // Obtener logs
+        Route::get('logs', [MLPipelineController::class, 'logs'])
+            ->name('logs');
     });
 });
