@@ -3,6 +3,7 @@
 use App\Http\Middleware\EnsureUserHasRole;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\HandleStatefulApiRequests;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -27,20 +28,10 @@ return Application::configure(basePath: dirname(__DIR__))
             AddLinkHeadersForPreloadedAssets::class,
         ]);
 
-        // CRITICAL: Session middleware MUST be applied BEFORE Sanctum's EnsureFrontendRequestsAreStateful
-        // The order is: EncryptCookies -> StartSession -> EnsureFrontendRequestsAreStateful -> App logic
         $middleware->api(prepend: [
-            // Start the session FIRST - this must happen before any auth checks
-            \Illuminate\Session\Middleware\StartSession::class,
-            // Then Sanctum checks if it's a stateful request using the session
+            HandleStatefulApiRequests::class,
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-            // CORS handling
             \Illuminate\Http\Middleware\HandleCors::class,
-        ]);
-
-        // Share session errors with the view
-        $middleware->api(append: [
-            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
         ]);
 
         // Excluir rutas del middleware CSRF para testing

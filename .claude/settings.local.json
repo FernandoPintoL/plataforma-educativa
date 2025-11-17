@@ -7,7 +7,8 @@
       "Bash(timeout 60 python:*)",
       "Bash(git reset:*)",
       "Bash(npm run build:*)",
-      "Bash(Get-Content \"D:\\PLATAFORMA EDUCATIVA\\plataforma-educativa\\storage\\logs\\laravel.log\" -Tail 50)"
+      "Bash(Get-Content \"D:\\PLATAFORMA EDUCATIVA\\plataforma-educativa\\storage\\logs\\laravel.log\" -Tail 50)",
+      "Bash(Get-Content \"D:\\PLATAFORMA EDUCATIVA\\plataforma-educativa\\storage\\logs\\laravel.log\" -Tail 100)"
     ],
     "deny": [],
     "ask": []
