@@ -4,6 +4,7 @@ import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { AuthProvider } from './contexts/AuthContext';
 import axiosInstance from './config/axiosConfig';
+import './config/debugAuth';
 import '../css/app.css';
 
 // Initialize axios with CSRF tokens and credentials
