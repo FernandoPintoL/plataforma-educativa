@@ -644,7 +644,7 @@ eliminar.delete = (args: { notificacion: number | { id: number } } | [notificaci
     
     eliminar.form = eliminarForm
 /**
- * @see [serialized-closure]:2
+ * @see routes/web.php:353
  * @route '/notificaciones'
  */
 export const centro = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -658,7 +658,7 @@ centro.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see [serialized-closure]:2
+ * @see routes/web.php:353
  * @route '/notificaciones'
  */
 centro.url = (options?: RouteQueryOptions) => {
@@ -666,7 +666,7 @@ centro.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see [serialized-closure]:2
+ * @see routes/web.php:353
  * @route '/notificaciones'
  */
 centro.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -674,7 +674,7 @@ centro.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see [serialized-closure]:2
+ * @see routes/web.php:353
  * @route '/notificaciones'
  */
 centro.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -683,7 +683,7 @@ centro.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see [serialized-closure]:2
+ * @see routes/web.php:353
  * @route '/notificaciones'
  */
     const centroForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -692,7 +692,7 @@ centro.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see [serialized-closure]:2
+ * @see routes/web.php:353
  * @route '/notificaciones'
  */
         centroForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -700,7 +700,7 @@ centro.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see [serialized-closure]:2
+ * @see routes/web.php:353
  * @route '/notificaciones'
  */
         centroForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

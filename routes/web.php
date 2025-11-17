@@ -20,6 +20,15 @@ Route::post('/test-csrf', function () {
     return response()->json(['message' => 'CSRF token is valid', 'success' => true]);
 })->name('test.csrf');
 
+// API Token endpoint - must be in web.php to have proper session access
+Route::middleware(['auth'])->group(function () {
+    Route::get('/api/auth/token', [\App\Http\Controllers\Api\AuthTokenController::class, 'getToken'])
+        ->name('api.auth.token');
+
+    Route::post('/api/auth/token/revoke', [\App\Http\Controllers\Api\AuthTokenController::class, 'revokeToken'])
+        ->name('api.auth.token.revoke');
+});
+
 // Solo usuarios, roles, permisos y prototipos educativos
 Route::middleware(['auth', 'verified'])->group(function () {
     // Módulo de usuarios, roles y permisos (mantener)
