@@ -20,7 +20,7 @@ import logging
 import argparse
 import json
 from pathlib import Path
-from typing import Dict, Any
+from typing import Dict, Any, Tuple
 import numpy as np
 import pandas as pd
 from datetime import datetime
@@ -95,34 +95,48 @@ class LSTMTrainer:
         try:
             logger.info("Cargando datos de BD...")
 
-            conn = get_db_connection()
-            cursor = conn.cursor()
+            db = get_db_connection()
+            if db is None:
+                raise ConnectionError("No se pudo conectar a la base de datos")
 
             # Query para obtener datos de estudiantes
             query = """
                 SELECT
                     e.id as estudiante_id,
-                    e.nombre,
-                    c.fecha,
-                    c.calificacion,
+                    e.name as nombre,
+                    c.created_at as fecha,
+                    c.valor as calificacion,
                     c.asistencia,
                     c.participacion,
                     c.tareas_completadas
-                FROM estudiantes e
-                LEFT JOIN calificaciones c ON e.id = c.estudiante_id
-                WHERE c.calificacion IS NOT NULL
-                ORDER BY e.id, c.fecha
+                FROM users e
+                LEFT JOIN calificacions c ON e.id = c.estudiante_id
+                WHERE c.valor IS NOT NULL
+                ORDER BY e.id, c.created_at
             """
 
             if limit:
                 query += f" LIMIT {limit}"
 
-            df = pd.read_sql(query, conn)
-            conn.close()
+            # Usar SQLAlchemy para ejecutar la query
+            from sqlalchemy import text
+            result = db.execute(text(query))
+            rows = result.fetchall()
 
-            logger.info(f"✓ {len(df)} registros cargados")
-            logger.info(f"  Estudiantes únicos: {df['estudiante_id'].nunique()}")
-            logger.info(f"  Rango de fechas: {df['fecha'].min()} a {df['fecha'].max()}")
+            # Convertir a DataFrame
+            if rows:
+                df = pd.DataFrame(rows, columns=result.keys())
+            else:
+                logger.warning("No hay datos disponibles en la BD")
+                df = pd.DataFrame()
+
+            db.close()
+
+            if not df.empty:
+                logger.info(f"✓ {len(df)} registros cargados")
+                logger.info(f"  Estudiantes únicos: {df['estudiante_id'].nunique()}")
+                if 'fecha' in df.columns:
+                    logger.info(f"  Rango de fechas: {df['fecha'].min()} a {df['fecha'].max()}")
 
             return df
 
