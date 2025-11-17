@@ -78,79 +78,8 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     index.form = indexForm
 /**
- * @see routes/web.php:344
- * @route '/notificaciones'
- */
-export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: index.url(options),
-    method: 'get',
-})
-
-index.definition = {
-    methods: ["get","head"],
-    url: '/notificaciones',
-} satisfies RouteDefinition<["get","head"]>
-
-/**
- * @see routes/web.php:344
- * @route '/notificaciones'
- */
-index.url = (options?: RouteQueryOptions) => {
-    return index.definition.url + queryParams(options)
-}
-
-/**
- * @see routes/web.php:344
- * @route '/notificaciones'
- */
-index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: index.url(options),
-    method: 'get',
-})
-/**
- * @see routes/web.php:344
- * @route '/notificaciones'
- */
-index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
-    url: index.url(options),
-    method: 'head',
-})
-
-    /**
- * @see routes/web.php:344
- * @route '/notificaciones'
- */
-    const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-        action: index.url(options),
-        method: 'get',
-    })
-
-            /**
- * @see routes/web.php:344
- * @route '/notificaciones'
- */
-        indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: index.url(options),
-            method: 'get',
-        })
-            /**
- * @see routes/web.php:344
- * @route '/notificaciones'
- */
-        indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: index.url({
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'HEAD',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'get',
-        })
-    
-    index.form = indexForm
-/**
 * @see \App\Http\Controllers\Api\NotificacionController::noLeidas
- * @see app/Http/Controllers/Api/NotificacionController.php:44
+ * @see app/Http/Controllers/Api/NotificacionController.php:62
  * @route '/api/notificaciones/no-leidas'
  */
 export const noLeidas = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -165,7 +94,7 @@ noLeidas.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\NotificacionController::noLeidas
- * @see app/Http/Controllers/Api/NotificacionController.php:44
+ * @see app/Http/Controllers/Api/NotificacionController.php:62
  * @route '/api/notificaciones/no-leidas'
  */
 noLeidas.url = (options?: RouteQueryOptions) => {
@@ -174,7 +103,7 @@ noLeidas.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\NotificacionController::noLeidas
- * @see app/Http/Controllers/Api/NotificacionController.php:44
+ * @see app/Http/Controllers/Api/NotificacionController.php:62
  * @route '/api/notificaciones/no-leidas'
  */
 noLeidas.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -183,7 +112,7 @@ noLeidas.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\NotificacionController::noLeidas
- * @see app/Http/Controllers/Api/NotificacionController.php:44
+ * @see app/Http/Controllers/Api/NotificacionController.php:62
  * @route '/api/notificaciones/no-leidas'
  */
 noLeidas.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -193,7 +122,7 @@ noLeidas.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\NotificacionController::noLeidas
- * @see app/Http/Controllers/Api/NotificacionController.php:44
+ * @see app/Http/Controllers/Api/NotificacionController.php:62
  * @route '/api/notificaciones/no-leidas'
  */
     const noLeidasForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -203,7 +132,7 @@ noLeidas.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\NotificacionController::noLeidas
- * @see app/Http/Controllers/Api/NotificacionController.php:44
+ * @see app/Http/Controllers/Api/NotificacionController.php:62
  * @route '/api/notificaciones/no-leidas'
  */
         noLeidasForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -212,7 +141,7 @@ noLeidas.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\NotificacionController::noLeidas
- * @see app/Http/Controllers/Api/NotificacionController.php:44
+ * @see app/Http/Controllers/Api/NotificacionController.php:62
  * @route '/api/notificaciones/no-leidas'
  */
         noLeidasForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -228,7 +157,7 @@ noLeidas.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     noLeidas.form = noLeidasForm
 /**
 * @see \App\Http\Controllers\Api\NotificacionController::stream
- * @see app/Http/Controllers/Api/NotificacionController.php:197
+ * @see app/Http/Controllers/Api/NotificacionController.php:215
  * @route '/api/notificaciones/stream'
  */
 export const stream = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -243,7 +172,7 @@ stream.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\NotificacionController::stream
- * @see app/Http/Controllers/Api/NotificacionController.php:197
+ * @see app/Http/Controllers/Api/NotificacionController.php:215
  * @route '/api/notificaciones/stream'
  */
 stream.url = (options?: RouteQueryOptions) => {
@@ -252,7 +181,7 @@ stream.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\NotificacionController::stream
- * @see app/Http/Controllers/Api/NotificacionController.php:197
+ * @see app/Http/Controllers/Api/NotificacionController.php:215
  * @route '/api/notificaciones/stream'
  */
 stream.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -261,7 +190,7 @@ stream.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\NotificacionController::stream
- * @see app/Http/Controllers/Api/NotificacionController.php:197
+ * @see app/Http/Controllers/Api/NotificacionController.php:215
  * @route '/api/notificaciones/stream'
  */
 stream.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -271,7 +200,7 @@ stream.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\NotificacionController::stream
- * @see app/Http/Controllers/Api/NotificacionController.php:197
+ * @see app/Http/Controllers/Api/NotificacionController.php:215
  * @route '/api/notificaciones/stream'
  */
     const streamForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -281,7 +210,7 @@ stream.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\NotificacionController::stream
- * @see app/Http/Controllers/Api/NotificacionController.php:197
+ * @see app/Http/Controllers/Api/NotificacionController.php:215
  * @route '/api/notificaciones/stream'
  */
         streamForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -290,7 +219,7 @@ stream.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\NotificacionController::stream
- * @see app/Http/Controllers/Api/NotificacionController.php:197
+ * @see app/Http/Controllers/Api/NotificacionController.php:215
  * @route '/api/notificaciones/stream'
  */
         streamForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -306,7 +235,7 @@ stream.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     stream.form = streamForm
 /**
 * @see \App\Http\Controllers\Api\NotificacionController::estadisticas
- * @see app/Http/Controllers/Api/NotificacionController.php:157
+ * @see app/Http/Controllers/Api/NotificacionController.php:175
  * @route '/api/notificaciones/estadisticas'
  */
 export const estadisticas = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -321,7 +250,7 @@ estadisticas.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\NotificacionController::estadisticas
- * @see app/Http/Controllers/Api/NotificacionController.php:157
+ * @see app/Http/Controllers/Api/NotificacionController.php:175
  * @route '/api/notificaciones/estadisticas'
  */
 estadisticas.url = (options?: RouteQueryOptions) => {
@@ -330,7 +259,7 @@ estadisticas.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\NotificacionController::estadisticas
- * @see app/Http/Controllers/Api/NotificacionController.php:157
+ * @see app/Http/Controllers/Api/NotificacionController.php:175
  * @route '/api/notificaciones/estadisticas'
  */
 estadisticas.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -339,7 +268,7 @@ estadisticas.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\NotificacionController::estadisticas
- * @see app/Http/Controllers/Api/NotificacionController.php:157
+ * @see app/Http/Controllers/Api/NotificacionController.php:175
  * @route '/api/notificaciones/estadisticas'
  */
 estadisticas.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -349,7 +278,7 @@ estadisticas.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\NotificacionController::estadisticas
- * @see app/Http/Controllers/Api/NotificacionController.php:157
+ * @see app/Http/Controllers/Api/NotificacionController.php:175
  * @route '/api/notificaciones/estadisticas'
  */
     const estadisticasForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -359,7 +288,7 @@ estadisticas.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\NotificacionController::estadisticas
- * @see app/Http/Controllers/Api/NotificacionController.php:157
+ * @see app/Http/Controllers/Api/NotificacionController.php:175
  * @route '/api/notificaciones/estadisticas'
  */
         estadisticasForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -368,7 +297,7 @@ estadisticas.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\NotificacionController::estadisticas
- * @see app/Http/Controllers/Api/NotificacionController.php:157
+ * @see app/Http/Controllers/Api/NotificacionController.php:175
  * @route '/api/notificaciones/estadisticas'
  */
         estadisticasForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -384,7 +313,7 @@ estadisticas.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     estadisticas.form = estadisticasForm
 /**
 * @see \App\Http\Controllers\Api\NotificacionController::marcarLeido
- * @see app/Http/Controllers/Api/NotificacionController.php:60
+ * @see app/Http/Controllers/Api/NotificacionController.php:78
  * @route '/api/notificaciones/{notificacion}/leido'
  */
 export const marcarLeido = (args: { notificacion: number | { id: number } } | [notificacion: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -399,7 +328,7 @@ marcarLeido.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\NotificacionController::marcarLeido
- * @see app/Http/Controllers/Api/NotificacionController.php:60
+ * @see app/Http/Controllers/Api/NotificacionController.php:78
  * @route '/api/notificaciones/{notificacion}/leido'
  */
 marcarLeido.url = (args: { notificacion: number | { id: number } } | [notificacion: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -432,7 +361,7 @@ marcarLeido.url = (args: { notificacion: number | { id: number } } | [notificaci
 
 /**
 * @see \App\Http\Controllers\Api\NotificacionController::marcarLeido
- * @see app/Http/Controllers/Api/NotificacionController.php:60
+ * @see app/Http/Controllers/Api/NotificacionController.php:78
  * @route '/api/notificaciones/{notificacion}/leido'
  */
 marcarLeido.put = (args: { notificacion: number | { id: number } } | [notificacion: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -442,7 +371,7 @@ marcarLeido.put = (args: { notificacion: number | { id: number } } | [notificaci
 
     /**
 * @see \App\Http\Controllers\Api\NotificacionController::marcarLeido
- * @see app/Http/Controllers/Api/NotificacionController.php:60
+ * @see app/Http/Controllers/Api/NotificacionController.php:78
  * @route '/api/notificaciones/{notificacion}/leido'
  */
     const marcarLeidoForm = (args: { notificacion: number | { id: number } } | [notificacion: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -457,7 +386,7 @@ marcarLeido.put = (args: { notificacion: number | { id: number } } | [notificaci
 
             /**
 * @see \App\Http\Controllers\Api\NotificacionController::marcarLeido
- * @see app/Http/Controllers/Api/NotificacionController.php:60
+ * @see app/Http/Controllers/Api/NotificacionController.php:78
  * @route '/api/notificaciones/{notificacion}/leido'
  */
         marcarLeidoForm.put = (args: { notificacion: number | { id: number } } | [notificacion: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -473,7 +402,7 @@ marcarLeido.put = (args: { notificacion: number | { id: number } } | [notificaci
     marcarLeido.form = marcarLeidoForm
 /**
 * @see \App\Http\Controllers\Api\NotificacionController::marcarNoLeido
- * @see app/Http/Controllers/Api/NotificacionController.php:86
+ * @see app/Http/Controllers/Api/NotificacionController.php:104
  * @route '/api/notificaciones/{notificacion}/no-leido'
  */
 export const marcarNoLeido = (args: { notificacion: number | { id: number } } | [notificacion: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -488,7 +417,7 @@ marcarNoLeido.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\NotificacionController::marcarNoLeido
- * @see app/Http/Controllers/Api/NotificacionController.php:86
+ * @see app/Http/Controllers/Api/NotificacionController.php:104
  * @route '/api/notificaciones/{notificacion}/no-leido'
  */
 marcarNoLeido.url = (args: { notificacion: number | { id: number } } | [notificacion: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -521,7 +450,7 @@ marcarNoLeido.url = (args: { notificacion: number | { id: number } } | [notifica
 
 /**
 * @see \App\Http\Controllers\Api\NotificacionController::marcarNoLeido
- * @see app/Http/Controllers/Api/NotificacionController.php:86
+ * @see app/Http/Controllers/Api/NotificacionController.php:104
  * @route '/api/notificaciones/{notificacion}/no-leido'
  */
 marcarNoLeido.put = (args: { notificacion: number | { id: number } } | [notificacion: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -531,7 +460,7 @@ marcarNoLeido.put = (args: { notificacion: number | { id: number } } | [notifica
 
     /**
 * @see \App\Http\Controllers\Api\NotificacionController::marcarNoLeido
- * @see app/Http/Controllers/Api/NotificacionController.php:86
+ * @see app/Http/Controllers/Api/NotificacionController.php:104
  * @route '/api/notificaciones/{notificacion}/no-leido'
  */
     const marcarNoLeidoForm = (args: { notificacion: number | { id: number } } | [notificacion: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -546,7 +475,7 @@ marcarNoLeido.put = (args: { notificacion: number | { id: number } } | [notifica
 
             /**
 * @see \App\Http\Controllers\Api\NotificacionController::marcarNoLeido
- * @see app/Http/Controllers/Api/NotificacionController.php:86
+ * @see app/Http/Controllers/Api/NotificacionController.php:104
  * @route '/api/notificaciones/{notificacion}/no-leido'
  */
         marcarNoLeidoForm.put = (args: { notificacion: number | { id: number } } | [notificacion: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -562,7 +491,7 @@ marcarNoLeido.put = (args: { notificacion: number | { id: number } } | [notifica
     marcarNoLeido.form = marcarNoLeidoForm
 /**
 * @see \App\Http\Controllers\Api\NotificacionController::marcarTodasLeidas
- * @see app/Http/Controllers/Api/NotificacionController.php:112
+ * @see app/Http/Controllers/Api/NotificacionController.php:130
  * @route '/api/notificaciones/marcar/todas-leidas'
  */
 export const marcarTodasLeidas = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -577,7 +506,7 @@ marcarTodasLeidas.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\NotificacionController::marcarTodasLeidas
- * @see app/Http/Controllers/Api/NotificacionController.php:112
+ * @see app/Http/Controllers/Api/NotificacionController.php:130
  * @route '/api/notificaciones/marcar/todas-leidas'
  */
 marcarTodasLeidas.url = (options?: RouteQueryOptions) => {
@@ -586,7 +515,7 @@ marcarTodasLeidas.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\NotificacionController::marcarTodasLeidas
- * @see app/Http/Controllers/Api/NotificacionController.php:112
+ * @see app/Http/Controllers/Api/NotificacionController.php:130
  * @route '/api/notificaciones/marcar/todas-leidas'
  */
 marcarTodasLeidas.put = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -596,7 +525,7 @@ marcarTodasLeidas.put = (options?: RouteQueryOptions): RouteDefinition<'put'> =>
 
     /**
 * @see \App\Http\Controllers\Api\NotificacionController::marcarTodasLeidas
- * @see app/Http/Controllers/Api/NotificacionController.php:112
+ * @see app/Http/Controllers/Api/NotificacionController.php:130
  * @route '/api/notificaciones/marcar/todas-leidas'
  */
     const marcarTodasLeidasForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -611,7 +540,7 @@ marcarTodasLeidas.put = (options?: RouteQueryOptions): RouteDefinition<'put'> =>
 
             /**
 * @see \App\Http\Controllers\Api\NotificacionController::marcarTodasLeidas
- * @see app/Http/Controllers/Api/NotificacionController.php:112
+ * @see app/Http/Controllers/Api/NotificacionController.php:130
  * @route '/api/notificaciones/marcar/todas-leidas'
  */
         marcarTodasLeidasForm.put = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -627,7 +556,7 @@ marcarTodasLeidas.put = (options?: RouteQueryOptions): RouteDefinition<'put'> =>
     marcarTodasLeidas.form = marcarTodasLeidasForm
 /**
 * @see \App\Http\Controllers\Api\NotificacionController::eliminar
- * @see app/Http/Controllers/Api/NotificacionController.php:131
+ * @see app/Http/Controllers/Api/NotificacionController.php:149
  * @route '/api/notificaciones/{notificacion}'
  */
 export const eliminar = (args: { notificacion: number | { id: number } } | [notificacion: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -642,7 +571,7 @@ eliminar.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\NotificacionController::eliminar
- * @see app/Http/Controllers/Api/NotificacionController.php:131
+ * @see app/Http/Controllers/Api/NotificacionController.php:149
  * @route '/api/notificaciones/{notificacion}'
  */
 eliminar.url = (args: { notificacion: number | { id: number } } | [notificacion: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -675,7 +604,7 @@ eliminar.url = (args: { notificacion: number | { id: number } } | [notificacion:
 
 /**
 * @see \App\Http\Controllers\Api\NotificacionController::eliminar
- * @see app/Http/Controllers/Api/NotificacionController.php:131
+ * @see app/Http/Controllers/Api/NotificacionController.php:149
  * @route '/api/notificaciones/{notificacion}'
  */
 eliminar.delete = (args: { notificacion: number | { id: number } } | [notificacion: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -685,7 +614,7 @@ eliminar.delete = (args: { notificacion: number | { id: number } } | [notificaci
 
     /**
 * @see \App\Http\Controllers\Api\NotificacionController::eliminar
- * @see app/Http/Controllers/Api/NotificacionController.php:131
+ * @see app/Http/Controllers/Api/NotificacionController.php:149
  * @route '/api/notificaciones/{notificacion}'
  */
     const eliminarForm = (args: { notificacion: number | { id: number } } | [notificacion: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -700,7 +629,7 @@ eliminar.delete = (args: { notificacion: number | { id: number } } | [notificaci
 
             /**
 * @see \App\Http\Controllers\Api\NotificacionController::eliminar
- * @see app/Http/Controllers/Api/NotificacionController.php:131
+ * @see app/Http/Controllers/Api/NotificacionController.php:149
  * @route '/api/notificaciones/{notificacion}'
  */
         eliminarForm.delete = (args: { notificacion: number | { id: number } } | [notificacion: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -714,6 +643,77 @@ eliminar.delete = (args: { notificacion: number | { id: number } } | [notificaci
         })
     
     eliminar.form = eliminarForm
+/**
+ * @see [serialized-closure]:2
+ * @route '/notificaciones'
+ */
+export const centro = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: centro.url(options),
+    method: 'get',
+})
+
+centro.definition = {
+    methods: ["get","head"],
+    url: '/notificaciones',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+ * @see [serialized-closure]:2
+ * @route '/notificaciones'
+ */
+centro.url = (options?: RouteQueryOptions) => {
+    return centro.definition.url + queryParams(options)
+}
+
+/**
+ * @see [serialized-closure]:2
+ * @route '/notificaciones'
+ */
+centro.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: centro.url(options),
+    method: 'get',
+})
+/**
+ * @see [serialized-closure]:2
+ * @route '/notificaciones'
+ */
+centro.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: centro.url(options),
+    method: 'head',
+})
+
+    /**
+ * @see [serialized-closure]:2
+ * @route '/notificaciones'
+ */
+    const centroForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: centro.url(options),
+        method: 'get',
+    })
+
+            /**
+ * @see [serialized-closure]:2
+ * @route '/notificaciones'
+ */
+        centroForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: centro.url(options),
+            method: 'get',
+        })
+            /**
+ * @see [serialized-closure]:2
+ * @route '/notificaciones'
+ */
+        centroForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: centro.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    centro.form = centroForm
 const notificaciones = {
     index,
 noLeidas,
@@ -723,6 +723,7 @@ marcarLeido,
 marcarNoLeido,
 marcarTodasLeidas,
 eliminar,
+centro,
 }
 
 export default notificaciones

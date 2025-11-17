@@ -1,6 +1,6 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
 /**
- * @see routes/web.php:321
+ * @see [serialized-closure]:2
  * @route '/analisis-riesgo'
  */
 export const dashboard = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -14,7 +14,7 @@ dashboard.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:321
+ * @see [serialized-closure]:2
  * @route '/analisis-riesgo'
  */
 dashboard.url = (options?: RouteQueryOptions) => {
@@ -22,7 +22,7 @@ dashboard.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:321
+ * @see [serialized-closure]:2
  * @route '/analisis-riesgo'
  */
 dashboard.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -30,7 +30,7 @@ dashboard.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:321
+ * @see [serialized-closure]:2
  * @route '/analisis-riesgo'
  */
 dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -39,7 +39,7 @@ dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:321
+ * @see [serialized-closure]:2
  * @route '/analisis-riesgo'
  */
     const dashboardForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -48,7 +48,7 @@ dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:321
+ * @see [serialized-closure]:2
  * @route '/analisis-riesgo'
  */
         dashboardForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -56,7 +56,7 @@ dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:321
+ * @see [serialized-closure]:2
  * @route '/analisis-riesgo'
  */
         dashboardForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -71,7 +71,7 @@ dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     dashboard.form = dashboardForm
 /**
- * @see routes/web.php:326
+ * @see [serialized-closure]:2
  * @route '/analisis-riesgo/cursos'
  */
 export const porCurso = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -85,7 +85,7 @@ porCurso.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:326
+ * @see [serialized-closure]:2
  * @route '/analisis-riesgo/cursos'
  */
 porCurso.url = (options?: RouteQueryOptions) => {
@@ -93,7 +93,7 @@ porCurso.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:326
+ * @see [serialized-closure]:2
  * @route '/analisis-riesgo/cursos'
  */
 porCurso.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -101,7 +101,7 @@ porCurso.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:326
+ * @see [serialized-closure]:2
  * @route '/analisis-riesgo/cursos'
  */
 porCurso.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -110,7 +110,7 @@ porCurso.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:326
+ * @see [serialized-closure]:2
  * @route '/analisis-riesgo/cursos'
  */
     const porCursoForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -119,7 +119,7 @@ porCurso.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:326
+ * @see [serialized-closure]:2
  * @route '/analisis-riesgo/cursos'
  */
         porCursoForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -127,7 +127,7 @@ porCurso.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:326
+ * @see [serialized-closure]:2
  * @route '/analisis-riesgo/cursos'
  */
         porCursoForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -142,7 +142,7 @@ porCurso.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     porCurso.form = porCursoForm
 /**
- * @see routes/web.php:331
+ * @see [serialized-closure]:2
  * @route '/analisis-riesgo/tendencias'
  */
 export const tendencias = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -156,7 +156,7 @@ tendencias.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:331
+ * @see [serialized-closure]:2
  * @route '/analisis-riesgo/tendencias'
  */
 tendencias.url = (options?: RouteQueryOptions) => {
@@ -164,7 +164,7 @@ tendencias.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:331
+ * @see [serialized-closure]:2
  * @route '/analisis-riesgo/tendencias'
  */
 tendencias.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -172,7 +172,7 @@ tendencias.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:331
+ * @see [serialized-closure]:2
  * @route '/analisis-riesgo/tendencias'
  */
 tendencias.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -181,7 +181,7 @@ tendencias.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:331
+ * @see [serialized-closure]:2
  * @route '/analisis-riesgo/tendencias'
  */
     const tendenciasForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -190,7 +190,7 @@ tendencias.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:331
+ * @see [serialized-closure]:2
  * @route '/analisis-riesgo/tendencias'
  */
         tendenciasForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -198,7 +198,7 @@ tendencias.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:331
+ * @see [serialized-closure]:2
  * @route '/analisis-riesgo/tendencias'
  */
         tendenciasForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -213,7 +213,7 @@ tendencias.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     tendencias.form = tendenciasForm
 /**
- * @see routes/web.php:336
+ * @see [serialized-closure]:2
  * @route '/analisis-riesgo/estudiante/{id}'
  */
 export const estudiante = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -227,7 +227,7 @@ estudiante.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:336
+ * @see [serialized-closure]:2
  * @route '/analisis-riesgo/estudiante/{id}'
  */
 estudiante.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -254,7 +254,7 @@ estudiante.url = (args: { id: string | number } | [id: string | number ] | strin
 }
 
 /**
- * @see routes/web.php:336
+ * @see [serialized-closure]:2
  * @route '/analisis-riesgo/estudiante/{id}'
  */
 estudiante.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -262,7 +262,7 @@ estudiante.get = (args: { id: string | number } | [id: string | number ] | strin
     method: 'get',
 })
 /**
- * @see routes/web.php:336
+ * @see [serialized-closure]:2
  * @route '/analisis-riesgo/estudiante/{id}'
  */
 estudiante.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -271,7 +271,7 @@ estudiante.head = (args: { id: string | number } | [id: string | number ] | stri
 })
 
     /**
- * @see routes/web.php:336
+ * @see [serialized-closure]:2
  * @route '/analisis-riesgo/estudiante/{id}'
  */
     const estudianteForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -280,7 +280,7 @@ estudiante.head = (args: { id: string | number } | [id: string | number ] | stri
     })
 
             /**
- * @see routes/web.php:336
+ * @see [serialized-closure]:2
  * @route '/analisis-riesgo/estudiante/{id}'
  */
         estudianteForm.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -288,7 +288,7 @@ estudiante.head = (args: { id: string | number } | [id: string | number ] | stri
             method: 'get',
         })
             /**
- * @see routes/web.php:336
+ * @see [serialized-closure]:2
  * @route '/analisis-riesgo/estudiante/{id}'
  */
         estudianteForm.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

@@ -1,29 +1,13 @@
 {
   "permissions": {
     "allow": [
-      "Bash(dir:*)",
-      "Bash(echo:*)",
-      "Bash(dir /B ML*.md)",
-      "Bash(powershell -Command \"cd ''D:\\PLATAFORMA EDUCATIVA\\plataforma-educativa\\ml_educativas''; ls | Select-Object Name\")",
-      "Bash(powershell -Command:*)",
-      "Bash(venvScriptspython -m supervisado.data.seed_test_data --grades 1200 --attendance 1500)",
-      "Bash(cat:*)",
-      "Bash(xargs -I {} sh -c 'echo \"\"\"\"=== {} ===\"\"\"\" && wc -l {}')",
-      "Bash(findstr:*)",
       "Bash(php artisan:*)",
-      "Bash(find_file:*)",
-      "Bash(xargs:*)",
-      "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(nul)",
+      "Bash(pip install:*)",
+      "Bash(timeout 60 python:*)",
+      "Bash(git reset:*)",
       "Bash(npm run build:*)",
-      "Bash(tree:*)",
-      "Bash(git rm:*)",
-      "Bash(curl:*)",
-      "Bash(php -r:*)",
-      "Bash(php test_api.php:*)",
-      "Bash(python:*)",
-      "Bash(ls -la \"D:\\PLATAFORMA EDUCATIVA\\plataforma-educativa\\database\\seeders\"\" | grep -i \"prediccion|calificacion|asistencia \")"
+      "Bash(Get-Content \"D:\\PLATAFORMA EDUCATIVA\\plataforma-educativa\\storage\\logs\\laravel.log\" -Tail 50)"
     ],
     "deny": [],
     "ask": []
