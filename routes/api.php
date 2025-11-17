@@ -42,15 +42,15 @@ Route::middleware(['api'])->get('/debug-auth', function (\Illuminate\Http\Reques
 });
 
 // Auth token endpoints - available to authenticated users
-// Must use 'web' guard for session-based auth since these routes need session support
-Route::middleware(['web'])->group(function () {
+// Uses both 'api' (for routing/prefix) and 'web' (for session handling)
+Route::middleware(['api', 'web'])->group(function () {
     // Get current API token (for users with session)
-    Route::get('/api/auth/token', [AuthTokenController::class, 'getToken'])
+    Route::get('auth/token', [AuthTokenController::class, 'getToken'])
         ->middleware('auth')
         ->name('api.auth.token');
 
     // Revoke API token (requires Sanctum authentication)
-    Route::post('/api/auth/token/revoke', [AuthTokenController::class, 'revokeToken'])
+    Route::post('auth/token/revoke', [AuthTokenController::class, 'revokeToken'])
         ->middleware('auth:sanctum')
         ->name('api.auth.token.revoke');
 });
