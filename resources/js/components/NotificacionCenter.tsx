@@ -72,8 +72,8 @@ export default function NotificacionCenter() {
     /**
      * Conectar al stream SSE
      */
-    const conectarSSE = () => {
-        notificacionesApi.conectarSSE(
+    const conectarSSE = async () => {
+        await notificacionesApi.conectarSSE(
             (notificacion) => {
                 // Nueva notificación recibida
                 setNotificaciones((prev) => [notificacion, ...prev])

@@ -219,8 +219,12 @@ class NotificacionController extends Controller
      * Este endpoint usa Server-Sent Events para enviar notificaciones
      * en tiempo real al cliente sin necesidad de WebSocket.
      *
+     * Soporta autenticación por:
+     * 1. Header Authorization con Bearer token (para axios/fetch)
+     * 2. Query parameter ?token=xxx (para EventSource que no soporta headers)
+     *
      * Uso del cliente:
-     * const eventSource = new EventSource('/api/notificaciones/stream');
+     * const eventSource = new EventSource('/api/notificaciones/stream?token=xxx');
      * eventSource.addEventListener('notificacion', (event) => {
      *     const notificacion = JSON.parse(event.data);
      *     console.log('Nueva notificación:', notificacion);
@@ -228,12 +232,29 @@ class NotificacionController extends Controller
      */
     public function stream(Request $request): StreamedResponse
     {
+        // Try to get user from Sanctum authentication
         $user = $request->user();
+
+        // If not authenticated via header, try token from query parameter
+        if (!$user) {
+            $token = $request->query('token');
+            if ($token) {
+                // Validate the Sanctum token
+                $personalAccessToken = \Laravel\Sanctum\PersonalAccessToken::findToken($token);
+                if ($personalAccessToken && $personalAccessToken->tokenable) {
+                    $user = $personalAccessToken->tokenable;
+                    Log::debug('SSE stream authenticated via token parameter', [
+                        'user_id' => $user->id,
+                    ]);
+                }
+            }
+        }
 
         // Check if user is authenticated
         if (!$user) {
             Log::warning('Unauthorized SSE stream request', [
                 'ip' => $request->ip(),
+                'has_token_param' => $request->query('token') ? 'yes' : 'no',
                 'headers' => [
                     'Authorization' => $request->header('Authorization') ? 'present' : 'missing',
                     'PHPSESSID' => $request->cookie('PHPSESSID') ? 'present' : 'missing',

@@ -157,7 +157,7 @@ noLeidas.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     noLeidas.form = noLeidasForm
 /**
 * @see \App\Http\Controllers\Api\NotificacionController::stream
- * @see app/Http/Controllers/Api/NotificacionController.php:229
+ * @see app/Http/Controllers/Api/NotificacionController.php:233
  * @route '/api/notificaciones/stream'
  */
 export const stream = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -172,7 +172,7 @@ stream.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\NotificacionController::stream
- * @see app/Http/Controllers/Api/NotificacionController.php:229
+ * @see app/Http/Controllers/Api/NotificacionController.php:233
  * @route '/api/notificaciones/stream'
  */
 stream.url = (options?: RouteQueryOptions) => {
@@ -181,7 +181,7 @@ stream.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\NotificacionController::stream
- * @see app/Http/Controllers/Api/NotificacionController.php:229
+ * @see app/Http/Controllers/Api/NotificacionController.php:233
  * @route '/api/notificaciones/stream'
  */
 stream.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -190,7 +190,7 @@ stream.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\NotificacionController::stream
- * @see app/Http/Controllers/Api/NotificacionController.php:229
+ * @see app/Http/Controllers/Api/NotificacionController.php:233
  * @route '/api/notificaciones/stream'
  */
 stream.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -200,7 +200,7 @@ stream.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\NotificacionController::stream
- * @see app/Http/Controllers/Api/NotificacionController.php:229
+ * @see app/Http/Controllers/Api/NotificacionController.php:233
  * @route '/api/notificaciones/stream'
  */
     const streamForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -210,7 +210,7 @@ stream.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\NotificacionController::stream
- * @see app/Http/Controllers/Api/NotificacionController.php:229
+ * @see app/Http/Controllers/Api/NotificacionController.php:233
  * @route '/api/notificaciones/stream'
  */
         streamForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -219,7 +219,7 @@ stream.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\NotificacionController::stream
- * @see app/Http/Controllers/Api/NotificacionController.php:229
+ * @see app/Http/Controllers/Api/NotificacionController.php:233
  * @route '/api/notificaciones/stream'
  */
         streamForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

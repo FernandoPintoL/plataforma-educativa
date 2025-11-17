@@ -8,7 +8,7 @@
  * - Obtener estadísticas
  */
 
-import axiosInstance from '../config/axiosConfig'
+import axiosInstance, { getApiToken } from '../config/axiosConfig'
 
 interface Notificacion {
     id: number
@@ -154,10 +154,10 @@ class NotificacionesApiService {
      * @param onNotificacion - Callback cuando llega una notificación
      * @param onError - Callback cuando hay un error
      */
-    conectarSSE(
+    async conectarSSE(
         onNotificacion: (notificacion: Notificacion) => void,
         onError?: (error: Error) => void
-    ): void {
+    ): Promise<void> {
         if (this.eventSource) {
             this.desconectarSSE()
         }
@@ -166,11 +166,18 @@ class NotificacionesApiService {
         this.onErrorCallback = onError || (() => {})
 
         try {
-            // Get CSRF token from cookie for EventSource (which doesn't support custom headers)
-            const csrfToken = this.getCookie('XSRF-TOKEN')
-            const streamUrl = csrfToken
-                ? `${this.baseUrl}/stream?_token=${encodeURIComponent(csrfToken)}`
-                : `${this.baseUrl}/stream`
+            // Get Sanctum Bearer token for EventSource (passed as query parameter)
+            const token = await getApiToken()
+            if (!token) {
+                console.error('[SSE] No API token available')
+                if (this.onErrorCallback) {
+                    this.onErrorCallback(new Error('No API token available'))
+                }
+                return
+            }
+
+            // EventSource doesn't support custom headers, so we pass the token as a query parameter
+            const streamUrl = `${this.baseUrl}/stream?token=${encodeURIComponent(token)}`
 
             this.eventSource = new EventSource(streamUrl, { withCredentials: true })
 
@@ -204,9 +211,9 @@ class NotificacionesApiService {
                 }
             }
 
-            console.log('Conexión SSE establecida')
+            console.log('[SSE] Conexión SSE establecida')
         } catch (error) {
-            console.error('Error conectando SSE:', error)
+            console.error('[SSE] Error conectando SSE:', error)
             if (this.onErrorCallback) {
                 this.onErrorCallback(error as Error)
             }

@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AnalisisRiesgoController;
+use App\Http\Controllers\Api\AuthTokenController;
 use App\Http\Controllers\Api\ExportarReportesController;
 use App\Http\Controllers\Api\MLPipelineController;
 use App\Http\Controllers\Api\NotificacionController;
@@ -38,6 +39,18 @@ Route::middleware(['api'])->get('/debug-auth', function (\Illuminate\Http\Reques
             'laravel_session' => $request->cookie('laravel_session') ? 'present' : 'missing',
         ],
     ]);
+});
+
+// Auth token endpoints - available to authenticated users
+Route::middleware(['api'])->group(function () {
+    // Get current API token (for users with session)
+    Route::get('/auth/token', [AuthTokenController::class, 'getToken'])
+        ->name('auth.token');
+
+    // Revoke API token (requires Sanctum authentication)
+    Route::post('/auth/token/revoke', [AuthTokenController::class, 'revokeToken'])
+        ->middleware('auth:sanctum')
+        ->name('auth.token.revoke');
 });
 
 Route::middleware(['auth:sanctum'])->group(function () {

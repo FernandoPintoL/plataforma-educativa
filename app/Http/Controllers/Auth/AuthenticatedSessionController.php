@@ -33,6 +33,17 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        // Generate Sanctum token for API authentication
+        $user = Auth::guard('web')->user();
+        if ($user) {
+            // Create or update API token for this user
+            $user->tokens()->where('name', 'api-token')->delete();
+            $token = $user->createToken('api-token');
+
+            // Store token in session so frontend can access it
+            $request->session()->put('api_token', $token->plainTextToken);
+        }
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 

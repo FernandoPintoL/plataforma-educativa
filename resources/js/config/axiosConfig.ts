@@ -1,13 +1,53 @@
 /**
- * Axios Configuration for Laravel Sanctum Authentication
+ * Axios Configuration for Laravel Sanctum Token-Based Authentication
  *
- * Configures axios to automatically include CSRF tokens and
- * handle authentication with Laravel Sanctum
+ * Configures axios to use Sanctum Bearer tokens for API authentication.
+ * Tokens are obtained after login and stored in sessionStorage.
  *
- * Works with Inertia.js and Laravel Sanctum for session-based authentication
+ * For SSE and other EventSource connections, the token is passed as a query parameter
+ * since EventSource doesn't support custom headers.
  */
 
 import axios from 'axios';
+
+let apiToken: string | null = null;
+
+/**
+ * Get the Sanctum API token from sessionStorage or fetch it from the server
+ */
+async function getApiToken(): Promise<string | null> {
+  // If we already have it cached, return it
+  if (apiToken) {
+    return apiToken;
+  }
+
+  // Try to get from sessionStorage
+  const stored = sessionStorage.getItem('sanctum_token');
+  if (stored) {
+    apiToken = stored;
+    console.debug('[Axios] API token loaded from sessionStorage');
+    return stored;
+  }
+
+  // If not in sessionStorage, fetch from the server endpoint
+  // This endpoint returns the token that was generated during login
+  try {
+    const response = await axios.get('/api/auth/token', {
+      withCredentials: true,
+    });
+
+    if (response.data.success && response.data.token) {
+      apiToken = response.data.token;
+      sessionStorage.setItem('sanctum_token', apiToken);
+      console.debug('[Axios] API token fetched from server:', apiToken.substring(0, 10) + '...');
+      return apiToken;
+    }
+  } catch (error) {
+    console.debug('[Axios] Could not fetch API token from server:', error);
+  }
+
+  return null;
+}
 
 // Get CSRF token from meta tag, cookie, or request
 function getCsrfToken(): string {
@@ -49,28 +89,30 @@ const axiosInstance = axios.create({
   },
 });
 
-// Add CSRF token and proper headers to all requests
-axiosInstance.interceptors.request.use((config) => {
-  const token = getCsrfToken();
-
+// Add Bearer token and proper headers to all requests
+axiosInstance.interceptors.request.use(async (config) => {
+  // Add the Sanctum Bearer token for API authentication
+  const token = await getApiToken();
   if (token) {
-    // Laravel accepts CSRF token via X-CSRF-TOKEN header
-    config.headers['X-CSRF-TOKEN'] = token;
-    // Some configurations also check X-XSRF-TOKEN
-    config.headers['X-XSRF-TOKEN'] = token;
-    console.debug('[Axios] Added CSRF tokens to request:', config.url);
+    config.headers['Authorization'] = `Bearer ${token}`;
+    console.debug('[Axios] Added Bearer token to request:', config.url);
   } else {
-    console.warn('[Axios] No CSRF token available for request:', config.url);
+    console.warn('[Axios] No Bearer token available for request:', config.url);
+  }
+
+  // Still include CSRF token for form submissions if needed
+  const csrfToken = getCsrfToken();
+  if (csrfToken) {
+    config.headers['X-CSRF-TOKEN'] = csrfToken;
+    config.headers['X-XSRF-TOKEN'] = csrfToken;
   }
 
   // Ensure we're sending JSON
   config.headers['Accept'] = 'application/json';
 
-  // Important: Referer and Origin headers are automatically set by the browser
-  // and cannot be manually set via JavaScript for security reasons.
-  // The withCredentials: true above ensures cookies are sent automatically.
-
   return config;
+}, (error) => {
+  return Promise.reject(error);
 });
 
 // Handle response errors
@@ -123,4 +165,6 @@ function getCookie(name: string): string | null {
   return null;
 }
 
+// Export both the axios instance and the token getter
 export default axiosInstance;
+export { getApiToken };
