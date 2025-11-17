@@ -8,7 +8,7 @@
  * - Obtener estadísticas
  */
 
-import axios from 'axios'
+import axiosInstance from '../config/axiosConfig'
 
 interface Notificacion {
     id: number
@@ -39,6 +39,18 @@ class NotificacionesApiService {
     private onErrorCallback: ((error: Error) => void) | null = null
 
     /**
+     * Obtener valor de una cookie por nombre
+     */
+    private getCookie(name: string): string | null {
+        const value = `; ${document.cookie}`
+        const parts = value.split(`; ${name}=`)
+        if (parts.length === 2) {
+            return parts.pop()?.split(';').shift() || null
+        }
+        return null
+    }
+
+    /**
      * Obtener todas las notificaciones del usuario
      */
     async obtenerNotificaciones(
@@ -50,7 +62,7 @@ class NotificacionesApiService {
             params.append('limit', limite.toString())
             if (tipo) params.append('tipo', tipo)
 
-            const response = await axios.get<any>(`${this.baseUrl}?${params}`)
+            const response = await axiosInstance.get<any>(`${this.baseUrl}?${params}`)
             return response.data
         } catch (error) {
             console.error('Error obteniendo notificaciones:', error)
@@ -63,7 +75,7 @@ class NotificacionesApiService {
      */
     async obtenerNoLeidas(): Promise<{ success: boolean; data: Notificacion[]; count: number }> {
         try {
-            const response = await axios.get<any>(`${this.baseUrl}/no-leidas`)
+            const response = await axiosInstance.get<any>(`${this.baseUrl}/no-leidas`)
             return response.data
         } catch (error) {
             console.error('Error obteniendo notificaciones no leídas:', error)
@@ -76,7 +88,7 @@ class NotificacionesApiService {
      */
     async obtenerEstadisticas(): Promise<{ success: boolean; data: EstadisticasNotificaciones }> {
         try {
-            const response = await axios.get<any>(`${this.baseUrl}/estadisticas`)
+            const response = await axiosInstance.get<any>(`${this.baseUrl}/estadisticas`)
             return response.data
         } catch (error) {
             console.error('Error obteniendo estadísticas:', error)
@@ -89,7 +101,7 @@ class NotificacionesApiService {
      */
     async marcarLeido(notificacionId: number): Promise<{ success: boolean; data: Notificacion }> {
         try {
-            const response = await axios.put<any>(`${this.baseUrl}/${notificacionId}/leido`)
+            const response = await axiosInstance.put<any>(`${this.baseUrl}/${notificacionId}/leido`)
             return response.data
         } catch (error) {
             console.error('Error marcando notificación como leída:', error)
@@ -102,7 +114,7 @@ class NotificacionesApiService {
      */
     async marcarNoLeido(notificacionId: number): Promise<{ success: boolean; data: Notificacion }> {
         try {
-            const response = await axios.put<any>(`${this.baseUrl}/${notificacionId}/no-leido`)
+            const response = await axiosInstance.put<any>(`${this.baseUrl}/${notificacionId}/no-leido`)
             return response.data
         } catch (error) {
             console.error('Error marcando notificación como no leída:', error)
@@ -115,7 +127,7 @@ class NotificacionesApiService {
      */
     async marcarTodasLeidas(): Promise<{ success: boolean; data: { cantidad: number } }> {
         try {
-            const response = await axios.put<any>(`${this.baseUrl}/marcar/todas-leidas`)
+            const response = await axiosInstance.put<any>(`${this.baseUrl}/marcar/todas-leidas`)
             return response.data
         } catch (error) {
             console.error('Error marcando todas como leídas:', error)
@@ -128,7 +140,7 @@ class NotificacionesApiService {
      */
     async eliminar(notificacionId: number): Promise<{ success: boolean }> {
         try {
-            const response = await axios.delete<any>(`${this.baseUrl}/${notificacionId}`)
+            const response = await axiosInstance.delete<any>(`${this.baseUrl}/${notificacionId}`)
             return response.data
         } catch (error) {
             console.error('Error eliminando notificación:', error)
@@ -154,7 +166,13 @@ class NotificacionesApiService {
         this.onErrorCallback = onError || (() => {})
 
         try {
-            this.eventSource = new EventSource(`${this.baseUrl}/stream`)
+            // Get CSRF token from cookie for EventSource (which doesn't support custom headers)
+            const csrfToken = this.getCookie('XSRF-TOKEN')
+            const streamUrl = csrfToken
+                ? `${this.baseUrl}/stream?_token=${encodeURIComponent(csrfToken)}`
+                : `${this.baseUrl}/stream`
+
+            this.eventSource = new EventSource(streamUrl, { withCredentials: true })
 
             // Evento de notificación
             this.eventSource.addEventListener('notificacion', (event: Event) => {
