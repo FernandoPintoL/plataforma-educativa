@@ -63,13 +63,12 @@ axiosInstance.interceptors.request.use((config) => {
     console.warn('[Axios] No CSRF token available for request:', config.url);
   }
 
-  // Set Referer and Origin headers for Sanctum's EnsureFrontendRequestsAreStateful
-  // Sanctum checks these headers to identify requests as coming from a stateful SPA frontend
-  config.headers['Referer'] = window.location.origin + '/';
-  config.headers['Origin'] = window.location.origin;
-
   // Ensure we're sending JSON
   config.headers['Accept'] = 'application/json';
+
+  // Important: Referer and Origin headers are automatically set by the browser
+  // and cannot be manually set via JavaScript for security reasons.
+  // The withCredentials: true above ensures cookies are sent automatically.
 
   return config;
 });

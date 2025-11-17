@@ -32,6 +32,13 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Http\Middleware\HandleCors::class,
         ]);
 
+        // Ensure session middleware is applied to API routes for Sanctum session-based auth
+        // This is needed because EnsureFrontendRequestsAreStateful requires an active session
+        $middleware->api(append: [
+            \Illuminate\Session\Middleware\StartSession::class,
+            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+        ]);
+
         // Excluir rutas del middleware CSRF para testing
         $middleware->validateCsrfTokens(except: [
             'test-csrf',
