@@ -25,9 +25,23 @@ class NotificacionController extends Controller
             Log::warning('Unauthorized API request to notificaciones.index', [
                 'ip' => $request->ip(),
                 'user_agent' => $request->userAgent(),
+                'session_id' => session()->getId(),
+                'session_exists' => session()->all(),
+                'auth_check' => auth()->check(),
+                'auth_user' => auth()->user(),
                 'headers' => [
                     'Authorization' => $request->header('Authorization') ? 'present' : 'missing',
+                    'X-CSRF-TOKEN' => $request->header('X-CSRF-TOKEN') ? 'present' : 'missing',
+                    'Referer' => $request->header('Referer'),
+                ],
+                'cookies' => [
                     'PHPSESSID' => $request->cookie('PHPSESSID') ? 'present' : 'missing',
+                    'XSRF-TOKEN' => $request->cookie('XSRF-TOKEN') ? 'present' : 'missing',
+                    'laravel_session' => $request->cookie('laravel_session') ? 'present' : 'missing',
+                ],
+                'guards' => [
+                    'web' => auth('web')->check(),
+                    'sanctum' => auth('sanctum')->check(),
                 ],
             ]);
 

@@ -13,6 +13,33 @@ use App\Http\Controllers\Api\NotificacionController;
  * These routes are protected by the "api" middleware and require authentication
  */
 
+// Debug route - temporary for troubleshooting (remove in production)
+Route::middleware(['api'])->get('/debug-auth', function (\Illuminate\Http\Request $request) {
+    return response()->json([
+        'timestamp' => now(),
+        'authenticated' => \Illuminate\Support\Facades\Auth::check(),
+        'user' => \Illuminate\Support\Facades\Auth::user(),
+        'session_id' => session()->getId(),
+        'session_all' => session()->all(),
+        'request_user' => $request->user(),
+        'guards' => [
+            'web' => auth('web')->check(),
+            'sanctum' => auth('sanctum')->check(),
+        ],
+        'headers' => [
+            'Referer' => $request->header('Referer'),
+            'Origin' => $request->header('Origin'),
+            'Authorization' => $request->header('Authorization') ? 'present' : 'missing',
+            'X-CSRF-TOKEN' => $request->header('X-CSRF-TOKEN') ? 'present' : 'missing',
+        ],
+        'cookies' => [
+            'PHPSESSID' => $request->cookie('PHPSESSID') ? 'present' : 'missing',
+            'XSRF-TOKEN' => $request->cookie('XSRF-TOKEN') ? 'present' : 'missing',
+            'laravel_session' => $request->cookie('laravel_session') ? 'present' : 'missing',
+        ],
+    ]);
+});
+
 Route::middleware(['auth:sanctum'])->group(function () {
     /**
      * Rutas para Análisis de Riesgo (solo director, profesor, admin)
