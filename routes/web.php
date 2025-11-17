@@ -340,8 +340,8 @@ Route::middleware(['auth', 'verified', 'role:director|profesor|admin'])->group(f
 
 // ==================== NOTIFICACIONES EN TIEMPO REAL ====================
 Route::middleware(['auth', 'verified'])->group(function () {
-    // Centro de notificaciones
+    // Centro de notificaciones (vista web)
     Route::get('notificaciones', function () {
         return Inertia::render('Notificaciones/Index');
-    })->name('notificaciones.index');
+    })->name('notificaciones.centro');
 });
