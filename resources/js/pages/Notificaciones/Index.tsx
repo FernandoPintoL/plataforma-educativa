@@ -10,7 +10,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { Head } from '@inertiajs/react'
-import AuthLayout from '@/layouts/AuthLayout'
+import AuthLayout from '@/layouts/auth-layout'
 import {
     Bell,
     Search,
