@@ -86,11 +86,14 @@ class LSTMTrainer:
         """
         Cargar datos de estudiantes desde BD.
 
+        Carga datos de rendimiento académico combinando información de
+        rendimiento_academico y calificaciones individuales.
+
         Args:
             limit (int): Máximo número de registros (None = todos)
 
         Retorna:
-            pd.DataFrame: Datos de estudiantes
+            pd.DataFrame: Datos de estudiantes con calificaciones
         """
         try:
             logger.info("Cargando datos de BD...")
@@ -100,32 +103,59 @@ class LSTMTrainer:
                 raise ConnectionError("No se pudo conectar a la base de datos")
 
             # Query para obtener datos de estudiantes
+            # Combinamos rendimiento_academico con calificaciones
             query = """
                 SELECT
-                    e.id as estudiante_id,
-                    e.name as nombre,
-                    c.created_at as fecha,
-                    c.valor as calificacion,
-                    c.asistencia,
-                    c.participacion,
-                    c.tareas_completadas
-                FROM users e
-                LEFT JOIN calificacions c ON e.id = c.estudiante_id
-                WHERE c.valor IS NOT NULL
-                ORDER BY e.id, c.created_at
+                    u.id as estudiante_id,
+                    u.name as nombre,
+                    c.fecha_calificacion as fecha,
+                    c.puntaje as calificacion,
+                    ra.promedio as promedio_histor,
+                    ra.tendencia_temporal as tendencia,
+                    u.created_at as fecha_registro
+                FROM users u
+                LEFT JOIN calificaciones c ON u.id = c.evaluador_id OR c.id > 0
+                LEFT JOIN rendimiento_academico ra ON u.id = ra.estudiante_id
+                WHERE c.puntaje IS NOT NULL
+                ORDER BY u.id, c.fecha_calificacion
             """
 
-            if limit:
-                query += f" LIMIT {limit}"
+            # Alternativa más simple si lo anterior no funciona bien
+            simple_query = """
+                SELECT
+                    ra.estudiante_id,
+                    u.name as nombre,
+                    ra.promedio as calificacion,
+                    ra.created_at as fecha,
+                    ra.tendencia_temporal as tendencia
+                FROM rendimiento_academico ra
+                LEFT JOIN users u ON ra.estudiante_id = u.id
+                WHERE ra.promedio IS NOT NULL
+                ORDER BY ra.estudiante_id, ra.created_at
+            """
 
             # Usar SQLAlchemy para ejecutar la query
             from sqlalchemy import text
-            result = db.execute(text(query))
-            rows = result.fetchall()
+
+            try:
+                result = db.execute(text(query))
+                rows = result.fetchall()
+                if not rows:
+                    logger.info("Intentando con query simplificada...")
+                    result = db.execute(text(simple_query))
+                    rows = result.fetchall()
+            except Exception as e:
+                logger.warning(f"Query principal falló, usando simplificada: {e}")
+                result = db.execute(text(simple_query))
+                rows = result.fetchall()
 
             # Convertir a DataFrame
             if rows:
                 df = pd.DataFrame(rows, columns=result.keys())
+                # Asegurar que tenemos al menos las columnas necesarias
+                if 'estudiante_id' not in df.columns:
+                    logger.error("No se encontró columna 'estudiante_id'")
+                    df = pd.DataFrame()
             else:
                 logger.warning("No hay datos disponibles en la BD")
                 df = pd.DataFrame()
@@ -137,11 +167,14 @@ class LSTMTrainer:
                 logger.info(f"  Estudiantes únicos: {df['estudiante_id'].nunique()}")
                 if 'fecha' in df.columns:
                     logger.info(f"  Rango de fechas: {df['fecha'].min()} a {df['fecha'].max()}")
+            else:
+                logger.warning("No se pudieron cargar datos de la BD")
 
             return df
 
         except Exception as e:
             logger.error(f"✗ Error cargando datos: {str(e)}")
+            logger.error(f"  Tipo: {type(e).__name__}")
             raise
 
     def prepare_sequences(self, df: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray, Dict]:
