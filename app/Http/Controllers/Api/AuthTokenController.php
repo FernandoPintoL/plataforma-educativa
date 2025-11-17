@@ -22,18 +22,36 @@ class AuthTokenController extends Controller
      */
     public function getToken(Request $request): JsonResponse
     {
-        $token = $request->session()->get('api_token');
+        // Try to get the authenticated user
+        $user = $request->user();
 
-        if (!$token) {
+        if (!$user) {
             return response()->json([
                 'success' => false,
-                'message' => 'No API token available. Please log in again.',
+                'message' => 'Not authenticated. Please log in first.',
             ], 401);
+        }
+
+        // Get or create API token for this user
+        // First check if user has an existing api-token
+        $token = $user->tokens()->where('name', 'api-token')->first();
+
+        if (!$token) {
+            // Token doesn't exist, need to create one
+            // This shouldn't happen in normal flow, but handle it gracefully
+            $token = $user->createToken('api-token');
+            $tokenString = $token->plainTextToken;
+        } else {
+            // Token exists but we don't have the plain text version
+            // We need to create a new one and return it
+            $user->tokens()->where('name', 'api-token')->delete();
+            $token = $user->createToken('api-token');
+            $tokenString = $token->plainTextToken;
         }
 
         return response()->json([
             'success' => true,
-            'token' => $token,
+            'token' => $tokenString,
             'type' => 'Bearer',
         ]);
     }
