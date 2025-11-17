@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 import token from './token'
 /**
 * @see \App\Http\Controllers\Api\AuthTokenController::token
- * @see app/Http/Controllers/Api/AuthTokenController.php:23
+ * @see app/Http/Controllers/Api/AuthTokenController.php:25
  * @route '/api/auth/token'
  */
 export const token = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -17,7 +17,7 @@ token.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\AuthTokenController::token
- * @see app/Http/Controllers/Api/AuthTokenController.php:23
+ * @see app/Http/Controllers/Api/AuthTokenController.php:25
  * @route '/api/auth/token'
  */
 token.url = (options?: RouteQueryOptions) => {
@@ -26,7 +26,7 @@ token.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\AuthTokenController::token
- * @see app/Http/Controllers/Api/AuthTokenController.php:23
+ * @see app/Http/Controllers/Api/AuthTokenController.php:25
  * @route '/api/auth/token'
  */
 token.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ token.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\AuthTokenController::token
- * @see app/Http/Controllers/Api/AuthTokenController.php:23
+ * @see app/Http/Controllers/Api/AuthTokenController.php:25
  * @route '/api/auth/token'
  */
 token.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ token.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\AuthTokenController::token
- * @see app/Http/Controllers/Api/AuthTokenController.php:23
+ * @see app/Http/Controllers/Api/AuthTokenController.php:25
  * @route '/api/auth/token'
  */
     const tokenForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -55,7 +55,7 @@ token.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\AuthTokenController::token
- * @see app/Http/Controllers/Api/AuthTokenController.php:23
+ * @see app/Http/Controllers/Api/AuthTokenController.php:25
  * @route '/api/auth/token'
  */
         tokenForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -64,7 +64,7 @@ token.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\AuthTokenController::token
- * @see app/Http/Controllers/Api/AuthTokenController.php:23
+ * @see app/Http/Controllers/Api/AuthTokenController.php:25
  * @route '/api/auth/token'
  */
         tokenForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

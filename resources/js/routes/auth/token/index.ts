@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Api\AuthTokenController::revoke
- * @see app/Http/Controllers/Api/AuthTokenController.php:62
+ * @see app/Http/Controllers/Api/AuthTokenController.php:67
  * @route '/api/auth/token/revoke'
  */
 export const revoke = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -16,7 +16,7 @@ revoke.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\AuthTokenController::revoke
- * @see app/Http/Controllers/Api/AuthTokenController.php:62
+ * @see app/Http/Controllers/Api/AuthTokenController.php:67
  * @route '/api/auth/token/revoke'
  */
 revoke.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ revoke.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\AuthTokenController::revoke
- * @see app/Http/Controllers/Api/AuthTokenController.php:62
+ * @see app/Http/Controllers/Api/AuthTokenController.php:67
  * @route '/api/auth/token/revoke'
  */
 revoke.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -35,7 +35,7 @@ revoke.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\AuthTokenController::revoke
- * @see app/Http/Controllers/Api/AuthTokenController.php:62
+ * @see app/Http/Controllers/Api/AuthTokenController.php:67
  * @route '/api/auth/token/revoke'
  */
     const revokeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -45,7 +45,7 @@ revoke.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\AuthTokenController::revoke
- * @see app/Http/Controllers/Api/AuthTokenController.php:62
+ * @see app/Http/Controllers/Api/AuthTokenController.php:67
  * @route '/api/auth/token/revoke'
  */
         revokeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

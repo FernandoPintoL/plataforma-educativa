@@ -18,11 +18,25 @@ class AuthTokenController extends Controller
      * Get the current API token for the authenticated user
      *
      * The token is stored in the session during login and is used
-     * for all subsequent API requests via the Authorization header
+     * for all subsequent API requests via the Authorization header.
+     * This endpoint works with session-based auth (web guard) rather than
+     * requiring an existing Bearer token.
      */
     public function getToken(Request $request): JsonResponse
     {
-        // Try to get the authenticated user
+        // First, try to get the token from session
+        // This is available after login via the web guard
+        $tokenString = $request->session()->get('api_token');
+
+        if ($tokenString) {
+            return response()->json([
+                'success' => true,
+                'token' => $tokenString,
+                'type' => 'Bearer',
+            ]);
+        }
+
+        // If not in session, try to get the user and recreate token
         $user = $request->user();
 
         if (!$user) {
@@ -33,21 +47,12 @@ class AuthTokenController extends Controller
         }
 
         // Get or create API token for this user
-        // First check if user has an existing api-token
-        $token = $user->tokens()->where('name', 'api-token')->first();
+        $user->tokens()->where('name', 'api-token')->delete();
+        $token = $user->createToken('api-token');
+        $tokenString = $token->plainTextToken;
 
-        if (!$token) {
-            // Token doesn't exist, need to create one
-            // This shouldn't happen in normal flow, but handle it gracefully
-            $token = $user->createToken('api-token');
-            $tokenString = $token->plainTextToken;
-        } else {
-            // Token exists but we don't have the plain text version
-            // We need to create a new one and return it
-            $user->tokens()->where('name', 'api-token')->delete();
-            $token = $user->createToken('api-token');
-            $tokenString = $token->plainTextToken;
-        }
+        // Store in session for future requests
+        $request->session()->put('api_token', $tokenString);
 
         return response()->json([
             'success' => true,

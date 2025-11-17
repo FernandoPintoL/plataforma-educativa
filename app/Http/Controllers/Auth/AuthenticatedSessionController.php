@@ -40,8 +40,11 @@ class AuthenticatedSessionController extends Controller
             $user->tokens()->where('name', 'api-token')->delete();
             $token = $user->createToken('api-token');
 
-            // Store token in session so frontend can access it
+            // Store token in session
             $request->session()->put('api_token', $token->plainTextToken);
+
+            // Also store as a temporary flash message so frontend can capture it
+            $request->session()->flash('sanctum_token', $token->plainTextToken);
         }
 
         return redirect()->intended(route('dashboard', absolute: false));

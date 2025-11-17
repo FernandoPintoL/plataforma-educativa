@@ -13,6 +13,19 @@ import axios from 'axios';
 let apiToken: string | null = null;
 
 /**
+ * Create a simple axios instance without interceptors for token fetching
+ * This avoids circular dependency when fetching the token itself
+ */
+const simpleAxios = axios.create({
+  baseURL: window.location.origin,
+  withCredentials: true,
+  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+  },
+});
+
+/**
  * Get the Sanctum API token from sessionStorage or fetch it from the server
  */
 async function getApiToken(): Promise<string | null> {
@@ -31,10 +44,9 @@ async function getApiToken(): Promise<string | null> {
 
   // If not in sessionStorage, fetch from the server endpoint
   // This endpoint returns the token that was generated during login
+  // Use simpleAxios to avoid circular dependency with interceptors
   try {
-    const response = await axios.get('/api/auth/token', {
-      withCredentials: true,
-    });
+    const response = await simpleAxios.get('/api/auth/token');
 
     if (response.data.success && response.data.token) {
       apiToken = response.data.token;
