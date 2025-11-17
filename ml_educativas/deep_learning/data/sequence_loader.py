@@ -104,6 +104,15 @@ class SequenceLoader:
                 if groupby_column in feature_columns:
                     feature_columns.remove(groupby_column)
 
+            # Filtrar features que realmente existen en el DataFrame
+            feature_columns = [col for col in feature_columns if col in df.columns]
+
+            if not feature_columns:
+                logger.warning("No hay features especificadas, usando todas las numéricas")
+                feature_columns = df.select_dtypes(include=[np.number]).columns.tolist()
+                if groupby_column in feature_columns:
+                    feature_columns.remove(groupby_column)
+
             self.features = feature_columns
             self.n_features = len(feature_columns)
 
@@ -113,33 +122,41 @@ class SequenceLoader:
             y_all = []
             student_ids = []
             valid_students = 0
+            skipped_students = 0
 
             # Procesar cada estudiante
             for student_id, group in df.groupby(groupby_column):
-                # Ordenar por tiempo
-                group = group.sort_values(sort_column)
+                try:
+                    # Ordenar por tiempo
+                    group = group.sort_values(sort_column)
 
-                # Necesita mínimo lookback + lookahead datos
-                if len(group) < self.lookback + self.lookahead:
+                    # Necesita mínimo lookback + lookahead datos
+                    if len(group) < self.lookback + self.lookahead:
+                        skipped_students += 1
+                        continue
+
+                    # Extraer features
+                    student_data = group[feature_columns].values
+
+                    # Normalizar si es la primera vez
+                    if not self.is_fitted:
+                        student_data = self.scaler.fit_transform(student_data)
+                    else:
+                        student_data = self.scaler.transform(student_data)
+
+                    # Crear secuencias
+                    X_seq, y_seq = self.create_sequences(student_data)
+
+                    if X_seq is not None and len(X_seq) > 0:
+                        X_all.extend(X_seq)
+                        y_all.extend(y_seq)
+                        student_ids.extend([student_id] * len(X_seq))
+                        valid_students += 1
+
+                except Exception as e:
+                    logger.warning(f"Error procesando estudiante {student_id}: {str(e)}")
+                    skipped_students += 1
                     continue
-
-                # Extraer features
-                student_data = group[feature_columns].values
-
-                # Normalizar si es la primera vez
-                if not self.is_fitted:
-                    student_data = self.scaler.fit_transform(student_data)
-                else:
-                    student_data = self.scaler.transform(student_data)
-
-                # Crear secuencias
-                X_seq, y_seq = self.create_sequences(student_data)
-
-                if X_seq is not None and len(X_seq) > 0:
-                    X_all.extend(X_seq)
-                    y_all.extend(y_seq)
-                    student_ids.extend([student_id] * len(X_seq))
-                    valid_students += 1
 
             if not X_all:
                 raise ValueError("No hay datos suficientes para crear secuencias")
@@ -155,6 +172,7 @@ class SequenceLoader:
                 'lookback': self.lookback,
                 'lookahead': self.lookahead,
                 'valid_students': valid_students,
+                'skipped_students': skipped_students,
                 'feature_names': self.features,
                 'X_shape': X.shape,
                 'y_shape': y.shape
@@ -162,6 +180,7 @@ class SequenceLoader:
 
             logger.info(f"✓ Secuencias creadas exitosamente")
             logger.info(f"  Estudiantes válidos: {valid_students}")
+            logger.info(f"  Estudiantes omitidos: {skipped_students}")
             logger.info(f"  Secuencias totales: {len(X)}")
             logger.info(f"  Shape X: {X.shape}")
             logger.info(f"  Shape y: {y.shape}")

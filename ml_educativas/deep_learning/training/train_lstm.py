@@ -190,15 +190,36 @@ class LSTMTrainer:
         try:
             logger.info("Preparando secuencias...")
 
+            if df.empty:
+                raise ValueError("DataFrame vacío")
+
             self.sequence_loader = SequenceLoader(lookback=self.lookback)
 
-            # Features a usar
-            feature_columns = [
+            # Usar solo las columnas que realmente existen en los datos
+            # Verificar qué columnas tenemos
+            logger.info(f"Columnas disponibles: {df.columns.tolist()}")
+
+            # Features a usar - solo las que existan
+            possible_features = [
                 'calificacion',
                 'asistencia',
                 'participacion',
-                'tareas_completadas'
+                'tareas_completadas',
+                'promedio',
+                'promedio_histor',
+                'puntaje'
             ]
+
+            feature_columns = [col for col in possible_features if col in df.columns]
+
+            if not feature_columns:
+                # Si no hay ningún feature numérico, usar la calificación
+                if 'calificacion' in df.columns:
+                    feature_columns = ['calificacion']
+                else:
+                    raise ValueError(f"No se encontraron columnas numéricas. Disponibles: {df.columns.tolist()}")
+
+            logger.info(f"Usando features: {feature_columns}")
 
             # Crear secuencias
             X, y, metadata = self.sequence_loader.load_from_dataframe(
