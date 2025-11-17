@@ -27,15 +27,19 @@ return Application::configure(basePath: dirname(__DIR__))
             AddLinkHeadersForPreloadedAssets::class,
         ]);
 
+        // CRITICAL: Session middleware MUST be applied BEFORE Sanctum's EnsureFrontendRequestsAreStateful
+        // The order is: EncryptCookies -> StartSession -> EnsureFrontendRequestsAreStateful -> App logic
         $middleware->api(prepend: [
+            // Start the session FIRST - this must happen before any auth checks
+            \Illuminate\Session\Middleware\StartSession::class,
+            // Then Sanctum checks if it's a stateful request using the session
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+            // CORS handling
             \Illuminate\Http\Middleware\HandleCors::class,
         ]);
 
-        // Ensure session middleware is applied to API routes for Sanctum session-based auth
-        // This is needed because EnsureFrontendRequestsAreStateful requires an active session
+        // Share session errors with the view
         $middleware->api(append: [
-            \Illuminate\Session\Middleware\StartSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
         ]);
 
