@@ -19,6 +19,24 @@ class NotificacionController extends Controller
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
+
+        // Check if user is authenticated
+        if (!$user) {
+            Log::warning('Unauthorized API request to notificaciones.index', [
+                'ip' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+                'headers' => [
+                    'Authorization' => $request->header('Authorization') ? 'present' : 'missing',
+                    'PHPSESSID' => $request->cookie('PHPSESSID') ? 'present' : 'missing',
+                ],
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized: User not authenticated',
+            ], 401);
+        }
+
         $limite = $request->input('limit', 50);
         $tipo = $request->input('tipo');
 
@@ -197,6 +215,27 @@ class NotificacionController extends Controller
     public function stream(Request $request): StreamedResponse
     {
         $user = $request->user();
+
+        // Check if user is authenticated
+        if (!$user) {
+            Log::warning('Unauthorized SSE stream request', [
+                'ip' => $request->ip(),
+                'headers' => [
+                    'Authorization' => $request->header('Authorization') ? 'present' : 'missing',
+                    'PHPSESSID' => $request->cookie('PHPSESSID') ? 'present' : 'missing',
+                ],
+            ]);
+
+            // Return error as SSE stream
+            return response()->stream(function () {
+                echo "event: error\n";
+                echo "data: " . json_encode(['error' => 'Unauthorized']) . "\n\n";
+            }, 401, [
+                'Content-Type' => 'text/event-stream',
+                'Cache-Control' => 'no-cache',
+            ]);
+        }
+
         $userId = $user->id;
 
         // Configurar headers para SSE
