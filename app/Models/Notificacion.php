@@ -14,26 +14,30 @@ class Notificacion extends Model
 
     protected $fillable = [
         'titulo',
-        'contenido',
+        'descripcion',
         'fecha',
-        'destinatario_id',
+        'usuario_id',
         'leido',
         'tipo',
-        'datos_adicionales',
+        'datos',
+        'prediccion_riesgo_id',
+        'fecha_lectura',
     ];
 
     protected $casts = [
-        'fecha' => 'datetime',
-        'leido' => 'boolean',
-        'datos_adicionales' => 'array',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'fecha_lectura' => 'datetime',
+        'leida' => 'boolean',
+        'datos' => 'array',
     ];
 
     /**
-     * Relación con el destinatario
+     * Relación con el usuario destinatario
      */
-    public function destinatario(): BelongsTo
+    public function usuario(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'destinatario_id');
+        return $this->belongsTo(User::class, 'usuario_id');
     }
 
     /**
@@ -41,7 +45,7 @@ class Notificacion extends Model
      */
     public function marcarLeido(): void
     {
-        $this->update(['leido' => true]);
+        $this->update(['leida' => true]);
     }
 
     /**
@@ -49,7 +53,7 @@ class Notificacion extends Model
      */
     public function marcarNoLeido(): void
     {
-        $this->update(['leido' => false]);
+        $this->update(['leida' => false]);
     }
 
     /**
@@ -143,15 +147,15 @@ class Notificacion extends Model
         return [
             'id' => $this->id,
             'titulo' => $this->titulo,
-            'contenido' => $this->contenido,
+            'descripcion' => $this->descripcion,
             'tipo' => $this->tipo,
             'icono' => $this->getIcono(),
             'color' => $this->getColor(),
-            'leido' => $this->leido,
-            'fecha' => $this->fecha->format('d/m/Y H:i'),
+            'leida' => $this->leida,
+            'fecha' => $this->created_at->format('d/m/Y H:i'),
             'tiempo_transcurrido' => $this->getTiempoTranscurrido(),
             'es_reciente' => $this->esReciente(),
-            'datos_adicionales' => $this->datos_adicionales,
+            'datos' => $this->datos,
         ];
     }
 
@@ -161,18 +165,17 @@ class Notificacion extends Model
     public static function crearParaUsuario(
         User $usuario,
         string $titulo,
-        string $contenido,
+        string $descripcion,
         string $tipo = 'general',
-        array $datosAdicionales = []
+        array $datos = []
     ): self {
         return static::create([
             'titulo' => $titulo,
-            'contenido' => $contenido,
-            'fecha' => now(),
-            'destinatario_id' => $usuario->id,
+            'descripcion' => $descripcion,
+            'usuario_id' => $usuario->id,
             'tipo' => $tipo,
-            'datos_adicionales' => $datosAdicionales,
-            'leido' => false,
+            'datos' => $datos,
+            'leida' => false,
         ]);
     }
 
@@ -181,8 +184,8 @@ class Notificacion extends Model
      */
     public static function getParaUsuario(User $usuario, int $limite = 50): \Illuminate\Database\Eloquent\Collection
     {
-        return static::where('destinatario_id', $usuario->id)
-            ->orderBy('fecha', 'desc')
+        return static::where('usuario_id', $usuario->id)
+            ->orderBy('created_at', 'desc')
             ->limit($limite)
             ->get();
     }
@@ -192,9 +195,9 @@ class Notificacion extends Model
      */
     public static function getNoLeidasParaUsuario(User $usuario): \Illuminate\Database\Eloquent\Collection
     {
-        return static::where('destinatario_id', $usuario->id)
-            ->where('leido', false)
-            ->orderBy('fecha', 'desc')
+        return static::where('usuario_id', $usuario->id)
+            ->where('leida', false)
+            ->orderBy('created_at', 'desc')
             ->get();
     }
 
@@ -203,9 +206,9 @@ class Notificacion extends Model
      */
     public static function marcarTodasComoLeidas(User $usuario): int
     {
-        return static::where('destinatario_id', $usuario->id)
-            ->where('leido', false)
-            ->update(['leido' => true]);
+        return static::where('usuario_id', $usuario->id)
+            ->where('leida', false)
+            ->update(['leida' => true]);
     }
 
     /**

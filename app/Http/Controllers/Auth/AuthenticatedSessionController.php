@@ -36,15 +36,29 @@ class AuthenticatedSessionController extends Controller
         // Generate Sanctum token for API authentication
         $user = Auth::guard('web')->user();
         if ($user) {
-            // Create or update API token for this user
-            $user->tokens()->where('name', 'api-token')->delete();
-            $token = $user->createToken('api-token');
+            try {
+                // Create or update API token for this user
+                $user->tokens()->where('name', 'api-token')->delete();
+                $token = $user->createToken('api-token');
 
-            // Store token in session
-            $request->session()->put('api_token', $token->plainTextToken);
+                // Store token in session
+                $request->session()->put('api_token', $token->plainTextToken);
 
-            // Also store as a temporary flash message so frontend can capture it
-            $request->session()->flash('sanctum_token', $token->plainTextToken);
+                // Also store as a temporary flash message so frontend can capture it
+                $request->session()->flash('sanctum_token', $token->plainTextToken);
+
+                // Debug log
+                \Log::info('Token created for user', [
+                    'user_id' => $user->id,
+                    'token_exists' => !empty($token->plainTextToken),
+                    'session_has_token' => $request->session()->has('api_token'),
+                ]);
+            } catch (\Exception $e) {
+                \Log::error('Failed to create token', [
+                    'user_id' => $user->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
         }
 
         return redirect()->intended(route('dashboard', absolute: false));

@@ -7,7 +7,7 @@ use App\Models\Notificacion;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\StreamedResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
@@ -54,8 +54,8 @@ class NotificacionController extends Controller
         $limite = $request->input('limit', 50);
         $tipo = $request->input('tipo');
 
-        $query = Notificacion::where('destinatario_id', $user->id)
-            ->orderBy('fecha', 'desc');
+        $query = Notificacion::where('usuario_id', $user->id)
+            ->orderBy('created_at', 'desc');
 
         if ($tipo) {
             $query->where('tipo', $tipo);
@@ -63,11 +63,33 @@ class NotificacionController extends Controller
 
         $notificaciones = $query->limit($limite)->get();
 
-        return response()->json([
-            'success' => true,
-            'data' => $notificaciones->map(fn($n) => $n->obtenerInformacion()),
-            'count' => $notificaciones->count(),
-        ]);
+        try {
+            $data = $notificaciones->map(function($n) {
+                if (!$n) {
+                    Log::warning('Notificación null en index', ['user_id' => $user->id]);
+                    return null;
+                }
+                return $n->obtenerInformacion();
+            })->filter(fn($item) => $item !== null)->values();
+
+            return response()->json([
+                'success' => true,
+                'data' => $data,
+                'count' => $data->count(),
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error en NotificacionController::index', [
+                'user_id' => $user->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener notificaciones',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -77,7 +99,10 @@ class NotificacionController extends Controller
     {
         $user = $request->user();
 
-        $noLeidas = Notificacion::getNoLeidasParaUsuario($user);
+        $noLeidas = Notificacion::where('usuario_id', $user->id)
+            ->where('leida', false)
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         return response()->json([
             'success' => true,
@@ -91,8 +116,8 @@ class NotificacionController extends Controller
      */
     public function marcarLeido(Request $request, Notificacion $notificacion): JsonResponse
     {
-        // Verificar que el usuario sea el destinatario
-        if ($notificacion->destinatario_id !== $request->user()->id) {
+        // Verificar que el usuario sea el propietario
+        if ($notificacion->usuario_id !== $request->user()->id) {
             return response()->json([
                 'success' => false,
                 'message' => 'No autorizado',
@@ -117,8 +142,8 @@ class NotificacionController extends Controller
      */
     public function marcarNoLeido(Request $request, Notificacion $notificacion): JsonResponse
     {
-        // Verificar que el usuario sea el destinatario
-        if ($notificacion->destinatario_id !== $request->user()->id) {
+        // Verificar que el usuario sea el propietario
+        if ($notificacion->usuario_id !== $request->user()->id) {
             return response()->json([
                 'success' => false,
                 'message' => 'No autorizado',
@@ -144,7 +169,9 @@ class NotificacionController extends Controller
     public function marcarTodasLeidas(Request $request): JsonResponse
     {
         $user = $request->user();
-        $cantidad = Notificacion::marcarTodasComoLeidas($user);
+        $cantidad = Notificacion::where('usuario_id', $user->id)
+            ->where('leida', false)
+            ->update(['leida' => true]);
 
         Log::info("Se marcaron {$cantidad} notificaciones como leídas", [
             'user_id' => $user->id,
@@ -162,8 +189,8 @@ class NotificacionController extends Controller
      */
     public function eliminar(Request $request, Notificacion $notificacion): JsonResponse
     {
-        // Verificar que el usuario sea el destinatario
-        if ($notificacion->destinatario_id !== $request->user()->id) {
+        // Verificar que el usuario sea el propietario
+        if ($notificacion->usuario_id !== $request->user()->id) {
             return response()->json([
                 'success' => false,
                 'message' => 'No autorizado',
@@ -191,15 +218,15 @@ class NotificacionController extends Controller
         $user = $request->user();
 
         $stats = [
-            'total' => Notificacion::where('destinatario_id', $user->id)->count(),
-            'no_leidas' => Notificacion::where('destinatario_id', $user->id)
-                ->where('leido', false)
+            'total' => Notificacion::where('usuario_id', $user->id)->count(),
+            'no_leidas' => Notificacion::where('usuario_id', $user->id)
+                ->where('leida', false)
                 ->count(),
-            'leidas' => Notificacion::where('destinatario_id', $user->id)
-                ->where('leido', true)
+            'leidas' => Notificacion::where('usuario_id', $user->id)
+                ->where('leida', true)
                 ->count(),
-            'recientes_24h' => Notificacion::where('destinatario_id', $user->id)
-                ->where('fecha', '>=', now()->subHours(24))
+            'recientes_24h' => Notificacion::where('usuario_id', $user->id)
+                ->where('created_at', '>=', now()->subHours(24))
                 ->count(),
         ];
 
@@ -276,10 +303,10 @@ class NotificacionController extends Controller
         // Configurar headers para SSE
         return response()->stream(function () use ($userId) {
             // Enviar notificaciones existentes no leídas
-            $noLeidas = Notificacion::where('destinatario_id', $userId)
-                ->where('leido', false)
-                ->where('fecha', '>=', now()->subHours(1))
-                ->orderBy('fecha', 'desc')
+            $noLeidas = Notificacion::where('usuario_id', $userId)
+                ->where('leida', false)
+                ->where('created_at', '>=', now()->subHours(1))
+                ->orderBy('created_at', 'desc')
                 ->get();
 
             foreach ($noLeidas as $notificacion) {
@@ -295,9 +322,9 @@ class NotificacionController extends Controller
                 // Buscar nuevas notificaciones cada 2 segundos
                 sleep(2);
 
-                $nuevas = Notificacion::where('destinatario_id', $userId)
-                    ->where('fecha', '>', $ultimaFecha)
-                    ->orderBy('fecha', 'asc')
+                $nuevas = Notificacion::where('usuario_id', $userId)
+                    ->where('created_at', '>', $ultimaFecha)
+                    ->orderBy('created_at', 'asc')
                     ->get();
 
                 if ($nuevas->isNotEmpty()) {
@@ -307,7 +334,7 @@ class NotificacionController extends Controller
                         flush();
 
                         // Actualizar timestamp
-                        $ultimaFecha = $notificacion->fecha;
+                        $ultimaFecha = $notificacion->created_at;
                     }
                 }
 
