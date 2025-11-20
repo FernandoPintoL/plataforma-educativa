@@ -178,7 +178,15 @@ class MLPipelineService
             ]);
 
             $process->setTimeout(self::TIMEOUT_SECONDS);
-            $process->setWorkingDirectory(base_path());
+            // Ejecutar desde el directorio de ml_educativas para cargar su .env
+            $mlDir = dirname(base_path()) . DIRECTORY_SEPARATOR . 'ml_educativas';
+            $process->setWorkingDirectory($mlDir);
+
+            // Heredar variables de entorno del padre y sobrescribir LOG_LEVEL
+            // para evitar conflicto con LOG_LEVEL=debug de Laravel
+            $env = $_ENV;
+            $env['LOG_LEVEL'] = 'INFO'; // Usar el nivel correcto para Python logging
+            $process->setEnv($env);
 
             // Capturar output
             $output = '';
