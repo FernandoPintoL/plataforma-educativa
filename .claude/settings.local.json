@@ -16,7 +16,8 @@
       "Bash($null)",
       "Bash(storage/logs/laravel.log)",
       "Bash(psql:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []
