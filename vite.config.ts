@@ -13,9 +13,13 @@ export default defineConfig({
         }),
         react(),
         tailwindcss(),
-        wayfinder({
-            formVariants: true,
-        }),
+        // Only run wayfinder in development mode
+        // In production (Railway), it may fail due to DB not being ready during build
+        ...(process.env.NODE_ENV === 'development' ? [
+            wayfinder({
+                formVariants: true,
+            }),
+        ] : []),
     ],
     server: {
         // Listen on all network interfaces so you can access from other devices and any Wi‑Fi network
