@@ -9,6 +9,7 @@ use App\Models\PreguntaTest;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class TestVocacionalController extends Controller
 {
@@ -227,24 +228,224 @@ class TestVocacionalController extends Controller
      */
     private function generarPerfilVocacional($estudiante, TestVocacional $test, ResultadoTestVocacional $resultado)
     {
-        // Lógica para analizar respuestas y crear un perfil
-        // Este es un placeholder que se debe completar con la lógica real
-        // de análisis de orientación vocacional
+        try {
+            // 1. Procesar respuestas
+            $areasScore = $this->procesarRespuestasTest($resultado);
 
-        $perfilData = [
-            'estudiante_id' => $estudiante->id,
-            'test_id' => $test->id,
-            'resultado_id' => $resultado->id,
-            'carreras_recomendadas' => [], // Se debe llenar con la lógica real
-            'fortalezas' => [],
-            'areas_interes' => [],
-            'nivel_confianza' => 0,
+            // 2. Identificar fortalezas
+            $fortalezas = $this->identificarFortalezas($areasScore);
+
+            // 3. Recomendar carreras
+            $carreras = $this->recomendarCarreras($areasScore, $fortalezas);
+
+            // 4. Calcular confianza
+            $confianza = $this->calcularConfianza($areasScore, $resultado);
+
+            // 5. Guardar perfil
+            $perfilData = [
+                'estudiante_id' => $estudiante->id,
+                'test_id' => $test->id,
+                'resultado_id' => $resultado->id,
+                'carreras_recomendadas' => $carreras,
+                'fortalezas' => $fortalezas,
+                'areas_interes' => array_keys($areasScore),
+                'nivel_confianza' => $confianza,
+                'generado_en' => now(),
+            ];
+
+            PerfilVocacional::updateOrCreate(
+                ['estudiante_id' => $estudiante->id],
+                $perfilData
+            );
+
+            Log::info("Perfil vocacional generado para estudiante {$estudiante->id}");
+        } catch (\Exception $e) {
+            Log::error("Error generando perfil vocacional: {$e->getMessage()}");
+            throw $e;
+        }
+    }
+
+    /**
+     * Procesar respuestas del test y extraer áreas de interés
+     */
+    private function procesarRespuestasTest($resultado): array
+    {
+        $respuestas = $resultado->respuestas ?? [];
+
+        $areas = [
+            'ciencias' => 0,
+            'tecnologia' => 0,
+            'humanidades' => 0,
+            'artes' => 0,
+            'negocios' => 0,
+            'salud' => 0,
         ];
 
-        // Actualizar o crear perfil
-        PerfilVocacional::updateOrCreate(
-            ['estudiante_id' => $estudiante->id],
-            $perfilData
-        );
+        // Procesar cada respuesta
+        foreach ($respuestas as $id_pregunta => $respuesta_data) {
+            // Si viene como ID simple o como array con puntuación
+            $puntuacion = is_array($respuesta_data) ? ($respuesta_data['puntuacion'] ?? 0) : 1;
+
+            // Intentar obtener la pregunta y su área
+            try {
+                $pregunta = PreguntaTest::find($id_pregunta);
+
+                if ($pregunta && isset($pregunta->area) && isset($areas[$pregunta->area])) {
+                    $areas[$pregunta->area] += $puntuacion;
+                }
+            } catch (\Exception $e) {
+                Log::warning("Pregunta {$id_pregunta} no encontrada: {$e->getMessage()}");
+            }
+        }
+
+        return $areas;
+    }
+
+    /**
+     * Identificar fortalezas (top 2-3 áreas con mayor puntuación)
+     */
+    private function identificarFortalezas($areasScore): array
+    {
+        // Ordenar descendente
+        arsort($areasScore);
+
+        $fortalezas = [];
+        foreach (array_slice($areasScore, 0, 3) as $area => $score) {
+            if ($score > 0) {
+                $fortalezas[] = [
+                    'area' => $area,
+                    'score' => $score,
+                    'descripcion' => $this->getDescripcionArea($area),
+                ];
+            }
+        }
+
+        return $fortalezas;
+    }
+
+    /**
+     * Obtener descripción amigable de cada área
+     */
+    private function getDescripcionArea(string $area): string
+    {
+        $descripciones = [
+            'ciencias' => 'Ciencias Naturales - Biología, Química, Física',
+            'tecnologia' => 'Tecnología e Informática - Programación, Sistemas',
+            'humanidades' => 'Humanidades - Literatura, Historia, Filosofía',
+            'artes' => 'Artes y Creatividad - Diseño, Música, Teatro',
+            'negocios' => 'Negocios y Administración - Gestión, Marketing',
+            'salud' => 'Salud y Bienestar - Medicina, Enfermería, Psicología',
+        ];
+
+        return $descripciones[$area] ?? 'Área desconocida';
+    }
+
+    /**
+     * Recomendar carreras basadas en áreas fuertes
+     */
+    private function recomendarCarreras($areasScore, $fortalezas): array
+    {
+        $carrerasPorArea = [
+            'ciencias' => [
+                'Biología',
+                'Química',
+                'Física',
+                'Medicina',
+                'Farmacología',
+                'Geología',
+            ],
+            'tecnologia' => [
+                'Ingeniería Informática',
+                'Ingeniería de Sistemas',
+                'Ciencia de Datos',
+                'Ciberseguridad',
+                'Desarrollo de Software',
+                'Ingeniería de Redes',
+            ],
+            'humanidades' => [
+                'Literatura',
+                'Derecho',
+                'Filosofía',
+                'Historia',
+                'Educación',
+                'Periodismo',
+            ],
+            'artes' => [
+                'Artes Plásticas',
+                'Diseño Gráfico',
+                'Música',
+                'Teatro',
+                'Cinematografía',
+                'Animación Digital',
+            ],
+            'negocios' => [
+                'Administración de Empresas',
+                'Contabilidad',
+                'Marketing',
+                'Economía',
+                'Finanzas',
+                'Recursos Humanos',
+            ],
+            'salud' => [
+                'Enfermería',
+                'Psicología',
+                'Medicina',
+                'Fisioterapia',
+                'Odontología',
+                'Nutrición',
+            ],
+        ];
+
+        $carrerasRecomendadas = [];
+
+        // Tomar las carreras de las áreas más fuertes
+        foreach ($fortalezas as $fortaleza) {
+            $area = $fortaleza['area'];
+            if (isset($carrerasPorArea[$area])) {
+                $carreras = $carrerasPorArea[$area];
+                foreach ($carreras as $carrera) {
+                    $carrerasRecomendadas[] = [
+                        'nombre' => $carrera,
+                        'area' => $area,
+                        'compatibilidad' => min(1.0, $fortaleza['score'] / 100),
+                    ];
+                }
+            }
+        }
+
+        return $carrerasRecomendadas;
+    }
+
+    /**
+     * Calcular nivel de confianza basado en claridad de preferencias
+     */
+    private function calcularConfianza($areasScore, $resultado): float
+    {
+        // Confianza basada en:
+        // 1. Claridad de preferencias (una área mucho más alta = confianza alta)
+        // 2. Consistencia de respuestas
+
+        $scores = array_values($areasScore);
+
+        if (empty($scores)) {
+            return 0.3;
+        }
+
+        $maxScore = max($scores);
+        $minScore = min($scores);
+        $promedio = array_sum($scores) / count($scores);
+
+        // Si maxScore es 0, retornar confianza mínima
+        if ($maxScore === 0) {
+            return 0.3;
+        }
+
+        // Claridad: qué tan separada está la más alta de las demás
+        $claridad = ($maxScore - $promedio) / $maxScore;
+
+        // Rango de confianza: 0.3 (baja) a 0.95 (alta)
+        $confianza = 0.3 + ($claridad * 0.65);
+
+        return round(min(0.95, max(0.3, $confianza)), 2);
     }
 }

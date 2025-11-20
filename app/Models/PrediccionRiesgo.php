@@ -12,22 +12,20 @@ class PrediccionRiesgo extends Model
 
     protected $fillable = [
         'estudiante_id',
-        'risk_score',
-        'risk_level',
-        'confidence_score',
+        'fk_curso_id',
+        'score_riesgo',
+        'nivel_riesgo',
+        'confianza',
         'fecha_prediccion',
         'modelo_version',
-        'modelo_tipo',
-        'features_used',
-        'creado_por',
+        'factores_influyentes',
         'observaciones',
     ];
 
     protected $casts = [
-        'features_used' => AsCollection::class,
         'fecha_prediccion' => 'datetime',
-        'risk_score' => 'float',
-        'confidence_score' => 'float',
+        'score_riesgo' => 'float',
+        'confianza' => 'float',
     ];
 
     /**
@@ -40,12 +38,11 @@ class PrediccionRiesgo extends Model
 
     /**
      * Relación con Curso
-     * Note: Not available until fk_curso_id column is added
      */
-    // public function curso(): BelongsTo
-    // {
-    //     return $this->belongsTo(Curso::class, 'fk_curso_id');
-    // }
+    public function curso(): BelongsTo
+    {
+        return $this->belongsTo(Curso::class, 'fk_curso_id');
+    }
 
     /**
      * Obtener etiqueta de nivel de riesgo
@@ -96,12 +93,10 @@ class PrediccionRiesgo extends Model
 
     /**
      * Scope: Filtrar por curso
-     * Note: PrediccionRiesgo table doesn't have fk_curso_id column yet
      */
     public function scopeByCurso($query, int $cursoId)
     {
-        // TODO: Implement when fk_curso_id is added to predicciones_riesgo table
-        return $query;
+        return $query->where('fk_curso_id', $cursoId);
     }
 
     /**

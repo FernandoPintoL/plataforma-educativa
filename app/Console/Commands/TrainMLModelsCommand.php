@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use App\Services\MLPipelineService;
 use App\Models\PrediccionRiesgo;
 use App\Models\PrediccionCarrera;
 use App\Models\PrediccionTendencia;
@@ -30,61 +31,32 @@ class TrainMLModelsCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle(): int
+    public function handle(MLPipelineService $mlPipeline): int
     {
         $this->info('╔════════════════════════════════════════════════════════════╗');
         $this->info('║  🤖 ENTRENAMIENTO DE MODELOS ML - PLATAFORMA EDUCATIVA     ║');
         $this->info('╚════════════════════════════════════════════════════════════╝');
 
-        $limit = $this->option('limit');
-        $force = $this->option('force');
+        $limit = (int) $this->option('limit') ?? 50;
+        $force = (bool) $this->option('force');
 
         try {
-            // PASO 1: Verificar disponibilidad de datos
-            $this->step(1, 'Verificando disponibilidad de datos...');
-            if (!$this->verifyDataAvailability()) {
-                $this->error('✗ No hay datos suficientes para entrenar');
-                return 1;
-            }
+            // Ejecutar pipeline ML completo
+            // MLPipelineService orquesta todos los pasos:
+            // 1. Verifica datos
+            // 2. Valida servicio ML disponible
+            // 3. Genera predicciones de riesgo
+            // 4. Genera recomendaciones de carrera
+            // 5. Genera tendencias
+            // 6. Genera progreso
+            // 7. Genera clustering
+            // 8. Genera LSTM
+            $result = $mlPipeline->executePipeline($limit, $force);
 
-            // PASO 2: Ejecutar script Python de entrenamiento
-            $this->step(2, "Ejecutando entrenamiento ML (limit={$limit})...");
-            if (!$this->runPythonTraining($limit)) {
-                $this->error('✗ Error en el entrenamiento del modelo Python');
-                return 1;
-            }
+            // Mostrar resultados
+            $this->displayResults($result);
 
-            // PASO 3: Generar predicciones de riesgo
-            $this->step(3, 'Generando predicciones de riesgo...');
-            if (!$this->generateRiskPredictions()) {
-                $this->error('✗ Error al generar predicciones de riesgo');
-                return 1;
-            }
-
-            // PASO 4: Generar predicciones de carrera
-            $this->step(4, 'Generando recomendaciones de carrera...');
-            if (!$this->generateCareerPredictions()) {
-                $this->error('✗ Error al generar predicciones de carrera');
-                return 1;
-            }
-
-            // PASO 5: Generar predicciones de tendencia
-            $this->step(5, 'Generando predicciones de tendencia...');
-            if (!$this->generateTrendPredictions()) {
-                $this->error('✗ Error al generar predicciones de tendencia');
-                return 1;
-            }
-
-            // PASO 6: Generar reportes
-            $this->step(6, 'Generando reportes...');
-            $this->generateReports();
-
-            $this->info('');
-            $this->info('╔════════════════════════════════════════════════════════════╗');
-            $this->info('║  ✅ ENTRENAMIENTO COMPLETADO EXITOSAMENTE                  ║');
-            $this->info('╚════════════════════════════════════════════════════════════╝');
-
-            return 0;
+            return $result['success'] ? 0 : 1;
 
         } catch (\Exception $e) {
             $this->error("✗ Error durante el entrenamiento: {$e->getMessage()}");
@@ -92,6 +64,35 @@ class TrainMLModelsCommand extends Command
                 $this->error($e->getTraceAsString());
             }
             return 1;
+        }
+    }
+
+    /**
+     * Mostrar resultados del pipeline
+     */
+    private function displayResults(array $result): void
+    {
+        if ($result['success']) {
+            $this->info('');
+            $this->info('╔════════════════════════════════════════════════════════════╗');
+            $this->info('║  ✅ PIPELINE ML COMPLETADO EXITOSAMENTE                    ║');
+            $this->info('╚════════════════════════════════════════════════════════════╝');
+
+            // Mostrar pasos completados
+            foreach ($result['steps'] as $step) {
+                $status = $step['status'] === 'success' ? '✓' : '✗';
+                $this->line("  {$status} {$step['name']}");
+            }
+        } else {
+            $this->error('');
+            $this->error('╔════════════════════════════════════════════════════════════╗');
+            $this->error('║  ❌ ERROR EN PIPELINE ML                                    ║');
+            $this->error('╚════════════════════════════════════════════════════════════╝');
+
+            // Mostrar errores
+            foreach ($result['errors'] as $error) {
+                $this->error("  ✗ {$error}");
+            }
         }
     }
 

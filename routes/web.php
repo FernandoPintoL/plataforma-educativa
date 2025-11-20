@@ -347,10 +347,54 @@ Route::middleware(['auth', 'verified', 'role:director|profesor|admin'])->group(f
     })->name('riesgo.estudiante');
 });
 
+// ==================== ORIENTACIÓN VOCACIONAL ====================
+Route::middleware(['auth', 'verified'])->group(function () {
+    // Índice - accesible para todos
+    Route::get('vocacional', function () {
+        return Inertia::render('Vocacional/Index', [
+            'perfil' => null, // Se puede expandir para traer datos reales
+        ]);
+    })->name('vocacional.index');
+
+    // Ver perfil vocacional
+    Route::get('vocacional/perfil', [\App\Http\Controllers\VocacionalController::class, 'perfil'])
+        ->name('vocacional.perfil');
+
+    // Ver recomendaciones
+    Route::get('vocacional/recomendaciones', [\App\Http\Controllers\VocacionalController::class, 'recomendaciones'])
+        ->name('vocacional.recomendaciones');
+});
+
 // ==================== NOTIFICACIONES EN TIEMPO REAL ====================
 Route::middleware(['auth', 'verified'])->group(function () {
     // Centro de notificaciones (vista web)
     Route::get('notificaciones', function () {
         return Inertia::render('Notificaciones/Index');
     })->name('notificaciones.centro');
+});
+
+// ==================== MI PERFIL - ESTUDIANTE ====================
+Route::middleware(['auth', 'verified', 'role:estudiante'])->group(function () {
+    // Análisis de riesgo personal del estudiante
+    Route::get('mi-perfil/riesgo', function () {
+        return Inertia::render('MiPerfil/Riesgo');
+    })->name('web.mi-perfil.riesgo');
+
+    // Recomendaciones de carrera del estudiante
+    Route::get('mi-perfil/carreras', function () {
+        return Inertia::render('MiPerfil/Carreras');
+    })->name('web.mi-perfil.carreras');
+});
+
+// ==================== PADRE - VISTA DE HIJOS ====================
+Route::middleware(['auth', 'verified', 'role:padre'])->group(function () {
+    // Análisis de riesgo de un hijo específico
+    Route::get('padre/hijo/{hijoId}/riesgo', function ($hijoId) {
+        return Inertia::render('Padre/HijoRiesgo', ['hijoId' => $hijoId]);
+    })->name('web.padre.hijo.riesgo');
+
+    // Recomendaciones de carrera de un hijo
+    Route::get('padre/hijo/{hijoId}/carreras', function ($hijoId) {
+        return Inertia::render('Padre/HijoCarreras', ['hijoId' => $hijoId]);
+    })->name('web.padre.hijo.carreras');
 });

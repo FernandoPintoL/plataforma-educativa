@@ -8,10 +8,13 @@ use App\Models\PrediccionTendencia;
 use App\Models\User;
 use App\Models\Curso;
 use App\Models\Calificacion;
+use App\Jobs\GenerarPrediccionesJob;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class AnalisisRiesgoController extends Controller
 {
@@ -116,8 +119,23 @@ class AnalisisRiesgoController extends Controller
 
         $predicciones = $query->paginate($perPage);
 
+        // Transformar datos para que coincidan con los nombres esperados por el frontend
+        $transformedData = $predicciones->items();
+        array_walk($transformedData, function (&$item) {
+            $item = [
+                'id' => $item->id,
+                'estudiante_id' => $item->estudiante_id,
+                'estudiante' => $item->estudiante,
+                'score_riesgo' => (float) $item->risk_score,
+                'nivel_riesgo' => strtolower($item->risk_level ?? 'bajo'),
+                'confianza' => (float) $item->confidence_score,
+                'fecha_prediccion' => $item->fecha_prediccion,
+                'fk_curso_id' => $item->fk_curso_id,
+            ];
+        });
+
         return response()->json([
-            'data' => $predicciones->items(),
+            'data' => $transformedData,
             'pagination' => [
                 'total' => $predicciones->total(),
                 'per_page' => $predicciones->perPage(),
@@ -238,73 +256,118 @@ class AnalisisRiesgoController extends Controller
      */
     public function porCurso(int $cursoId, Request $request): JsonResponse
     {
-        // Autorización manejada por el middleware de ruta
+        try {
+            $usuario = Auth::user();
+            if (!$usuario) {
+                return response()->json(['error' => 'No autenticado'], 401);
+            }
 
-        $curso = Curso::findOrFail($cursoId);
-        $diasAtraso = $request->input('dias', 30);
+            $curso = Curso::findOrFail($cursoId);
+            $diasAtraso = $request->input('dias', 30);
 
-        // Note: PrediccionRiesgo doesn't have curso_id field yet
-        // Return empty results for now
-        $predicciones = collect();
+            // Validar acceso según rol
+            if ($usuario->tipo_usuario === 'profesor') {
+                // Profesor solo ve sus propios cursos
+                $esSuCurso = DB::table('curso_profesor')
+                    ->where('profesor_id', $usuario->id)
+                    ->where('curso_id', $cursoId)
+                    ->exists();
 
-        // Agregar por nivel
-        $distribucion = [
-            'alto' => $predicciones->where('risk_level', 'alto')->count(),
-            'medio' => $predicciones->where('risk_level', 'medio')->count(),
-            'bajo' => $predicciones->where('risk_level', 'bajo')->count(),
-        ];
+                if (!$esSuCurso) {
+                    Log::warning("Profesor {$usuario->id} intentó acceder a curso {$cursoId} sin permisos");
+                    return response()->json(['error' => 'No eres profesor de este curso'], 403);
+                }
+            } elseif ($usuario->tipo_usuario === 'estudiante') {
+                // Estudiante solo ve su propio curso
+                $esSuCurso = DB::table('curso_estudiante')
+                    ->where('estudiante_id', $usuario->id)
+                    ->where('curso_id', $cursoId)
+                    ->exists();
 
-        // Score promedio
-        $scorePromedio = $predicciones->avg('risk_score') ?? 0;
+                if (!$esSuCurso) {
+                    Log::warning("Estudiante {$usuario->id} intentó acceder a curso {$cursoId} sin permisos");
+                    return response()->json(['error' => 'No eres estudiante de este curso'], 403);
+                }
+            }
+            // Admin y orientador tienen acceso a todos los cursos
 
-        // Estudiantes por nivel
-        $estudiantesPorNivel = [
-            'alto' => $predicciones
-                ->where('risk_level', 'alto')
-                ->sortByDesc('risk_score')
-                ->map(fn($p) => [
-                    'estudiante_id' => $p->estudiante_id,
-                    'nombre' => $p->estudiante?->name,
-                    'score' => $p->risk_score,
-                ])
-                ->values(),
-            'medio' => $predicciones
-                ->where('risk_level', 'medio')
-                ->map(fn($p) => [
-                    'estudiante_id' => $p->estudiante_id,
-                    'nombre' => $p->estudiante?->name,
-                    'score' => $p->risk_score,
-                ])
-                ->values(),
-        ];
+            // Obtener predicciones del curso
+            $predicciones = PrediccionRiesgo::where('fk_curso_id', $cursoId)
+                ->where('fecha_prediccion', '>=', now()->subDays($diasAtraso))
+                ->with('estudiante:id,name,email')
+                ->get();
 
-        return response()->json([
-            'data' => [
-                'curso' => [
-                    'id' => $curso->id,
-                    'nombre' => $curso->nombre,
-                    'codigo' => $curso->codigo ?? null,
+            // Agregar por nivel
+            $distribucion = [
+                'alto' => $predicciones->where('risk_level', 'alto')->count(),
+                'medio' => $predicciones->where('risk_level', 'medio')->count(),
+                'bajo' => $predicciones->where('risk_level', 'bajo')->count(),
+            ];
+
+            // Score promedio
+            $scorePromedio = $predicciones->avg('risk_score') ?? 0;
+
+            // Estudiantes por nivel
+            $estudiantesPorNivel = [
+                'alto' => $predicciones
+                    ->where('risk_level', 'alto')
+                    ->sortByDesc('risk_score')
+                    ->map(fn($p) => [
+                        'estudiante_id' => $p->estudiante_id,
+                        'nombre' => $p->estudiante?->name,
+                        'score' => (float) $p->risk_score,
+                    ])
+                    ->values(),
+                'medio' => $predicciones
+                    ->where('risk_level', 'medio')
+                    ->map(fn($p) => [
+                        'estudiante_id' => $p->estudiante_id,
+                        'nombre' => $p->estudiante?->name,
+                        'score' => (float) $p->risk_score,
+                    ])
+                    ->values(),
+            ];
+
+            return response()->json([
+                'data' => [
+                    'curso' => [
+                        'id' => $curso->id,
+                        'nombre' => $curso->nombre,
+                        'codigo' => $curso->codigo ?? null,
+                    ],
+                    'metricas' => [
+                        'total_estudiantes' => $predicciones->count(),
+                        'score_promedio' => round($scorePromedio, 4),
+                        'distribucion' => $distribucion,
+                        'porcentaje_alto_riesgo' => $predicciones->count() > 0
+                            ? round(($distribucion['alto'] / $predicciones->count()) * 100, 2)
+                            : 0,
+                    ],
+                    'estudiantes_por_nivel' => $estudiantesPorNivel,
+                    'lista_completa' => $predicciones->map(fn($p) => [
+                        'id' => $p->id,
+                        'estudiante_id' => $p->estudiante_id,
+                        'nombre' => $p->estudiante?->name,
+                        'score_riesgo' => (float) $p->risk_score,
+                        'nivel_riesgo' => strtolower($p->risk_level ?? 'bajo'),
+                        'fecha_prediccion' => $p->fecha_prediccion,
+                    ])->sortByDesc('score_riesgo')->values(),
                 ],
-                'metricas' => [
-                    'total_estudiantes' => $predicciones->count(),
-                    'score_promedio' => round($scorePromedio, 4),
-                    'distribucion' => $distribucion,
-                    'porcentaje_alto_riesgo' => $predicciones->count() > 0
-                        ? round(($distribucion['alto'] / $predicciones->count()) * 100, 2)
-                        : 0,
-                ],
-                'estudiantes_por_nivel' => $estudiantesPorNivel,
-                'lista_completa' => $predicciones->map(fn($p) => [
-                    'id' => $p->id,
-                    'estudiante_id' => $p->estudiante_id,
-                    'nombre' => $p->estudiante?->name,
-                    'score_riesgo' => $p->risk_score,
-                    'nivel_riesgo' => $p->risk_level,
-                    'fecha_prediccion' => $p->fecha_prediccion,
-                ])->sortByDesc('score_riesgo')->values(),
-            ],
-            'message' => 'Análisis por curso cargado exitosamente',
-        ], 200);
+                'message' => 'Análisis por curso cargado exitosamente',
+            ], 200);
+
+        } catch (\Exception $e) {
+            Log::error("Error en porCurso: {$e->getMessage()}", [
+                'curso_id' => $cursoId,
+                'usuario_id' => Auth::id(),
+                'exception' => $e,
+            ]);
+
+            return response()->json([
+                'error' => 'Error al cargar análisis del curso',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -420,19 +483,48 @@ class AnalisisRiesgoController extends Controller
      */
     public function generarPredicciones(Request $request, int $estudianteId): JsonResponse
     {
-        // Autorización manejada por el middleware de ruta
+        try {
+            $usuario = Auth::user();
+            if (!$usuario) {
+                return response()->json(['error' => 'No autenticado'], 401);
+            }
 
-        $estudiante = User::findOrFail($estudianteId);
+            // Validar que el estudiante existe y es estudiante
+            $estudiante = User::where('id', $estudianteId)
+                ->where('tipo_usuario', 'estudiante')
+                ->firstOrFail();
 
-        // Aquí se integraría con el servicio de ML
-        // Por ahora, retornamos un placeholder
+            // Validar autorización
+            // Solo admin, orientador o el mismo estudiante pueden solicitar predicciones
+            if ($usuario->id !== $estudianteId && !in_array($usuario->tipo_usuario, ['admin', 'orientador'])) {
+                Log::warning("Intento no autorizado de generar predicciones para estudiante {$estudianteId} por usuario {$usuario->id}");
+                return response()->json(['error' => 'No autorizado'], 403);
+            }
 
-        return response()->json([
-            'data' => [
-                'estudiante_id' => $estudianteId,
-                'mensaje' => 'Predicciones en proceso de generación',
-            ],
-            'message' => 'Solicitud de predicción enviada. Se procesará en background.',
-        ], 202);
+            Log::info("Generando predicciones para estudiante {$estudianteId} solicitado por usuario {$usuario->id}");
+
+            // Disparar job para generar predicciones en background
+            GenerarPrediccionesJob::dispatch($estudianteId);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Generación de predicciones iniciada',
+                'data' => [
+                    'estudiante_id' => $estudianteId,
+                    'estado' => 'procesando',
+                    'timestamp' => now(),
+                ],
+            ], 202);
+
+        } catch (\Exception $e) {
+            Log::error("Error generando predicciones para estudiante {$estudianteId}: {$e->getMessage()}", [
+                'exception' => $e,
+            ]);
+
+            return response()->json([
+                'error' => 'Error al generar predicciones',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 }

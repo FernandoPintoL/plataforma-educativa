@@ -37,18 +37,40 @@ return [
     'api_token' => env('ML_API_TOKEN', null),
 
     /**
-     * Endpoints del servicio ML
+     * Endpoints del servicio ML (según app.py)
+     * Los endpoints están bajo las secciones: /supervisado/, /no-supervisado/, /deep-learning/
      */
     'endpoints' => [
-        'train_models' => '/supervisado/training/train',
-        'risk_predictions' => '/supervisado/performance/predict-batch',
-        'career_recommendations' => '/supervisado/carrera/recommend-batch',
-        'trend_predictions' => '/supervisado/tendencia/predict-batch',
-        'progress_predictions' => '/supervisado/progreso/predict-batch',
-        'kmeans_clustering' => '/no-supervisado/clustering/predict-batch',
-        'anomaly_detection' => '/no-supervisado/anomaly/detect-batch',
-        'lstm_predictions' => '/deep-learning/lstm/predict-batch',
+        // Health check
         'health' => '/health',
+
+        // Supervisado - Predicciones de Riesgo (Performance Predictor)
+        'risk_predictions' => '/supervisado/performance/predict',
+        'risk_predictions_batch' => '/supervisado/performance/predict-batch',
+
+        // Supervisado - Recomendaciones de Carrera (Career Recommender)
+        'career_recommendations' => '/supervisado/carrera/recommend',
+        'career_recommendations_batch' => '/supervisado/carrera/recommend-batch',
+
+        // Supervisado - Predicciones de Tendencia (Trend Predictor)
+        'trend_predictions' => '/supervisado/tendencia/predict',
+        'trend_predictions_batch' => '/supervisado/tendencia/predict-batch',
+
+        // Supervisado - Predicciones de Progreso (Progress Analyzer)
+        'progress_predictions' => '/supervisado/progreso/predict',
+        'progress_predictions_batch' => '/supervisado/progreso/predict-batch',
+
+        // No Supervisado - Clustering (K-Means Segmenter)
+        'kmeans_clustering' => '/no-supervisado/clustering/predict',
+        'kmeans_clustering_batch' => '/no-supervisado/clustering/predict-batch',
+
+        // No Supervisado - Detección de Anomalías (Isolation Forest)
+        'anomaly_detection' => '/no-supervisado/anomaly/detect',
+        'anomaly_detection_batch' => '/no-supervisado/anomaly/detect-batch',
+
+        // Deep Learning - LSTM Predictions
+        'lstm_predictions' => '/deep-learning/lstm/predict',
+        'lstm_predictions_batch' => '/deep-learning/lstm/predict-batch',
     ],
 
     /**

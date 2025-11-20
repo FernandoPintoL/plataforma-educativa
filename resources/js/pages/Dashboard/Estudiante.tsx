@@ -2,12 +2,15 @@ import React from 'react';
 import { Link } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 import { Head } from '@inertiajs/react';
+import { RiskWidget } from '@/components/Dashboard/RiskWidget';
+import { TrendWidget } from '@/components/Dashboard/TrendWidget';
 import {
   AcademicCapIcon,
   DocumentTextIcon,
   ClockIcon,
   ChartBarIcon,
   CheckCircleIcon,
+  ExclamationCircleIcon as AlertCircleIcon,
 } from '@heroicons/react/24/outline';
 
 interface TareaPendiente {
@@ -131,6 +134,12 @@ export default function DashboardEstudiante({
                   </dd>
                 </div>
               </div>
+            </div>
+
+            {/* Risk and Trend Widgets */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+              <RiskWidget />
+              <TrendWidget />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -259,6 +268,28 @@ export default function DashboardEstudiante({
                     </div>
                     <span className="text-sm font-semibold text-gray-700 group-hover:text-white transition-colors duration-300 text-center">
                       Calificaciones
+                    </span>
+                  </Link>
+                  <Link
+                    href="/mi-perfil/carreras"
+                    className="group flex flex-col items-center justify-center px-6 py-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl hover:from-purple-500 hover:to-purple-600 transition-all duration-300 shadow-md hover:shadow-xl transform hover:scale-105"
+                  >
+                    <div className="p-3 bg-purple-500 group-hover:bg-white rounded-xl mb-3 transition-colors duration-300">
+                      <AcademicCapIcon className="h-7 w-7 text-white group-hover:text-purple-600 transition-colors duration-300" />
+                    </div>
+                    <span className="text-sm font-semibold text-gray-700 group-hover:text-white transition-colors duration-300 text-center">
+                      Carreras
+                    </span>
+                  </Link>
+                  <Link
+                    href="/mi-perfil/riesgo"
+                    className="group flex flex-col items-center justify-center px-6 py-6 bg-gradient-to-br from-red-50 to-red-100 rounded-xl hover:from-red-500 hover:to-red-600 transition-all duration-300 shadow-md hover:shadow-xl transform hover:scale-105"
+                  >
+                    <div className="p-3 bg-red-500 group-hover:bg-white rounded-xl mb-3 transition-colors duration-300">
+                      <AlertCircleIcon className="h-7 w-7 text-white group-hover:text-red-600 transition-colors duration-300" />
+                    </div>
+                    <span className="text-sm font-semibold text-gray-700 group-hover:text-white transition-colors duration-300 text-center">
+                      Mi Riesgo
                     </span>
                   </Link>
                 </div>

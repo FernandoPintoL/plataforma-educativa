@@ -10,7 +10,7 @@ class RendimientoAcademico extends Model
 {
     use HasFactory;
 
-    protected $table = 'rendimientos_academicos';
+    protected $table = 'rendimiento_academico';
 
     protected $fillable = [
         'estudiante_id',

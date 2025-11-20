@@ -7,6 +7,8 @@ use App\Http\Controllers\Api\AuthTokenController;
 use App\Http\Controllers\Api\ExportarReportesController;
 use App\Http\Controllers\Api\MLPipelineController;
 use App\Http\Controllers\Api\NotificacionController;
+use App\Http\Controllers\Api\MiPerfilController;
+use App\Http\Controllers\Api\PadreChildController;
 
 /**
  * API Routes
@@ -174,5 +176,39 @@ Route::middleware(['auth:sanctum'])->group(function () {
         // Eliminar notificación
         Route::delete('{notificacion}', [NotificacionController::class, 'eliminar'])
             ->name('eliminar');
+    });
+
+    /**
+     * Rutas para Mi Perfil - Datos personales del estudiante autenticado
+     * Acceso para estudiantes y padres (padres pueden ver datos de hijos)
+     */
+    Route::prefix('mi-perfil')->name('mi-perfil.')->group(function () {
+        // Obtener datos de riesgo personal (solo estudiante autenticado)
+        Route::get('riesgo', [MiPerfilController::class, 'getRiesgo'])
+            ->middleware('role:estudiante')
+            ->name('riesgo');
+
+        // Obtener recomendaciones de carreras (solo estudiante)
+        Route::get('carreras', [MiPerfilController::class, 'getCarreras'])
+            ->middleware('role:estudiante')
+            ->name('carreras');
+    });
+
+    /**
+     * Rutas para Padres - Acceso a datos de hijos
+     * Solo accesible por padres (padre role)
+     */
+    Route::prefix('padre')->name('padre.')->middleware('role:padre')->group(function () {
+        // Listar hijos del padre
+        Route::get('hijos', [PadreChildController::class, 'getHijos'])
+            ->name('hijos');
+
+        // Obtener datos de riesgo de un hijo específico
+        Route::get('hijos/{hijoId}/riesgo', [PadreChildController::class, 'getHijoRiesgo'])
+            ->name('hijo.riesgo');
+
+        // Obtener recomendaciones de carrera de un hijo
+        Route::get('hijos/{hijoId}/carreras', [PadreChildController::class, 'getHijoCarreras'])
+            ->name('hijo.carreras');
     });
 });

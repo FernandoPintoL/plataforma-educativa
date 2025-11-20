@@ -89,6 +89,7 @@ class RoleModuloAccesoSeeder extends Seeder
                 'Recursos',                 // ✅ Subir recursos
                 'Entregas',                 // ✅ Ver entregas
                 'Reportes',                 // ✅ Ver reportes de sus cursos
+                'Orientación Vocacional',   // ✅ Ver y crear tests vocacionales
             ];
             $this->asignarModulosARol($profesor, $modulosProfesor, 'Profesor enseña en cursos');
         }
@@ -105,6 +106,7 @@ class RoleModuloAccesoSeeder extends Seeder
                 'Contenido Educativo',      // ✅ Ver contenido publicado
                 'Recursos',                 // ✅ Descargar recursos
                 'Entregas',                 // ✅ Entregar trabajos
+                'Orientación Vocacional',   // ✅ Realizar tests vocacionales y ver perfil
             ];
             $this->asignarModulosARol($estudiante, $modulosEstudiante, 'Estudiante accede a contenido educativo');
         }
@@ -135,6 +137,7 @@ class RoleModuloAccesoSeeder extends Seeder
                 'Contenido Educativo',      // ✅ Gestionar contenido
                 'Recursos',                 // ✅ Gestionar recursos
                 'Reportes',                 // ✅ Ver reportes
+                'Orientación Vocacional',   // ✅ Gestionar tests y perfiles vocacionales
             ];
             $this->asignarModulosARol($coordinador, $modulosCoordinador, 'Coordinador organiza aspectos académicos');
         }

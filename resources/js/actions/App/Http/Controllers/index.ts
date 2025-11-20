@@ -21,6 +21,7 @@ import ReportesController from './ReportesController'
 import ModuloEducativoController from './ModuloEducativoController'
 import LeccionController from './LeccionController'
 import TestVocacionalController from './TestVocacionalController'
+import VocacionalController from './VocacionalController'
 const Controllers = {
     Api,
 UserController,
@@ -45,6 +46,7 @@ ReportesController,
 ModuloEducativoController,
 LeccionController,
 TestVocacionalController,
+VocacionalController,
 }
 
 export default Controllers

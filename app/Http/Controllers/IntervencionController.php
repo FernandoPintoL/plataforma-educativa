@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Models\Curso;
 use App\Models\PrediccionRiesgo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class IntervencionController extends Controller
@@ -86,6 +88,14 @@ class IntervencionController extends Controller
      */
     public function store(Request $request)
     {
+        $usuario = Auth::user();
+
+        // Validar autorización: Solo profesores, orientadores y admin pueden crear intervenciones
+        if ($usuario->tipo_usuario === 'estudiante') {
+            return redirect()->back()
+                ->with('error', 'Los estudiantes no pueden crear intervenciones');
+        }
+
         $validated = $request->validate([
             'prediccion_riesgo_id' => 'nullable|exists:predicciones_riesgo,id',
             'estudiante_id' => 'required|exists:users,id',
@@ -99,8 +109,22 @@ class IntervencionController extends Controller
             'observaciones' => 'nullable|string',
         ]);
 
-        $validated['profesor_id'] = auth()->id();
-        $validated['created_by'] = auth()->id();
+        // Si es profesor, validar que sea profesor del curso
+        if ($usuario->tipo_usuario === 'profesor') {
+            $esProfesor = DB::table('curso_profesor')
+                ->where('profesor_id', $usuario->id)
+                ->where('curso_id', $validated['curso_id'])
+                ->exists();
+
+            if (!$esProfesor) {
+                return redirect()->back()
+                    ->with('error', 'No eres profesor de este curso');
+            }
+        }
+        // Si es orientador o admin, tienen acceso a todos los cursos
+
+        $validated['profesor_id'] = $usuario->id;
+        $validated['created_by'] = $usuario->id;
 
         $intervencion = Intervencion::create($validated);
 
@@ -144,6 +168,19 @@ class IntervencionController extends Controller
      */
     public function update(Request $request, Intervencion $intervencion)
     {
+        $usuario = Auth::user();
+
+        // Validar autorización: Solo profesor de la intervención, orientador o admin
+        if ($usuario->tipo_usuario === 'profesor' && $intervencion->profesor_id !== $usuario->id) {
+            return redirect()->back()
+                ->with('error', 'No tienes permiso para actualizar esta intervención');
+        }
+
+        if ($usuario->tipo_usuario === 'estudiante') {
+            return redirect()->back()
+                ->with('error', 'Los estudiantes no pueden actualizar intervenciones');
+        }
+
         $validated = $request->validate([
             'titulo' => 'required|string|max:255',
             'descripcion' => 'required|string',
@@ -156,7 +193,7 @@ class IntervencionController extends Controller
             'seguimiento_requerido' => 'boolean',
         ]);
 
-        $validated['updated_by'] = auth()->id();
+        $validated['updated_by'] = $usuario->id;
 
         $intervencion->update($validated);
 
@@ -169,6 +206,19 @@ class IntervencionController extends Controller
      */
     public function destroy(Intervencion $intervencion)
     {
+        $usuario = Auth::user();
+
+        // Validar autorización: Solo el creador, orientador o admin pueden eliminar
+        if ($usuario->tipo_usuario === 'profesor' && $intervencion->created_by !== $usuario->id) {
+            return redirect()->back()
+                ->with('error', 'No tienes permiso para eliminar esta intervención');
+        }
+
+        if ($usuario->tipo_usuario === 'estudiante') {
+            return redirect()->back()
+                ->with('error', 'Los estudiantes no pueden eliminar intervenciones');
+        }
+
         $intervencion->delete();
 
         return redirect()->route('intervenciones.index')

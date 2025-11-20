@@ -443,9 +443,8 @@ class ModuloSidebarSeeder extends Seeder
             );
         }
 
-        // Módulo de Orientación Vocacional - TODO: Implementar rutas backend en web.php
-        // Comentado hasta que se implementen las rutas necesarias
-        /*
+        // Módulo de Orientación Vocacional - ✅ Implementado
+        // Permite a estudiantes acceder a tests vocacionales y ver resultados
         ModuloSidebar::firstOrCreate(
             ['titulo' => 'Orientación Vocacional', 'ruta' => '/vocacional', 'es_submenu' => false],
             [
@@ -458,7 +457,6 @@ class ModuloSidebarSeeder extends Seeder
                 'visible_dashboard' => true,
             ]
         );
-        */
 
     }
 }
