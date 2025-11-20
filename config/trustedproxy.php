@@ -19,16 +19,13 @@ return [
 
     /*
      * Which headers to trust from the proxy
-     * HEADER_CLIENT_IP - X-Forwarded-For (client IP)
-     * HEADER_CLIENT_PROTO - X-Forwarded-Proto (http/https)
-     * HEADER_CLIENT_PORT - X-Forwarded-Port (port number)
-     * HEADER_CLIENT_HOST - X-Forwarded-Host (hostname)
+     * These headers are set by the reverse proxy (Railway) to indicate the real client IP and protocol
      */
     'headers' => [
-        \Illuminate\Http\Request::HEADER_FORWARDED => 'FORWARDED',
-        \Illuminate\Http\Request::HEADER_CLIENT_IP => 'X-FORWARDED-FOR',
-        \Illuminate\Http\Request::HEADER_CLIENT_PROTO => 'X-FORWARDED-PROTO',
-        \Illuminate\Http\Request::HEADER_CLIENT_PORT => 'X-FORWARDED-PORT',
-        \Illuminate\Http\Request::HEADER_CLIENT_HOST => 'X-FORWARDED-HOST',
+        'FORWARDED' => 'FORWARDED',
+        'CLIENT_IP' => 'X-FORWARDED-FOR',
+        'CLIENT_PROTO' => 'X-FORWARDED-PROTO',
+        'CLIENT_PORT' => 'X-FORWARDED-PORT',
+        'CLIENT_HOST' => 'X-FORWARDED-HOST',
     ],
 ];
