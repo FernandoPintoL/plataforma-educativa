@@ -200,6 +200,20 @@ class NotificacionesApiService {
             this.eventSource.addEventListener('heartbeat', () => {
                 // Silenciosamente ignorar el heartbeat
                 // Solo es para mantener la conexión abierta
+                console.debug('[SSE] Heartbeat recibido')
+            })
+
+            // Evento de reconexión (enviado por el servidor después de 50 segundos)
+            this.eventSource.addEventListener('reconnect', (event: Event) => {
+                console.log('[SSE] Server requesting reconnection')
+                // Cerrar esta conexión y crear una nueva automáticamente
+                this.desconectarSSE()
+                // Reconectar después de 1 segundo
+                setTimeout(() => {
+                    if (this.onNotificacionCallback) {
+                        this.conectarSSE(this.onNotificacionCallback, this.onErrorCallback || undefined)
+                    }
+                }, 1000)
             })
 
             // Manejo de errores
@@ -209,6 +223,13 @@ class NotificacionesApiService {
                 if (this.onErrorCallback) {
                     this.onErrorCallback(new Error('Conexión SSE perdida'))
                 }
+                // Intentar reconectar automáticamente después de 3 segundos
+                setTimeout(() => {
+                    if (this.onNotificacionCallback) {
+                        console.log('[SSE] Intentando reconectar...')
+                        this.conectarSSE(this.onNotificacionCallback, this.onErrorCallback || undefined)
+                    }
+                }, 3000)
             }
 
             console.log('[SSE] Conexión SSE establecida')

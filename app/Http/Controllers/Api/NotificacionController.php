@@ -317,8 +317,19 @@ class NotificacionController extends Controller
 
             // Mantener la conexión abierta y enviar notificaciones nuevas
             $ultimaFecha = now();
+            $startTime = time();
+            $maxDuration = 50; // Cerrar conexión después de 50 segundos (PHP timeout es 60s)
 
             while (true) {
+                // Verificar si hemos alcanzado el límite de tiempo
+                if (time() - $startTime >= $maxDuration) {
+                    Log::debug("SSE stream closing due to max duration for user {$userId}");
+                    echo "event: reconnect\n";
+                    echo "data: {\"message\":\"Reconnecting...\"}\n\n";
+                    flush();
+                    break;
+                }
+
                 // Buscar nuevas notificaciones cada 2 segundos
                 sleep(2);
 
@@ -338,8 +349,8 @@ class NotificacionController extends Controller
                     }
                 }
 
-                // Enviar heartbeat cada 30 segundos para mantener la conexión
-                if (now()->diffInSeconds($ultimaFecha) >= 30) {
+                // Enviar heartbeat cada 15 segundos para mantener la conexión
+                if (now()->diffInSeconds($ultimaFecha) >= 15) {
                     echo "event: heartbeat\n";
                     echo "data: {\"status\":\"ok\"}\n\n";
                     flush();
