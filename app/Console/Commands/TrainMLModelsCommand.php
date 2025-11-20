@@ -122,8 +122,9 @@ class TrainMLModelsCommand extends Command
     private function runPythonTraining(int $limit): bool
     {
         try {
-            $basePath = base_path();
-            $pythonScript = "{$basePath}/ml_educativas/supervisado/training/train_performance_adapted.py";
+            // ml_educativas está en el directorio padre de plataforma-educativa
+            $parentPath = dirname(base_path());
+            $pythonScript = $parentPath . DIRECTORY_SEPARATOR . 'ml_educativas' . DIRECTORY_SEPARATOR . 'supervisado' . DIRECTORY_SEPARATOR . 'training' . DIRECTORY_SEPARATOR . 'train_performance_adapted.py';
 
             // Verificar que el archivo exista
             if (!file_exists($pythonScript)) {

@@ -29,7 +29,8 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
 class MLPipelineService
 {
     private const BATCH_SIZE = 50;
-    private const MODELS_DIR = 'ml_educativas/supervisado';
+    private const MODELS_DIR = 'ml_educativas';
+    private const MODELS_SUBDIR = 'supervisado';
     private const TIMEOUT_SECONDS = 300; // 5 minutos
 
     /**
@@ -160,7 +161,9 @@ class MLPipelineService
         Log::info('[2/6] Entrenando modelos Python...');
 
         try {
-            $pythonScript = base_path(self::MODELS_DIR . DIRECTORY_SEPARATOR . 'training' . DIRECTORY_SEPARATOR . 'train_performance_adapted.py');
+            // Ruta a ml_educativas (está fuera del proyecto Laravel, en el directorio padre)
+            $mlPath = dirname(base_path()) . DIRECTORY_SEPARATOR . 'ml_educativas' . DIRECTORY_SEPARATOR . 'supervisado' . DIRECTORY_SEPARATOR . 'training' . DIRECTORY_SEPARATOR . 'train_performance_adapted.py';
+            $pythonScript = $mlPath;
 
             if (!file_exists($pythonScript)) {
                 $results['errors'][] = "Script Python no encontrado: {$pythonScript}";
