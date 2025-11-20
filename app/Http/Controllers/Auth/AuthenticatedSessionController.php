@@ -37,24 +37,34 @@ class AuthenticatedSessionController extends Controller
         $user = Auth::guard('web')->user();
         if ($user) {
             try {
-                // Create or update API token for this user
-                $user->tokens()->where('name', 'api-token')->delete();
-                $token = $user->createToken('api-token');
+                // Reutilizar token existente o crear uno nuevo si no existe
+                // Esto es más rápido que eliminar y recrear en cada login
+                $existingToken = $user->tokens()->where('name', 'api-token')->first();
+
+                if ($existingToken) {
+                    // Reutilizar token existente
+                    $tokenString = $existingToken->plainTextToken;
+                } else {
+                    // Crear nuevo token solo si no existe
+                    $token = $user->createToken('api-token');
+                    $tokenString = $token->plainTextToken;
+                }
 
                 // Store token in session
-                $request->session()->put('api_token', $token->plainTextToken);
+                $request->session()->put('api_token', $tokenString);
 
                 // Also store as a temporary flash message so frontend can capture it
-                $request->session()->flash('sanctum_token', $token->plainTextToken);
+                $request->session()->flash('sanctum_token', $tokenString);
 
                 // Debug log
-                \Log::info('Token created for user', [
+                \Log::info('Token obtained for user', [
                     'user_id' => $user->id,
-                    'token_exists' => !empty($token->plainTextToken),
+                    'token_exists' => !empty($tokenString),
                     'session_has_token' => $request->session()->has('api_token'),
+                    'token_reused' => $existingToken ? true : false,
                 ]);
             } catch (\Exception $e) {
-                \Log::error('Failed to create token', [
+                \Log::error('Failed to obtain token', [
                     'user_id' => $user->id,
                     'error' => $e->getMessage(),
                 ]);
