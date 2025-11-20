@@ -160,7 +160,7 @@ class MLPipelineService
         Log::info('[2/6] Entrenando modelos Python...');
 
         try {
-            $pythonScript = base_path(self::MODELS_DIR . '/training/train_performance_adapted.py');
+            $pythonScript = base_path(self::MODELS_DIR . DIRECTORY_SEPARATOR . 'training' . DIRECTORY_SEPARATOR . 'train_performance_adapted.py');
 
             if (!file_exists($pythonScript)) {
                 $results['errors'][] = "Script Python no encontrado: {$pythonScript}";
