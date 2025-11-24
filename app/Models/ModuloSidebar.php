@@ -122,15 +122,19 @@ class ModuloSidebar extends Model
     {
         $usuario = $usuario ?? Auth::user();
 
+        // Obtener roles del usuario - siempre retorna Collection de Eloquent
         if (!$usuario) {
-            return collect([]);
+            $rolesIds = [];
+        } else {
+            $rolesIds = $usuario->roles()->pluck('roles.id')->toArray();
         }
 
-        // Obtener roles del usuario
-        $rolesIds = $usuario->roles()->pluck('roles.id')->toArray();
-
+        // Siempre retorna Eloquent\Collection (vacía si no hay roles)
         if (empty($rolesIds)) {
-            return collect([]);
+            return self::activos()
+                ->principales()
+                ->ordenados()
+                ->get();
         }
 
         return self::activos()
@@ -210,13 +214,16 @@ class ModuloSidebar extends Model
             'icon'  => $this->icono,
         ];
 
-        if ($this->submodulos->isNotEmpty()) {
-            $usuario             = Auth::user();
-            $navItem['children'] = $this->submodulos
-                ->filter(fn($submodulo) => $submodulo->usuarioTienePermiso($usuario))
+        if ($this->submodulos && $this->submodulos->isNotEmpty()) {
+            $usuario = Auth::user();
+            $children = $this->submodulos
                 ->map(fn($submodulo) => $submodulo->toNavItem())
                 ->values()
                 ->toArray();
+
+            if (!empty($children)) {
+                $navItem['children'] = $children;
+            }
         }
 
         return $navItem;

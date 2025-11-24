@@ -66,6 +66,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('educacion/cursos', function () {
         return Inertia::render('Educacion/Cursos');
     })->name('educacion.cursos');
+
+    // Rutas de recomendaciones educativas
+    Route::get('recomendaciones', function () {
+        return Inertia::render('Recomendaciones/Index');
+    })->name('web.recommendations.index');
+
+    Route::get('recomendaciones/{id}', function ($id) {
+        return Inertia::render('Recomendaciones/Show', ['id' => $id]);
+    })->name('web.recommendations.show');
 });
 
 require __DIR__ . '/settings.php';
@@ -397,4 +406,41 @@ Route::middleware(['auth', 'verified', 'role:padre'])->group(function () {
     Route::get('padre/hijo/{hijoId}/carreras', function ($hijoId) {
         return Inertia::render('Padre/HijoCarreras', ['hijoId' => $hijoId]);
     })->name('web.padre.hijo.carreras');
+});
+
+// ==================== DASHBOARD DE ALERTAS EN TIEMPO REAL ====================
+Route::middleware(['auth', 'verified'])->group(function () {
+    // Dashboard para estudiante
+    Route::middleware('role:estudiante')->group(function () {
+        Route::get('dashboard/alertas', [\App\Http\Controllers\DashboardAlertsController::class, 'dashboardEstudiante'])
+            ->name('dashboard.alertas.estudiante');
+
+        Route::post('dashboard/sugerencias/{sugerenciaId}/marcar-utilizada',
+            [\App\Http\Controllers\DashboardAlertsController::class, 'marcarSugerenciaUtilizada'])
+            ->name('dashboard.sugerencia.marcar-utilizada');
+
+        Route::get('dashboard/alerta/{alertaId}', [\App\Http\Controllers\DashboardAlertsController::class, 'detalleAlerta'])
+            ->name('dashboard.alerta.detalle');
+
+        Route::get('dashboard/sugerencia/{sugerenciaId}', [\App\Http\Controllers\DashboardAlertsController::class, 'detalleSugerencia'])
+            ->name('dashboard.sugerencia.detalle');
+    });
+
+    // Dashboard para profesor
+    Route::middleware('role:profesor')->group(function () {
+        Route::get('dashboard/alertas-profesor', [\App\Http\Controllers\DashboardAlertsController::class, 'dashboardProfesor'])
+            ->name('dashboard.alertas.profesor');
+
+        Route::post('dashboard/alerta/{alertaId}/intervenir',
+            [\App\Http\Controllers\DashboardAlertsController::class, 'intervenirAlerta'])
+            ->name('dashboard.alerta.intervenir');
+
+        Route::post('dashboard/alerta/{alertaId}/resolver',
+            [\App\Http\Controllers\DashboardAlertsController::class, 'resolverAlerta'])
+            ->name('dashboard.alerta.resolver');
+
+        Route::get('dashboard/estudiante/{estudianteId}/estadisticas',
+            [\App\Http\Controllers\DashboardAlertsController::class, 'estadisticasEstudiante'])
+            ->name('dashboard.estudiante.estadisticas');
+    });
 });

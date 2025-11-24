@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\CalificacionController::index
- * @see app/Http/Controllers/CalificacionController.php:17
+ * @see app/Http/Controllers/CalificacionController.php:19
  * @route '/calificaciones'
  */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\CalificacionController::index
- * @see app/Http/Controllers/CalificacionController.php:17
+ * @see app/Http/Controllers/CalificacionController.php:19
  * @route '/calificaciones'
  */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\CalificacionController::index
- * @see app/Http/Controllers/CalificacionController.php:17
+ * @see app/Http/Controllers/CalificacionController.php:19
  * @route '/calificaciones'
  */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\CalificacionController::index
- * @see app/Http/Controllers/CalificacionController.php:17
+ * @see app/Http/Controllers/CalificacionController.php:19
  * @route '/calificaciones'
  */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\CalificacionController::index
- * @see app/Http/Controllers/CalificacionController.php:17
+ * @see app/Http/Controllers/CalificacionController.php:19
  * @route '/calificaciones'
  */
     const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\CalificacionController::index
- * @see app/Http/Controllers/CalificacionController.php:17
+ * @see app/Http/Controllers/CalificacionController.php:19
  * @route '/calificaciones'
  */
         indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\CalificacionController::index
- * @see app/Http/Controllers/CalificacionController.php:17
+ * @see app/Http/Controllers/CalificacionController.php:19
  * @route '/calificaciones'
  */
         indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,7 +79,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\CalificacionController::show
- * @see app/Http/Controllers/CalificacionController.php:135
+ * @see app/Http/Controllers/CalificacionController.php:153
  * @route '/calificaciones/{calificacione}'
  */
 export const show = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\CalificacionController::show
- * @see app/Http/Controllers/CalificacionController.php:135
+ * @see app/Http/Controllers/CalificacionController.php:153
  * @route '/calificaciones/{calificacione}'
  */
 show.url = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -122,7 +122,7 @@ show.url = (args: { calificacione: string | number } | [calificacione: string | 
 
 /**
 * @see \App\Http\Controllers\CalificacionController::show
- * @see app/Http/Controllers/CalificacionController.php:135
+ * @see app/Http/Controllers/CalificacionController.php:153
  * @route '/calificaciones/{calificacione}'
  */
 show.get = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -131,7 +131,7 @@ show.get = (args: { calificacione: string | number } | [calificacione: string | 
 })
 /**
 * @see \App\Http\Controllers\CalificacionController::show
- * @see app/Http/Controllers/CalificacionController.php:135
+ * @see app/Http/Controllers/CalificacionController.php:153
  * @route '/calificaciones/{calificacione}'
  */
 show.head = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -141,7 +141,7 @@ show.head = (args: { calificacione: string | number } | [calificacione: string |
 
     /**
 * @see \App\Http\Controllers\CalificacionController::show
- * @see app/Http/Controllers/CalificacionController.php:135
+ * @see app/Http/Controllers/CalificacionController.php:153
  * @route '/calificaciones/{calificacione}'
  */
     const showForm = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -151,7 +151,7 @@ show.head = (args: { calificacione: string | number } | [calificacione: string |
 
             /**
 * @see \App\Http\Controllers\CalificacionController::show
- * @see app/Http/Controllers/CalificacionController.php:135
+ * @see app/Http/Controllers/CalificacionController.php:153
  * @route '/calificaciones/{calificacione}'
  */
         showForm.get = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -160,7 +160,7 @@ show.head = (args: { calificacione: string | number } | [calificacione: string |
         })
             /**
 * @see \App\Http\Controllers\CalificacionController::show
- * @see app/Http/Controllers/CalificacionController.php:135
+ * @see app/Http/Controllers/CalificacionController.php:153
  * @route '/calificaciones/{calificacione}'
  */
         showForm.head = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -176,7 +176,7 @@ show.head = (args: { calificacione: string | number } | [calificacione: string |
     show.form = showForm
 /**
 * @see \App\Http\Controllers\CalificacionController::update
- * @see app/Http/Controllers/CalificacionController.php:163
+ * @see app/Http/Controllers/CalificacionController.php:185
  * @route '/calificaciones/{calificacione}'
  */
 export const update = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -191,7 +191,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\CalificacionController::update
- * @see app/Http/Controllers/CalificacionController.php:163
+ * @see app/Http/Controllers/CalificacionController.php:185
  * @route '/calificaciones/{calificacione}'
  */
 update.url = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -219,7 +219,7 @@ update.url = (args: { calificacione: string | number } | [calificacione: string 
 
 /**
 * @see \App\Http\Controllers\CalificacionController::update
- * @see app/Http/Controllers/CalificacionController.php:163
+ * @see app/Http/Controllers/CalificacionController.php:185
  * @route '/calificaciones/{calificacione}'
  */
 update.put = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -228,7 +228,7 @@ update.put = (args: { calificacione: string | number } | [calificacione: string 
 })
 /**
 * @see \App\Http\Controllers\CalificacionController::update
- * @see app/Http/Controllers/CalificacionController.php:163
+ * @see app/Http/Controllers/CalificacionController.php:185
  * @route '/calificaciones/{calificacione}'
  */
 update.patch = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -238,7 +238,7 @@ update.patch = (args: { calificacione: string | number } | [calificacione: strin
 
     /**
 * @see \App\Http\Controllers\CalificacionController::update
- * @see app/Http/Controllers/CalificacionController.php:163
+ * @see app/Http/Controllers/CalificacionController.php:185
  * @route '/calificaciones/{calificacione}'
  */
     const updateForm = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -253,7 +253,7 @@ update.patch = (args: { calificacione: string | number } | [calificacione: strin
 
             /**
 * @see \App\Http\Controllers\CalificacionController::update
- * @see app/Http/Controllers/CalificacionController.php:163
+ * @see app/Http/Controllers/CalificacionController.php:185
  * @route '/calificaciones/{calificacione}'
  */
         updateForm.put = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -267,7 +267,7 @@ update.patch = (args: { calificacione: string | number } | [calificacione: strin
         })
             /**
 * @see \App\Http\Controllers\CalificacionController::update
- * @see app/Http/Controllers/CalificacionController.php:163
+ * @see app/Http/Controllers/CalificacionController.php:185
  * @route '/calificaciones/{calificacione}'
  */
         updateForm.patch = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -283,7 +283,7 @@ update.patch = (args: { calificacione: string | number } | [calificacione: strin
     update.form = updateForm
 /**
 * @see \App\Http\Controllers\CalificacionController::destroy
- * @see app/Http/Controllers/CalificacionController.php:217
+ * @see app/Http/Controllers/CalificacionController.php:239
  * @route '/calificaciones/{calificacione}'
  */
 export const destroy = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -298,7 +298,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\CalificacionController::destroy
- * @see app/Http/Controllers/CalificacionController.php:217
+ * @see app/Http/Controllers/CalificacionController.php:239
  * @route '/calificaciones/{calificacione}'
  */
 destroy.url = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -326,7 +326,7 @@ destroy.url = (args: { calificacione: string | number } | [calificacione: string
 
 /**
 * @see \App\Http\Controllers\CalificacionController::destroy
- * @see app/Http/Controllers/CalificacionController.php:217
+ * @see app/Http/Controllers/CalificacionController.php:239
  * @route '/calificaciones/{calificacione}'
  */
 destroy.delete = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -336,7 +336,7 @@ destroy.delete = (args: { calificacione: string | number } | [calificacione: str
 
     /**
 * @see \App\Http\Controllers\CalificacionController::destroy
- * @see app/Http/Controllers/CalificacionController.php:217
+ * @see app/Http/Controllers/CalificacionController.php:239
  * @route '/calificaciones/{calificacione}'
  */
     const destroyForm = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -351,7 +351,7 @@ destroy.delete = (args: { calificacione: string | number } | [calificacione: str
 
             /**
 * @see \App\Http\Controllers\CalificacionController::destroy
- * @see app/Http/Controllers/CalificacionController.php:217
+ * @see app/Http/Controllers/CalificacionController.php:239
  * @route '/calificaciones/{calificacione}'
  */
         destroyForm.delete = (args: { calificacione: string | number } | [calificacione: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -367,7 +367,7 @@ destroy.delete = (args: { calificacione: string | number } | [calificacione: str
     destroy.form = destroyForm
 /**
 * @see \App\Http\Controllers\CalificacionController::store
- * @see app/Http/Controllers/CalificacionController.php:70
+ * @see app/Http/Controllers/CalificacionController.php:72
  * @route '/trabajos/{trabajo}/calificar'
  */
 export const store = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -382,7 +382,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\CalificacionController::store
- * @see app/Http/Controllers/CalificacionController.php:70
+ * @see app/Http/Controllers/CalificacionController.php:72
  * @route '/trabajos/{trabajo}/calificar'
  */
 store.url = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -415,7 +415,7 @@ store.url = (args: { trabajo: number | { id: number } } | [trabajo: number | { i
 
 /**
 * @see \App\Http\Controllers\CalificacionController::store
- * @see app/Http/Controllers/CalificacionController.php:70
+ * @see app/Http/Controllers/CalificacionController.php:72
  * @route '/trabajos/{trabajo}/calificar'
  */
 store.post = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -425,7 +425,7 @@ store.post = (args: { trabajo: number | { id: number } } | [trabajo: number | { 
 
     /**
 * @see \App\Http\Controllers\CalificacionController::store
- * @see app/Http/Controllers/CalificacionController.php:70
+ * @see app/Http/Controllers/CalificacionController.php:72
  * @route '/trabajos/{trabajo}/calificar'
  */
     const storeForm = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -435,7 +435,7 @@ store.post = (args: { trabajo: number | { id: number } } | [trabajo: number | { 
 
             /**
 * @see \App\Http\Controllers\CalificacionController::store
- * @see app/Http/Controllers/CalificacionController.php:70
+ * @see app/Http/Controllers/CalificacionController.php:72
  * @route '/trabajos/{trabajo}/calificar'
  */
         storeForm.post = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -446,7 +446,7 @@ store.post = (args: { trabajo: number | { id: number } } | [trabajo: number | { 
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\CalificacionController::exportar
- * @see app/Http/Controllers/CalificacionController.php:253
+ * @see app/Http/Controllers/CalificacionController.php:345
  * @route '/calificaciones/exportar'
  */
 export const exportar = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -461,7 +461,7 @@ exportar.definition = {
 
 /**
 * @see \App\Http\Controllers\CalificacionController::exportar
- * @see app/Http/Controllers/CalificacionController.php:253
+ * @see app/Http/Controllers/CalificacionController.php:345
  * @route '/calificaciones/exportar'
  */
 exportar.url = (options?: RouteQueryOptions) => {
@@ -470,7 +470,7 @@ exportar.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\CalificacionController::exportar
- * @see app/Http/Controllers/CalificacionController.php:253
+ * @see app/Http/Controllers/CalificacionController.php:345
  * @route '/calificaciones/exportar'
  */
 exportar.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -479,7 +479,7 @@ exportar.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\CalificacionController::exportar
- * @see app/Http/Controllers/CalificacionController.php:253
+ * @see app/Http/Controllers/CalificacionController.php:345
  * @route '/calificaciones/exportar'
  */
 exportar.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -489,7 +489,7 @@ exportar.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\CalificacionController::exportar
- * @see app/Http/Controllers/CalificacionController.php:253
+ * @see app/Http/Controllers/CalificacionController.php:345
  * @route '/calificaciones/exportar'
  */
     const exportarForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -499,7 +499,7 @@ exportar.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\CalificacionController::exportar
- * @see app/Http/Controllers/CalificacionController.php:253
+ * @see app/Http/Controllers/CalificacionController.php:345
  * @route '/calificaciones/exportar'
  */
         exportarForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -508,7 +508,7 @@ exportar.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\CalificacionController::exportar
- * @see app/Http/Controllers/CalificacionController.php:253
+ * @see app/Http/Controllers/CalificacionController.php:345
  * @route '/calificaciones/exportar'
  */
         exportarForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

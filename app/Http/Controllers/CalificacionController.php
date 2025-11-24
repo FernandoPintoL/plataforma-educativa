@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Calificacion;
 use App\Models\Trabajo;
 use App\Http\Requests\StoreCalificacionRequest;
+use App\Services\FeedbackIntellicentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class CalificacionController extends Controller
@@ -101,6 +103,22 @@ class CalificacionController extends Controller
                 'estado' => 'calificado',
             ]);
 
+            // Generar feedback inteligente de forma asincrónica
+            try {
+                $feedbackService = new FeedbackIntellicentService();
+                $feedbackService->generarFeedback($trabajo->id, $calificacion->id);
+                Log::info('Feedback inteligente generado para calificación', [
+                    'calificacion_id' => $calificacion->id,
+                    'trabajo_id' => $trabajo->id,
+                ]);
+            } catch (\Exception $feedbackError) {
+                Log::error('Error generando feedback inteligente', [
+                    'calificacion_id' => $calificacion->id,
+                    'error' => $feedbackError->getMessage(),
+                ]);
+                // No afecta el flujo de calificación si el feedback falla
+            }
+
             // Notificar al estudiante
             \App\Models\Notificacion::crear(
                 destinatario: $trabajo->estudiante,
@@ -152,8 +170,12 @@ class CalificacionController extends Controller
             'evaluador'
         ]);
 
+        // Cargar feedback inteligente si existe
+        $feedback = \App\Models\FeedbackAnalysis::where('calificacion_id', $calificacion->id)->first();
+
         return Inertia::render('Calificaciones/Show', [
             'calificacion' => $calificacion,
+            'feedback' => $feedback,
         ]);
     }
 
@@ -244,6 +266,76 @@ class CalificacionController extends Controller
 
             return back()
                 ->withErrors(['error' => 'Error al eliminar la calificación: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Aprobar feedback inteligente generado
+     */
+    public function approveFeedback(Request $request, \App\Models\FeedbackAnalysis $feedback)
+    {
+        $user = auth()->user();
+
+        // Verificar que sea profesor
+        if (!$user->esProfesor()) {
+            abort(403, 'Solo profesores pueden aprobar feedback.');
+        }
+
+        // Verificar que sea el evaluador de la calificación
+        if ($feedback->calificacion->evaluador_id !== $user->id) {
+            abort(403, 'No tienes permiso para aprobar este feedback.');
+        }
+
+        try {
+            $feedbackFinal = $request->get('feedback_final');
+
+            $feedbackService = new FeedbackIntellicentService();
+            $feedbackService->aprobarFeedback($feedback->id, $feedbackFinal);
+
+            Log::info('Feedback aprobado por profesor', [
+                'feedback_id' => $feedback->id,
+                'profesor_id' => $user->id,
+            ]);
+
+            return back()->with('success', 'Feedback aprobado exitosamente.');
+
+        } catch (\Exception $e) {
+            return back()
+                ->withErrors(['error' => 'Error al aprobar feedback: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Rechazar feedback inteligente y solicitar regeneración
+     */
+    public function rejectFeedback(Request $request, \App\Models\FeedbackAnalysis $feedback)
+    {
+        $user = auth()->user();
+
+        // Verificar que sea profesor
+        if (!$user->esProfesor()) {
+            abort(403, 'Solo profesores pueden rechazar feedback.');
+        }
+
+        // Verificar que sea el evaluador de la calificación
+        if ($feedback->calificacion->evaluador_id !== $user->id) {
+            abort(403, 'No tienes permiso para rechazar este feedback.');
+        }
+
+        try {
+            $feedbackService = new FeedbackIntellicentService();
+            $feedbackService->rechazarFeedback($feedback->id);
+
+            Log::info('Feedback rechazado por profesor - regeneración solicitada', [
+                'feedback_id' => $feedback->id,
+                'profesor_id' => $user->id,
+            ]);
+
+            return back()->with('success', 'Feedback rechazado. Se puede regenerar.');
+
+        } catch (\Exception $e) {
+            return back()
+                ->withErrors(['error' => 'Error al rechazar feedback: ' . $e->getMessage()]);
         }
     }
 

@@ -27,20 +27,19 @@ return new class extends Migration
      */
     public function down(): void
     {
+        if (!Schema::hasColumn('notificaciones', 'destinatario_id')) {
+            return;
+        }
+
         Schema::table('notificaciones', function (Blueprint $table) {
+            // Intentar dropear la FK primero
+            try {
+                DB::statement('ALTER TABLE notificaciones DROP CONSTRAINT IF EXISTS notificaciones_destinatario_id_foreign');
+            } catch (\Exception $e) {
+                // Ignorar si falla
+            }
+            // Finalmente, dropear la columna si existe
             if (Schema::hasColumn('notificaciones', 'destinatario_id')) {
-                // Intentar dropear la FK primero
-                try {
-                    $table->dropForeignIdFor(\App\Models\User::class, 'destinatario_id');
-                } catch (\Exception $e) {
-                    // Si falla, intentar con nombre específico
-                    try {
-                        DB::statement('ALTER TABLE notificaciones DROP CONSTRAINT IF EXISTS notificaciones_destinatario_id_foreign');
-                    } catch (\Exception $e2) {
-                        // Ignorar si falla
-                    }
-                }
-                // Finalmente, dropear la columna
                 $table->dropColumn('destinatario_id');
             }
         });

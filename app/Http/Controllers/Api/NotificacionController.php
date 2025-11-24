@@ -318,8 +318,9 @@ class NotificacionController extends Controller
             // Mantener la conexión abierta y enviar notificaciones nuevas
             $ultimaFecha = now();
             $startTime = time();
-            // Cerrar conexión después de 25 segundos para evitar timeout de PHP en producción (Railway = 30s)
-            $maxDuration = 25;
+            // Cerrar conexión después de 28 segundos para evitar timeout de PHP en producción (Railway = 30s)
+            // Aumentado de 25 a 28 para reducir frecuencia de reconexiones durante navegación
+            $maxDuration = 28;
 
             while (true) {
                 // Verificar si hemos alcanzado el límite de tiempo

@@ -107,6 +107,7 @@ class RoleModuloAccesoSeeder extends Seeder
                 'Recursos',                 // ✅ Descargar recursos
                 'Entregas',                 // ✅ Entregar trabajos
                 'Orientación Vocacional',   // ✅ Realizar tests vocacionales y ver perfil
+                'Mis Recomendaciones',      // ✅ Ver recomendaciones personalizadas
             ];
             $this->asignarModulosARol($estudiante, $modulosEstudiante, 'Estudiante accede a contenido educativo');
         }

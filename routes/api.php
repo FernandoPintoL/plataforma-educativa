@@ -9,6 +9,12 @@ use App\Http\Controllers\Api\MLPipelineController;
 use App\Http\Controllers\Api\NotificacionController;
 use App\Http\Controllers\Api\MiPerfilController;
 use App\Http\Controllers\Api\PadreChildController;
+use App\Http\Controllers\Api\ModuloSidebarController;
+use App\Http\Controllers\Api\StudentActivityController;
+use App\Http\Controllers\Api\ClusteringController;
+use App\Http\Controllers\Api\DiscoveryOrchestrationController;
+use App\Http\Controllers\Api\AgentController;
+use App\Http\Controllers\RecommendationController;
 
 /**
  * API Routes
@@ -58,6 +64,12 @@ Route::middleware(['api', 'web'])->group(function () {
 });
 
 Route::middleware(['auth:sanctum'])->group(function () {
+    /**
+     * Rutas para Módulos Sidebar (todos los usuarios autenticados)
+     */
+    Route::get('modulos-sidebar', [ModuloSidebarController::class, 'index'])
+        ->name('modulos-sidebar.index');
+
     /**
      * Rutas para Análisis de Riesgo (solo director, profesor, admin)
      */
@@ -210,5 +222,178 @@ Route::middleware(['auth:sanctum'])->group(function () {
         // Obtener recomendaciones de carrera de un hijo
         Route::get('hijos/{hijoId}/carreras', [PadreChildController::class, 'getHijoCarreras'])
             ->name('hijo.carreras');
+    });
+
+    /**
+     * Rutas para Recomendaciones Educativas Personalizadas
+     * Agente Inteligente que genera recomendaciones basadas en ML
+     */
+    Route::prefix('recommendations')->name('recommendations.')->group(function () {
+        // Obtener recomendaciones del estudiante autenticado
+        Route::get('my', [RecommendationController::class, 'myRecommendations'])
+            ->name('my');
+
+        // Obtener historial de recomendaciones (MUST BE BEFORE {recommendationId})
+        Route::get('history', [RecommendationController::class, 'history'])
+            ->name('history');
+
+        // Obtener estadísticas de recomendaciones (MUST BE BEFORE {recommendationId})
+        Route::get('stats', [RecommendationController::class, 'stats'])
+            ->name('stats');
+
+        // Obtener recomendaciones de un estudiante específico (profesor/admin)
+        Route::get('student/{studentId}', [RecommendationController::class, 'studentRecommendations'])
+            ->name('student');
+
+        // Ver una recomendación específica
+        Route::get('{recommendationId}', [RecommendationController::class, 'show'])
+            ->name('show');
+
+        // Aceptar una recomendación
+        Route::post('{recommendationId}/accept', [RecommendationController::class, 'accept'])
+            ->name('accept');
+
+        // Completar una recomendación
+        Route::post('{recommendationId}/complete', [RecommendationController::class, 'complete'])
+            ->name('complete');
+
+        // Listar todas las recomendaciones (profesor/admin)
+        Route::get('/', [RecommendationController::class, 'index'])
+            ->middleware('role:profesor|admin')
+            ->name('index');
+    });
+
+    /**
+     * Rutas para Monitoreo de Actividad Estudiantil en Tiempo Real
+     * Tracking de progreso, alertas inteligentes y sugerencias Socráticas
+     * Acceso: estudiantes (su propia actividad), profesores (sus estudiantes), admin (todos)
+     */
+    Route::prefix('student-activity')->name('student-activity.')->group(function () {
+        // Registrar actividad de estudiante (estudiante registra su propia actividad)
+        Route::post('/', [StudentActivityController::class, 'registrarActividad'])
+            ->name('registrar');
+
+        // Obtener resumen de actividad de un trabajo
+        Route::get('trabajo/{trabajoId}', [StudentActivityController::class, 'obtenerResumen'])
+            ->name('resumen');
+
+        // Obtener alertas pendientes para un estudiante
+        Route::get('alertas/{estudianteId}', [StudentActivityController::class, 'obtenerAlertas'])
+            ->name('alertas');
+
+        // Marcar alerta como intervenida
+        Route::patch('alertas/{alertaId}/intervene', [StudentActivityController::class, 'marcarAlertaIntervenida'])
+            ->name('alerta.intervene');
+    });
+
+    /**
+     * Rutas para Análisis de Clustering No Supervisado
+     * Descubrimiento de patrones y segmentación de estudiantes
+     * Acceso: profesores, admin
+     */
+    Route::prefix('clustering')->name('clustering.')->middleware('role:profesor|admin')->group(function () {
+        // Ejecutar clustering
+        Route::post('run', [ClusteringController::class, 'runClustering'])
+            ->name('run');
+
+        // Obtener resumen de clusters
+        Route::get('summary', [ClusteringController::class, 'getSummary'])
+            ->name('summary');
+
+        // Obtener análisis de un cluster específico
+        Route::get('cluster/{clusterId}', [ClusteringController::class, 'getClusterAnalysis'])
+            ->name('cluster.analysis');
+
+        // Obtener estudiantes anómalos
+        Route::get('anomalous', [ClusteringController::class, 'getAnomalousStudents'])
+            ->name('anomalous');
+
+        // Obtener estudiantes similares
+        Route::get('similar/{studentId}', [ClusteringController::class, 'getSimilarStudents'])
+            ->name('similar');
+    });
+
+    /**
+     * Rutas para Descubrimiento Unificado y Orquestación
+     * Pipeline completo: Unsupervised → Supervised → Agent → Adaptive
+     * Acceso: profesores, admin
+     */
+    Route::prefix('discovery')->name('discovery.')->middleware('role:profesor|admin')->group(function () {
+        // Pipeline unificado completo para un estudiante
+        Route::post('unified-pipeline/{studentId}', [DiscoveryOrchestrationController::class, 'runUnifiedPipeline'])
+            ->name('unified-pipeline');
+
+        // Clustering
+        Route::post('clustering/run', [DiscoveryOrchestrationController::class, 'runClustering'])
+            ->name('clustering.run');
+        Route::get('clustering/summary', [DiscoveryOrchestrationController::class, 'getClusteringSummary'])
+            ->name('clustering.summary');
+
+        // Topic Modeling
+        Route::post('topics/analyze', [DiscoveryOrchestrationController::class, 'analyzeTopics'])
+            ->name('topics.analyze');
+        Route::get('topics/student/{studentId}', [DiscoveryOrchestrationController::class, 'getStudentTopics'])
+            ->name('topics.student');
+        Route::get('topics/distribution', [DiscoveryOrchestrationController::class, 'getTopicsDistribution'])
+            ->name('topics.distribution');
+
+        // Anomaly Detection
+        Route::post('anomalies/detect', [DiscoveryOrchestrationController::class, 'detectAnomalies'])
+            ->name('anomalies.detect');
+        Route::get('anomalies/student/{studentId}', [DiscoveryOrchestrationController::class, 'getStudentAnomalies'])
+            ->name('anomalies.student');
+        Route::get('anomalies/summary', [DiscoveryOrchestrationController::class, 'getAnomaliesSummary'])
+            ->name('anomalies.summary');
+
+        // Correlation Analysis
+        Route::post('correlations/analyze', [DiscoveryOrchestrationController::class, 'analyzeCorrelations'])
+            ->name('correlations.analyze');
+        Route::post('correlations/activity-performance', [DiscoveryOrchestrationController::class, 'analyzeActivityPerformance'])
+            ->name('correlations.activity-performance');
+        Route::get('correlations/predictive-factors', [DiscoveryOrchestrationController::class, 'getPredictiveFactors'])
+            ->name('correlations.predictive-factors');
+
+        // Integrated Insights
+        Route::get('insights/{studentId}', [DiscoveryOrchestrationController::class, 'getIntegratedInsights'])
+            ->name('insights');
+
+        // System Health
+        Route::get('health', [DiscoveryOrchestrationController::class, 'getHealthStatus'])
+            ->name('health');
+    });
+
+    /**
+     * Rutas para Agent Service (Síntesis LLM)
+     * Sintetiza descubrimientos usando LLM (Groq)
+     * Acceso: profesores, admin
+     */
+    Route::prefix('agent')->name('agent.')->middleware('role:profesor|admin')->group(function () {
+        // Sintetizar descubrimientos
+        Route::post('synthesize/{studentId}', [AgentController::class, 'synthesize'])
+            ->name('synthesize');
+
+        // Obtener razonamiento detallado
+        Route::get('reasoning/{studentId}', [AgentController::class, 'reasoning'])
+            ->name('reasoning');
+
+        // Generar estrategia de intervención
+        Route::post('intervention/{studentId}', [AgentController::class, 'intervention'])
+            ->name('intervention');
+
+        // Obtener análisis completo
+        Route::post('complete-analysis/{studentId}', [AgentController::class, 'completeAnalysis'])
+            ->name('complete-analysis');
+
+        // Verificar salud del servicio
+        Route::get('health', [AgentController::class, 'health'])
+            ->name('health');
+
+        // Obtener información del servicio
+        Route::get('info', [AgentController::class, 'info'])
+            ->name('info');
+
+        // Probar servicio
+        Route::get('test', [AgentController::class, 'test'])
+            ->name('test');
     });
 });

@@ -8,7 +8,7 @@ import {
     Users, BookOpen, GraduationCap, Home, Shield, Calendar, CheckSquare,
     FileText, ListChecks, Settings, Bell, Activity, UserCheck, User, BarChart2,
     Folder, MessageSquare, Clock, HelpCircle, Award, PlusCircle, Archive,
-    Clipboard, Layout, DollarSign, LucideIcon, ChevronDown, Layers, AlertTriangle, TrendingUp
+    Clipboard, Layout, DollarSign, LucideIcon, ChevronDown, Layers, AlertTriangle, TrendingUp, Lightbulb
 } from 'lucide-react';
 import AppLogo from './app-logo';
 import { cn } from '@/lib/utils';
@@ -51,6 +51,7 @@ const iconMap: Record<string, LucideIcon> = {
     Mail: MessageSquare,
     Edit: FileText,
     UserPlus: UserCheck,
+    Lightbulb: Lightbulb,
     // Agregar más iconos según sea necesario
 };
 

@@ -458,5 +458,20 @@ class ModuloSidebarSeeder extends Seeder
             ]
         );
 
+        // Módulo de Mis Recomendaciones - ✅ Implementado
+        // Permite a estudiantes ver recomendaciones personalizadas basadas en su desempeño
+        ModuloSidebar::firstOrCreate(
+            ['titulo' => 'Mis Recomendaciones', 'ruta' => '/recomendaciones', 'es_submenu' => false],
+            [
+                'icono'             => 'Lightbulb',
+                'descripcion'       => 'Recomendaciones educativas personalizadas',
+                'orden'             => 5,
+                'categoria'         => 'Académico',
+                'activo'            => true,
+                'permisos'          => ['recomendaciones.ver', 'recomendaciones.ver_mis'],
+                'visible_dashboard' => true,
+            ]
+        );
+
     }
 }

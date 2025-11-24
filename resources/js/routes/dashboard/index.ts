@@ -1,4 +1,8 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
+import estudiante from './estudiante'
+import alertas from './alertas'
+import sugerencia from './sugerencia'
+import alerta from './alerta'
 /**
 * @see \App\Http\Controllers\DashboardDirectorController::director
  * @see app/Http/Controllers/DashboardDirectorController.php:12
@@ -316,6 +320,9 @@ const dashboard = {
 profesor,
 estudiante,
 padre,
+alertas,
+sugerencia,
+alerta,
 }
 
 export default dashboard

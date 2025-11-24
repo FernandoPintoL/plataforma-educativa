@@ -1,17 +1,26 @@
 import React, { useState } from 'react';
-import Layout from '../../components/Layout/Layout';
+import AppLayout from '@/layouts/app-layout';
 import { useAuth } from '../../contexts/AuthContext';
 import { Curso } from '../../types';
-import { 
-  PlusIcon, 
+import { type BreadcrumbItem } from '@/types';
+import {
+  PlusIcon,
   MagnifyingGlassIcon,
   FunnelIcon,
   EyeIcon,
   PencilIcon,
   TrashIcon,
   UserGroupIcon,
-  CalendarIcon
+  CalendarIcon,
+  BookOpenIcon
 } from '@heroicons/react/24/outline';
+
+const breadcrumbs: BreadcrumbItem[] = [
+  {
+    title: 'Cursos',
+    href: '/cursos',
+  },
+];
 
 const CursosIndex: React.FC = () => {
   const { user, hasPermission } = useAuth();
@@ -110,8 +119,8 @@ const CursosIndex: React.FC = () => {
   };
 
   return (
-    <Layout title="Cursos">
-      <div className="space-y-6">
+    <AppLayout breadcrumbs={breadcrumbs}>
+      <div className="container mx-auto py-8 px-4 space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
@@ -242,7 +251,7 @@ const CursosIndex: React.FC = () => {
           </div>
         )}
       </div>
-    </Layout>
+    </AppLayout>
   );
 };
 

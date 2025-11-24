@@ -37,6 +37,8 @@ class NotificacionesApiService {
     private eventSource: EventSource | null = null
     private onNotificacionCallback: ((notificacion: Notificacion) => void) | null = null
     private onErrorCallback: ((error: Error) => void) | null = null
+    private pausado: boolean = false
+    private tiempoUltimaPausa: number = 0
 
     /**
      * Obtener valor de una cookie por nombre
@@ -149,6 +151,7 @@ class NotificacionesApiService {
     }
 
     /**
+     * DEPRECATED: Usar useNotificationPolling hook en su lugar
      * Conectar al stream SSE para notificaciones en tiempo real
      *
      * @param onNotificacion - Callback cuando llega una notificación
@@ -184,6 +187,12 @@ class NotificacionesApiService {
             // Evento de notificación
             this.eventSource.addEventListener('notificacion', (event: Event) => {
                 try {
+                    // Si está pausado, ignorar silenciosamente la notificación
+                    if (this.pausado) {
+                        console.debug('[SSE] Notificación ignorada durante pausa de navegación')
+                        return
+                    }
+
                     const notificacion = JSON.parse((event as MessageEvent).data) as Notificacion
                     if (this.onNotificacionCallback) {
                         this.onNotificacionCallback(notificacion)
@@ -242,6 +251,7 @@ class NotificacionesApiService {
     }
 
     /**
+     * DEPRECATED: Ya no se usa con HTTP Polling
      * Desconectar del stream SSE
      */
     desconectarSSE(): void {
@@ -306,6 +316,36 @@ class NotificacionesApiService {
         }
 
         intentarConectar()
+    }
+
+    /**
+     * Pausar temporalmente las notificaciones (útil durante navegación)
+     * La conexión se mantiene activa pero las notificaciones se ignoran
+     */
+    pausar(): void {
+        if (!this.pausado) {
+            this.pausado = true
+            this.tiempoUltimaPausa = Date.now()
+            console.debug('[SSE] Notificaciones pausadas durante navegación')
+        }
+    }
+
+    /**
+     * Reanudar las notificaciones después de una pausa
+     */
+    reanudar(): void {
+        if (this.pausado) {
+            this.pausado = false
+            const tiempoPausa = Date.now() - this.tiempoUltimaPausa
+            console.debug(`[SSE] Notificaciones reanudadas (pausa: ${tiempoPausa}ms)`)
+        }
+    }
+
+    /**
+     * Verificar si está pausado
+     */
+    estaPausado(): boolean {
+        return this.pausado
     }
 }
 

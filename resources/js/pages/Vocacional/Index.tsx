@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import Layout from '../../components/Layout/Layout';
+import AppLayout from '@/layouts/app-layout';
 import { useAuth } from '../../contexts/AuthContext';
+import { type BreadcrumbItem } from '@/types';
 import { TestVocacional, PerfilVocacional, RecomendacionCarrera } from '../../types';
 import { 
   MapIcon,
@@ -10,6 +11,13 @@ import {
   CheckCircleIcon,
   ClockIcon
 } from '@heroicons/react/24/outline';
+
+const breadcrumbs: BreadcrumbItem[] = [
+  {
+    title: 'Orientación Vocacional',
+    href: '/vocacional',
+  },
+];
 
 const VocacionalIndex: React.FC = () => {
   const { user, isEstudiante } = useAuth();
@@ -149,8 +157,8 @@ const VocacionalIndex: React.FC = () => {
   };
 
   return (
-    <Layout title="Orientación Vocacional">
-      <div className="space-y-6">
+    <AppLayout breadcrumbs={breadcrumbs}>
+      <div className="container mx-auto py-8 px-4 space-y-6">
         {/* Header */}
         <div className="bg-white rounded-lg shadow p-6">
           <div className="flex items-center">
@@ -358,7 +366,7 @@ const VocacionalIndex: React.FC = () => {
           </div>
         </div>
       </div>
-    </Layout>
+    </AppLayout>
   );
 };
 

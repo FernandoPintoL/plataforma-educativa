@@ -1,4 +1,5 @@
 import Api from './Api'
+import RecommendationController from './RecommendationController'
 import UserController from './UserController'
 import RoleController from './RoleController'
 import PermissionController from './PermissionController'
@@ -22,8 +23,10 @@ import ModuloEducativoController from './ModuloEducativoController'
 import LeccionController from './LeccionController'
 import TestVocacionalController from './TestVocacionalController'
 import VocacionalController from './VocacionalController'
+import DashboardAlertsController from './DashboardAlertsController'
 const Controllers = {
     Api,
+RecommendationController,
 UserController,
 RoleController,
 PermissionController,
@@ -47,6 +50,7 @@ ModuloEducativoController,
 LeccionController,
 TestVocacionalController,
 VocacionalController,
+DashboardAlertsController,
 }
 
 export default Controllers

@@ -9,10 +9,11 @@
  * - Eliminación de notificaciones
  */
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { Bell, X, CheckCheck, ChevronDown } from 'lucide-react'
 import notificacionesApi from '@/services/notificacionesApi'
 import notificationService from '@/services/notification.service'
+import { useNotificationPolling } from '@/hooks/useNotificationPolling'
 
 interface Notificacion {
     id: number
@@ -33,72 +34,48 @@ export default function NotificacionCenter() {
     const [noLeidas, setNoLeidas] = useState<number>(0)
     const [abierto, setAbierto] = useState(false)
     const [cargando, setCargando] = useState(true)
-    const [conectado, setConectado] = useState(false)
+    const [conectado, setConectado] = useState(true) // Siempre conectado con polling
+    const previousNoLeidasRef = React.useRef<number>(0)
 
-    // Cargar notificaciones iniciales
-    useEffect(() => {
-        cargarNotificaciones()
-    }, [])
+    // Usar hook de polling para notificaciones
+    useNotificationPolling({
+        intervalMs: 3000, // Poll cada 3 segundos
+        onNotificacionesChange: (notificaciones) => {
+            setNotificaciones(notificaciones)
 
-    // Conectar al stream SSE cuando el componente monta
-    useEffect(() => {
-        conectarSSE()
+            // Detectar notificaciones nuevas y mostrar toast
+            const noLeidasCount = notificaciones.filter((n: any) => !n.leido).length
 
-        return () => {
-            notificacionesApi.desconectarSSE()
-        }
-    }, [])
-
-    /**
-     * Cargar notificaciones del servidor
-     */
-    const cargarNotificaciones = async () => {
-        try {
-            setCargando(true)
-            const response = await notificacionesApi.obtenerNotificaciones(20)
-            setNotificaciones(response.data)
-
-            // Actualizar contador de no leídas
-            const noLeidasCount = response.data.filter((n) => !n.leido).length
-            setNoLeidas(noLeidasCount)
-        } catch (error) {
-            console.error('Error cargando notificaciones:', error)
-            notificationService.error('Error al cargar notificaciones')
-        } finally {
-            setCargando(false)
-        }
-    }
-
-    /**
-     * Conectar al stream SSE
-     */
-    const conectarSSE = async () => {
-        await notificacionesApi.conectarSSE(
-            (notificacion) => {
-                // Nueva notificación recibida
-                setNotificaciones((prev) => [notificacion, ...prev])
-                setNoLeidas((prev) => prev + 1)
-
-                // Mostrar toast con la notificación
-                notificationService.info(notificacion.titulo, {
-                    description: notificacion.contenido,
+            if (noLeidasCount > previousNoLeidasRef.current) {
+                // Hay una notificación nueva
+                const nuevasNotificaciones = notificaciones.slice(
+                    0,
+                    noLeidasCount - previousNoLeidasRef.current
+                )
+                nuevasNotificaciones.forEach((notif: Notificacion) => {
+                    notificationService.info(notif.titulo, {
+                        description: notif.contenido,
+                    })
                 })
-
-                console.log('Notificación recibida:', notificacion)
-            },
-            (error) => {
-                console.error('Error SSE:', error)
-                setConectado(false)
             }
-        )
 
-        setConectado(true)
-    }
+            previousNoLeidasRef.current = noLeidasCount
+            setNoLeidas(noLeidasCount)
+            setCargando(false)
+        },
+        onError: (error) => {
+            console.error('Error en polling:', error)
+            setConectado(false)
+        },
+    })
+
+    // Con polling, no necesitamos conexión SSE - el hook maneja todo
+
 
     /**
      * Marcar notificación como leída
      */
-    const marcarLeido = async (id: number, estaLeida: boolean) => {
+    const marcarLeido = useCallback(async (id: number, estaLeida: boolean) => {
         try {
             const fn = estaLeida ? notificacionesApi.marcarNoLeido : notificacionesApi.marcarLeido
             await fn(id)
@@ -118,12 +95,12 @@ export default function NotificacionCenter() {
             console.error('Error marcando notificación:', error)
             notificationService.error('Error al actualizar notificación')
         }
-    }
+    }, [])
 
     /**
      * Eliminar notificación
      */
-    const eliminarNotificacion = async (id: number, estaLeida: boolean) => {
+    const eliminarNotificacion = useCallback(async (id: number, estaLeida: boolean) => {
         try {
             await notificacionesApi.eliminar(id)
 
@@ -140,12 +117,12 @@ export default function NotificacionCenter() {
             console.error('Error eliminando notificación:', error)
             notificationService.error('Error al eliminar notificación')
         }
-    }
+    }, [])
 
     /**
      * Marcar todas como leídas
      */
-    const marcarTodasLeidas = async () => {
+    const marcarTodasLeidas = useCallback(async () => {
         try {
             await notificacionesApi.marcarTodasLeidas()
 
@@ -158,7 +135,7 @@ export default function NotificacionCenter() {
             console.error('Error marcando todas como leídas:', error)
             notificationService.error('Error al actualizar notificaciones')
         }
-    }
+    }, [])
 
     const getColorClase = (color: string): string => {
         const colores: Record<string, string> = {
