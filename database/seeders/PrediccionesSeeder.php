@@ -44,12 +44,11 @@ class PrediccionesSeeder extends Seeder
 
     /**
      * Generar predicciones de riesgo
+     * Mapeo de columnas correcto según migración
      */
     private function seedPrediccionesRiesgo($estudiantes): void
     {
         $this->command->info('Generando predicciones_riesgo...');
-
-        $carreras_opciones = ['Ingeniería Informática', 'Administración', 'Contabilidad', 'Enfermería', 'Psicología'];
 
         foreach ($estudiantes as $estudiante_id) {
             // Generar entre 1-3 predicciones por estudiante
@@ -57,47 +56,46 @@ class PrediccionesSeeder extends Seeder
 
             for ($i = 0; $i < $num_predicciones; $i++) {
                 // Simular score de riesgo
-                $risk_score = rand(20, 95) / 100;
+                $score_riesgo = rand(20, 95) / 100;
 
                 // Determinar nivel basado en thresholds
-                if ($risk_score >= 0.70) {
-                    $nivel = 'alto';
-                } elseif ($risk_score >= 0.40) {
-                    $nivel = 'medio';
+                if ($score_riesgo >= 0.70) {
+                    $nivel_riesgo = 'alto';
+                } elseif ($score_riesgo >= 0.40) {
+                    $nivel_riesgo = 'medio';
                 } else {
-                    $nivel = 'bajo';
+                    $nivel_riesgo = 'bajo';
                 }
 
                 $fecha = Carbon::now()->subDays(rand(0, 30));
 
                 DB::table('predicciones_riesgo')->insert([
                     'estudiante_id' => $estudiante_id,
-                    'risk_score' => round($risk_score, 4),
-                    'risk_level' => $nivel,
-                    'confidence_score' => round(rand(70, 99) / 100, 4),
+                    'score_riesgo' => round($score_riesgo, 4),
+                    'nivel_riesgo' => $nivel_riesgo,
+                    'confianza' => round(rand(70, 99) / 100, 4),
                     'fecha_prediccion' => $fecha,
                     'modelo_version' => 'v1.0',
-                    'modelo_tipo' => 'PerformancePredictor',
-                    'features_used' => json_encode([
+                    'factores_influyentes' => json_encode([
                         'promedio_ultimas_notas',
                         'varianza_notas',
                         'asistencia_porcentaje',
                         'trabajos_entregados_tarde',
                         'horas_estudio_semanal'
                     ]),
-                    'creado_por' => 1,
-                    'observaciones' => $nivel === 'alto' ? 'Estudiante requiere intervención' : null,
+                    'observaciones' => $nivel_riesgo === 'alto' ? 'Estudiante requiere intervención' : null,
                     'created_at' => $fecha,
                     'updated_at' => $fecha,
                 ]);
             }
         }
 
-        $this->command->info('✓ predicciones_riesgo completadas');
+        $this->command->info('✓ predicciones_riesgo completadas (' . count($estudiantes) . ' estudiantes)');
     }
 
     /**
      * Generar predicciones de carrera
+     * 3 recomendaciones por estudiante
      */
     private function seedPrediccionesCarrera($estudiantes): void
     {
@@ -136,17 +134,19 @@ class PrediccionesSeeder extends Seeder
             }
         }
 
-        $this->command->info('✓ predicciones_carrera completadas');
+        $this->command->info('✓ predicciones_carrera completadas (' . (count($estudiantes) * 3) . ' registros)');
     }
 
     /**
      * Generar predicciones de tendencia
+     * 1-2 tendencias por estudiante (mejorando, estable, declinando, fluctuando)
      */
     private function seedPrediccionesTendencia($estudiantes): void
     {
         $this->command->info('Generando predicciones_tendencia...');
 
         $tendencias = ['mejorando', 'estable', 'declinando', 'fluctuando'];
+        $total_tendencias = 0;
 
         foreach ($estudiantes as $estudiante_id) {
             // Generar entre 1-2 tendencias por estudiante
@@ -167,9 +167,11 @@ class PrediccionesSeeder extends Seeder
                     'created_at' => $fecha,
                     'updated_at' => $fecha,
                 ]);
+
+                $total_tendencias++;
             }
         }
 
-        $this->command->info('✓ predicciones_tendencia completadas');
+        $this->command->info('✓ predicciones_tendencia completadas (' . $total_tendencias . ' registros)');
     }
 }

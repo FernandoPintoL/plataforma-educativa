@@ -41,7 +41,11 @@ class DashboardProfesorController extends Controller
         $cursosDestacados = $cursos->sortByDesc('estudiantes_count')->take(5);
 
         // Trabajos recientes pendientes de calificar
-        $trabajosPendientes = Trabajo::with(['estudiante', 'contenido', 'contenido.curso'])
+        $trabajosPendientes = Trabajo::with([
+            'estudiante:id,name,apellido',
+            'contenido:id,titulo,curso_id',
+            'contenido.curso:id,nombre'
+        ])
             ->whereHas('contenido', function ($query) use ($profesor) {
                 $query->where('tipo', 'tarea')
                     ->where('creador_id', $profesor->id);

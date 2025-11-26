@@ -22,7 +22,7 @@ export default function Cursos({ cursos = [] }: CursosProps) {
 
   const breadcrumbs = [
     { label: 'Inicio', href: '/dashboard' },
-    { label: 'Análisis de Riesgo', href: '/analisis-riesgo' },
+    { label: 'Monitoreo de Desempeño', href: '/analisis-riesgo' },
     { label: 'Por Cursos' },
   ];
 

@@ -160,7 +160,7 @@ export default function RiesgoPage() {
     if (loading) {
         return (
             <AppLayout>
-                <Head title="Mi Análisis de Riesgo" />
+                <Head title="Mi Monitoreo de Desempeño" />
                 <div className="space-y-4">
                     <div className="h-10 bg-gray-200 rounded w-1/4 animate-pulse"></div>
                     <div className="h-32 bg-gray-200 rounded animate-pulse"></div>
@@ -173,7 +173,7 @@ export default function RiesgoPage() {
     if (error) {
         return (
             <AppLayout>
-                <Head title="Mi Análisis de Riesgo" />
+                <Head title="Mi Monitoreo de Desempeño" />
                 <div className="max-w-4xl mx-auto">
                     <Link href="/dashboard" className="flex items-center gap-2 text-blue-600 hover:underline mb-6">
                         <ArrowLeft className="w-4 h-4" />
@@ -192,7 +192,7 @@ export default function RiesgoPage() {
     if (!riskData) {
         return (
             <AppLayout>
-                <Head title="Mi Análisis de Riesgo" />
+                <Head title="Mi Monitoreo de Desempeño" />
                 <div className="max-w-4xl mx-auto">
                     <Link href="/dashboard" className="flex items-center gap-2 text-blue-600 hover:underline mb-6">
                         <ArrowLeft className="w-4 h-4" />
@@ -212,7 +212,7 @@ export default function RiesgoPage() {
 
     return (
         <AppLayout>
-            <Head title="Mi Análisis de Riesgo" />
+            <Head title="Mi Monitoreo de Desempeño" />
 
             <div className="max-w-4xl mx-auto">
                 {/* Breadcrumb */}
@@ -223,7 +223,7 @@ export default function RiesgoPage() {
 
                 {/* Header */}
                 <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900">Mi Análisis de Riesgo Académico</h1>
+                    <h1 className="text-3xl font-bold text-gray-900">Mi Monitoreo de Desempeño Académico</h1>
                     <p className="text-gray-500 mt-1">
                         Última actualización: {new Date(riskData.last_update).toLocaleDateString('es-ES', {
                             weekday: 'long',

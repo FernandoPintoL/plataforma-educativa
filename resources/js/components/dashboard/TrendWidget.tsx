@@ -26,6 +26,7 @@ export function TrendWidget() {
             setLoading(true);
             const response = await fetch('/api/mi-perfil/riesgo', {
                 method: 'GET',
+                credentials: 'include', // Enviar cookies de sesión
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',

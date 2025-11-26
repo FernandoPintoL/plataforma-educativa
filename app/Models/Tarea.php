@@ -12,6 +12,7 @@ class Tarea extends Contenido
     protected $table = 'tareas';
 
     protected $fillable = [
+        'contenido_id',
         'instrucciones',
         'puntuacion',
         'permite_archivos',

@@ -19,7 +19,12 @@ use Illuminate\Support\Facades\Log;
 class AnalisisRiesgoController extends Controller
 {
     /**
-     * Dashboard general con métricas de riesgo
+     * Dashboard general con métricas de desempeño académico
+     *
+     * Predice el riesgo de bajo desempeño basado en:
+     * - Calificaciones promedio
+     * - Comportamiento académico
+     * - Tendencias de desempeño
      */
     public function dashboard(Request $request): JsonResponse
     {
@@ -41,11 +46,11 @@ class AnalisisRiesgoController extends Controller
 
         // Cálculos de métricas
         $totalEstudiantes = $predicciones->count();
-        $riesgoAlto = $predicciones->where('risk_level', 'alto')->count();
-        $riesgoMedio = $predicciones->where('risk_level', 'medio')->count();
-        $riesgoBajo = $predicciones->where('risk_level', 'bajo')->count();
+        $riesgoAlto = $predicciones->where('nivel_riesgo', 'alto')->count();
+        $riesgoMedio = $predicciones->where('nivel_riesgo', 'medio')->count();
+        $riesgoBajo = $predicciones->where('nivel_riesgo', 'bajo')->count();
 
-        $scorePromedio = $predicciones->avg('risk_score') ?? 0;
+        $scorePromedio = $predicciones->avg('score_riesgo') ?? 0;
         $porcentajeAlto = $totalEstudiantes > 0 ? ($riesgoAlto / $totalEstudiantes) * 100 : 0;
 
         return response()->json([
@@ -64,16 +69,16 @@ class AnalisisRiesgoController extends Controller
                     'bajo' => $riesgoBajo,
                 ],
                 'estudiantes_criticos' => $predicciones
-                    ->where('risk_level', 'alto')
-                    ->sortByDesc('risk_score')
+                    ->where('nivel_riesgo', 'alto')
+                    ->sortByDesc('score_riesgo')
                     ->take(5)
                     ->values()
                     ->map(fn($p) => [
                         'id' => $p->id,
                         'estudiante_id' => $p->estudiante_id,
                         'estudiante_nombre' => $p->estudiante?->name,
-                        'score_riesgo' => $p->risk_score,
-                        'nivel_riesgo' => $p->risk_level,
+                        'score_riesgo' => $p->score_riesgo,
+                        'nivel_riesgo' => $p->nivel_riesgo,
                     ]),
             ],
             'message' => 'Dashboard de análisis de riesgo cargado exitosamente',
@@ -81,7 +86,12 @@ class AnalisisRiesgoController extends Controller
     }
 
     /**
-     * Listar predicciones de riesgo con filtros
+     * Listar predicciones de desempeño con filtros
+     *
+     * Retorna estudiantes clasificados por su probabilidad de bajo desempeño:
+     * - Alto: > 70% de probabilidad
+     * - Medio: 40-70% de probabilidad
+     * - Bajo: < 40% de probabilidad
      */
     public function index(Request $request): JsonResponse
     {
@@ -104,7 +114,7 @@ class AnalisisRiesgoController extends Controller
         }
 
         if ($nivelRiesgo) {
-            $query->where('risk_level', $nivelRiesgo);
+            $query->where('nivel_riesgo', $nivelRiesgo);
         }
 
         if ($buscar) {
@@ -126,9 +136,9 @@ class AnalisisRiesgoController extends Controller
                 'id' => $item->id,
                 'estudiante_id' => $item->estudiante_id,
                 'estudiante' => $item->estudiante,
-                'score_riesgo' => (float) $item->risk_score,
-                'nivel_riesgo' => strtolower($item->risk_level ?? 'bajo'),
-                'confianza' => (float) $item->confidence_score,
+                'score_riesgo' => (float) $item->score_riesgo,
+                'nivel_riesgo' => strtolower($item->nivel_riesgo ?? 'bajo'),
+                'confianza' => (float) $item->confianza,
                 'fecha_prediccion' => $item->fecha_prediccion,
                 'fk_curso_id' => $item->fk_curso_id,
             ];
@@ -147,7 +157,9 @@ class AnalisisRiesgoController extends Controller
     }
 
     /**
-     * Análisis detallado de un estudiante
+     * Análisis detallado de desempeño académico de un estudiante
+     *
+     * Retorna predicción de bajo desempeño, histórico, tendencias y recomendaciones
      */
     public function porEstudiante(int $estudianteId, Request $request): JsonResponse
     {
@@ -167,7 +179,7 @@ class AnalisisRiesgoController extends Controller
             ->recientes($diasAtraso * 30)
             ->orderBy('fecha_prediccion', 'desc')
             ->limit($diasAtraso)
-            ->get(['fecha_prediccion', 'risk_score', 'risk_level']);
+            ->get(['fecha_prediccion', 'score_riesgo', 'nivel_riesgo']);
 
         // Recomendaciones de carrera
         $recomendacionesCarrera = collect();
@@ -218,14 +230,14 @@ class AnalisisRiesgoController extends Controller
                 ],
                 'prediccion_riesgo' => [
                     'id' => $prediccionRiesgo->id,
-                    'score_riesgo' => $prediccionRiesgo->risk_score,
-                    'nivel_riesgo' => $prediccionRiesgo->risk_level,
+                    'score_riesgo' => $prediccionRiesgo->score_riesgo,
+                    'nivel_riesgo' => $prediccionRiesgo->nivel_riesgo,
                     'nivel_riesgo_label' => $prediccionRiesgo->nivel_riesgo_label,
-                    'confianza' => $prediccionRiesgo->confidence_score,
+                    'confianza' => $prediccionRiesgo->confianza,
                     'fecha_prediccion' => $prediccionRiesgo->fecha_prediccion,
                     'descripcion' => $prediccionRiesgo->descripcion,
                     'color' => $prediccionRiesgo->color,
-                    'factores_influyentes' => $prediccionRiesgo->features_used,
+                    'factores_influyentes' => $prediccionRiesgo->factores_influyentes,
                 ],
                 'historico_riesgo' => $historicoRiesgo,
                 'recomendaciones_carrera' => $recomendacionesCarrera->map(fn($r) => [
@@ -299,31 +311,31 @@ class AnalisisRiesgoController extends Controller
 
             // Agregar por nivel
             $distribucion = [
-                'alto' => $predicciones->where('risk_level', 'alto')->count(),
-                'medio' => $predicciones->where('risk_level', 'medio')->count(),
-                'bajo' => $predicciones->where('risk_level', 'bajo')->count(),
+                'alto' => $predicciones->where('nivel_riesgo', 'alto')->count(),
+                'medio' => $predicciones->where('nivel_riesgo', 'medio')->count(),
+                'bajo' => $predicciones->where('nivel_riesgo', 'bajo')->count(),
             ];
 
             // Score promedio
-            $scorePromedio = $predicciones->avg('risk_score') ?? 0;
+            $scorePromedio = $predicciones->avg('score_riesgo') ?? 0;
 
             // Estudiantes por nivel
             $estudiantesPorNivel = [
                 'alto' => $predicciones
-                    ->where('risk_level', 'alto')
-                    ->sortByDesc('risk_score')
+                    ->where('nivel_riesgo', 'alto')
+                    ->sortByDesc('score_riesgo')
                     ->map(fn($p) => [
                         'estudiante_id' => $p->estudiante_id,
                         'nombre' => $p->estudiante?->name,
-                        'score' => (float) $p->risk_score,
+                        'score' => (float) $p->score_riesgo,
                     ])
                     ->values(),
                 'medio' => $predicciones
-                    ->where('risk_level', 'medio')
+                    ->where('nivel_riesgo', 'medio')
                     ->map(fn($p) => [
                         'estudiante_id' => $p->estudiante_id,
                         'nombre' => $p->estudiante?->name,
-                        'score' => (float) $p->risk_score,
+                        'score' => (float) $p->score_riesgo,
                     ])
                     ->values(),
             ];
@@ -348,8 +360,8 @@ class AnalisisRiesgoController extends Controller
                         'id' => $p->id,
                         'estudiante_id' => $p->estudiante_id,
                         'nombre' => $p->estudiante?->name,
-                        'score_riesgo' => (float) $p->risk_score,
-                        'nivel_riesgo' => strtolower($p->risk_level ?? 'bajo'),
+                        'score_riesgo' => (float) $p->score_riesgo,
+                        'nivel_riesgo' => strtolower($p->nivel_riesgo ?? 'bajo'),
                         'fecha_prediccion' => $p->fecha_prediccion,
                     ])->sortByDesc('score_riesgo')->values(),
                 ],
@@ -387,7 +399,7 @@ class AnalisisRiesgoController extends Controller
         }
 
         // Datos para gráfico de línea
-        $datosTendencia = $query->selectRaw("DATE_TRUNC('day', fecha_prediccion)::date as fecha, AVG(risk_score) as score_promedio, COUNT(*) as total")
+        $datosTendencia = $query->selectRaw("DATE_TRUNC('day', fecha_prediccion)::date as fecha, AVG(score_riesgo) as score_promedio, COUNT(*) as total")
             ->groupBy('fecha')
             ->orderBy('fecha')
             ->get();

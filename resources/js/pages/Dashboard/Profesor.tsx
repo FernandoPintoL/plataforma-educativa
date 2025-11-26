@@ -30,12 +30,10 @@ interface TrabajoPendiente {
     name: string;
     apellido: string;
   };
-  tarea: {
+  contenido: {
     titulo: string;
-    contenido: {
-      curso: {
-        nombre: string;
-      };
+    curso: {
+      nombre: string;
     };
   };
 }
@@ -249,10 +247,10 @@ export default function DashboardProfesor({
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
                             <h3 className="font-semibold text-gray-900 text-sm group-hover:text-orange-700 transition-colors">
-                              {trabajo.tarea.titulo}
+                              {trabajo.contenido.titulo}
                             </h3>
                             <p className="text-xs text-gray-500 mt-1">
-                              {trabajo.tarea.contenido.curso.nombre}
+                              {trabajo.contenido.curso.nombre}
                             </p>
                             <p className="text-xs text-gray-600 mt-2">
                               Estudiante: {trabajo.estudiante.name}{' '}

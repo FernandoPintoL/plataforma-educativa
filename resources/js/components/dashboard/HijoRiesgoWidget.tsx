@@ -165,9 +165,9 @@ export function HijoRiesgoWidget({ childId, childName }: HijoRiesgoWidgetProps) 
             <CardHeader>
                 <div className="flex items-start justify-between">
                     <div>
-                        <CardTitle className="text-lg">Análisis de Riesgo</CardTitle>
+                        <CardTitle className="text-lg">Monitoreo de Desempeño</CardTitle>
                         <CardDescription>
-                            {riskData.student_name} • Actualizado: {new Date(riskData.last_update).toLocaleDateString('es-ES')}
+                            {riskData.student_name} • Probabilidad de bajo desempeño • Actualizado: {new Date(riskData.last_update).toLocaleDateString('es-ES')}
                         </CardDescription>
                     </div>
                     {riskData.risk_level.toUpperCase() === 'ALTO' && (
@@ -176,10 +176,10 @@ export function HijoRiesgoWidget({ childId, childName }: HijoRiesgoWidgetProps) 
                 </div>
             </CardHeader>
             <CardContent className="space-y-4">
-                {/* Risk Score */}
+                {/* Probability Score */}
                 <div>
                     <div className="flex items-end justify-between mb-2">
-                        <label className="text-sm font-medium text-gray-700">Puntuación de Riesgo</label>
+                        <label className="text-sm font-medium text-gray-700">Probabilidad de Bajo Desempeño</label>
                         <span className={`text-3xl font-bold ${getRiskColor(riskData.risk_level)}`}>
                             {Math.round(riskData.risk_score * 100)}%
                         </span>
@@ -190,10 +190,10 @@ export function HijoRiesgoWidget({ childId, childName }: HijoRiesgoWidgetProps) 
                     />
                 </div>
 
-                {/* Risk Level and Confidence */}
+                {/* Classification and Confidence */}
                 <div className="grid grid-cols-2 gap-4 pt-2 border-t">
                     <div>
-                        <p className="text-xs text-gray-600 mb-1">Nivel de Riesgo</p>
+                        <p className="text-xs text-gray-600 mb-1">Clasificación</p>
                         <p className={`text-lg font-bold ${getRiskColor(riskData.risk_level)}`}>
                             {riskData.risk_level.charAt(0).toUpperCase() + riskData.risk_level.slice(1).toLowerCase()}
                         </p>

@@ -20,6 +20,7 @@ import analisisRiesgoService from '@/services/analisis-riesgo.service';
 import type {
   Dashboard,
   PrediccionRiesgo,
+  PrediccionTendencia,
   DashboardMetricas,
   FiltrosDashboard,
 } from '@/types/analisis-riesgo';
@@ -31,13 +32,14 @@ interface IndexProps {
 export default function Index({ initialCursos = [] }: IndexProps) {
   const [dashboard, setDashboard] = useState<Dashboard | null>(null);
   const [predicciones, setPredicciones] = useState<PrediccionRiesgo[]>([]);
+  const [tendencias, setTendencias] = useState<Record<number, PrediccionTendencia>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [selectedCurso, setSelectedCurso] = useState<number | undefined>();
   const [dias, setDias] = useState(30);
 
   const breadcrumbs = [
     { label: 'Inicio', href: '/dashboard' },
-    { label: 'Análisis de Riesgo' },
+    { label: 'Monitoreo de Desempeño' },
   ];
 
   // Cargar datos
@@ -62,6 +64,17 @@ export default function Index({ initialCursos = [] }: IndexProps) {
         ...filters,
       });
       setPredicciones(prediccionesData);
+
+      // Cargar tendencias agregadas (se pueden obtener tendencias individuales si se cargan detalles)
+      try {
+        const tendenciasData = await analisisRiesgoService.obtenerTendencias(filters);
+        // Por ahora, tendencias está vacío. Las tendencias individuales se cargan cuando se ve el detalle
+        setTendencias({});
+      } catch (error) {
+        // Las tendencias son opcionales, así que continuamos sin ellas
+        console.debug('No se pudieron cargar tendencias:', error);
+        setTendencias({});
+      }
     } catch (error) {
       console.error('Error cargando datos:', error);
     } finally {
@@ -84,17 +97,17 @@ export default function Index({ initialCursos = [] }: IndexProps) {
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
-      <Head title="Análisis de Riesgo Académico" />
+      <Head title="Monitoreo de Desempeño Académico" />
 
       <div className="space-y-6 p-4">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              Análisis de Riesgo Académico
+              Monitoreo de Desempeño Académico
             </h1>
             <p className="mt-2 text-gray-600 dark:text-gray-400">
-              Monitoreo y predicción de desempeño estudiantil
+              Predicción de bajo desempeño y recomendaciones de apoyo académico
             </p>
           </div>
 
@@ -190,8 +203,8 @@ export default function Index({ initialCursos = [] }: IndexProps) {
         {/* Distribución de riesgo */}
         <Card>
           <CardHeader>
-            <CardTitle>Distribución de Riesgo</CardTitle>
-            <CardDescription>Desglose de estudiantes por nivel de riesgo</CardDescription>
+            <CardTitle>Distribución de Desempeño</CardTitle>
+            <CardDescription>Desglose de estudiantes por probabilidad de bajo desempeño académico</CardDescription>
           </CardHeader>
 
           <CardContent>
@@ -251,10 +264,10 @@ export default function Index({ initialCursos = [] }: IndexProps) {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-red-900 dark:text-red-200">
                 <AlertTriangle className="w-5 h-5" />
-                Estudiantes en Riesgo Crítico
+                Estudiantes que Necesitan Apoyo Urgente
               </CardTitle>
               <CardDescription className="text-red-700 dark:text-red-400">
-                Top {estudiantes_criticos.length} estudiantes que requieren atención inmediata
+                Top {estudiantes_criticos.length} estudiantes con mayor probabilidad de bajo desempeño
               </CardDescription>
             </CardHeader>
 
@@ -285,11 +298,12 @@ export default function Index({ initialCursos = [] }: IndexProps) {
         {/* Lista de predicciones */}
         <StudentRiskList
           predicciones={predicciones}
+          tendencias={tendencias}
           onViewDetail={(estudianteId) => {
             window.location.href = `/analisis-riesgo/estudiante/${estudianteId}`;
           }}
           isLoading={isLoading}
-          emptyMessage="No hay predicciones disponibles. Ejecute el modelo de ML para generar análisis."
+          emptyMessage="No hay análisis disponibles. Ejecute el modelo de predicción para generar un monitoreo de desempeño."
         />
 
         {/* Link a páginas adicionales */}

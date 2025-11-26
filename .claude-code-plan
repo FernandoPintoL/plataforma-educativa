@@ -1,0 +1,221 @@
+## Plan de Implementación: Flujo Multi-Paso para Creación de Tareas/Evaluaciones con IA
+
+### 📋 Resumen
+Implementar un flujo step-by-step mejorado para la creación de tareas y evaluaciones, donde:
+1. Usuario selecciona modo (IA o Manual)
+2. Ingresa título y curso (mínimo necesario)
+3. Agente analiza y sugiere datos (incluyendo tiempo estimado)
+4. Usuario revisa análisis (editable) con cálculo automático de fecha de entrega
+5. Formulario completo pre-llenado con datos analizados
+6. Publicación final
+
+### 🎯 Componentes a Crear
+
+#### 1. **TareaWizard.vue** (Componente Principal)
+   - Estado global del wizard
+   - Manejo de pasos (1-5)
+   - Validaciones entre pasos
+   - Persistencia de datos
+   - Ubicación: `/resources/js/pages/Tareas/TareaWizard.vue`
+
+#### 2. **Steps/StepSelector.vue** (Paso 1)
+   - Selector visual IA/Manual
+   - Cards con iconos y descripciones
+   - Almacena selección en estado global
+   - Ubicación: `/resources/js/pages/Tareas/Steps/StepSelector.vue`
+
+#### 3. **Steps/StepBasicInfo.vue** (Paso 2)
+   - Input: Título (required, 5-255 caracteres)
+   - Select: Curso (del dropdown de cursos del profesor)
+   - Botón: "Enviar a Análisis" (si IA) o "Siguiente" (si Manual)
+   - Ubicación: `/resources/js/pages/Tareas/Steps/StepBasicInfo.vue`
+
+#### 4. **Steps/StepAnalysis.vue** (Paso 3)
+   - Loading state mientras se analiza
+   - Mostrar resultados del análisis en paneles:
+     - Descripción sugerida
+     - Instrucciones sugeridas
+     - Tiempo estimado (IMPORTANTE)
+     - Dificultad propuesta
+     - Puntuación sugerida
+     - Cualquier otra información
+   - Botón: "Revisión & Confirmación"
+   - Ubicación: `/resources/js/pages/Tareas/Steps/StepAnalysis.vue`
+
+#### 5. **Steps/StepReview.vue** (Paso 4)
+   - Mostrar análisis con campos editables:
+     - Descripción ✏️
+     - Instrucciones ✏️
+     - Tiempo estimado ✏️
+     - Dificultad ✏️
+     - **Campo calculado (read-only inicialmente):** Fecha de Entrega = HOY + tiempo_estimado
+     - Puntuación ✏️ (default 100)
+   - Botón: "Aceptar y Continuar" → abre formulario completo
+   - Ubicación: `/resources/js/pages/Tareas/Steps/StepReview.vue`
+
+#### 6. **Steps/StepFullForm.vue** (Paso 5)
+   - Formulario completo con campos pre-llenados:
+     - Título
+     - Descripción
+     - Curso
+     - Instrucciones
+     - Fecha de Entrega (EDITABLE)
+     - Puntuación (EDITABLE)
+     - Permite archivos (checkbox)
+     - Máximo archivos
+     - Tipos de archivo permitido
+     - Recursos adjuntos (upload)
+   - Botón: "Guardar como Borrador" y "Publicar Tarea"
+   - Ubicación: `/resources/js/pages/Tareas/Steps/StepFullForm.vue`
+
+#### 7. **Utils/dateCalculator.js**
+   - Función: calcularFechaEntrega(tiempoEstimado, unidad)
+     - tiempoEstimado: número
+     - unidad: 'horas', 'dias', 'semanas'
+     - Retorna: Date object de fecha futura
+   - Ubicación: `/resources/js/utils/dateCalculator.js`
+
+### 🔄 Flujo de Datos
+
+```
+TareaWizard (Estado Global)
+├── selectedMode: 'ia' | 'manual'
+├── basicInfo: { titulo, curso_id }
+├── analysis: {
+│   descripcion,
+│   instrucciones,
+│   tiempo_estimado,
+│   unidad_tiempo,  // 'horas', 'dias', 'semanas'
+│   dificultad,
+│   puntuacion_sugerida,
+│   ...otros campos
+│ }
+├── review: {
+│   descripcion,
+│   instrucciones,
+│   tiempo_estimado,
+│   dificultad,
+│   fecha_entrega,  // calculada
+│   puntuacion,
+│ }
+├── form: { ...todos los datos } // pre-llenado
+└── currentStep: 1-5
+```
+
+### 🔧 Cambios en el Backend
+
+#### 1. **TareaController.php**
+   - Modificar `create()` para renderizar TareaWizard en lugar de form tradicional
+   - Mantener `store()` igual (recibe los mismos datos)
+   - Cambio: línea 90
+
+#### 2. **Validar estructura de respuesta del agente**
+   - Asegurarse que include: tiempo_estimado, unidad_tiempo
+   - Si no está disponible, agregar lógica para inferirlo
+   - En ContentAnalysisController o crear helper
+
+#### 3. **Nueva ruta (opcional pero recomendada)**
+   - POST `/api/tareas/draft` - guardar como borrador en Paso 5
+   - Mantener POST `/tareas` para guardar completo
+
+### 📝 Manejo de Estados y Errores
+
+1. **Loading en Paso 3:**
+   - Spinner/skeleton mientras se espera análisis
+   - Timeout: mostrar mensaje "Reintenta"
+
+2. **Error en Análisis:**
+   - Botón "Reintentar"
+   - Opción de ir Manual si falla 2 veces
+
+3. **Validación entre pasos:**
+   - Paso 2: Validar título (5-255 chars) y curso seleccionado
+   - Paso 3: Validar que agente respondió correctamente
+   - Paso 4: Validar que fecha_entrega es futura
+   - Paso 5: Usar validación existente del TareaRequest
+
+4. **Navegación atrás:**
+   - Permitir en todos los pasos
+   - Mantener datos ingresados
+   - Reanalizar si vuelve a Paso 2 en modo IA
+
+### 🎨 UI/UX Detalles
+
+1. **Indicador de progreso:**
+   - Números de pasos (1/5, 2/5, etc.)
+   - Progreso bar
+   - Paso actual destacado
+
+2. **Transiciones:**
+   - Slide/fade entre pasos
+   - Validación antes de avanzar (mostrar errores)
+
+3. **Responsividad:**
+   - Mobile-first (componentes ocupan todo el ancho)
+   - Cards adaptables
+
+### 🧪 Casos de Prueba
+
+1. **Flujo IA Completo:** Selector → Título/Curso → Análisis OK → Revisión → Formulario → Publicar
+2. **Flujo Manual:** Selector → (salta Análisis) → Formulario completo → Publicar
+3. **Error en Análisis:** Paso 3 falla → Reintentar → OK
+4. **Ediciones en Revisión:** Cambiar tiempo estimado → Fecha auto-actualiza
+5. **Navegación atrás:** En cualquier paso, volver → Datos persisten
+6. **Guardar borrador:** Paso 5 → Guardar como borrador → Recuperable después
+
+### 📦 Archivo de Configuración (JSON)
+
+```json
+{
+  "wizard": {
+    "steps": 5,
+    "allowBackNavigation": true,
+    "persistData": true,
+    "timeoutSeconds": 15
+  },
+  "defaults": {
+    "puntuacion": 100,
+    "permite_archivos": true,
+    "max_archivos": 5
+  }
+}
+```
+
+### ⚠️ Consideraciones Importantes
+
+1. **Compatibilidad Backend:** TareaController.store() debe recibir los MISMOS datos que antes
+2. **Backward Compatibility:** Formulario tradicional debe seguir siendo accesible (opción "Crear Manual")
+3. **Token CSRF:** Mantener protección en POST requests
+4. **Autenticación:** Verificar que usuario sea profesor en cada paso
+5. **Permisos:** Solo acceso a cursos propios del profesor
+
+### 📊 Respuesta Esperada del Agente
+
+Se asume que `ContentAnalysisController` retorna algo como:
+```json
+{
+  "success": true,
+  "analysis": {
+    "titulo": "...",
+    "descripcion": "...",
+    "instrucciones": "...",
+    "tiempo_estimado": 3,
+    "unidad_tiempo": "dias",
+    "dificultad": "intermedia",
+    "puntuacion_sugerida": 100,
+    "confidence": 0.85
+  }
+}
+```
+
+Si no incluye tiempo_estimado, ver con el equipo de IA qué lógica seguir.
+
+---
+
+## ✅ Validación del Plan
+
+- ¿El flujo es claro y lineal? ✓
+- ¿Los datos fluyen correctamente entre componentes? ✓
+- ¿Se mantiene compatibilidad con backend? ✓
+- ¿Buen UX con carga mínima por paso? ✓
+- ¿Manejo robusto de errores? ✓

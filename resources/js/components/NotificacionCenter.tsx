@@ -10,7 +10,7 @@
  */
 
 import React, { useEffect, useState, useCallback } from 'react'
-import { Bell, X, CheckCheck, ChevronDown } from 'lucide-react'
+import { Bell, X, CheckCheck, ChevronDown, Pause, Play } from 'lucide-react'
 import notificacionesApi from '@/services/notificacionesApi'
 import notificationService from '@/services/notification.service'
 import { useNotificationPolling } from '@/hooks/useNotificationPolling'
@@ -35,11 +35,19 @@ export default function NotificacionCenter() {
     const [abierto, setAbierto] = useState(false)
     const [cargando, setCargando] = useState(true)
     const [conectado, setConectado] = useState(true) // Siempre conectado con polling
+
+    // En desarrollo, desactivar polling por defecto para limpiar la consola
+    // En producción, habilitar polling automáticamente
+    const isDevelopment = import.meta.env.DEV
+    const [pollingEnabled, setPollingEnabled] = useState(!isDevelopment)
+
     const previousNoLeidasRef = React.useRef<number>(0)
+    const pollingControlRef = React.useRef<any>(null)
 
     // Usar hook de polling para notificaciones
-    useNotificationPolling({
-        intervalMs: 3000, // Poll cada 3 segundos
+    const pollingControl = useNotificationPolling({
+        intervalMs: 30000, // Poll cada 30 segundos (reducido de 3 segundos para mejor performance)
+        enabled: pollingEnabled, // Pasar el estado de habilitación
         onNotificacionesChange: (notificaciones) => {
             setNotificaciones(notificaciones)
 
@@ -69,8 +77,24 @@ export default function NotificacionCenter() {
         },
     })
 
+    // Guardar referencia al control de polling
+    pollingControlRef.current = pollingControl
+
     // Con polling, no necesitamos conexión SSE - el hook maneja todo
 
+
+    /**
+     * Alternar estado de polling
+     */
+    const togglePollingService = useCallback(() => {
+        const newState = !pollingEnabled
+        setPollingEnabled(newState)
+        notificationService.success(
+            newState ? 'Notificaciones habilitadas' : 'Notificaciones pausadas'
+        )
+        const modeInfo = isDevelopment ? ' (MODO DESARROLLO: desactivadas por defecto para limpiar consola)' : ''
+        console.debug(`[NotificacionCenter] Polling ${newState ? 'habilitado' : 'deshabilitado'}${modeInfo}`)
+    }, [pollingEnabled, isDevelopment])
 
     /**
      * Marcar notificación como leída
@@ -206,6 +230,21 @@ export default function NotificacionCenter() {
                                 </button>
                             )}
                             <button
+                                onClick={togglePollingService}
+                                className={`p-1 rounded transition-colors ${
+                                    pollingEnabled
+                                        ? 'hover:bg-blue-100 text-blue-600'
+                                        : 'hover:bg-yellow-100 text-yellow-600'
+                                }`}
+                                title={pollingEnabled ? 'Pausar notificaciones' : 'Reanudar notificaciones'}
+                            >
+                                {pollingEnabled ? (
+                                    <Pause className="w-4 h-4" />
+                                ) : (
+                                    <Play className="w-4 h-4" />
+                                )}
+                            </button>
+                            <button
                                 onClick={() => setAbierto(false)}
                                 className="p-1 hover:bg-gray-100 rounded transition-colors"
                             >
@@ -213,6 +252,16 @@ export default function NotificacionCenter() {
                             </button>
                         </div>
                     </div>
+
+                    {/* Estado de polling */}
+                    {!pollingEnabled && (
+                        <div className="px-4 py-2 bg-yellow-50 border-b border-yellow-200 flex items-center gap-2">
+                            <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                            <span className="text-xs text-yellow-700 font-medium">
+                                {isDevelopment ? 'Notificaciones desactivadas (modo dev - cliquea para habilitar)' : 'Notificaciones pausadas'}
+                            </span>
+                        </div>
+                    )}
 
                     {/* Lista de notificaciones */}
                     <div className="max-h-96 overflow-y-auto">

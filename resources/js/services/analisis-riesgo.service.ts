@@ -1,7 +1,15 @@
 import axios, { AxiosInstance } from 'axios';
 
 /**
- * Tipos para el módulo de Análisis de Riesgo
+ * Tipos para el módulo de Monitoreo de Desempeño Académico
+ *
+ * Este módulo predice la probabilidad de bajo desempeño académico en estudiantes
+ * basado en: calificaciones, comportamiento académico y tendencias de desempeño.
+ *
+ * Niveles de riesgo:
+ * - Alto: > 70% de probabilidad de bajo desempeño
+ * - Medio: 40-70% de probabilidad
+ * - Bajo: < 40% de probabilidad
  */
 
 export interface PrediccionRiesgo {
@@ -151,8 +159,15 @@ export interface TendenciasResponse {
 }
 
 /**
- * Servicio para Análisis de Riesgo
- * Maneja todas las operaciones con la API de análisis de riesgo
+ * Servicio para Monitoreo de Desempeño Académico
+ *
+ * Maneja todas las operaciones con la API de predicción de bajo desempeño.
+ *
+ * Este servicio predice la probabilidad de que un estudiante tenga bajo desempeño
+ * académico (promedio < 3.0) basándose en:
+ * - Historial de calificaciones
+ * - Comportamiento académico (asistencia, entregas de trabajos, etc.)
+ * - Tendencia de desempeño (mejorando, estable, declinando)
  */
 class AnalisisRiesgoService {
   private api: AxiosInstance;
@@ -168,7 +183,12 @@ class AnalisisRiesgoService {
   }
 
   /**
-   * Obtener dashboard con métricas generales
+   * Obtener dashboard con métricas generales de desempeño
+   *
+   * Retorna:
+   * - Distribución de estudiantes por nivel de probabilidad de bajo desempeño
+   * - Estudiantes que necesitan apoyo urgente (probabilidad > 70%)
+   * - Estadísticas generales
    */
   async dashboard(filters?: {
     curso_id?: number;
@@ -184,7 +204,10 @@ class AnalisisRiesgoService {
   }
 
   /**
-   * Listar predicciones con filtros y paginación
+   * Listar predicciones de desempeño con filtros y paginación
+   *
+   * Retorna lista de estudiantes con su probabilidad de bajo desempeño,
+   * filtrada por curso, nivel de probabilidad, y otros criterios.
    */
   async listarPredicciones(options?: {
     page?: number;
@@ -205,7 +228,12 @@ class AnalisisRiesgoService {
   }
 
   /**
-   * Obtener análisis detallado de un estudiante
+   * Obtener análisis detallado de desempeño de un estudiante
+   *
+   * Retorna:
+   * - Predicción actual de bajo desempeño
+   * - Histórico de desempeño
+   * - Tendencias y recomendaciones de apoyo
    */
   async analisEstudiante(
     estudianteId: number,

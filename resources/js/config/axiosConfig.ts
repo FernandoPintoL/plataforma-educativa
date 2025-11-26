@@ -9,6 +9,8 @@
  */
 
 import axios from 'axios';
+import { setupHttpInterceptors } from '@/utils/httpInterceptor';
+import { logger } from '@/utils/logger';
 
 let apiToken: string | null = null;
 
@@ -176,6 +178,9 @@ function getCookie(name: string): string | null {
   }
   return null;
 }
+
+// Setup HTTP logging interceptors (logs all requests and responses)
+setupHttpInterceptors(axiosInstance);
 
 // Export both the axios instance and the token getter
 export default axiosInstance;

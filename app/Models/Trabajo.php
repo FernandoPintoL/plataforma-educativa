@@ -49,14 +49,6 @@ class Trabajo extends Model
     }
 
     /**
-     * Relación con la tarea (a través de contenido)
-     */
-    public function tarea()
-    {
-        return $this->belongsTo(Tarea::class, 'contenido_id', 'contenido_id');
-    }
-
-    /**
      * Relación con la calificación
      */
     public function calificacion(): HasOne

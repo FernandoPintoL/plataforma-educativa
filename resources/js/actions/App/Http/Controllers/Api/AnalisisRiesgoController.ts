@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::dashboard
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:24
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:29
  * @route '/api/analisis-riesgo/dashboard'
  */
 export const dashboard = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ dashboard.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::dashboard
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:24
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:29
  * @route '/api/analisis-riesgo/dashboard'
  */
 dashboard.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ dashboard.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::dashboard
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:24
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:29
  * @route '/api/analisis-riesgo/dashboard'
  */
 dashboard.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ dashboard.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::dashboard
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:24
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:29
  * @route '/api/analisis-riesgo/dashboard'
  */
 dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::dashboard
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:24
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:29
  * @route '/api/analisis-riesgo/dashboard'
  */
     const dashboardForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::dashboard
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:24
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:29
  * @route '/api/analisis-riesgo/dashboard'
  */
         dashboardForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::dashboard
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:24
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:29
  * @route '/api/analisis-riesgo/dashboard'
  */
         dashboardForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,7 +79,7 @@ dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     dashboard.form = dashboardForm
 /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::index
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:86
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:96
  * @route '/api/analisis-riesgo'
  */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::index
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:86
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:96
  * @route '/api/analisis-riesgo'
  */
 index.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::index
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:86
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:96
  * @route '/api/analisis-riesgo'
  */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -112,7 +112,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::index
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:86
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:96
  * @route '/api/analisis-riesgo'
  */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -122,7 +122,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::index
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:86
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:96
  * @route '/api/analisis-riesgo'
  */
     const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -132,7 +132,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::index
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:86
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:96
  * @route '/api/analisis-riesgo'
  */
         indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -141,7 +141,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::index
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:86
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:96
  * @route '/api/analisis-riesgo'
  */
         indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -157,7 +157,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::porEstudiante
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:152
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:164
  * @route '/api/analisis-riesgo/estudiante/{id}'
  */
 export const porEstudiante = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -172,7 +172,7 @@ porEstudiante.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::porEstudiante
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:152
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:164
  * @route '/api/analisis-riesgo/estudiante/{id}'
  */
 porEstudiante.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -200,7 +200,7 @@ porEstudiante.url = (args: { id: string | number } | [id: string | number ] | st
 
 /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::porEstudiante
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:152
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:164
  * @route '/api/analisis-riesgo/estudiante/{id}'
  */
 porEstudiante.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -209,7 +209,7 @@ porEstudiante.get = (args: { id: string | number } | [id: string | number ] | st
 })
 /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::porEstudiante
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:152
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:164
  * @route '/api/analisis-riesgo/estudiante/{id}'
  */
 porEstudiante.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -219,7 +219,7 @@ porEstudiante.head = (args: { id: string | number } | [id: string | number ] | s
 
     /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::porEstudiante
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:152
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:164
  * @route '/api/analisis-riesgo/estudiante/{id}'
  */
     const porEstudianteForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -229,7 +229,7 @@ porEstudiante.head = (args: { id: string | number } | [id: string | number ] | s
 
             /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::porEstudiante
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:152
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:164
  * @route '/api/analisis-riesgo/estudiante/{id}'
  */
         porEstudianteForm.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -238,7 +238,7 @@ porEstudiante.head = (args: { id: string | number } | [id: string | number ] | s
         })
             /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::porEstudiante
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:152
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:164
  * @route '/api/analisis-riesgo/estudiante/{id}'
  */
         porEstudianteForm.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -254,7 +254,7 @@ porEstudiante.head = (args: { id: string | number } | [id: string | number ] | s
     porEstudiante.form = porEstudianteForm
 /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::porCurso
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:257
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:269
  * @route '/api/analisis-riesgo/curso/{id}'
  */
 export const porCurso = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -269,7 +269,7 @@ porCurso.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::porCurso
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:257
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:269
  * @route '/api/analisis-riesgo/curso/{id}'
  */
 porCurso.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -297,7 +297,7 @@ porCurso.url = (args: { id: string | number } | [id: string | number ] | string 
 
 /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::porCurso
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:257
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:269
  * @route '/api/analisis-riesgo/curso/{id}'
  */
 porCurso.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -306,7 +306,7 @@ porCurso.get = (args: { id: string | number } | [id: string | number ] | string 
 })
 /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::porCurso
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:257
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:269
  * @route '/api/analisis-riesgo/curso/{id}'
  */
 porCurso.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -316,7 +316,7 @@ porCurso.head = (args: { id: string | number } | [id: string | number ] | string
 
     /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::porCurso
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:257
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:269
  * @route '/api/analisis-riesgo/curso/{id}'
  */
     const porCursoForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -326,7 +326,7 @@ porCurso.head = (args: { id: string | number } | [id: string | number ] | string
 
             /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::porCurso
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:257
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:269
  * @route '/api/analisis-riesgo/curso/{id}'
  */
         porCursoForm.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -335,7 +335,7 @@ porCurso.head = (args: { id: string | number } | [id: string | number ] | string
         })
             /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::porCurso
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:257
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:269
  * @route '/api/analisis-riesgo/curso/{id}'
  */
         porCursoForm.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -351,7 +351,7 @@ porCurso.head = (args: { id: string | number } | [id: string | number ] | string
     porCurso.form = porCursoForm
 /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::tendencias
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:376
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:388
  * @route '/api/analisis-riesgo/tendencias'
  */
 export const tendencias = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -366,7 +366,7 @@ tendencias.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::tendencias
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:376
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:388
  * @route '/api/analisis-riesgo/tendencias'
  */
 tendencias.url = (options?: RouteQueryOptions) => {
@@ -375,7 +375,7 @@ tendencias.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::tendencias
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:376
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:388
  * @route '/api/analisis-riesgo/tendencias'
  */
 tendencias.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -384,7 +384,7 @@ tendencias.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::tendencias
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:376
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:388
  * @route '/api/analisis-riesgo/tendencias'
  */
 tendencias.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -394,7 +394,7 @@ tendencias.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::tendencias
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:376
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:388
  * @route '/api/analisis-riesgo/tendencias'
  */
     const tendenciasForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -404,7 +404,7 @@ tendencias.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::tendencias
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:376
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:388
  * @route '/api/analisis-riesgo/tendencias'
  */
         tendenciasForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -413,7 +413,7 @@ tendencias.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::tendencias
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:376
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:388
  * @route '/api/analisis-riesgo/tendencias'
  */
         tendenciasForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -429,7 +429,7 @@ tendencias.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     tendencias.form = tendenciasForm
 /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::recomendacionesCarrera
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:431
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:443
  * @route '/api/analisis-riesgo/carrera/{id}'
  */
 export const recomendacionesCarrera = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -444,7 +444,7 @@ recomendacionesCarrera.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::recomendacionesCarrera
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:431
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:443
  * @route '/api/analisis-riesgo/carrera/{id}'
  */
 recomendacionesCarrera.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -472,7 +472,7 @@ recomendacionesCarrera.url = (args: { id: string | number } | [id: string | numb
 
 /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::recomendacionesCarrera
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:431
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:443
  * @route '/api/analisis-riesgo/carrera/{id}'
  */
 recomendacionesCarrera.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -481,7 +481,7 @@ recomendacionesCarrera.get = (args: { id: string | number } | [id: string | numb
 })
 /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::recomendacionesCarrera
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:431
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:443
  * @route '/api/analisis-riesgo/carrera/{id}'
  */
 recomendacionesCarrera.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -491,7 +491,7 @@ recomendacionesCarrera.head = (args: { id: string | number } | [id: string | num
 
     /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::recomendacionesCarrera
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:431
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:443
  * @route '/api/analisis-riesgo/carrera/{id}'
  */
     const recomendacionesCarreraForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -501,7 +501,7 @@ recomendacionesCarrera.head = (args: { id: string | number } | [id: string | num
 
             /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::recomendacionesCarrera
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:431
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:443
  * @route '/api/analisis-riesgo/carrera/{id}'
  */
         recomendacionesCarreraForm.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -510,7 +510,7 @@ recomendacionesCarrera.head = (args: { id: string | number } | [id: string | num
         })
             /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::recomendacionesCarrera
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:431
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:443
  * @route '/api/analisis-riesgo/carrera/{id}'
  */
         recomendacionesCarreraForm.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -526,7 +526,7 @@ recomendacionesCarrera.head = (args: { id: string | number } | [id: string | num
     recomendacionesCarrera.form = recomendacionesCarreraForm
 /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::update
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:462
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:474
  * @route '/api/analisis-riesgo/{id}'
  */
 export const update = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -541,7 +541,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::update
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:462
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:474
  * @route '/api/analisis-riesgo/{id}'
  */
 update.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -569,7 +569,7 @@ update.url = (args: { id: string | number } | [id: string | number ] | string | 
 
 /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::update
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:462
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:474
  * @route '/api/analisis-riesgo/{id}'
  */
 update.put = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -579,7 +579,7 @@ update.put = (args: { id: string | number } | [id: string | number ] | string | 
 
     /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::update
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:462
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:474
  * @route '/api/analisis-riesgo/{id}'
  */
     const updateForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -594,7 +594,7 @@ update.put = (args: { id: string | number } | [id: string | number ] | string | 
 
             /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::update
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:462
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:474
  * @route '/api/analisis-riesgo/{id}'
  */
         updateForm.put = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -610,7 +610,7 @@ update.put = (args: { id: string | number } | [id: string | number ] | string | 
     update.form = updateForm
 /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::generarPredicciones
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:484
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:496
  * @route '/api/analisis-riesgo/generar/{estudianteId}'
  */
 export const generarPredicciones = (args: { estudianteId: string | number } | [estudianteId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -625,7 +625,7 @@ generarPredicciones.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::generarPredicciones
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:484
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:496
  * @route '/api/analisis-riesgo/generar/{estudianteId}'
  */
 generarPredicciones.url = (args: { estudianteId: string | number } | [estudianteId: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -653,7 +653,7 @@ generarPredicciones.url = (args: { estudianteId: string | number } | [estudiante
 
 /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::generarPredicciones
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:484
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:496
  * @route '/api/analisis-riesgo/generar/{estudianteId}'
  */
 generarPredicciones.post = (args: { estudianteId: string | number } | [estudianteId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -663,7 +663,7 @@ generarPredicciones.post = (args: { estudianteId: string | number } | [estudiant
 
     /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::generarPredicciones
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:484
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:496
  * @route '/api/analisis-riesgo/generar/{estudianteId}'
  */
     const generarPrediccionesForm = (args: { estudianteId: string | number } | [estudianteId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -673,7 +673,7 @@ generarPredicciones.post = (args: { estudianteId: string | number } | [estudiant
 
             /**
 * @see \App\Http\Controllers\Api\AnalisisRiesgoController::generarPredicciones
- * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:484
+ * @see app/Http/Controllers/Api/AnalisisRiesgoController.php:496
  * @route '/api/analisis-riesgo/generar/{estudianteId}'
  */
         generarPrediccionesForm.post = (args: { estudianteId: string | number } | [estudianteId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

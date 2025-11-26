@@ -24,7 +24,68 @@ class AgentSynthesisService
     private const AGENT_API_URL = 'http://localhost:8003';
 
     /**
-     * Sintetizar descubrimientos ML usando agente IA
+     * NUEVO: Análisis completo integrado del estudiante
+     *
+     * Este es el método principal recomendado que:
+     * 1. Obtiene datos de supervisada (puerto 8001)
+     * 2. Obtiene datos de no_supervisado (puerto 8002)
+     * 3. Sintetiza con LLM
+     * 4. Genera estrategia de intervención
+     *
+     * Todo en una sola llamada al agente
+     */
+    public function getIntegratedStudentAnalysis(int $studentId): array
+    {
+        try {
+            Log::info("Obteniendo análisis integrado para estudiante {$studentId}");
+
+            $response = Http::timeout(30)
+                ->post(self::AGENT_API_URL . "/api/student/{$studentId}/analysis");
+
+            if (!$response->successful()) {
+                Log::warning("Agente retornó status {$response->status()}, usando fallback");
+                return $this->fallbackIntegratedAnalysis($studentId);
+            }
+
+            $result = $response->json();
+
+            Log::info("Análisis integrado completado para estudiante {$studentId}");
+
+            return [
+                'success' => true,
+                'student_id' => $studentId,
+                'ml_data' => $result['ml_data'] ?? [],
+                'synthesis' => $result['synthesis'] ?? [],
+                'intervention_strategy' => $result['intervention_strategy'] ?? [],
+                'timestamp' => $result['timestamp'] ?? now()->toIso8601String(),
+                'method' => 'integrated_agent',
+            ];
+
+        } catch (Exception $e) {
+            Log::warning("Error en análisis integrado: {$e->getMessage()}, usando fallback");
+            return $this->fallbackIntegratedAnalysis($studentId);
+        }
+    }
+
+    /**
+     * Fallback para análisis integrado cuando agente no está disponible
+     */
+    private function fallbackIntegratedAnalysis(int $studentId): array
+    {
+        return [
+            'success' => false,
+            'student_id' => $studentId,
+            'message' => 'Agent Service no disponible, usando fallback',
+            'ml_data' => [],
+            'synthesis' => $this->localSynthesis([], []),
+            'intervention_strategy' => $this->defaultInterventionResponse($studentId),
+            'timestamp' => now()->toIso8601String(),
+            'method' => 'fallback',
+        ];
+    }
+
+    /**
+     * Sintetizar descubrimientos ML usando agente IA (LEGACY)
      */
     public function synthesizeDiscoveries(
         int $studentId,

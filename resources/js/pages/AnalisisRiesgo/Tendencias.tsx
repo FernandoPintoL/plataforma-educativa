@@ -21,7 +21,7 @@ export default function Tendencias({ cursos = [] }: TendenciasProps) {
 
   const breadcrumbs = [
     { label: 'Inicio', href: '/dashboard' },
-    { label: 'Análisis de Riesgo', href: '/analisis-riesgo' },
+    { label: 'Monitoreo de Desempeño', href: '/analisis-riesgo' },
     { label: 'Tendencias' },
   ];
 

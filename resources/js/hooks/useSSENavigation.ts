@@ -1,6 +1,7 @@
 /**
  * Hook para manejar la pausa/reanudación de SSE durante navegación
  *
+ * ❌ DESHABILITADO: Se está migrando a WebSocket con Node.js
  * Pausa las notificaciones mientras se navega entre páginas para evitar
  * interferencias con la transición de Inertia.js
  */
@@ -11,6 +12,8 @@ import notificacionesApi from '@/services/notificacionesApi'
 
 export function useSSENavigation() {
     useEffect(() => {
+        // ❌ CÓDIGO DESHABILITADO - REVERB PAUSADO
+        /*
         // Pausar SSE al comenzar navegación
         const pausarEnNavegacion = () => {
             console.debug('[SSE] Navegación detectada - pausando notificaciones')
@@ -36,5 +39,6 @@ export function useSSENavigation() {
             unsubscribeBefore?.()
             unsubscribeFinish?.()
         }
+        */
     }, [])
 }

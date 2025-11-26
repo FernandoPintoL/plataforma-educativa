@@ -5,22 +5,26 @@
  * Evita los problemas de timeout de SSE en Railway.
  */
 
-import { useEffect, useRef, useCallback } from 'react'
+import { useEffect, useRef, useCallback, useState } from 'react'
 import notificacionesApi from '@/services/notificacionesApi'
 
 interface UseNotificationPollingOptions {
     intervalMs?: number // Intervalo de polling en milisegundos (default: 3000ms)
     onNotificacionesChange?: (notificaciones: any[]) => void
     onError?: (error: Error) => void
+    enabled?: boolean // Controlar si el polling está habilitado
 }
 
 export function useNotificationPolling({
     intervalMs = 3000,
     onNotificacionesChange,
     onError,
+    enabled = true,
 }: UseNotificationPollingOptions = {}) {
     const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null)
     const lastNotificationCountRef = useRef<number>(0)
+    const [isEnabled, setIsEnabled] = useState(enabled)
+    const enabledRef = useRef(enabled)
 
     // Función para obtener notificaciones
     const fetchNotificaciones = useCallback(async () => {
@@ -51,6 +55,18 @@ export function useNotificationPolling({
 
     // Iniciar polling cuando monta el componente
     useEffect(() => {
+        enabledRef.current = isEnabled
+
+        if (!isEnabled) {
+            // Si está deshabilitado, limpiar cualquier intervalo existente
+            if (pollingIntervalRef.current) {
+                clearInterval(pollingIntervalRef.current)
+                pollingIntervalRef.current = null
+            }
+            console.debug('[Polling] Deshabilitado')
+            return
+        }
+
         // Hacer fetch inmediato
         fetchNotificaciones()
 
@@ -66,7 +82,7 @@ export function useNotificationPolling({
                 console.debug('[Polling] Detenido')
             }
         }
-    }, [fetchNotificaciones, intervalMs])
+    }, [fetchNotificaciones, intervalMs, isEnabled])
 
     // Funciones públicas
     return {
@@ -81,5 +97,16 @@ export function useNotificationPolling({
             pollingIntervalRef.current = setInterval(fetchNotificaciones, newIntervalMs)
             console.debug(`[Polling] Intervalo cambiado a: ${newIntervalMs}ms`)
         },
+
+        // Toggle para habilitar/deshabilitar polling
+        togglePolling: (enabled?: boolean) => {
+            const newState = enabled !== undefined ? enabled : !isEnabled
+            setIsEnabled(newState)
+            console.debug(`[Polling] ${newState ? 'Habilitado' : 'Deshabilitado'}`)
+            return newState
+        },
+
+        // Obtener estado actual
+        isPollingEnabled: () => isEnabled,
     }
 }

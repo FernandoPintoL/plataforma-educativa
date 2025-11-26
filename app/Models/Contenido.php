@@ -72,22 +72,6 @@ class Contenido extends Model
     }
 
     /**
-     * Relación con tarea específica
-     */
-    public function tarea(): HasMany
-    {
-        return $this->hasMany(Tarea::class);
-    }
-
-    /**
-     * Relación con evaluación específica
-     */
-    public function evaluacion(): HasMany
-    {
-        return $this->hasMany(Evaluacion::class);
-    }
-
-    /**
      * Publicar el contenido
      */
     public function publicar(): void

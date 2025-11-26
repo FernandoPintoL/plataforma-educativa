@@ -12,7 +12,10 @@ use Illuminate\Support\Facades\Auth;
 class MiPerfilController extends Controller
 {
     /**
-     * Obtener datos de riesgo personal del estudiante autenticado
+     * Obtener datos de desempeño personal del estudiante autenticado
+     *
+     * Retorna la predicción de bajo desempeño académico, factores influyentes
+     * y recomendaciones personalizadas para apoyo académico.
      */
     public function getRiesgo(Request $request)
     {
@@ -63,27 +66,20 @@ class MiPerfilController extends Controller
         // Datos de tendencia simulados
         $trendData = [
             'labels' => $this->generarUltimosMeses(12),
-            'scores' => $this->generarPuntuacionesTendencia($prediccionRiesgo->score_riesgo),
+            'scores' => $this->generarPuntuacionesTendencia($prediccionRiesgo->score_riesgo * 100),
         ];
 
         // Factores que influyen (simulados basados en datos disponibles)
         $factors = $this->obtenerFactoresInfluyentes($user->id);
 
         // Recomendaciones personalizadas
-        $recommendations = $this->obtenerRecomendaciones($prediccionRiesgo->risk_level);
-
-        // Mapear nivel de riesgo
-        $riskLevelMap = [
-            'ALTO' => 'alto',
-            'MEDIO' => 'medio',
-            'BAJO' => 'bajo',
-        ];
+        $recommendations = $this->obtenerRecomendaciones($prediccionRiesgo->nivel_riesgo);
 
         return response()->json([
             'student_id' => $user->id,
-            'risk_score' => (float) $prediccionRiesgo->risk_score,
-            'risk_level' => strtolower($prediccionRiesgo->risk_level ?? 'medio'),
-            'confidence' => (float) $prediccionRiesgo->confidence_score,
+            'risk_score' => (float) $prediccionRiesgo->score_riesgo,
+            'risk_level' => strtolower($prediccionRiesgo->nivel_riesgo ?? 'medio'),
+            'confidence' => (float) $prediccionRiesgo->confianza,
             'trend' => 'estable',
             'last_update' => $prediccionRiesgo->fecha_prediccion?->toIso8601String(),
             'trend_data' => $trendData,
@@ -254,24 +250,24 @@ class MiPerfilController extends Controller
      */
     private function obtenerRecomendaciones($riskLevel): array
     {
-        $level = strtolower($riskLevel ?? 'medium');
+        $level = strtolower($riskLevel ?? 'medio');
 
         $recomendaciones = [
-            'high' => [
+            'alto' => [
                 'Habla con tu profesor o director académico sobre tu desempeño',
                 'Dedica más tiempo a estudiar, especialmente en las áreas débiles',
                 'Solicita tutorías o apoyo académico adicional',
                 'Revisa tu método de estudio y considera cambios en tu rutina',
                 'Participa activamente en clase y haz preguntas cuando no entiendas',
             ],
-            'medium' => [
+            'medio' => [
                 'Mantén el enfoque en tus estudios e identifica áreas para mejorar',
                 'Establece metas académicas específicas y realistas',
                 'Solicita retroalimentación a tus profesores sobre tu desempeño',
                 'Organiza tu tiempo de estudio de manera más efectiva',
                 'Considera formar un grupo de estudio con compañeros',
             ],
-            'low' => [
+            'bajo' => [
                 'Continúa con tu buen desempeño académico',
                 'Mantén tu disciplina y dedicación a los estudios',
                 'Considera ayudar a compañeros que necesiten apoyo',
@@ -280,6 +276,6 @@ class MiPerfilController extends Controller
             ],
         ];
 
-        return $recomendaciones[$level] ?? $recomendaciones['medium'];
+        return $recomendaciones[$level] ?? $recomendaciones['medio'];
     }
 }

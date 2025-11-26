@@ -165,7 +165,7 @@ export default function HijoRiesgoPage({ hijoId }: RouteParams) {
     if (loading) {
         return (
             <AppLayout>
-                <Head title="Análisis de Riesgo - Hijo" />
+                <Head title="Monitoreo de Desempeño - Hijo" />
                 <div className="space-y-4">
                     <div className="h-10 bg-gray-200 rounded w-1/4 animate-pulse"></div>
                     <div className="h-32 bg-gray-200 rounded animate-pulse"></div>
@@ -178,7 +178,7 @@ export default function HijoRiesgoPage({ hijoId }: RouteParams) {
     if (error) {
         return (
             <AppLayout>
-                <Head title="Análisis de Riesgo - Hijo" />
+                <Head title="Monitoreo de Desempeño - Hijo" />
                 <div className="max-w-4xl mx-auto">
                     <Link href="/dashboard" className="flex items-center gap-2 text-blue-600 hover:underline mb-6">
                         <ArrowLeft className="w-4 h-4" />
@@ -197,7 +197,7 @@ export default function HijoRiesgoPage({ hijoId }: RouteParams) {
     if (!riskData) {
         return (
             <AppLayout>
-                <Head title="Análisis de Riesgo - Hijo" />
+                <Head title="Monitoreo de Desempeño - Hijo" />
                 <div className="max-w-4xl mx-auto">
                     <Link href="/dashboard" className="flex items-center gap-2 text-blue-600 hover:underline mb-6">
                         <ArrowLeft className="w-4 h-4" />
@@ -228,7 +228,7 @@ export default function HijoRiesgoPage({ hijoId }: RouteParams) {
 
                 {/* Header */}
                 <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900">Análisis de Riesgo Académico</h1>
+                    <h1 className="text-3xl font-bold text-gray-900">Monitoreo de Desempeño Académico</h1>
                     <p className="text-gray-500 mt-2">
                         {riskData.student_name} • Última actualización: {new Date(riskData.last_update).toLocaleDateString('es-ES', {
                             weekday: 'long',

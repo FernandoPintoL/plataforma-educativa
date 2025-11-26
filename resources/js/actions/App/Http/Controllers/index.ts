@@ -1,5 +1,6 @@
 import Api from './Api'
 import RecommendationController from './RecommendationController'
+import MLAnalysisController from './MLAnalysisController'
 import UserController from './UserController'
 import RoleController from './RoleController'
 import PermissionController from './PermissionController'
@@ -27,6 +28,7 @@ import DashboardAlertsController from './DashboardAlertsController'
 const Controllers = {
     Api,
 RecommendationController,
+MLAnalysisController,
 UserController,
 RoleController,
 PermissionController,

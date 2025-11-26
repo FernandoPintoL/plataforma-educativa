@@ -167,8 +167,8 @@ class TareaController extends Controller
             DB::commit();
 
             return redirect()
-                ->route('tareas.show', $tarea->id)
-                ->with('success', 'Tarea creada exitosamente.');
+                ->route('tareas.index')
+                ->with('success', 'Tarea "' . $request->titulo . '" publicada exitosamente.');
 
         } catch (\Exception $e) {
             DB::rollBack();

@@ -15,6 +15,8 @@ use App\Http\Controllers\Api\ClusteringController;
 use App\Http\Controllers\Api\DiscoveryOrchestrationController;
 use App\Http\Controllers\Api\AgentController;
 use App\Http\Controllers\RecommendationController;
+use App\Http\Controllers\MLAnalysisController;
+use App\Http\Controllers\Api\ContentAnalysisController;
 
 /**
  * API Routes
@@ -45,6 +47,38 @@ Route::middleware(['api'])->get('/debug-auth', function (\Illuminate\Http\Reques
             'PHPSESSID' => $request->cookie('PHPSESSID') ? 'present' : 'missing',
             'XSRF-TOKEN' => $request->cookie('XSRF-TOKEN') ? 'present' : 'missing',
             'laravel_session' => $request->cookie('laravel_session') ? 'present' : 'missing',
+        ],
+    ]);
+});
+
+// Debug route para diagnosticar mi-perfil
+Route::middleware(['api'])->get('/debug-mi-perfil', function (\Illuminate\Http\Request $request) {
+    $user = \Illuminate\Support\Facades\Auth::user();
+
+    if (!$user) {
+        return response()->json([
+            'error' => 'No authenticated user',
+            'auth_check' => \Illuminate\Support\Facades\Auth::check(),
+            'user' => null,
+        ]);
+    }
+
+    $prediccion = \App\Models\PrediccionRiesgo::where('estudiante_id', $user->id)
+        ->orderBy('fecha_prediccion', 'desc')
+        ->first();
+
+    return response()->json([
+        'authenticated_user_id' => $user->id,
+        'user_type' => $user->tipo_usuario ?? 'sin tipo',
+        'user_name' => $user->name ?? 'sin nombre',
+        'has_prediction' => !!$prediccion,
+        'prediction_id' => $prediccion?->id,
+        'prediction_nivel_riesgo' => $prediccion?->nivel_riesgo,
+        'prediction_score_riesgo' => $prediccion?->score_riesgo,
+        'total_predictions' => \App\Models\PrediccionRiesgo::where('estudiante_id', $user->id)->count(),
+        'guards' => [
+            'web' => auth('web')->check(),
+            'sanctum' => auth('sanctum')->check(),
         ],
     ]);
 });
@@ -188,22 +222,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
         // Eliminar notificación
         Route::delete('{notificacion}', [NotificacionController::class, 'eliminar'])
             ->name('eliminar');
-    });
-
-    /**
-     * Rutas para Mi Perfil - Datos personales del estudiante autenticado
-     * Acceso para estudiantes y padres (padres pueden ver datos de hijos)
-     */
-    Route::prefix('mi-perfil')->name('mi-perfil.')->group(function () {
-        // Obtener datos de riesgo personal (solo estudiante autenticado)
-        Route::get('riesgo', [MiPerfilController::class, 'getRiesgo'])
-            ->middleware('role:estudiante')
-            ->name('riesgo');
-
-        // Obtener recomendaciones de carreras (solo estudiante)
-        Route::get('carreras', [MiPerfilController::class, 'getCarreras'])
-            ->middleware('role:estudiante')
-            ->name('carreras');
     });
 
     /**
@@ -363,6 +381,37 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
     /**
+     * Rutas para ML Analysis (NUEVO: Análisis Integrado)
+     * Coordina supervisada + no_supervisado + síntesis LLM
+     * Acceso: profesores, admin
+     */
+    Route::prefix('ml')->name('ml.')->middleware('role:profesor|admin')->group(function () {
+        // Análisis completo integrado del estudiante
+        Route::get('student/{studentId}/analysis', [MLAnalysisController::class, 'getIntegratedAnalysis'])
+            ->name('analysis.integrated');
+
+        // Solo predicciones (supervisada)
+        Route::get('student/{studentId}/predictions', [MLAnalysisController::class, 'getPredictions'])
+            ->name('analysis.predictions');
+
+        // Solo clustering (no_supervisado)
+        Route::get('student/{studentId}/clustering', [MLAnalysisController::class, 'getClustering'])
+            ->name('analysis.clustering');
+
+        // Análisis en lote para múltiples estudiantes
+        Route::post('batch-analysis', [MLAnalysisController::class, 'batchAnalysis'])
+            ->name('batch-analysis');
+
+        // Verificar salud del ML System
+        Route::post('health', [MLAnalysisController::class, 'checkMLHealth'])
+            ->name('health');
+
+        // Información del ML System
+        Route::get('info', [MLAnalysisController::class, 'getMLInfo'])
+            ->name('info');
+    });
+
+    /**
      * Rutas para Agent Service (Síntesis LLM)
      * Sintetiza descubrimientos usando LLM (Groq)
      * Acceso: profesores, admin
@@ -396,4 +445,50 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('test', [AgentController::class, 'test'])
             ->name('test');
     });
+
+});
+
+/**
+ * Rutas para Análisis de Contenido (Tareas y Evaluaciones)
+ * FUERA del grupo auth:sanctum para permitir autenticación por sesión desde React SPA
+ * Usa middleware 'auth' en lugar de 'auth:sanctum'
+ *
+ * Servicio para generar sugerencias de contenido usando IA
+ * Acceso: profesores, admin
+ */
+Route::middleware(['api', 'auth'])->prefix('content')->name('content.')->middleware('role:profesor|admin')->group(function () {
+    // Analizar contenido y obtener sugerencias
+    Route::post('analyze', [ContentAnalysisController::class, 'analyze'])
+        ->name('analyze');
+
+    // Verificar salud del servicio de análisis
+    Route::get('health', [ContentAnalysisController::class, 'health'])
+        ->name('health');
+});
+
+/**
+ * Rutas para Mi Perfil - Datos personales del estudiante autenticado
+ * FUERA del grupo auth:sanctum para permitir autenticación por sesión desde React SPA
+ * Usa middleware 'auth' en lugar de 'auth:sanctum'
+ */
+
+// Endpoint de prueba para diagnosticar
+Route::middleware(['api', 'auth'])->get('/mi-perfil-test', function () {
+    return response()->json([
+        'message' => 'Test endpoint working',
+        'user' => \Illuminate\Support\Facades\Auth::user(),
+        'timestamp' => now(),
+    ]);
+})->name('mi-perfil.test');
+
+Route::middleware(['api', 'auth'])->prefix('mi-perfil')->name('mi-perfil.')->group(function () {
+    // Obtener datos de riesgo personal (solo estudiante autenticado)
+    Route::get('riesgo', [MiPerfilController::class, 'getRiesgo'])
+        ->middleware('role:estudiante')
+        ->name('riesgo');
+
+    // Obtener recomendaciones de carreras (solo estudiante)
+    Route::get('carreras', [MiPerfilController::class, 'getCarreras'])
+        ->middleware('role:estudiante')
+        ->name('carreras');
 });
