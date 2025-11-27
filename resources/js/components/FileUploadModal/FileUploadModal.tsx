@@ -67,7 +67,7 @@ export const FileUploadModal: React.FC<FileUploadModalProps> = ({
     if (!open) {
       fileUpload.clearFiles();
     }
-  }, [open, fileUpload]);
+  }, [open]);
 
   /**
    * Maneja el envío del formulario

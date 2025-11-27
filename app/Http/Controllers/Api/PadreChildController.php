@@ -110,14 +110,14 @@ class PadreChildController extends Controller
         $factors = $this->obtenerFactoresInfluyentes($hijoId);
 
         // Recomendaciones
-        $recommendations = $this->obtenerRecomendaciones($prediccionRiesgo->risk_level);
+        $recommendations = $this->obtenerRecomendaciones($prediccionRiesgo->nivel_riesgo);
 
         return response()->json([
             'student_id' => $hijoId,
             'student_name' => $hijo->name,
-            'risk_score' => (float) $prediccionRiesgo->risk_score,
-            'risk_level' => strtolower($prediccionRiesgo->risk_level ?? 'medio'),
-            'confidence' => (float) $prediccionRiesgo->confidence_score,
+            'risk_score' => (float) $prediccionRiesgo->score_riesgo,
+            'risk_level' => strtolower($prediccionRiesgo->nivel_riesgo ?? 'medio'),
+            'confidence' => (float) $prediccionRiesgo->confianza,
             'trend' => 'estable',
             'last_update' => $prediccionRiesgo->fecha_prediccion?->toIso8601String(),
             'trend_data' => $trendData,

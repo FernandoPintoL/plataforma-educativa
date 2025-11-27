@@ -339,8 +339,8 @@ export default function ReportesRiesgo({
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {estudiantes_mayor_riesgo.map((est) => (
-                      <tr key={est.id} className="hover:bg-gray-50 transition-colors">
+                    {estudiantes_mayor_riesgo.map((est, idx) => (
+                      <tr key={`${est.id}-${idx}`} className="hover:bg-gray-50 transition-colors">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center gap-3">
                             <div className="h-10 w-10 bg-red-100 rounded-full flex items-center justify-center">
@@ -395,9 +395,9 @@ export default function ReportesRiesgo({
           <div className="bg-white rounded-2xl shadow-lg p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Análisis Detallado de Carreras</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {carreras_recomendadas.map((carrera, idx) => (
+              {carreras_recomendadas.map((carrera) => (
                 <div
-                  key={idx}
+                  key={carrera.nombre}
                   className="border-2 border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow"
                 >
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">{carrera.nombre}</h3>

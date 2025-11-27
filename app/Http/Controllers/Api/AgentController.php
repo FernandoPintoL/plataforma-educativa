@@ -32,49 +32,55 @@ class AgentController extends Controller
      *
      * POST /api/agent/synthesize/{studentId}
      *
-     * Request body:
+     * Request body (optional):
      * {
      *   "discoveries": {...},
      *   "predictions": {...},
      *   "context": "unified_learning_pipeline"
      * }
+     *
+     * This endpoint uses the integrated analysis method which:
+     * 1. Fetches ML predictions and discoveries
+     * 2. Synthesizes with LLM (Groq)
+     * 3. Generates intervention strategies
+     * 4. Has fallback to local synthesis
      */
     public function synthesize(Request $request, int $studentId): JsonResponse
     {
         try {
             Log::info("Agent synthesis requested for student {$studentId}");
 
-            // Validate input
-            $validator = Validator::make($request->all(), [
-                'discoveries' => 'sometimes|array',
-                'predictions' => 'sometimes|array',
-                'context' => 'sometimes|string|max:255',
-            ]);
+            // Call the new integrated analysis method
+            // This handles everything: ML data fetching, LLM synthesis, and fallback
+            $result = $this->agentService->getIntegratedStudentAnalysis($studentId);
 
-            if ($validator->fails()) {
+            if (!($result['success'] ?? false)) {
+                Log::warning("Integrated analysis failed for student {$studentId}");
                 return response()->json([
                     'success' => false,
-                    'message' => 'Validation failed',
-                    'errors' => $validator->errors(),
-                ], 422);
-            }
-
-            // Call agent service
-            $result = $this->agentService->synthesizeDiscoveries(
-                $studentId,
-                $request->input('discoveries', []),
-                $request->input('predictions', []),
-                $request->input('context', 'unified_learning_pipeline')
-            );
-
-            if (!$result['success'] ?? false) {
-                return response()->json([
-                    'success' => false,
-                    'message' => $result['message'] ?? 'Synthesis failed',
+                    'message' => $result['message'] ?? 'Analysis failed',
                 ], 500);
             }
 
-            return response()->json($result);
+            // Return the synthesis in the expected format for the frontend
+            // The Vue component expects: synthesis.synthesis.insights
+            $synthesis = $result['synthesis'] ?? [];
+
+            return response()->json([
+                'success' => true,
+                'synthesis' => [
+                    'synthesis' => [
+                        'insights' => $synthesis['synthesis']['insights'] ?? $synthesis['insights'] ?? [],
+                        'recommendations' => $synthesis['synthesis']['recommendations'] ?? $synthesis['recommendations'] ?? [],
+                        'text' => $synthesis['synthesis']['text'] ?? '',
+                    ],
+                    'reasoning' => $synthesis['reasoning'] ?? [],
+                    'confidence' => $synthesis['confidence'] ?? 0,
+                ],
+                'confidence' => $synthesis['confidence'] ?? 0,
+                'reasoning' => $synthesis['reasoning'] ?? [],
+                'method' => $result['method'] ?? 'fallback',
+            ]);
 
         } catch (\Exception $e) {
             Log::error("Error in synthesis: {$e->getMessage()}");

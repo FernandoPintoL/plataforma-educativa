@@ -7,15 +7,41 @@ use App\Models\Contenido;
 use App\Models\Curso;
 use App\Models\Pregunta;
 use App\Models\Trabajo;
+use App\Models\User;
 use App\Http\Requests\StoreEvaluacionRequest;
 use App\Http\Requests\UpdateEvaluacionRequest;
 use App\Http\Requests\StoreRespuestaRequest;
+use App\Services\ConceptTopicModelingService;
+use App\Services\CorrelationAnalysisService;
+use App\Services\AnomalyDetectionService;
+use App\Services\EducationalRecommendationService;
+use App\Services\AgentSynthesisService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class EvaluacionController extends Controller
 {
+    protected ConceptTopicModelingService $conceptService;
+    protected CorrelationAnalysisService $correlationService;
+    protected AnomalyDetectionService $anomalyService;
+    protected EducationalRecommendationService $recommendationService;
+    protected AgentSynthesisService $agentService;
+
+    public function __construct(
+        ConceptTopicModelingService $conceptService,
+        CorrelationAnalysisService $correlationService,
+        AnomalyDetectionService $anomalyService,
+        EducationalRecommendationService $recommendationService,
+        AgentSynthesisService $agentService
+    ) {
+        $this->conceptService = $conceptService;
+        $this->correlationService = $correlationService;
+        $this->anomalyService = $anomalyService;
+        $this->recommendationService = $recommendationService;
+        $this->agentService = $agentService;
+    }
     /**
      * Display a listing of the resource.
      */
@@ -121,7 +147,32 @@ class EvaluacionController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Mostrar wizard para crear evaluaciones con IA
+     *
+     * Renderiza una página con un asistente paso a paso para crear evaluaciones,
+     * incluyendo generación automática de preguntas con IA.
+     *
+     * @return \Inertia\Response
+     */
+    public function wizard()
+    {
+        $user = auth()->user();
+
+        // Solo profesores pueden crear evaluaciones
+        if (!$user->esProfesor()) {
+            abort(403, 'No tienes permiso para crear evaluaciones.');
+        }
+
+        $cursos = $user->cursosComoProfesor()->get();
+
+        return Inertia::render('Evaluaciones/EvaluacionWizard', [
+            'cursos' => $cursos,
+        ]);
+    }
+
+    /**
+     * Store a newly created resource in storage (ML-ENHANCED)
+     * Agrega análisis automático de preguntas con ML
      */
     public function store(StoreEvaluacionRequest $request)
     {
@@ -152,19 +203,10 @@ class EvaluacionController extends Controller
                 'max_reintentos' => $request->max_reintentos ?? 1,
             ]);
 
-            // Crear preguntas si se proporcionaron
+            // ANÁLISIS ML DE PREGUNTAS
+            $analisis_ml = null;
             if ($request->has('preguntas') && is_array($request->preguntas)) {
-                foreach ($request->preguntas as $index => $preguntaData) {
-                    Pregunta::create([
-                        'evaluacion_id' => $evaluacion->id,
-                        'enunciado' => $preguntaData['enunciado'],
-                        'tipo' => $preguntaData['tipo'],
-                        'opciones' => $preguntaData['opciones'] ?? null,
-                        'respuesta_correcta' => $preguntaData['respuesta_correcta'],
-                        'puntos' => $preguntaData['puntos'],
-                        'orden' => $index + 1,
-                    ]);
-                }
+                $analisis_ml = $this->analizarYCrearPreguntas($evaluacion, $request->preguntas);
             }
 
             // Si la evaluación se publica, notificar a estudiantes
@@ -202,7 +244,8 @@ class EvaluacionController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified resource (ML-ENHANCED)
+     * Enriquece con análisis de patrones, anomalías, correlaciones
      */
     public function show(Evaluacion $evaluacione)
     {
@@ -237,10 +280,21 @@ class EvaluacionController extends Controller
                 ->latest()
                 ->first();
 
+            // ENRIQUECIMIENTO ML para estudiante
+            $ml_insights = [];
+            if ($trabajo && $trabajo->calificacion) {
+                try {
+                    $ml_insights = $this->enriquecerResultadosEstudiante($trabajo, $evaluacione, $user);
+                } catch (\Exception $e) {
+                    Log::warning("Error enriqueciendo resultados: {$e->getMessage()}");
+                }
+            }
+
             return Inertia::render('Evaluaciones/Show', [
                 'evaluacion' => $evaluacione,
                 'trabajo' => $trabajo,
                 'estadisticas' => null,
+                'ml_insights' => $ml_insights,
             ]);
         } elseif ($user->esProfesor()) {
             // Profesor solo puede ver sus propias evaluaciones
@@ -248,19 +302,22 @@ class EvaluacionController extends Controller
                 abort(403, 'No tienes acceso a esta evaluación.');
             }
 
+            // ENRIQUECIMIENTO ML para profesor
+            $ml_analysis = [];
+            try {
+                $ml_analysis = $this->analizarEvaluacionML($evaluacione);
+            } catch (\Exception $e) {
+                Log::warning("Error analizando evaluación: {$e->getMessage()}");
+            }
+
             // Obtener estadísticas de la evaluación
             $estadisticas = $evaluacione->obtenerEstadisticas();
-
-            // Obtener trabajos con calificaciones
-            $trabajos = $evaluacione->contenido->trabajos()
-                ->with(['estudiante', 'calificacion'])
-                ->get();
 
             return Inertia::render('Evaluaciones/Show', [
                 'evaluacion' => $evaluacione,
                 'trabajo' => null,
                 'estadisticas' => $estadisticas,
-                'trabajos' => $trabajos,
+                'ml_analysis' => $ml_analysis,
             ]);
         }
 
@@ -567,5 +624,362 @@ class EvaluacionController extends Controller
             'trabajo' => $trabajo,
             'mostrar_respuestas' => $evaluacione->mostrar_respuestas,
         ]);
+    }
+
+    /**
+     * ====================================
+     * MÉTODOS PRIVADOS DE ANÁLISIS ML
+     * ====================================
+     */
+
+    /**
+     * Analizar y crear preguntas con análisis ML
+     */
+    private function analizarYCrearPreguntas(Evaluacion $evaluacion, array $preguntas): array
+    {
+        $analisis_completo = [
+            'preguntas_analizadas' => [],
+            'dificultad_promedio' => 0,
+            'balance_evaluado' => true,
+            'recomendaciones' => [],
+        ];
+
+        try {
+            foreach ($preguntas as $index => $preguntaData) {
+                // Crear pregunta
+                $pregunta = Pregunta::create([
+                    'evaluacion_id' => $evaluacion->id,
+                    'enunciado' => $preguntaData['enunciado'],
+                    'tipo' => $preguntaData['tipo'],
+                    'opciones' => $preguntaData['opciones'] ?? null,
+                    'respuesta_correcta' => $preguntaData['respuesta_correcta'],
+                    'puntos' => $preguntaData['puntos'],
+                    'orden' => $index + 1,
+                ]);
+
+                // Analizar dificultad de la pregunta
+                $dificultad = $this->analizarDificultadPregunta($pregunta);
+
+                $analisis_completo['preguntas_analizadas'][] = [
+                    'pregunta_id' => $pregunta->id,
+                    'dificultad' => $dificultad,
+                    'conceptos' => $this->extraerConceptosPreguntas($pregunta),
+                ];
+            }
+
+            // Calcular dificultad promedio
+            if (!empty($analisis_completo['preguntas_analizadas'])) {
+                $dificultades = array_column($analisis_completo['preguntas_analizadas'], 'dificultad');
+                $analisis_completo['dificultad_promedio'] = array_sum($dificultades) / count($dificultades);
+            }
+
+            // Validar balance de dificultad
+            $analisis_completo['balance_evaluado'] = $this->validarBalanceDificultad($analisis_completo['preguntas_analizadas']);
+
+            // Generar recomendaciones
+            if ($analisis_completo['dificultad_promedio'] > 0.8) {
+                $analisis_completo['recomendaciones'][] = 'La evaluación es muy difícil. Considera agregar preguntas más fáciles.';
+            }
+            if ($analisis_completo['dificultad_promedio'] < 0.3) {
+                $analisis_completo['recomendaciones'][] = 'La evaluación es muy fácil. Considera agregar preguntas más difíciles.';
+            }
+
+        } catch (\Exception $e) {
+            Log::warning("Error analizando preguntas: {$e->getMessage()}");
+        }
+
+        return $analisis_completo;
+    }
+
+    /**
+     * Analizar dificultad de una pregunta
+     */
+    private function analizarDificultadPregunta(Pregunta $pregunta): float
+    {
+        $dificultad = 0.5; // Default
+
+        // Estimar basado en tipo de pregunta
+        $mapeo_dificultad = [
+            'verdadero_falso' => 0.3,
+            'opcion_multiple' => 0.5,
+            'respuesta_corta' => 0.6,
+            'desarrollo' => 0.8,
+        ];
+
+        if (isset($mapeo_dificultad[$pregunta->tipo])) {
+            $dificultad = $mapeo_dificultad[$pregunta->tipo];
+        }
+
+        // Ajustar según puntos (más puntos = más difícil)
+        if ($pregunta->puntos && $pregunta->puntos > 3) {
+            $dificultad += 0.2;
+        }
+
+        return min(1.0, $dificultad);
+    }
+
+    /**
+     * Extraer conceptos de una pregunta
+     */
+    private function extraerConceptosPreguntas(Pregunta $pregunta): array
+    {
+        $conceptos = [];
+
+        // Análisis simple de palabras clave
+        $enunciado = strtolower($pregunta->enunciado);
+        $palabras_clave = [
+            'lógica' => ['if', 'condition', 'booleano'],
+            'bucles' => ['for', 'while', 'repetir'],
+            'funciones' => ['función', 'method', 'parámetro'],
+            'datos' => ['array', 'lista', 'estructura'],
+        ];
+
+        foreach ($palabras_clave as $concepto => $palabras) {
+            foreach ($palabras as $palabra) {
+                if (strpos($enunciado, $palabra) !== false) {
+                    $conceptos[] = $concepto;
+                    break;
+                }
+            }
+        }
+
+        return $conceptos ?: ['general'];
+    }
+
+    /**
+     * Validar balance de dificultad
+     */
+    private function validarBalanceDificultad(array $preguntas): bool
+    {
+        if (empty($preguntas)) {
+            return false;
+        }
+
+        $dificultades = array_column($preguntas, 'dificultad');
+        $promedio = array_sum($dificultades) / count($dificultades);
+        $varianza = 0;
+
+        foreach ($dificultades as $d) {
+            $varianza += pow($d - $promedio, 2);
+        }
+        $varianza /= count($dificultades);
+
+        // Balance aceptable si hay variación de dificultades
+        return $varianza > 0.05;
+    }
+
+    /**
+     * Enriquecer resultados para estudiante
+     */
+    private function enriquecerResultadosEstudiante($trabajo, Evaluacion $evaluacion, User $estudiante): array
+    {
+        $insights = [
+            'puntuacion' => $trabajo->calificacion->puntaje ?? 0,
+            'porcentaje' => round(($trabajo->calificacion->puntaje ?? 0) / $evaluacion->puntuacion_total * 100, 2),
+            'recomendaciones' => [],
+            'areas_mejora' => [],
+            'correlaciones' => [],
+        ];
+
+        try {
+            // Detectar patrones de respuesta problemáticos
+            $patrones = $this->detectarPatronesProblematicos($trabajo);
+            $insights['areas_mejora'] = $patrones;
+
+            // Correlacionar con otras evaluaciones
+            $correlaciones = $this->correlationService->analyzeAcademicCorrelations();
+            if ($correlaciones['success']) {
+                $insights['correlaciones'] = array_slice($correlaciones['correlations'] ?? [], 0, 3);
+            }
+
+            // Recomendaciones personalizadas
+            if ($insights['porcentaje'] < 60) {
+                $insights['recomendaciones'][] = [
+                    'tipo' => 'mejora',
+                    'mensaje' => 'Necesitas mejorar tu desempeño. Revisa los conceptos clave y practica más.',
+                ];
+            } elseif ($insights['porcentaje'] >= 80) {
+                $insights['recomendaciones'][] = [
+                    'tipo' => 'felicitacion',
+                    'mensaje' => '¡Excelente desempeño! Sigue así.',
+                ];
+            }
+
+        } catch (\Exception $e) {
+            Log::warning("Error enriqueciendo resultados: {$e->getMessage()}");
+        }
+
+        return $insights;
+    }
+
+    /**
+     * Detectar patrones problemáticos en respuestas
+     */
+    private function detectarPatronesProblematicos($trabajo): array
+    {
+        $patrones = [];
+
+        // Analizar respuestas del trabajo
+        if ($trabajo->respuestas && is_array($trabajo->respuestas)) {
+            $num_respuestas = count($trabajo->respuestas);
+            $num_incorrectas = count(array_filter($trabajo->respuestas, fn($r) => !$r));
+
+            if ($num_incorrectas / $num_respuestas > 0.5) {
+                $patrones[] = [
+                    'area' => 'Comprensión general',
+                    'descripción' => 'Más del 50% de respuestas incorrectas',
+                    'prioridad' => 'alta',
+                ];
+            }
+        }
+
+        return $patrones;
+    }
+
+    /**
+     * Analizar evaluación desde perspectiva del profesor
+     */
+    private function analizarEvaluacionML(Evaluacion $evaluacion): array
+    {
+        $análisis = [
+            'resumen' => [],
+            'estudiantes_dificultad' => [],
+            'patrones_detectados' => [],
+            'recomendaciones' => [],
+        ];
+
+        try {
+            $trabajos = $evaluacion->contenido->trabajos()->with(['estudiante', 'calificacion'])->get();
+
+            if ($trabajos->isEmpty()) {
+                return $análisis;
+            }
+
+            $calificaciones = $trabajos->pluck('calificacion.puntaje')->filter();
+            $análisis['resumen'] = [
+                'total_estudiantes' => $trabajos->count(),
+                'promedio' => round($calificaciones->avg(), 2),
+                'máximo' => $calificaciones->max(),
+                'mínimo' => $calificaciones->min(),
+            ];
+
+            // Detectar estudiantes con bajo desempeño
+            $promedio_evaluacion = $calificaciones->avg();
+            foreach ($trabajos as $trabajo) {
+                if ($trabajo->calificacion && $trabajo->calificacion->puntaje < $promedio_evaluacion * 0.7) {
+                    $análisis['estudiantes_dificultad'][] = [
+                        'estudiante_id' => $trabajo->estudiante_id,
+                        'nombre' => $trabajo->estudiante->nombre_completo,
+                        'puntuacion' => $trabajo->calificacion->puntaje,
+                    ];
+                }
+            }
+
+            // Recomendaciones
+            if (count($análisis['estudiantes_dificultad']) > 3) {
+                $análisis['recomendaciones'][] = [
+                    'tipo' => 'contenido',
+                    'mensaje' => 'Muchos estudiantes tuvieron bajo desempeño. Considera revisar la calidad del contenido o la evaluación.',
+                ];
+            }
+
+        } catch (\Exception $e) {
+            Log::warning("Error analizando evaluación ML: {$e->getMessage()}");
+        }
+
+        return $análisis;
+    }
+
+    /**
+     * ====================================
+     * ENDPOINTS API (NUEVO - EVALUACIONES ML)
+     * ====================================
+     */
+
+    /**
+     * Obtener análisis detallado de una evaluación
+     *
+     * GET /api/evaluaciones/{evaluacionId}/analisis
+     */
+    public function getAnalisisDetallado($evaluacionId)
+    {
+        try {
+            $evaluacion = Evaluacion::findOrFail($evaluacionId);
+            $profesor = auth()->user();
+
+            if (!$profesor->esProfesor() || $evaluacion->contenido->creador_id !== $profesor->id) {
+                return response()->json(['success' => false, 'message' => 'No autorizado'], 403);
+            }
+
+            $análisis = $this->analizarEvaluacionML($evaluacion);
+
+            return response()->json([
+                'success' => true,
+                'evaluacion_id' => $evaluacionId,
+                'análisis' => $análisis,
+                'timestamp' => now(),
+            ], 200);
+
+        } catch (\Exception $e) {
+            Log::error("Error obteniendo análisis: {$e->getMessage()}");
+            return response()->json(['success' => false, 'message' => 'Error'], 500);
+        }
+    }
+
+    /**
+     * Obtener correlaciones académicas
+     *
+     * GET /api/evaluaciones/correlaciones
+     */
+    public function getCorrelaciones()
+    {
+        try {
+            $correlaciones = $this->correlationService->analyzeAcademicCorrelations();
+
+            return response()->json([
+                'success' => $correlaciones['success'],
+                'total_correlations' => $correlaciones['total_correlations'] ?? 0,
+                'significant' => $correlaciones['significant_correlations'] ?? 0,
+                'data' => $correlaciones['correlations'] ?? [],
+                'timestamp' => now(),
+            ], 200);
+
+        } catch (\Exception $e) {
+            Log::error("Error obteniendo correlaciones: {$e->getMessage()}");
+            return response()->json(['success' => false, 'message' => 'Error'], 500);
+        }
+    }
+
+    /**
+     * Obtener recomendaciones personalizadas para un estudiante
+     *
+     * GET /api/evaluaciones/{evaluacionId}/recomendaciones
+     */
+    public function getRecomendacionesEstudiante($evaluacionId)
+    {
+        try {
+            $evaluacion = Evaluacion::findOrFail($evaluacionId);
+            $estudiante = auth()->user();
+
+            $trabajo = $evaluacion->contenido->trabajos()
+                ->where('estudiante_id', $estudiante->id)
+                ->with('calificacion')
+                ->firstOrFail();
+
+            $insights = $this->enriquecerResultadosEstudiante($trabajo, $evaluacion, $estudiante);
+
+            return response()->json([
+                'success' => true,
+                'puntuacion' => $insights['puntuacion'],
+                'porcentaje' => $insights['porcentaje'],
+                'areas_mejora' => $insights['areas_mejora'],
+                'recomendaciones' => $insights['recomendaciones'],
+                'timestamp' => now(),
+            ], 200);
+
+        } catch (\Exception $e) {
+            Log::error("Error obteniendo recomendaciones: {$e->getMessage()}");
+            return response()->json(['success' => false, 'message' => 'Error'], 500);
+        }
     }
 }

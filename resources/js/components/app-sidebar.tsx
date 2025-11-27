@@ -92,35 +92,38 @@ const MenuItemComponent = ({ item }: { item: MenuItem }) => {
                 <button
                     onClick={() => setIsOpen(!isOpen)}
                     className={cn(
-                        "w-full flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg transition-all duration-200",
+                        "w-full flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg transition-all duration-300 ease-in-out",
                         "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
                         "group relative",
-                        hasActiveChild && "bg-sidebar-accent/50 text-sidebar-accent-foreground font-medium"
+                        "focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-primary/50",
+                        hasActiveChild && "bg-sidebar-accent/70 text-sidebar-accent-foreground font-medium shadow-sm"
                     )}
+                    title={item.title}
                 >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
                         <IconComponent className={cn(
-                            "h-5 w-5 transition-colors",
-                            hasActiveChild ? "text-sidebar-accent-foreground" : "text-sidebar-foreground/70"
+                            "h-5 w-5 flex-shrink-0 transition-all duration-300",
+                            hasActiveChild ? "text-sidebar-accent-foreground scale-110" : "text-sidebar-foreground/70"
                         )} />
-                        <span className="font-medium text-sm">{item.title}</span>
+                        <span className="font-medium text-sm truncate group-data-[state=collapsed]:hidden">{item.title}</span>
                     </div>
                     <ChevronDown
                         className={cn(
-                            "h-4 w-4 transition-transform duration-200",
-                            isOpen && "rotate-180"
+                            "h-4 w-4 flex-shrink-0 transition-transform duration-300",
+                            isOpen && "rotate-180",
+                            "group-data-[state=collapsed]:hidden"
                         )}
                     />
                 </button>
 
-                {/* Submenú con animación */}
+                {/* Submenú con animación suave */}
                 <div
                     className={cn(
                         "overflow-hidden transition-all duration-300 ease-in-out",
-                        isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+                        isOpen ? "max-h-96 opacity-100 visible" : "max-h-0 opacity-0 invisible"
                     )}
                 >
-                    <ul className="ml-4 mt-1 space-y-0.5 border-l-2 border-sidebar-border pl-4">
+                    <ul className="ml-4 mt-1 space-y-0.5 border-l-2 border-sidebar-border/50 pl-4 transition-all duration-300">
                         {item.children.map((child, index) => (
                             <MenuItemComponent key={`${child.title}-${index}`} item={child} />
                         ))}
@@ -136,19 +139,21 @@ const MenuItemComponent = ({ item }: { item: MenuItem }) => {
             <Link
                 href={item.href}
                 className={cn(
-                    "flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200",
+                    "flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-300 ease-in-out",
                     "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                    "focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-primary/50",
                     "group relative",
-                    isActive && "bg-primary text-primary-foreground font-medium shadow-sm"
+                    isActive && "bg-primary text-primary-foreground font-medium shadow-md scale-105"
                 )}
+                title={item.title}
             >
                 <IconComponent className={cn(
-                    "h-4 w-4 transition-colors",
-                    isActive ? "text-primary-foreground" : "text-sidebar-foreground/70 group-hover:text-sidebar-accent-foreground"
+                    "h-4 w-4 flex-shrink-0 transition-all duration-300",
+                    isActive ? "text-primary-foreground scale-125" : "text-sidebar-foreground/70 group-hover:text-sidebar-accent-foreground group-hover:scale-110"
                 )} />
-                <span className="text-sm">{item.title}</span>
+                <span className="text-sm truncate group-data-[state=collapsed]:hidden">{item.title}</span>
                 {isActive && (
-                    <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-primary rounded-r-full" />
+                    <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-primary rounded-r-full shadow-md transition-all duration-300" />
                 )}
             </Link>
         </li>

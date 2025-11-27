@@ -1,16 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 import { useAuth } from '../../contexts/AuthContext';
 import { type BreadcrumbItem } from '@/types';
 import { TestVocacional, PerfilVocacional, RecomendacionCarrera } from '../../types';
-import { 
+import {
   MapIcon,
   PlayIcon,
   ChartBarIcon,
   AcademicCapIcon,
   CheckCircleIcon,
-  ClockIcon
+  ClockIcon,
+  AlertIcon,
+  Loader2Icon
 } from '@heroicons/react/24/outline';
+import axios from 'axios';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -23,124 +27,64 @@ const VocacionalIndex: React.FC = () => {
   const { user, isEstudiante } = useAuth();
   const [activeTab, setActiveTab] = useState('tests');
 
-  // Datos de ejemplo
-  const testsDisponibles: TestVocacional[] = [
-    {
-      id: 1,
-      nombre: 'Test de Intereses Profesionales',
-      descripcion: 'Descubre tus áreas de interés profesional',
-      duracion_estimada: 15,
-      activo: true,
-      created_at: '2024-01-01T00:00:00Z',
-      updated_at: '2024-01-01T00:00:00Z',
-    },
-    {
-      id: 2,
-      nombre: 'Test de Aptitudes',
-      descripcion: 'Evalúa tus habilidades y capacidades',
-      duracion_estimada: 20,
-      activo: true,
-      created_at: '2024-01-01T00:00:00Z',
-      updated_at: '2024-01-01T00:00:00Z',
-    },
-    {
-      id: 3,
-      nombre: 'Test de Personalidad Laboral',
-      descripcion: 'Conoce tu personalidad en el ámbito laboral',
-      duracion_estimada: 25,
-      activo: true,
-      created_at: '2024-01-01T00:00:00Z',
-      updated_at: '2024-01-01T00:00:00Z',
-    },
-  ];
+  // State management for real API data
+  const [testsDisponibles, setTestsDisponibles] = useState<TestVocacional[]>([]);
+  const [perfilVocacional, setPerfilVocacional] = useState<PerfilVocacional | null>(null);
+  const [recomendaciones, setRecomendaciones] = useState<RecomendacionCarrera[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const perfilVocacional: PerfilVocacional = {
-    id: 1,
-    estudiante_id: user?.id || 1,
-    intereses: {
-      'Matemáticas': 85,
-      'Ciencias': 78,
-      'Tecnología': 92,
-      'Artes': 45,
-      'Deportes': 60,
-    },
-    habilidades: {
-      'Análisis': 88,
-      'Creatividad': 65,
-      'Liderazgo': 70,
-      'Comunicación': 75,
-      'Resolución de problemas': 90,
-    },
-    personalidad: {
-      'Extroversión': 60,
-      'Responsabilidad': 85,
-      'Apertura': 70,
-      'Amabilidad': 75,
-      'Estabilidad': 80,
-    },
-    aptitudes: {
-      'Matemáticas': 90,
-      'Física': 85,
-      'Programación': 95,
-      'Diseño': 60,
-      'Escritura': 70,
-    },
-    fecha_creacion: '2024-01-01T00:00:00Z',
-    fecha_actualizacion: '2024-01-15T00:00:00Z',
-    created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-15T00:00:00Z',
-  };
+  // Fetch data from APIs
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
-  const recomendaciones: RecomendacionCarrera[] = [
-    {
-      id: 1,
-      estudiante_id: user?.id || 1,
-      carrera_id: 1,
-      compatibilidad: 0.92,
-      justificacion: 'Excelente compatibilidad con tus intereses en tecnología y matemáticas',
-      fecha: '2024-01-15T00:00:00Z',
-      fuente: 'test_vocacional',
-      carrera: {
-        id: 1,
-        nombre: 'Ingeniería en Sistemas',
-        descripcion: 'Carrera enfocada en el desarrollo de software y sistemas informáticos',
-        nivel_educativo: 'licenciatura',
-        duracion_anos: 5,
-        areas_conocimiento: ['Programación', 'Matemáticas', 'Lógica'],
-        perfil_ideal: {},
-        oportunidades_laborales: ['Desarrollador', 'Analista', 'Arquitecto de Software'],
-        activo: true,
-        created_at: '2024-01-01T00:00:00Z',
-        updated_at: '2024-01-01T00:00:00Z',
-      },
-      created_at: '2024-01-15T00:00:00Z',
-      updated_at: '2024-01-15T00:00:00Z',
-    },
-    {
-      id: 2,
-      estudiante_id: user?.id || 1,
-      carrera_id: 2,
-      compatibilidad: 0.85,
-      justificacion: 'Buena compatibilidad con tus aptitudes en matemáticas y física',
-      fecha: '2024-01-15T00:00:00Z',
-      fuente: 'test_vocacional',
-      carrera: {
-        id: 2,
-        nombre: 'Ingeniería Matemática',
-        descripcion: 'Aplicación de las matemáticas en la resolución de problemas complejos',
-        nivel_educativo: 'licenciatura',
-        duracion_anos: 5,
-        areas_conocimiento: ['Matemáticas', 'Estadística', 'Análisis'],
-        perfil_ideal: {},
-        oportunidades_laborales: ['Matemático', 'Estadístico', 'Analista de Datos'],
-        activo: true,
-        created_at: '2024-01-01T00:00:00Z',
-        updated_at: '2024-01-01T00:00:00Z',
-      },
-      created_at: '2024-01-15T00:00:00Z',
-      updated_at: '2024-01-15T00:00:00Z',
-    },
-  ];
+        // Fetch available tests
+        const testsResponse = await axios.get('/tests-vocacionales');
+        const tests = testsResponse.data.data || testsResponse.data;
+        setTestsDisponibles(
+          Array.isArray(tests) ? tests.filter((t: any) => t.activo) : []
+        );
+
+        // Fetch student's vocational profile
+        try {
+          const perfilResponse = await axios.get('/api/vocacional/mi-perfil');
+          setPerfilVocacional(perfilResponse.data.data || perfilResponse.data);
+        } catch (err: any) {
+          // Profile might not exist yet if student hasn't completed a test
+          if (err.response?.status !== 404) {
+            console.error('Error fetching profile:', err);
+          }
+          setPerfilVocacional(null);
+        }
+
+        // Fetch career recommendations
+        try {
+          const recomendacionesResponse = await axios.get(
+            '/api/vocacional/recomendaciones-carrera'
+          );
+          setRecomendaciones(recomendacionesResponse.data.data || recomendacionesResponse.data || []);
+        } catch (err: any) {
+          // Recommendations might not exist yet
+          if (err.response?.status !== 404) {
+            console.error('Error fetching recommendations:', err);
+          }
+          setRecomendaciones([]);
+        }
+      } catch (err: any) {
+        console.error('Error fetching vocational data:', err);
+        setError('Error cargando datos vocacionales. Por favor intenta de nuevo.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (isEstudiante) {
+      fetchData();
+    }
+  }, [isEstudiante]);
 
   const getCompatibilityColor = (compatibilidad: number) => {
     if (compatibilidad >= 0.8) return 'text-green-600 bg-green-100';
@@ -155,6 +99,21 @@ const VocacionalIndex: React.FC = () => {
     if (compatibilidad >= 0.6) return 'Buena';
     return 'Moderada';
   };
+
+  if (loading) {
+    return (
+      <AppLayout breadcrumbs={breadcrumbs}>
+        <div className="container mx-auto py-8 px-4">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <Loader2Icon className="h-12 w-12 text-blue-600 animate-spin mx-auto mb-4" />
+              <p className="text-gray-600">Cargando orientación vocacional...</p>
+            </div>
+          </div>
+        </div>
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
@@ -171,6 +130,17 @@ const VocacionalIndex: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* Error Alert */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex gap-3">
+            <AlertIcon className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-red-800 font-medium">Error</p>
+              <p className="text-red-700 text-sm">{error}</p>
+            </div>
+          </div>
+        )}
 
         {/* Tabs */}
         <div className="bg-white rounded-lg shadow">
@@ -220,30 +190,39 @@ const VocacionalIndex: React.FC = () => {
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {testsDisponibles.map((test) => (
-                    <div key={test.id} className="bg-gray-50 rounded-lg p-6">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex-1">
-                          <h4 className="text-lg font-semibold text-gray-900 mb-2">
-                            {test.nombre}
-                          </h4>
-                          <p className="text-gray-600 text-sm mb-4">
-                            {test.descripcion}
-                          </p>
-                          <div className="flex items-center text-sm text-gray-500">
-                            <ClockIcon className="h-4 w-4 mr-1" />
-                            <span>{test.duracion_estimada} minutos</span>
+                {testsDisponibles.length === 0 ? (
+                  <div className="text-center py-12">
+                    <AlertIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-600">No hay tests disponibles en este momento.</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {testsDisponibles.map((test) => (
+                      <div key={test.id} className="bg-gray-50 rounded-lg p-6 hover:shadow-md transition-shadow">
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex-1">
+                            <h4 className="text-lg font-semibold text-gray-900 mb-2">
+                              {test.nombre}
+                            </h4>
+                            <p className="text-gray-600 text-sm mb-4">
+                              {test.descripcion}
+                            </p>
+                            <div className="flex items-center text-sm text-gray-500">
+                              <ClockIcon className="h-4 w-4 mr-1" />
+                              <span>{test.duracion_estimada} minutos</span>
+                            </div>
                           </div>
                         </div>
+                        <Link href={`/tests-vocacionales/${test.id}/tomar`}>
+                          <button className="w-full inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            <PlayIcon className="h-4 w-4 mr-2" />
+                            Comenzar Test
+                          </button>
+                        </Link>
                       </div>
-                      <button className="w-full inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        <PlayIcon className="h-4 w-4 mr-2" />
-                        Comenzar Test
-                      </button>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 
@@ -257,49 +236,70 @@ const VocacionalIndex: React.FC = () => {
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Intereses */}
-                  <div className="bg-gray-50 rounded-lg p-6">
-                    <h4 className="text-lg font-semibold text-gray-900 mb-4">Intereses</h4>
-                    <div className="space-y-3">
-                      {Object.entries(perfilVocacional.intereses).map(([area, puntaje]) => (
-                        <div key={area}>
-                          <div className="flex justify-between text-sm mb-1">
-                            <span className="text-gray-700">{area}</span>
-                            <span className="text-gray-500">{puntaje}%</span>
-                          </div>
-                          <div className="w-full bg-gray-200 rounded-full h-2">
-                            <div
-                              className="bg-blue-600 h-2 rounded-full"
-                              style={{ width: `${puntaje}%` }}
-                            />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                {!perfilVocacional ? (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-8 text-center">
+                    <AcademicCapIcon className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+                    <h4 className="text-lg font-medium text-gray-900 mb-2">Sin Perfil Aún</h4>
+                    <p className="text-gray-600 mb-6">
+                      Completa un test vocacional para generar tu perfil y descubrir tus fortalezas, intereses y aptitudes.
+                    </p>
+                    <button
+                      onClick={() => setActiveTab('tests')}
+                      className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+                    >
+                      <PlayIcon className="h-4 w-4 mr-2" />
+                      Ir a Tests
+                    </button>
                   </div>
+                ) : (
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Intereses */}
+                    {perfilVocacional.intereses && Object.keys(perfilVocacional.intereses).length > 0 && (
+                      <div className="bg-gray-50 rounded-lg p-6">
+                        <h4 className="text-lg font-semibold text-gray-900 mb-4">Intereses</h4>
+                        <div className="space-y-3">
+                          {Object.entries(perfilVocacional.intereses).map(([area, puntaje]) => (
+                            <div key={area}>
+                              <div className="flex justify-between text-sm mb-1">
+                                <span className="text-gray-700">{area}</span>
+                                <span className="text-gray-500">{typeof puntaje === 'number' ? `${puntaje}%` : puntaje}</span>
+                              </div>
+                              <div className="w-full bg-gray-200 rounded-full h-2">
+                                <div
+                                  className="bg-blue-600 h-2 rounded-full"
+                                  style={{ width: `${typeof puntaje === 'number' ? puntaje : 0}%` }}
+                                />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
 
-                  {/* Habilidades */}
-                  <div className="bg-gray-50 rounded-lg p-6">
-                    <h4 className="text-lg font-semibold text-gray-900 mb-4">Habilidades</h4>
-                    <div className="space-y-3">
-                      {Object.entries(perfilVocacional.habilidades).map(([habilidad, puntaje]) => (
-                        <div key={habilidad}>
-                          <div className="flex justify-between text-sm mb-1">
-                            <span className="text-gray-700">{habilidad}</span>
-                            <span className="text-gray-500">{puntaje}%</span>
-                          </div>
-                          <div className="w-full bg-gray-200 rounded-full h-2">
-                            <div
-                              className="bg-green-600 h-2 rounded-full"
-                              style={{ width: `${puntaje}%` }}
-                            />
-                          </div>
+                    {/* Habilidades */}
+                    {perfilVocacional.habilidades && Object.keys(perfilVocacional.habilidades).length > 0 && (
+                      <div className="bg-gray-50 rounded-lg p-6">
+                        <h4 className="text-lg font-semibold text-gray-900 mb-4">Habilidades</h4>
+                        <div className="space-y-3">
+                          {Object.entries(perfilVocacional.habilidades).map(([habilidad, puntaje]) => (
+                            <div key={habilidad}>
+                              <div className="flex justify-between text-sm mb-1">
+                                <span className="text-gray-700">{habilidad}</span>
+                                <span className="text-gray-500">{typeof puntaje === 'number' ? `${puntaje}%` : puntaje}</span>
+                              </div>
+                              <div className="w-full bg-gray-200 rounded-full h-2">
+                                <div
+                                  className="bg-green-600 h-2 rounded-full"
+                                  style={{ width: `${typeof puntaje === 'number' ? puntaje : 0}%` }}
+                                />
+                              </div>
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
+                      </div>
+                    )}
                   </div>
-                </div>
+                )}
               </div>
             )}
 
@@ -313,54 +313,74 @@ const VocacionalIndex: React.FC = () => {
                   </p>
                 </div>
 
-                <div className="space-y-4">
-                  {recomendaciones.map((recomendacion) => (
-                    <div key={recomendacion.id} className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center mb-2">
-                            <AcademicCapIcon className="h-5 w-5 text-blue-600 mr-2" />
-                            <h4 className="text-lg font-semibold text-gray-900">
-                              {recomendacion.carrera.nombre}
-                            </h4>
+                {recomendaciones.length === 0 ? (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-8 text-center">
+                    <ChartBarIcon className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+                    <h4 className="text-lg font-medium text-gray-900 mb-2">Sin Recomendaciones Aún</h4>
+                    <p className="text-gray-600">
+                      Completa un test vocacional para recibir recomendaciones de carreras basadas en tus intereses y aptitudes.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {recomendaciones.map((recomendacion, index) => (
+                      <div key={recomendacion.id || index} className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center mb-2">
+                              <AcademicCapIcon className="h-5 w-5 text-blue-600 mr-2" />
+                              <h4 className="text-lg font-semibold text-gray-900">
+                                {recomendacion.carrera?.nombre || 'Carrera'}
+                              </h4>
+                            </div>
+                            {recomendacion.carrera?.descripcion && (
+                              <p className="text-gray-600 mb-4">
+                                {recomendacion.carrera.descripcion}
+                              </p>
+                            )}
+                            {recomendacion.carrera?.duracion_anos && (
+                              <div className="flex items-center text-sm text-gray-500 mb-2">
+                                <span className="font-medium">Duración:</span>
+                                <span className="ml-1">{recomendacion.carrera.duracion_anos} años</span>
+                              </div>
+                            )}
+                            {recomendacion.carrera?.nivel_educativo && (
+                              <div className="flex items-center text-sm text-gray-500 mb-4">
+                                <span className="font-medium">Nivel:</span>
+                                <span className="ml-1 capitalize">{recomendacion.carrera.nivel_educativo}</span>
+                              </div>
+                            )}
+                            {recomendacion.justificacion && (
+                              <p className="text-sm text-gray-700 mb-4">
+                                <strong>Justificación:</strong> {recomendacion.justificacion}
+                              </p>
+                            )}
+                            {recomendacion.carrera?.areas_conocimiento && (
+                              <div className="flex flex-wrap gap-2">
+                                {recomendacion.carrera.areas_conocimiento.map((area, index) => (
+                                  <span
+                                    key={index}
+                                    className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                                  >
+                                    {area}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
                           </div>
-                          <p className="text-gray-600 mb-4">
-                            {recomendacion.carrera.descripcion}
-                          </p>
-                          <div className="flex items-center text-sm text-gray-500 mb-2">
-                            <span className="font-medium">Duración:</span>
-                            <span className="ml-1">{recomendacion.carrera.duracion_anos} años</span>
-                          </div>
-                          <div className="flex items-center text-sm text-gray-500 mb-4">
-                            <span className="font-medium">Nivel:</span>
-                            <span className="ml-1 capitalize">{recomendacion.carrera.nivel_educativo}</span>
-                          </div>
-                          <p className="text-sm text-gray-700 mb-4">
-                            <strong>Justificación:</strong> {recomendacion.justificacion}
-                          </p>
-                          <div className="flex flex-wrap gap-2">
-                            {recomendacion.carrera.areas_conocimiento.map((area, index) => (
-                              <span
-                                key={index}
-                                className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
-                              >
-                                {area}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                        <div className="ml-4 text-right">
-                          <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getCompatibilityColor(recomendacion.compatibilidad)}`}>
-                            {getCompatibilityText(recomendacion.compatibilidad)}
-                          </div>
-                          <div className="text-2xl font-bold text-gray-900 mt-2">
-                            {Math.round(recomendacion.compatibilidad * 100)}%
+                          <div className="ml-4 text-right">
+                            <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getCompatibilityColor(recomendacion.compatibilidad)}`}>
+                              {getCompatibilityText(recomendacion.compatibilidad)}
+                            </div>
+                            <div className="text-2xl font-bold text-gray-900 mt-2">
+                              {Math.round(recomendacion.compatibilidad * 100)}%
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </div>

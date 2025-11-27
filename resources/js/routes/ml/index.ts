@@ -1,5 +1,8 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
 import analysis from './analysis'
+import predict from './predict'
+import feedback from './feedback'
+import reports from './reports'
 /**
 * @see \App\Http\Controllers\MLAnalysisController::batchAnalysis
  * @see app/Http/Controllers/MLAnalysisController.php:235
@@ -188,11 +191,409 @@ info.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
     
     info.form = infoForm
+/**
+* @see \App\Http\Controllers\MLDashboardController::dashboard
+ * @see app/Http/Controllers/MLDashboardController.php:117
+ * @route '/api/ml/dashboard'
+ */
+export const dashboard = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: dashboard.url(options),
+    method: 'get',
+})
+
+dashboard.definition = {
+    methods: ["get","head"],
+    url: '/api/ml/dashboard',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\MLDashboardController::dashboard
+ * @see app/Http/Controllers/MLDashboardController.php:117
+ * @route '/api/ml/dashboard'
+ */
+dashboard.url = (options?: RouteQueryOptions) => {
+    return dashboard.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\MLDashboardController::dashboard
+ * @see app/Http/Controllers/MLDashboardController.php:117
+ * @route '/api/ml/dashboard'
+ */
+dashboard.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: dashboard.url(options),
+    method: 'get',
+})
+/**
+* @see \App\Http\Controllers\MLDashboardController::dashboard
+ * @see app/Http/Controllers/MLDashboardController.php:117
+ * @route '/api/ml/dashboard'
+ */
+dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: dashboard.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \App\Http\Controllers\MLDashboardController::dashboard
+ * @see app/Http/Controllers/MLDashboardController.php:117
+ * @route '/api/ml/dashboard'
+ */
+    const dashboardForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: dashboard.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \App\Http\Controllers\MLDashboardController::dashboard
+ * @see app/Http/Controllers/MLDashboardController.php:117
+ * @route '/api/ml/dashboard'
+ */
+        dashboardForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: dashboard.url(options),
+            method: 'get',
+        })
+            /**
+* @see \App\Http\Controllers\MLDashboardController::dashboard
+ * @see app/Http/Controllers/MLDashboardController.php:117
+ * @route '/api/ml/dashboard'
+ */
+        dashboardForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: dashboard.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    dashboard.form = dashboardForm
+/**
+* @see \App\Http\Controllers\MLDashboardController::metrics
+ * @see app/Http/Controllers/MLDashboardController.php:145
+ * @route '/api/ml/metrics'
+ */
+export const metrics = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: metrics.url(options),
+    method: 'get',
+})
+
+metrics.definition = {
+    methods: ["get","head"],
+    url: '/api/ml/metrics',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\MLDashboardController::metrics
+ * @see app/Http/Controllers/MLDashboardController.php:145
+ * @route '/api/ml/metrics'
+ */
+metrics.url = (options?: RouteQueryOptions) => {
+    return metrics.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\MLDashboardController::metrics
+ * @see app/Http/Controllers/MLDashboardController.php:145
+ * @route '/api/ml/metrics'
+ */
+metrics.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: metrics.url(options),
+    method: 'get',
+})
+/**
+* @see \App\Http\Controllers\MLDashboardController::metrics
+ * @see app/Http/Controllers/MLDashboardController.php:145
+ * @route '/api/ml/metrics'
+ */
+metrics.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: metrics.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \App\Http\Controllers\MLDashboardController::metrics
+ * @see app/Http/Controllers/MLDashboardController.php:145
+ * @route '/api/ml/metrics'
+ */
+    const metricsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: metrics.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \App\Http\Controllers\MLDashboardController::metrics
+ * @see app/Http/Controllers/MLDashboardController.php:145
+ * @route '/api/ml/metrics'
+ */
+        metricsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: metrics.url(options),
+            method: 'get',
+        })
+            /**
+* @see \App\Http\Controllers\MLDashboardController::metrics
+ * @see app/Http/Controllers/MLDashboardController.php:145
+ * @route '/api/ml/metrics'
+ */
+        metricsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: metrics.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    metrics.form = metricsForm
+/**
+* @see \App\Http\Controllers\MLDashboardController::reviewQueue
+ * @see app/Http/Controllers/MLDashboardController.php:180
+ * @route '/api/ml/review-queue'
+ */
+export const reviewQueue = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: reviewQueue.url(options),
+    method: 'get',
+})
+
+reviewQueue.definition = {
+    methods: ["get","head"],
+    url: '/api/ml/review-queue',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\MLDashboardController::reviewQueue
+ * @see app/Http/Controllers/MLDashboardController.php:180
+ * @route '/api/ml/review-queue'
+ */
+reviewQueue.url = (options?: RouteQueryOptions) => {
+    return reviewQueue.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\MLDashboardController::reviewQueue
+ * @see app/Http/Controllers/MLDashboardController.php:180
+ * @route '/api/ml/review-queue'
+ */
+reviewQueue.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: reviewQueue.url(options),
+    method: 'get',
+})
+/**
+* @see \App\Http\Controllers\MLDashboardController::reviewQueue
+ * @see app/Http/Controllers/MLDashboardController.php:180
+ * @route '/api/ml/review-queue'
+ */
+reviewQueue.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: reviewQueue.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \App\Http\Controllers\MLDashboardController::reviewQueue
+ * @see app/Http/Controllers/MLDashboardController.php:180
+ * @route '/api/ml/review-queue'
+ */
+    const reviewQueueForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: reviewQueue.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \App\Http\Controllers\MLDashboardController::reviewQueue
+ * @see app/Http/Controllers/MLDashboardController.php:180
+ * @route '/api/ml/review-queue'
+ */
+        reviewQueueForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: reviewQueue.url(options),
+            method: 'get',
+        })
+            /**
+* @see \App\Http\Controllers\MLDashboardController::reviewQueue
+ * @see app/Http/Controllers/MLDashboardController.php:180
+ * @route '/api/ml/review-queue'
+ */
+        reviewQueueForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: reviewQueue.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    reviewQueue.form = reviewQueueForm
+/**
+* @see \App\Http\Controllers\MLDashboardController::pendingFeedback
+ * @see app/Http/Controllers/MLDashboardController.php:211
+ * @route '/api/ml/pending-feedback'
+ */
+export const pendingFeedback = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: pendingFeedback.url(options),
+    method: 'get',
+})
+
+pendingFeedback.definition = {
+    methods: ["get","head"],
+    url: '/api/ml/pending-feedback',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\MLDashboardController::pendingFeedback
+ * @see app/Http/Controllers/MLDashboardController.php:211
+ * @route '/api/ml/pending-feedback'
+ */
+pendingFeedback.url = (options?: RouteQueryOptions) => {
+    return pendingFeedback.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\MLDashboardController::pendingFeedback
+ * @see app/Http/Controllers/MLDashboardController.php:211
+ * @route '/api/ml/pending-feedback'
+ */
+pendingFeedback.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: pendingFeedback.url(options),
+    method: 'get',
+})
+/**
+* @see \App\Http\Controllers\MLDashboardController::pendingFeedback
+ * @see app/Http/Controllers/MLDashboardController.php:211
+ * @route '/api/ml/pending-feedback'
+ */
+pendingFeedback.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: pendingFeedback.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \App\Http\Controllers\MLDashboardController::pendingFeedback
+ * @see app/Http/Controllers/MLDashboardController.php:211
+ * @route '/api/ml/pending-feedback'
+ */
+    const pendingFeedbackForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: pendingFeedback.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \App\Http\Controllers\MLDashboardController::pendingFeedback
+ * @see app/Http/Controllers/MLDashboardController.php:211
+ * @route '/api/ml/pending-feedback'
+ */
+        pendingFeedbackForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: pendingFeedback.url(options),
+            method: 'get',
+        })
+            /**
+* @see \App\Http\Controllers\MLDashboardController::pendingFeedback
+ * @see app/Http/Controllers/MLDashboardController.php:211
+ * @route '/api/ml/pending-feedback'
+ */
+        pendingFeedbackForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: pendingFeedback.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    pendingFeedback.form = pendingFeedbackForm
+/**
+* @see \App\Http\Controllers\MLDashboardController::degradation
+ * @see app/Http/Controllers/MLDashboardController.php:246
+ * @route '/api/ml/degradation'
+ */
+export const degradation = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: degradation.url(options),
+    method: 'get',
+})
+
+degradation.definition = {
+    methods: ["get","head"],
+    url: '/api/ml/degradation',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\MLDashboardController::degradation
+ * @see app/Http/Controllers/MLDashboardController.php:246
+ * @route '/api/ml/degradation'
+ */
+degradation.url = (options?: RouteQueryOptions) => {
+    return degradation.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\MLDashboardController::degradation
+ * @see app/Http/Controllers/MLDashboardController.php:246
+ * @route '/api/ml/degradation'
+ */
+degradation.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: degradation.url(options),
+    method: 'get',
+})
+/**
+* @see \App\Http\Controllers\MLDashboardController::degradation
+ * @see app/Http/Controllers/MLDashboardController.php:246
+ * @route '/api/ml/degradation'
+ */
+degradation.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: degradation.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \App\Http\Controllers\MLDashboardController::degradation
+ * @see app/Http/Controllers/MLDashboardController.php:246
+ * @route '/api/ml/degradation'
+ */
+    const degradationForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: degradation.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \App\Http\Controllers\MLDashboardController::degradation
+ * @see app/Http/Controllers/MLDashboardController.php:246
+ * @route '/api/ml/degradation'
+ */
+        degradationForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: degradation.url(options),
+            method: 'get',
+        })
+            /**
+* @see \App\Http\Controllers\MLDashboardController::degradation
+ * @see app/Http/Controllers/MLDashboardController.php:246
+ * @route '/api/ml/degradation'
+ */
+        degradationForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: degradation.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    degradation.form = degradationForm
 const ml = {
     analysis,
 batchAnalysis,
 health,
 info,
+predict,
+feedback,
+dashboard,
+metrics,
+reviewQueue,
+pendingFeedback,
+degradation,
+reports,
 }
 
 export default ml

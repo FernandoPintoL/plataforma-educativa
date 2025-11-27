@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Head, Link } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card';
@@ -13,21 +14,30 @@ import {
   Clock,
   FileText,
   Trash2,
+  AlertCircle,
 } from 'lucide-react';
+import CategoriaForm from '@/components/Tests/CategoriaForm';
+import PreguntaForm from '@/components/Tests/PreguntaForm';
+import PreguntaList from '@/components/Tests/PreguntaList';
+import RespuestasTable from '@/components/Tests/RespuestasTable';
+import AnalyticsCard from '@/components/Tests/AnalyticsCard';
 
 interface Pregunta {
   id: number;
-  pregunta: string;
+  enunciado: string;
   tipo: string;
   opciones?: string[];
-  order: number;
+  categoria_test_id: number;
+  orden: number;
 }
 
 interface Categoria {
   id: number;
   nombre: string;
   descripcion?: string;
+  test_vocacional_id: number;
   preguntas: Pregunta[];
+  orden: number;
 }
 
 interface TestVocacional {
@@ -46,8 +56,10 @@ interface ShowProps {
   test: TestVocacional;
 }
 
-export default function Show({ test }: ShowProps) {
-  const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
+export default function Show({ test: initialTest }: ShowProps) {
+  const [test, setTest] = useState(initialTest);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const breadcrumbs = [
     { label: 'Inicio', href: '/dashboard' },
@@ -60,9 +72,20 @@ export default function Show({ test }: ShowProps) {
     0
   );
 
-  const handleDeletePregunta = (preguntaId: number) => {
-    // Implement delete logic
-    console.log('Delete pregunta:', preguntaId);
+  const handleRefresh = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.get(
+        `/tests-vocacionales/${test.id}`
+      );
+      setTest(response.data.data || response.data);
+    } catch (err) {
+      setError('Error al actualizar los datos');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -185,6 +208,23 @@ export default function Show({ test }: ShowProps) {
 
           {/* Contenido Tab */}
           <TabsContent value="contenido" className="space-y-6">
+            {error && (
+              <div className="flex gap-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 text-red-600 dark:text-red-400">
+                <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-medium">{error}</p>
+                  <Button
+                    variant="link"
+                    size="sm"
+                    onClick={handleRefresh}
+                    className="text-red-600 dark:text-red-400 h-auto p-0 mt-1"
+                  >
+                    Reintentar
+                  </Button>
+                </div>
+              </div>
+            )}
+
             {test.categorias.length === 0 ? (
               <Card>
                 <CardContent className="pt-10">
@@ -196,160 +236,110 @@ export default function Show({ test }: ShowProps) {
                       Este test aún no tiene preguntas. Agrega categorías y
                       preguntas.
                     </p>
-                    <Button disabled>
-                      <Plus className="w-4 h-4 mr-2" />
-                      Agregar Categoría (Próximamente)
-                    </Button>
+                    <CategoriaForm
+                      testId={test.id}
+                      onSuccess={handleRefresh}
+                      variant="create"
+                    />
                   </div>
                 </CardContent>
               </Card>
             ) : (
-              test.categorias.map((categoria, catIndex) => (
-                <Card key={categoria.id}>
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <CardTitle className="text-xl">
-                          {catIndex + 1}. {categoria.nombre}
-                        </CardTitle>
-                        {categoria.descripcion && (
-                          <CardDescription className="mt-1">
-                            {categoria.descripcion}
-                          </CardDescription>
-                        )}
-                      </div>
-                      <Badge variant="secondary">
-                        {categoria.preguntas.length} preguntas
-                      </Badge>
-                    </div>
-                  </CardHeader>
+              <>
+                <div className="flex justify-end">
+                  <CategoriaForm
+                    testId={test.id}
+                    onSuccess={handleRefresh}
+                    variant="create"
+                  />
+                </div>
 
-                  <CardContent className="space-y-4">
-                    {categoria.preguntas.length === 0 ? (
-                      <div className="text-center py-6">
-                        <p className="text-gray-600 dark:text-gray-400 mb-4">
-                          Sin preguntas en esta categoría
-                        </p>
-                        <Button disabled size="sm">
-                          <Plus className="w-3 h-3 mr-2" />
-                          Agregar Pregunta (Próximamente)
-                        </Button>
-                      </div>
-                    ) : (
-                      <div className="space-y-3">
-                        {categoria.preguntas.map((pregunta, pregIndex) => (
-                          <div
-                            key={pregunta.id}
-                            className="p-4 border rounded-lg"
-                          >
-                            <div className="flex items-start justify-between">
-                              <div className="flex-1">
-                                <p className="font-medium text-gray-900 dark:text-white">
-                                  {pregIndex + 1}. {pregunta.pregunta}
-                                </p>
-                                <Badge
-                                  variant="outline"
-                                  className="mt-2"
-                                >
-                                  {pregunta.tipo}
-                                </Badge>
-                              </div>
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={() =>
-                                  setDeleteConfirm(pregunta.id)
-                                }
-                              >
-                                <Trash2 className="w-4 h-4 text-red-600" />
-                              </Button>
+                <div className="space-y-6">
+                  {test.categorias.map((categoria, catIndex) => (
+                    <Card key={categoria.id}>
+                      <CardHeader>
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <CardTitle className="text-xl">
+                              {catIndex + 1}. {categoria.nombre}
+                            </CardTitle>
+                            {categoria.descripcion && (
+                              <CardDescription className="mt-1">
+                                {categoria.descripcion}
+                              </CardDescription>
+                            )}
+                          </div>
+                          <div className="flex gap-2">
+                            <Badge variant="secondary">
+                              {categoria.preguntas.length} preguntas
+                            </Badge>
+                            <CategoriaForm
+                              testId={test.id}
+                              categoria={categoria}
+                              onSuccess={handleRefresh}
+                              variant="edit"
+                            />
+                          </div>
+                        </div>
+                      </CardHeader>
+
+                      <CardContent className="space-y-4">
+                        {categoria.preguntas.length === 0 ? (
+                          <div className="text-center py-6">
+                            <p className="text-gray-600 dark:text-gray-400 mb-4">
+                              Sin preguntas en esta categoría
+                            </p>
+                            <PreguntaForm
+                              testId={test.id}
+                              categoriaId={categoria.id}
+                              onSuccess={handleRefresh}
+                              variant="create"
+                            />
+                          </div>
+                        ) : (
+                          <>
+                            <div className="flex justify-end mb-4">
+                              <PreguntaForm
+                                testId={test.id}
+                                categoriaId={categoria.id}
+                                onSuccess={handleRefresh}
+                                variant="create"
+                              />
                             </div>
 
-                            {pregunta.opciones &&
-                              pregunta.opciones.length > 0 && (
-                                <div className="mt-3 space-y-2">
-                                  {pregunta.opciones.map(
-                                    (opcion, idx) => (
-                                      <div
-                                        key={idx}
-                                        className="ml-4 text-sm text-gray-600 dark:text-gray-400"
-                                      >
-                                        • {opcion}
-                                      </div>
-                                    )
-                                  )}
-                                </div>
-                              )}
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              ))
+                            <PreguntaList
+                              testId={test.id}
+                              categoriaId={categoria.id}
+                              preguntas={categoria.preguntas}
+                              onUpdate={handleRefresh}
+                            />
+                          </>
+                        )}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </>
             )}
           </TabsContent>
 
           {/* Respuestas Tab */}
-          <TabsContent value="respuestas">
-            <Card>
-              <CardHeader>
-                <CardTitle>Respuestas del Test</CardTitle>
-                <CardDescription>
-                  {test.resultados_count} estudiante(s) han completado este
-                  test
-                </CardDescription>
-              </CardHeader>
-
-              <CardContent>
-                {test.resultados_count === 0 ? (
-                  <div className="text-center py-10">
-                    <p className="text-gray-600 dark:text-gray-400">
-                      Aún no hay respuestas. Los estudiantes que completen el
-                      test aparecerán aquí.
-                    </p>
-                  </div>
-                ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr className="border-b">
-                          <th className="text-left py-3 px-4 font-medium">
-                            Estudiante
-                          </th>
-                          <th className="text-left py-3 px-4 font-medium">
-                            Fecha
-                          </th>
-                          <th className="text-left py-3 px-4 font-medium">
-                            Estado
-                          </th>
-                          <th className="text-left py-3 px-4 font-medium">
-                            Acciones
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {/* Mock data - Replace with actual data */}
-                        <tr className="border-b">
-                          <td className="py-3 px-4">Estudiante Name</td>
-                          <td className="py-3 px-4">15 Nov, 2025</td>
-                          <td className="py-3 px-4">
-                            <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                              Completado
-                            </Badge>
-                          </td>
-                          <td className="py-3 px-4">
-                            <Button variant="outline" size="sm">
-                              Ver Respuestas
-                            </Button>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+          <TabsContent value="respuestas" className="space-y-6">
+            {test.resultados_count === 0 ? (
+              <Card>
+                <CardContent className="text-center py-10">
+                  <p className="text-gray-600 dark:text-gray-400">
+                    Aún no hay respuestas. Los estudiantes que completen el
+                    test aparecerán aquí.
+                  </p>
+                </CardContent>
+              </Card>
+            ) : (
+              <>
+                <AnalyticsCard testId={test.id} />
+                <RespuestasTable testId={test.id} testNombre={test.nombre} />
+              </>
+            )}
           </TabsContent>
         </Tabs>
 

@@ -13,7 +13,7 @@
  * - onSubmit: Callback para el submit
  */
 
-import React, { useState } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -28,7 +28,9 @@ import {
 } from '@/components/ui/select'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { PlusIcon, XMarkIcon, ClockIcon } from '@heroicons/react/24/outline'
+import { Badge } from '@/components/ui/badge'
+import { Progress } from '@/components/ui/progress'
+import { PlusIcon, XMarkIcon, ClockIcon, CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import type { Course } from '@/components/ContentAssistant'
 
 interface Pregunta {
@@ -44,7 +46,8 @@ interface EvaluacionFormProps {
     titulo: string
     descripcion: string
     curso_id: string | number
-    fecha_limite: string
+    fecha_inicio: string
+    fecha_fin: string
     tipo_evaluacion: string
     puntuacion_total: number
     tiempo_limite: number
@@ -60,6 +63,7 @@ interface EvaluacionFormProps {
   processing: boolean
   cursos: Course[]
   onSubmit: (e: React.FormEvent, estado: string) => void
+  onPreviewDataChange?: (previewData: any) => void
 }
 
 export default function EvaluacionForm({
@@ -69,8 +73,34 @@ export default function EvaluacionForm({
   processing,
   cursos,
   onSubmit,
+  onPreviewDataChange,
 }: EvaluacionFormProps) {
   const [preguntas, setPreguntas] = useState<Pregunta[]>(data.preguntas || [])
+
+  // Debounce para notificar cambios al preview y actualizar puntuación total
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const nuevaPuntuacion = preguntas.reduce((sum, p) => sum + Number(p.puntos || 0), 0)
+
+      // Actualizar puntuación total automáticamente
+      if (nuevaPuntuacion !== data.puntuacion_total) {
+        setData('puntuacion_total', nuevaPuntuacion)
+      }
+
+      if (onPreviewDataChange) {
+        onPreviewDataChange({
+          titulo: data.titulo,
+          descripcion: data.descripcion,
+          tipo_evaluacion: data.tipo_evaluacion,
+          tiempo_limite: data.tiempo_limite,
+          puntuacion_total: nuevaPuntuacion,
+          preguntas: preguntas,
+        })
+      }
+    }, 300)
+
+    return () => clearTimeout(timer)
+  }, [data.titulo, data.descripcion, data.tipo_evaluacion, data.tiempo_limite, preguntas, onPreviewDataChange, data.puntuacion_total, setData])
 
   const handleAddPregunta = () => {
     const nuevaPregunta: Pregunta = {
@@ -194,38 +224,57 @@ export default function EvaluacionForm({
             {errors.curso_id && <p className="text-sm text-red-500 mt-1">{errors.curso_id}</p>}
           </div>
 
-          {/* Tipo de Evaluación y Fecha Límite */}
+          {/* Tipo de Evaluación */}
+          <div>
+            <Label htmlFor="tipo_evaluacion">Tipo de Evaluación</Label>
+            <Select
+              value={data.tipo_evaluacion}
+              onValueChange={(value) => setData('tipo_evaluacion', value)}
+              disabled={processing}
+            >
+              <SelectTrigger className="mt-1">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="examen">Examen</SelectItem>
+                <SelectItem value="quiz">Quiz</SelectItem>
+                <SelectItem value="parcial">Parcial</SelectItem>
+                <SelectItem value="final">Final</SelectItem>
+                <SelectItem value="practica">Práctica</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Fechas de Disponibilidad */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="tipo_evaluacion">Tipo de Evaluación</Label>
-              <Select
-                value={data.tipo_evaluacion}
-                onValueChange={(value) => setData('tipo_evaluacion', value)}
-                disabled={processing}
-              >
-                <SelectTrigger className="mt-1">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="examen">Examen</SelectItem>
-                  <SelectItem value="quiz">Quiz</SelectItem>
-                  <SelectItem value="parcial">Parcial</SelectItem>
-                  <SelectItem value="final">Final</SelectItem>
-                  <SelectItem value="practica">Práctica</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="fecha_limite">Fecha Límite</Label>
+              <Label htmlFor="fecha_inicio">Fecha de Inicio</Label>
               <Input
-                id="fecha_limite"
+                id="fecha_inicio"
                 type="datetime-local"
-                value={data.fecha_limite}
-                onChange={(e) => setData('fecha_limite', e.target.value)}
+                value={data.fecha_inicio}
+                onChange={(e) => setData('fecha_inicio', e.target.value)}
                 className="mt-1"
                 disabled={processing}
               />
+              <p className="text-xs text-muted-foreground mt-1">
+                Cuándo estará disponible la evaluación
+              </p>
+            </div>
+
+            <div>
+              <Label htmlFor="fecha_fin">Fecha de Fin</Label>
+              <Input
+                id="fecha_fin"
+                type="datetime-local"
+                value={data.fecha_fin}
+                onChange={(e) => setData('fecha_fin', e.target.value)}
+                className="mt-1"
+                disabled={processing}
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Hasta cuándo se puede presentar
+              </p>
             </div>
           </div>
 
@@ -322,24 +371,65 @@ export default function EvaluacionForm({
         </CardContent>
       </Card>
 
+      {/* Estadísticas y Validación */}
+      <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+        <CardHeader>
+          <CardTitle className="text-lg">Resumen de Evaluación</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-3 gap-4">
+            <div className="bg-white rounded-lg p-4 border">
+              <div className="text-sm text-muted-foreground">Total de Preguntas</div>
+              <div className="text-3xl font-bold text-primary">{preguntas.length}</div>
+            </div>
+            <div className="bg-white rounded-lg p-4 border">
+              <div className="text-sm text-muted-foreground">Puntuación Total</div>
+              <div className="text-3xl font-bold text-green-600">{puntuacionTotal} pts</div>
+            </div>
+            <div className="bg-white rounded-lg p-4 border">
+              <div className="text-sm text-muted-foreground">Tiempo Estimado</div>
+              <div className="text-3xl font-bold text-orange-600">{data.tiempo_limite} min</div>
+            </div>
+          </div>
+
+          {/* Validación */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              {preguntas.length > 0 ? (
+                <CheckCircleIcon className="h-5 w-5 text-green-600" />
+              ) : (
+                <ExclamationTriangleIcon className="h-5 w-5 text-yellow-600" />
+              )}
+              <span className="text-sm">
+                {preguntas.length > 0
+                  ? `${preguntas.length} pregunta${preguntas.length !== 1 ? 's' : ''} agregada${preguntas.length !== 1 ? 's' : ''}`
+                  : 'Sin preguntas (mínimo 1 requerida)'}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              {data.titulo.length > 0 ? (
+                <CheckCircleIcon className="h-5 w-5 text-green-600" />
+              ) : (
+                <ExclamationTriangleIcon className="h-5 w-5 text-yellow-600" />
+              )}
+              <span className="text-sm">Título {data.titulo.length > 0 ? 'completado' : 'requerido'}</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Preguntas */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
               <CardTitle>Preguntas</CardTitle>
-              <CardDescription>Agrega las preguntas de la evaluación</CardDescription>
+              <CardDescription>Agrega las preguntas de la evaluación (mínimo 1)</CardDescription>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="text-sm">
-                <span className="font-medium">Puntuación Total:</span>{' '}
-                <span className="text-primary">{puntuacionTotal} pts</span>
-              </div>
-              <Button type="button" onClick={handleAddPregunta} size="sm" disabled={processing}>
-                <PlusIcon className="h-4 w-4 mr-2" />
-                Agregar Pregunta
-              </Button>
-            </div>
+            <Button type="button" onClick={handleAddPregunta} size="sm" disabled={processing}>
+              <PlusIcon className="h-4 w-4 mr-2" />
+              Agregar Pregunta
+            </Button>
           </div>
         </CardHeader>
         <CardContent>
@@ -353,38 +443,57 @@ export default function EvaluacionForm({
           ) : (
             <div className="space-y-4">
               {preguntas.map((pregunta, index) => (
-                <Card key={index}>
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-base">Pregunta {index + 1}</CardTitle>
+                <Card key={index} className="border-l-4 border-l-blue-500 hover:shadow-md transition-shadow">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3">
+                          <Badge variant="outline" className="text-xs">Pregunta {index + 1}</Badge>
+                          <Badge variant="secondary" className="text-xs">
+                            {pregunta.tipo === 'opcion_multiple'
+                              ? 'Opción Múltiple'
+                              : pregunta.tipo === 'verdadero_falso'
+                                ? 'V/F'
+                                : 'Respuesta Corta'}
+                          </Badge>
+                          <Badge className="ml-auto text-xs bg-green-100 text-green-800">
+                            {pregunta.puntos} pts
+                          </Badge>
+                        </div>
+                      </div>
                       <Button
                         type="button"
                         variant="ghost"
                         size="sm"
                         onClick={() => handleRemovePregunta(index)}
                         disabled={processing}
+                        className="ml-2"
                       >
                         <XMarkIcon className="h-4 w-4" />
                       </Button>
                     </div>
                   </CardHeader>
-                  <CardContent className="space-y-3">
+                  <CardContent className="space-y-4">
                     {/* Enunciado */}
                     <div>
-                      <Label>Enunciado</Label>
+                      <Label className="text-sm font-semibold">Enunciado</Label>
                       <Textarea
                         value={pregunta.enunciado}
                         onChange={(e) => handlePreguntaChange(index, 'enunciado', e.target.value)}
-                        placeholder="Escribe la pregunta..."
+                        placeholder="Escribe la pregunta de manera clara..."
                         rows={2}
                         disabled={processing}
+                        className="mt-2"
                       />
+                      {!pregunta.enunciado && (
+                        <p className="text-xs text-red-500 mt-1">El enunciado es requerido</p>
+                      )}
                     </div>
 
                     {/* Tipo y Puntos */}
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <Label>Tipo</Label>
+                        <Label className="text-sm font-semibold">Tipo</Label>
                         <Select
                           value={pregunta.tipo}
                           onValueChange={(value) =>
@@ -392,27 +501,29 @@ export default function EvaluacionForm({
                           }
                           disabled={processing}
                         >
-                          <SelectTrigger className="mt-1">
+                          <SelectTrigger className="mt-2">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="opcion_multiple">Opción Múltiple</SelectItem>
                             <SelectItem value="verdadero_falso">Verdadero/Falso</SelectItem>
-                            <SelectItem value="corta_respuesta">Respuesta Corta</SelectItem>
+                            <SelectItem value="respuesta_corta">Respuesta Corta</SelectItem>
+                            <SelectItem value="respuesta_larga">Respuesta Larga</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
 
                       <div>
-                        <Label>Puntos</Label>
+                        <Label className="text-sm font-semibold">Puntos</Label>
                         <Input
                           type="number"
                           value={pregunta.puntos}
                           onChange={(e) =>
                             handlePreguntaChange(index, 'puntos', Number(e.target.value))
                           }
-                          min={0}
-                          className="mt-1"
+                          min={1}
+                          max={100}
+                          className="mt-2"
                           disabled={processing}
                         />
                       </div>
@@ -421,10 +532,13 @@ export default function EvaluacionForm({
                     {/* Opciones (solo para opción múltiple) */}
                     {pregunta.tipo === 'opcion_multiple' && (
                       <div>
-                        <Label>Opciones</Label>
+                        <Label className="text-sm font-semibold">Opciones de Respuesta</Label>
                         <div className="space-y-2 mt-2">
                           {pregunta.opciones.map((opcion, opcionIdx) => (
-                            <div key={opcionIdx} className="flex gap-2">
+                            <div key={opcionIdx} className="flex gap-2 items-center">
+                              <span className="text-xs text-muted-foreground w-6 text-center font-medium">
+                                {String.fromCharCode(65 + opcionIdx)}.
+                              </span>
                               <Input
                                 value={opcion}
                                 onChange={(e) =>
@@ -432,6 +546,7 @@ export default function EvaluacionForm({
                                 }
                                 placeholder={`Opción ${opcionIdx + 1}`}
                                 disabled={processing}
+                                className="flex-1"
                               />
                               <Button
                                 type="button"
@@ -439,6 +554,7 @@ export default function EvaluacionForm({
                                 size="sm"
                                 onClick={() => handleRemoveOpcion(index, opcionIdx)}
                                 disabled={processing || pregunta.opciones.length <= 2}
+                                className="text-red-600 hover:text-red-700"
                               >
                                 <XMarkIcon className="h-4 w-4" />
                               </Button>
@@ -450,7 +566,7 @@ export default function EvaluacionForm({
                           variant="outline"
                           size="sm"
                           onClick={() => handleAddOpcion(index)}
-                          className="mt-2"
+                          className="mt-3"
                           disabled={processing}
                         >
                           <PlusIcon className="h-4 w-4 mr-2" />
@@ -460,9 +576,29 @@ export default function EvaluacionForm({
                     )}
 
                     {/* Respuesta Correcta */}
-                    <div>
-                      <Label>Respuesta Correcta</Label>
+                    <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
+                      <Label className="text-sm font-semibold">✓ Respuesta Correcta</Label>
                       {pregunta.tipo === 'opcion_multiple' ? (
+                        <Select
+                          value={pregunta.respuesta_correcta ? pregunta.opciones.indexOf(pregunta.respuesta_correcta).toString() : ''}
+                          onValueChange={(value) => {
+                            const selectedOption = pregunta.opciones[parseInt(value)]
+                            handlePreguntaChange(index, 'respuesta_correcta', selectedOption)
+                          }}
+                          disabled={processing}
+                        >
+                          <SelectTrigger className="mt-2">
+                            <SelectValue placeholder="Selecciona la respuesta correcta" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {pregunta.opciones.map((opcion, opcionIdx) => (
+                              <SelectItem key={opcionIdx} value={String(opcionIdx)}>
+                                {opcion || `Opción ${opcionIdx + 1}`}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      ) : pregunta.tipo === 'verdadero_falso' ? (
                         <Select
                           value={pregunta.respuesta_correcta}
                           onValueChange={(value) =>
@@ -470,15 +606,12 @@ export default function EvaluacionForm({
                           }
                           disabled={processing}
                         >
-                          <SelectTrigger className="mt-1">
+                          <SelectTrigger className="mt-2">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            {pregunta.opciones.map((opcion, opcionIdx) => (
-                              <SelectItem key={opcionIdx} value={opcion}>
-                                {opcion || `Opción ${opcionIdx + 1}`}
-                              </SelectItem>
-                            ))}
+                            <SelectItem value="Verdadero">Verdadero</SelectItem>
+                            <SelectItem value="Falso">Falso</SelectItem>
                           </SelectContent>
                         </Select>
                       ) : (
@@ -488,9 +621,12 @@ export default function EvaluacionForm({
                             handlePreguntaChange(index, 'respuesta_correcta', e.target.value)
                           }
                           placeholder="Escribe la respuesta correcta..."
-                          className="mt-1"
+                          className="mt-2"
                           disabled={processing}
                         />
+                      )}
+                      {!pregunta.respuesta_correcta && (
+                        <p className="text-xs text-red-500 mt-1">La respuesta correcta es requerida</p>
                       )}
                     </div>
                   </CardContent>

@@ -1,7 +1,104 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
+/**
+* @see \App\Http\Controllers\ReportesController::studentSynthesis
+ * @see app/Http/Controllers/ReportesController.php:636
+ * @route '/api/reportes/student/{studentId}/synthesis'
+ */
+export const studentSynthesis = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: studentSynthesis.url(args, options),
+    method: 'get',
+})
+
+studentSynthesis.definition = {
+    methods: ["get","head"],
+    url: '/api/reportes/student/{studentId}/synthesis',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\ReportesController::studentSynthesis
+ * @see app/Http/Controllers/ReportesController.php:636
+ * @route '/api/reportes/student/{studentId}/synthesis'
+ */
+studentSynthesis.url = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { studentId: args }
+    }
+
+    
+    if (Array.isArray(args)) {
+        args = {
+                    studentId: args[0],
+                }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+                        studentId: args.studentId,
+                }
+
+    return studentSynthesis.definition.url
+            .replace('{studentId}', parsedArgs.studentId.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\ReportesController::studentSynthesis
+ * @see app/Http/Controllers/ReportesController.php:636
+ * @route '/api/reportes/student/{studentId}/synthesis'
+ */
+studentSynthesis.get = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: studentSynthesis.url(args, options),
+    method: 'get',
+})
+/**
+* @see \App\Http\Controllers\ReportesController::studentSynthesis
+ * @see app/Http/Controllers/ReportesController.php:636
+ * @route '/api/reportes/student/{studentId}/synthesis'
+ */
+studentSynthesis.head = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: studentSynthesis.url(args, options),
+    method: 'head',
+})
+
+    /**
+* @see \App\Http\Controllers\ReportesController::studentSynthesis
+ * @see app/Http/Controllers/ReportesController.php:636
+ * @route '/api/reportes/student/{studentId}/synthesis'
+ */
+    const studentSynthesisForm = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: studentSynthesis.url(args, options),
+        method: 'get',
+    })
+
+            /**
+* @see \App\Http\Controllers\ReportesController::studentSynthesis
+ * @see app/Http/Controllers/ReportesController.php:636
+ * @route '/api/reportes/student/{studentId}/synthesis'
+ */
+        studentSynthesisForm.get = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: studentSynthesis.url(args, options),
+            method: 'get',
+        })
+            /**
+* @see \App\Http\Controllers\ReportesController::studentSynthesis
+ * @see app/Http/Controllers/ReportesController.php:636
+ * @route '/api/reportes/student/{studentId}/synthesis'
+ */
+        studentSynthesisForm.head = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: studentSynthesis.url(args, {
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    studentSynthesis.form = studentSynthesisForm
 /**
 * @see \App\Http\Controllers\ReportesController::index
- * @see app/Http/Controllers/ReportesController.php:19
+ * @see app/Http/Controllers/ReportesController.php:44
  * @route '/reportes'
  */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +113,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\ReportesController::index
- * @see app/Http/Controllers/ReportesController.php:19
+ * @see app/Http/Controllers/ReportesController.php:44
  * @route '/reportes'
  */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +122,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\ReportesController::index
- * @see app/Http/Controllers/ReportesController.php:19
+ * @see app/Http/Controllers/ReportesController.php:44
  * @route '/reportes'
  */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +131,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\ReportesController::index
- * @see app/Http/Controllers/ReportesController.php:19
+ * @see app/Http/Controllers/ReportesController.php:44
  * @route '/reportes'
  */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +141,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\ReportesController::index
- * @see app/Http/Controllers/ReportesController.php:19
+ * @see app/Http/Controllers/ReportesController.php:44
  * @route '/reportes'
  */
     const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +151,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\ReportesController::index
- * @see app/Http/Controllers/ReportesController.php:19
+ * @see app/Http/Controllers/ReportesController.php:44
  * @route '/reportes'
  */
         indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +160,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\ReportesController::index
- * @see app/Http/Controllers/ReportesController.php:19
+ * @see app/Http/Controllers/ReportesController.php:44
  * @route '/reportes'
  */
         indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,7 +176,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\ReportesController::desempeno
- * @see app/Http/Controllers/ReportesController.php:31
+ * @see app/Http/Controllers/ReportesController.php:63
  * @route '/reportes/desempeno'
  */
 export const desempeno = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +191,7 @@ desempeno.definition = {
 
 /**
 * @see \App\Http\Controllers\ReportesController::desempeno
- * @see app/Http/Controllers/ReportesController.php:31
+ * @see app/Http/Controllers/ReportesController.php:63
  * @route '/reportes/desempeno'
  */
 desempeno.url = (options?: RouteQueryOptions) => {
@@ -103,7 +200,7 @@ desempeno.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\ReportesController::desempeno
- * @see app/Http/Controllers/ReportesController.php:31
+ * @see app/Http/Controllers/ReportesController.php:63
  * @route '/reportes/desempeno'
  */
 desempeno.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -112,7 +209,7 @@ desempeno.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\ReportesController::desempeno
- * @see app/Http/Controllers/ReportesController.php:31
+ * @see app/Http/Controllers/ReportesController.php:63
  * @route '/reportes/desempeno'
  */
 desempeno.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -122,7 +219,7 @@ desempeno.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\ReportesController::desempeno
- * @see app/Http/Controllers/ReportesController.php:31
+ * @see app/Http/Controllers/ReportesController.php:63
  * @route '/reportes/desempeno'
  */
     const desempenoForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -132,7 +229,7 @@ desempeno.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\ReportesController::desempeno
- * @see app/Http/Controllers/ReportesController.php:31
+ * @see app/Http/Controllers/ReportesController.php:63
  * @route '/reportes/desempeno'
  */
         desempenoForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -141,7 +238,7 @@ desempeno.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\ReportesController::desempeno
- * @see app/Http/Controllers/ReportesController.php:31
+ * @see app/Http/Controllers/ReportesController.php:63
  * @route '/reportes/desempeno'
  */
         desempenoForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -157,7 +254,7 @@ desempeno.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     desempeno.form = desempenoForm
 /**
 * @see \App\Http\Controllers\ReportesController::cursos
- * @see app/Http/Controllers/ReportesController.php:74
+ * @see app/Http/Controllers/ReportesController.php:195
  * @route '/reportes/cursos'
  */
 export const cursos = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -172,7 +269,7 @@ cursos.definition = {
 
 /**
 * @see \App\Http\Controllers\ReportesController::cursos
- * @see app/Http/Controllers/ReportesController.php:74
+ * @see app/Http/Controllers/ReportesController.php:195
  * @route '/reportes/cursos'
  */
 cursos.url = (options?: RouteQueryOptions) => {
@@ -181,7 +278,7 @@ cursos.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\ReportesController::cursos
- * @see app/Http/Controllers/ReportesController.php:74
+ * @see app/Http/Controllers/ReportesController.php:195
  * @route '/reportes/cursos'
  */
 cursos.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -190,7 +287,7 @@ cursos.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\ReportesController::cursos
- * @see app/Http/Controllers/ReportesController.php:74
+ * @see app/Http/Controllers/ReportesController.php:195
  * @route '/reportes/cursos'
  */
 cursos.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -200,7 +297,7 @@ cursos.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\ReportesController::cursos
- * @see app/Http/Controllers/ReportesController.php:74
+ * @see app/Http/Controllers/ReportesController.php:195
  * @route '/reportes/cursos'
  */
     const cursosForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -210,7 +307,7 @@ cursos.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\ReportesController::cursos
- * @see app/Http/Controllers/ReportesController.php:74
+ * @see app/Http/Controllers/ReportesController.php:195
  * @route '/reportes/cursos'
  */
         cursosForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -219,7 +316,7 @@ cursos.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\ReportesController::cursos
- * @see app/Http/Controllers/ReportesController.php:74
+ * @see app/Http/Controllers/ReportesController.php:195
  * @route '/reportes/cursos'
  */
         cursosForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -235,7 +332,7 @@ cursos.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     cursos.form = cursosForm
 /**
 * @see \App\Http\Controllers\ReportesController::analisis
- * @see app/Http/Controllers/ReportesController.php:132
+ * @see app/Http/Controllers/ReportesController.php:253
  * @route '/reportes/analisis'
  */
 export const analisis = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -250,7 +347,7 @@ analisis.definition = {
 
 /**
 * @see \App\Http\Controllers\ReportesController::analisis
- * @see app/Http/Controllers/ReportesController.php:132
+ * @see app/Http/Controllers/ReportesController.php:253
  * @route '/reportes/analisis'
  */
 analisis.url = (options?: RouteQueryOptions) => {
@@ -259,7 +356,7 @@ analisis.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\ReportesController::analisis
- * @see app/Http/Controllers/ReportesController.php:132
+ * @see app/Http/Controllers/ReportesController.php:253
  * @route '/reportes/analisis'
  */
 analisis.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -268,7 +365,7 @@ analisis.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\ReportesController::analisis
- * @see app/Http/Controllers/ReportesController.php:132
+ * @see app/Http/Controllers/ReportesController.php:253
  * @route '/reportes/analisis'
  */
 analisis.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -278,7 +375,7 @@ analisis.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\ReportesController::analisis
- * @see app/Http/Controllers/ReportesController.php:132
+ * @see app/Http/Controllers/ReportesController.php:253
  * @route '/reportes/analisis'
  */
     const analisisForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -288,7 +385,7 @@ analisis.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\ReportesController::analisis
- * @see app/Http/Controllers/ReportesController.php:132
+ * @see app/Http/Controllers/ReportesController.php:253
  * @route '/reportes/analisis'
  */
         analisisForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -297,7 +394,7 @@ analisis.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\ReportesController::analisis
- * @see app/Http/Controllers/ReportesController.php:132
+ * @see app/Http/Controllers/ReportesController.php:253
  * @route '/reportes/analisis'
  */
         analisisForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -313,7 +410,7 @@ analisis.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     analisis.form = analisisForm
 /**
 * @see \App\Http\Controllers\ReportesController::metricas
- * @see app/Http/Controllers/ReportesController.php:265
+ * @see app/Http/Controllers/ReportesController.php:448
  * @route '/reportes/metricas'
  */
 export const metricas = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -328,7 +425,7 @@ metricas.definition = {
 
 /**
 * @see \App\Http\Controllers\ReportesController::metricas
- * @see app/Http/Controllers/ReportesController.php:265
+ * @see app/Http/Controllers/ReportesController.php:448
  * @route '/reportes/metricas'
  */
 metricas.url = (options?: RouteQueryOptions) => {
@@ -337,7 +434,7 @@ metricas.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\ReportesController::metricas
- * @see app/Http/Controllers/ReportesController.php:265
+ * @see app/Http/Controllers/ReportesController.php:448
  * @route '/reportes/metricas'
  */
 metricas.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -346,7 +443,7 @@ metricas.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\ReportesController::metricas
- * @see app/Http/Controllers/ReportesController.php:265
+ * @see app/Http/Controllers/ReportesController.php:448
  * @route '/reportes/metricas'
  */
 metricas.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -356,7 +453,7 @@ metricas.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\ReportesController::metricas
- * @see app/Http/Controllers/ReportesController.php:265
+ * @see app/Http/Controllers/ReportesController.php:448
  * @route '/reportes/metricas'
  */
     const metricasForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -366,7 +463,7 @@ metricas.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\ReportesController::metricas
- * @see app/Http/Controllers/ReportesController.php:265
+ * @see app/Http/Controllers/ReportesController.php:448
  * @route '/reportes/metricas'
  */
         metricasForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -375,7 +472,7 @@ metricas.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\ReportesController::metricas
- * @see app/Http/Controllers/ReportesController.php:265
+ * @see app/Http/Controllers/ReportesController.php:448
  * @route '/reportes/metricas'
  */
         metricasForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -391,7 +488,7 @@ metricas.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     metricas.form = metricasForm
 /**
 * @see \App\Http\Controllers\ReportesController::riesgo
- * @see app/Http/Controllers/ReportesController.php:190
+ * @see app/Http/Controllers/ReportesController.php:311
  * @route '/reportes/riesgo'
  */
 export const riesgo = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -406,7 +503,7 @@ riesgo.definition = {
 
 /**
 * @see \App\Http\Controllers\ReportesController::riesgo
- * @see app/Http/Controllers/ReportesController.php:190
+ * @see app/Http/Controllers/ReportesController.php:311
  * @route '/reportes/riesgo'
  */
 riesgo.url = (options?: RouteQueryOptions) => {
@@ -415,7 +512,7 @@ riesgo.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\ReportesController::riesgo
- * @see app/Http/Controllers/ReportesController.php:190
+ * @see app/Http/Controllers/ReportesController.php:311
  * @route '/reportes/riesgo'
  */
 riesgo.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -424,7 +521,7 @@ riesgo.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\ReportesController::riesgo
- * @see app/Http/Controllers/ReportesController.php:190
+ * @see app/Http/Controllers/ReportesController.php:311
  * @route '/reportes/riesgo'
  */
 riesgo.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -434,7 +531,7 @@ riesgo.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\ReportesController::riesgo
- * @see app/Http/Controllers/ReportesController.php:190
+ * @see app/Http/Controllers/ReportesController.php:311
  * @route '/reportes/riesgo'
  */
     const riesgoForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -444,7 +541,7 @@ riesgo.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\ReportesController::riesgo
- * @see app/Http/Controllers/ReportesController.php:190
+ * @see app/Http/Controllers/ReportesController.php:311
  * @route '/reportes/riesgo'
  */
         riesgoForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -453,7 +550,7 @@ riesgo.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\ReportesController::riesgo
- * @see app/Http/Controllers/ReportesController.php:190
+ * @see app/Http/Controllers/ReportesController.php:311
  * @route '/reportes/riesgo'
  */
         riesgoForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -468,7 +565,8 @@ riesgo.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     riesgo.form = riesgoForm
 const reportes = {
-    index,
+    studentSynthesis,
+index,
 desempeno,
 cursos,
 analisis,

@@ -31,11 +31,21 @@ interface Carrera {
 interface PerfilVocacional {
   id: number;
   estudiante_id: number;
-  test_id: number;
-  carreras_recomendadas: Carrera[];
-  fortalezas: string[];
-  areas_interes: string[];
-  nivel_confianza: number;
+  test_id?: number;
+  carrera_predicha_ml?: string;
+  confianza_prediccion?: number;
+  cluster_aptitud?: number;
+  probabilidad_cluster?: number;
+  prediccion_detalles?: any;
+  recomendaciones_personalizadas?: any;
+  carreras_recomendadas?: Carrera[];
+  fortalezas?: string[];
+  areas_interes?: string[];
+  nivel_confianza?: number;
+  intereses?: Record<string, number>;
+  habilidades?: Record<string, number>;
+  personalidad?: Record<string, number>;
+  aptitudes?: Record<string, number>;
 }
 
 interface TestVocacional {
@@ -148,53 +158,200 @@ export default function Resultados({ test, resultado, perfil }: ResultadosProps)
         {/* Resultado Principal */}
         {perfil ? (
           <div className="space-y-6">
-            {/* Nivel de Confianza */}
-            <Card className={getConfianzaBg(perfil.nivel_confianza)}>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Award className="w-5 h-5" />
-                  Nivel de Confianza
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
+            {/* Carrera Predicha por ML */}
+            {perfil.carrera_predicha_ml && (
+              <Card className="border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-2xl">
+                    <Award className="w-6 h-6" />
+                    Carrera Recomendada
+                  </CardTitle>
+                  <CardDescription className="text-lg">
+                    Basado en análisis de ML (Supervisado + Clustering)
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
                   <div>
-                    <div className="flex justify-between mb-2">
-                      <span className={`text-3xl font-bold ${getConfianzaColor(perfil.nivel_confianza)}`}>
-                        {perfil.nivel_confianza}%
-                      </span>
-                      <span className="text-sm text-gray-600 dark:text-gray-400">
-                        {perfil.nivel_confianza >= 80
-                          ? 'Muy Confiable'
-                          : perfil.nivel_confianza >= 60
-                            ? 'Confiable'
-                            : perfil.nivel_confianza >= 40
-                              ? 'Moderadamente Confiable'
-                              : 'En Revisión'}
-                      </span>
-                    </div>
-                    <div className="w-full bg-gray-300 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
-                      <div
-                        className={`h-full ${
-                          perfil.nivel_confianza >= 80
-                            ? 'bg-green-500'
-                            : perfil.nivel_confianza >= 60
-                              ? 'bg-blue-500'
-                              : perfil.nivel_confianza >= 40
-                                ? 'bg-yellow-500'
-                                : 'bg-orange-500'
-                        }`}
-                        style={{ width: `${perfil.nivel_confianza}%` }}
-                      />
-                    </div>
+                    <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                      {perfil.carrera_predicha_ml}
+                    </h3>
+                    {perfil.confianza_prediccion !== undefined && (
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-700 dark:text-gray-300 font-medium">
+                            Nivel de Confianza:
+                          </span>
+                          <span className={`text-2xl font-bold ${getConfianzaColor(Math.round(perfil.confianza_prediccion * 100))}`}>
+                            {Math.round(perfil.confianza_prediccion * 100)}%
+                          </span>
+                        </div>
+                        <div className="w-full bg-gray-300 dark:bg-gray-700 rounded-full h-4 overflow-hidden">
+                          <div
+                            className={`h-full transition-all ${
+                              perfil.confianza_prediccion >= 0.8
+                                ? 'bg-green-500'
+                                : perfil.confianza_prediccion >= 0.6
+                                  ? 'bg-blue-500'
+                                  : perfil.confianza_prediccion >= 0.4
+                                    ? 'bg-yellow-500'
+                                    : 'bg-orange-500'
+                            }`}
+                            style={{ width: `${perfil.confianza_prediccion * 100}%` }}
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  <p className="text-sm text-gray-700 dark:text-gray-300">
-                    Este nivel indica la precisión de los resultados basada
-                    en tu consistencia en las respuestas.
+
+                  {/* Cluster Asignado */}
+                  {perfil.cluster_aptitud !== undefined && (
+                    <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">Grupo de Aptitud</p>
+                          <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                            {perfil.cluster_aptitud === 0 && 'Bajo Desempeño'}
+                            {perfil.cluster_aptitud === 1 && 'Desempeño Medio'}
+                            {perfil.cluster_aptitud === 2 && 'Alto Desempeño'}
+                          </p>
+                        </div>
+                        {perfil.probabilidad_cluster !== undefined && (
+                          <div className="text-right">
+                            <p className="text-sm text-gray-600 dark:text-gray-400">Probabilidad</p>
+                            <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                              {Math.round(perfil.probabilidad_cluster * 100)}%
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Top 3 Carreras desde Predicción */}
+            {perfil.prediccion_detalles?.carrera_predicha?.top_3 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <TrendingUp className="w-5 h-5" />
+                    Top 3 Carreras Recomendadas
+                  </CardTitle>
+                  <CardDescription>
+                    Ranking basado en compatibilidad
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {perfil.prediccion_detalles.carrera_predicha.top_3.map((carrera: any) => (
+                      <div key={carrera.ranking} className="p-4 border rounded-lg hover:shadow-md transition-shadow">
+                        <div className="flex items-start justify-between mb-2">
+                          <div>
+                            <h4 className="font-semibold text-gray-900 dark:text-white">
+                              #{carrera.ranking} - {carrera.carrera}
+                            </h4>
+                          </div>
+                          <Badge className="ml-2 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                            {Math.round((carrera.compatibilidad || 0) * 100)}% match
+                          </Badge>
+                        </div>
+                        <div className="mt-3">
+                          <div className="flex justify-between text-xs text-gray-600 dark:text-gray-400 mb-1">
+                            <span>Compatibilidad</span>
+                            <span>Confianza</span>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
+                              <div
+                                className="h-full bg-blue-500"
+                                style={{ width: `${(carrera.compatibilidad || 0) * 100}%` }}
+                              />
+                            </div>
+                            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
+                              <div
+                                className="h-full bg-green-500"
+                                style={{ width: `${(carrera.confianza || 0) * 100}%` }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Narrativa Personalizada */}
+            {perfil.recomendaciones_personalizadas?.narrativa && (
+              <Card className="border-purple-200 bg-purple-50 dark:border-purple-900 dark:bg-purple-950">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Lightbulb className="w-5 h-5" />
+                    Análisis Personalizado
+                  </CardTitle>
+                  <CardDescription>
+                    {perfil.recomendaciones_personalizadas.sintesis_tipo === 'groq'
+                      ? 'Generado con IA (Groq)'
+                      : 'Análisis automático'}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                    {perfil.recomendaciones_personalizadas.narrativa}
                   </p>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Recomendaciones */}
+            {perfil.recomendaciones_personalizadas?.recomendaciones &&
+             perfil.recomendaciones_personalizadas.recomendaciones.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5" />
+                    Recomendaciones Personalizadas
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-3">
+                    {perfil.recomendaciones_personalizadas.recomendaciones.map((rec: string, idx: number) => (
+                      <li key={idx} className="flex gap-3">
+                        <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-700 dark:text-gray-300">{rec}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Pasos Siguientes */}
+            {perfil.recomendaciones_personalizadas?.pasos_siguientes &&
+             perfil.recomendaciones_personalizadas.pasos_siguientes.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <TrendingUp className="w-5 h-5" />
+                    Pasos Siguientes
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ol className="space-y-3">
+                    {perfil.recomendaciones_personalizadas.pasos_siguientes.map((paso: string, idx: number) => (
+                      <li key={idx} className="flex gap-3">
+                        <span className="flex items-center justify-center w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 font-semibold flex-shrink-0">
+                          {idx + 1}
+                        </span>
+                        <span className="text-gray-700 dark:text-gray-300 pt-0.5">{paso}</span>
+                      </li>
+                    ))}
+                  </ol>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Carreras Recomendadas */}
             {perfil.carreras_recomendadas &&

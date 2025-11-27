@@ -79,20 +79,68 @@ export default function Take({ test, preguntas }: TakeProps) {
   };
 
   const handleRespuesta = (preguntaId: number, valor: any) => {
+    const nuevasRespuestas = {
+      ...data.respuestas,
+      [preguntaId]: valor,
+    };
     setData({
       ...data,
-      respuestas: {
-        ...data.respuestas,
-        [preguntaId]: valor,
-      },
+      respuestas: nuevasRespuestas,
     });
+
+    // Auto-save draft to localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(
+        `test_draft_${test.id}`,
+        JSON.stringify({
+          respuestas: nuevasRespuestas,
+          timestamp: new Date().toISOString(),
+        })
+      );
+    }
+  };
+
+  const validateAllAnswered = (): boolean => {
+    return respuestasCompletadas === totalPreguntas && totalPreguntas > 0;
   };
 
   const handleSubmit = () => {
-    if (confirm('¿Estás seguro de que deseas enviar tus respuestas?')) {
+    // Validar que todas las preguntas estén respondidas
+    if (!validateAllAnswered()) {
+      alert(
+        `Por favor responde todas las preguntas. Faltan ${totalPreguntas - respuestasCompletadas} preguntas.`
+      );
+      return;
+    }
+
+    // Confirmación
+    if (
+      confirm(
+        '¿Estás seguro de que deseas enviar tus respuestas? No podrás modificarlas después.'
+      )
+    ) {
+      // Limpiar draft
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem(`test_draft_${test.id}`);
+      }
       post(`/tests-vocacionales/${test.id}/enviar`);
     }
   };
+
+  // Restore draft on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const draft = localStorage.getItem(`test_draft_${test.id}`);
+      if (draft) {
+        try {
+          const { respuestas } = JSON.parse(draft);
+          setData({ ...data, respuestas });
+        } catch (err) {
+          console.error('Error restoring draft:', err);
+        }
+      }
+    }
+  }, []);
 
   const mostrarAdvertencia = tiempoRestante <= 300 && tiempoRestante > 0;
 
@@ -251,24 +299,64 @@ export default function Take({ test, preguntas }: TakeProps) {
         </div>
 
         {/* Actions */}
-        <Card className="sticky bottom-4 shadow-lg">
+        <Card className="sticky bottom-4 shadow-lg border-l-4 border-blue-500">
           <CardContent className="pt-6">
-            <div className="flex gap-4">
+            <div className="space-y-4">
+              {/* Validation Status */}
+              <div
+                className={`p-4 rounded-lg flex items-start gap-3 ${
+                  validateAllAnswered()
+                    ? 'bg-green-50 border border-green-200 dark:bg-green-950 dark:border-green-900'
+                    : 'bg-yellow-50 border border-yellow-200 dark:bg-yellow-950 dark:border-yellow-900'
+                }`}
+              >
+                <div
+                  className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-white text-sm font-bold ${
+                    validateAllAnswered() ? 'bg-green-600' : 'bg-yellow-600'
+                  }`}
+                >
+                  {validateAllAnswered() ? '✓' : '!'}
+                </div>
+                <div className="flex-1">
+                  {validateAllAnswered() ? (
+                    <div>
+                      <p className="font-semibold text-green-900 dark:text-green-100">
+                        Listo para enviar
+                      </p>
+                      <p className="text-sm text-green-700 dark:text-green-200">
+                        Has respondido todas las {totalPreguntas} preguntas
+                      </p>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="font-semibold text-yellow-900 dark:text-yellow-100">
+                        Preguntas sin responder
+                      </p>
+                      <p className="text-sm text-yellow-700 dark:text-yellow-200">
+                        Faltan {totalPreguntas - respuestasCompletadas} de{' '}
+                        {totalPreguntas} preguntas por responder
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Submit Button */}
               <Button
                 onClick={handleSubmit}
-                disabled={processing || respuestasCompletadas === 0}
-                className="flex-1 flex items-center justify-center gap-2"
+                disabled={processing || !validateAllAnswered()}
+                className="w-full flex items-center justify-center gap-2"
                 size="lg"
               >
                 <CheckCircle className="w-5 h-5" />
-                {processing ? 'Enviando...' : 'Enviar Respuestas'}
+                {processing ? 'Enviando respuestas...' : 'Enviar Respuestas'}
               </Button>
 
-              <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
-                {respuestasCompletadas === totalPreguntas
-                  ? '✓ Todas las preguntas respondidas'
-                  : `${totalPreguntas - respuestasCompletadas} preguntas sin responder`}
-              </p>
+              {!validateAllAnswered() && (
+                <p className="text-xs text-gray-600 dark:text-gray-400 text-center">
+                  Completa todas las preguntas antes de enviar
+                </p>
+              )}
             </div>
           </CardContent>
         </Card>

@@ -13,6 +13,7 @@ class Evaluacion extends Contenido
     protected $table = 'evaluaciones';
 
     protected $fillable = [
+        'contenido_id',
         'tipo_evaluacion',
         'puntuacion_total',
         'tiempo_limite',
@@ -61,6 +62,14 @@ class Evaluacion extends Contenido
     public function preguntas(): HasMany
     {
         return $this->hasMany(Pregunta::class);
+    }
+
+    /**
+     * Relación con los intentos de evaluación
+     */
+    public function intentos(): HasMany
+    {
+        return $this->hasMany(IntentosEvaluacion::class);
     }
 
     public function curso()

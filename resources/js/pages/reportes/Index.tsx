@@ -11,9 +11,16 @@ import {
 
 interface Props {
   modulosSidebar: any[];
+  reportesLinks: {
+    desempeno: string;
+    cursos: string;
+    analisis: string;
+    riesgo: string;
+    metricas: string;
+  };
 }
 
-export default function ReportesIndex({ modulosSidebar }: Props) {
+export default function ReportesIndex({ modulosSidebar, reportesLinks }: Props) {
   const reportes = [
     {
       id: 'desempeno',
@@ -22,7 +29,7 @@ export default function ReportesIndex({ modulosSidebar }: Props) {
       icono: UserGroupIcon,
       color: 'from-blue-500 to-blue-600',
       bgColor: 'bg-blue-50',
-      ruta: route('reportes.desempeno'),
+      ruta: reportesLinks.desempeno,
       estadisticas: ['Promedio', 'Tasa de entrega', 'Tendencia'],
     },
     {
@@ -32,7 +39,7 @@ export default function ReportesIndex({ modulosSidebar }: Props) {
       icono: ChartBarIcon,
       color: 'from-green-500 to-green-600',
       bgColor: 'bg-green-50',
-      ruta: route('reportes.cursos'),
+      ruta: reportesLinks.cursos,
       estadisticas: ['Promedio', 'Estudiantes', 'Entrega'],
     },
     {
@@ -42,7 +49,7 @@ export default function ReportesIndex({ modulosSidebar }: Props) {
       icono: ArrowTrendingUpIcon,
       color: 'from-purple-500 to-purple-600',
       bgColor: 'bg-purple-50',
-      ruta: route('reportes.analisis'),
+      ruta: reportesLinks.analisis,
       estadisticas: ['Top 10', 'Bottom 10', 'Distribución'],
     },
     {
@@ -52,7 +59,7 @@ export default function ReportesIndex({ modulosSidebar }: Props) {
       icono: SparklesIcon,
       color: 'from-red-500 to-red-600',
       bgColor: 'bg-red-50',
-      ruta: route('reportes.riesgo'),
+      ruta: reportesLinks.riesgo,
       estadisticas: ['Riesgo Alto', 'Tendencias', 'Carreras'],
     },
     {
@@ -62,7 +69,7 @@ export default function ReportesIndex({ modulosSidebar }: Props) {
       icono: SparklesIcon,
       color: 'from-orange-500 to-orange-600',
       bgColor: 'bg-orange-50',
-      ruta: route('reportes.metricas'),
+      ruta: reportesLinks.metricas,
       estadisticas: ['Total usuarios', 'Actividad', 'Crecimiento'],
     },
   ];

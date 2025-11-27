@@ -73,6 +73,11 @@ export default function ProgresoPorCurso({ reportes, estadisticas, modulosSideba
     return labels[estado] || estado;
   };
 
+  const toFixed = (value: any, decimals: number = 1): string => {
+    const num = typeof value === 'number' ? value : parseFloat(value);
+    return isNaN(num) ? '0.0' : num.toFixed(decimals);
+  };
+
   return (
     <AppLayout>
       <Head title="Progreso por Curso - Reportes" />
@@ -97,7 +102,7 @@ export default function ProgresoPorCurso({ reportes, estadisticas, modulosSideba
             </div>
             <div className="bg-white rounded-xl shadow p-6">
               <p className="text-gray-600 text-sm font-semibold mb-1">Promedio General</p>
-              <p className="text-3xl font-bold text-blue-600">{estadisticas.promedio_general.toFixed(1)}</p>
+              <p className="text-3xl font-bold text-blue-600">{toFixed(estadisticas.promedio_general)}</p>
             </div>
             <div className="bg-white rounded-xl shadow p-6">
               <p className="text-gray-600 text-sm font-semibold mb-1">Total Estudiantes</p>
@@ -105,7 +110,7 @@ export default function ProgresoPorCurso({ reportes, estadisticas, modulosSideba
             </div>
             <div className="bg-white rounded-xl shadow p-6">
               <p className="text-gray-600 text-sm font-semibold mb-1">Tasa Entrega</p>
-              <p className="text-3xl font-bold text-purple-600">{estadisticas.tasa_entrega_promedio.toFixed(1)}%</p>
+              <p className="text-3xl font-bold text-purple-600">{toFixed(estadisticas.tasa_entrega_promedio)}%</p>
             </div>
           </div>
 
@@ -158,9 +163,9 @@ export default function ProgresoPorCurso({ reportes, estadisticas, modulosSideba
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <p className="text-xs text-gray-500 uppercase font-semibold mb-1">Promedio Curso</p>
-                      <p className="text-2xl font-bold text-blue-600">{reporte.promedio_curso.toFixed(1)}</p>
+                      <p className="text-2xl font-bold text-blue-600">{toFixed(reporte.promedio_curso)}</p>
                       <p className="text-xs text-gray-600 mt-1">
-                        Max: {reporte.promedio_maximo.toFixed(1)} | Min: {reporte.promedio_minimo.toFixed(1)}
+                        Max: {toFixed(reporte.promedio_maximo)} | Min: {toFixed(reporte.promedio_minimo)}
                       </p>
                     </div>
                     <div>
@@ -176,7 +181,7 @@ export default function ProgresoPorCurso({ reportes, estadisticas, modulosSideba
                   <div>
                     <div className="flex justify-between items-center mb-2">
                       <p className="text-xs text-gray-500 uppercase font-semibold">Tasa de Entrega</p>
-                      <span className="text-sm font-bold text-gray-900">{reporte.tasa_entrega.toFixed(1)}%</span>
+                      <span className="text-sm font-bold text-gray-900">{toFixed(reporte.tasa_entrega)}%</span>
                     </div>
                     <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
                       <div

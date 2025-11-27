@@ -25,8 +25,8 @@ class RoleModuloAccesoSeeder extends Seeder
         // Matriz de visibilidad: módulo => array de role_ids
         $modulosVisibles = [
             // MÓDULOS UNIVERSALES (Todos los roles autenticados)
-            'Inicio' => [1, 2, 3, 4, 5, 6, 7, 8],
-            'Mi Perfil' => [1, 2, 3, 4, 5, 6, 7, 8],
+            'Inicio' => [1, 2, 3, 4, 5, 6, 7],
+            'Mi Perfil' => [1, 2, 3, 4, 5, 6, 7],
             'Mis Cursos' => [1, 2, 3, 4, 5, 6, 7],
 
             // ADMINISTRACIÓN (Admin, Director)
@@ -42,8 +42,8 @@ class RoleModuloAccesoSeeder extends Seeder
             'Contenido Educativo' => [1, 2, 3, 6],
             'Recursos' => [1, 2, 3, 6],
 
-            // REPORTES Y ANÁLISIS (Admin, Director, Coordinador)
-            'Reportes' => [1, 2, 6],
+            // REPORTES Y ANÁLISIS (Admin, Director, Profesor, Coordinador)
+            'Reportes' => [1, 2, 3, 6],
 
             // 📊 ANÁLISIS DE RIESGO (Admin, Director, Profesor, Coordinador) ⭐
             'Análisis de Riesgo' => [1, 2, 3, 6],

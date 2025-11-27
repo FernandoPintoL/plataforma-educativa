@@ -43,7 +43,7 @@ class Kernel extends ConsoleKernel
         // Verificar salud del sistema
         $schedule->call(function () {
             $totalPred = \App\Models\PrediccionRiesgo::count();
-            $riesgoAlto = \App\Models\PrediccionRiesgo::where('risk_level', 'alto')->count();
+            $riesgoAlto = \App\Models\PrediccionRiesgo::where('nivel_riesgo', 'alto')->count();
 
             if ($totalPred === 0) {
                 \Log::warning('Advertencia: No hay predicciones en BD');

@@ -352,3 +352,81 @@ logout.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
         })
     
     logout.form = logoutForm
+/**
+* @see \App\Http\Controllers\CursoController::misCursos
+ * @see app/Http/Controllers/CursoController.php:14
+ * @route '/mis-cursos'
+ */
+export const misCursos = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: misCursos.url(options),
+    method: 'get',
+})
+
+misCursos.definition = {
+    methods: ["get","head"],
+    url: '/mis-cursos',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\CursoController::misCursos
+ * @see app/Http/Controllers/CursoController.php:14
+ * @route '/mis-cursos'
+ */
+misCursos.url = (options?: RouteQueryOptions) => {
+    return misCursos.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\CursoController::misCursos
+ * @see app/Http/Controllers/CursoController.php:14
+ * @route '/mis-cursos'
+ */
+misCursos.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: misCursos.url(options),
+    method: 'get',
+})
+/**
+* @see \App\Http\Controllers\CursoController::misCursos
+ * @see app/Http/Controllers/CursoController.php:14
+ * @route '/mis-cursos'
+ */
+misCursos.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: misCursos.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \App\Http\Controllers\CursoController::misCursos
+ * @see app/Http/Controllers/CursoController.php:14
+ * @route '/mis-cursos'
+ */
+    const misCursosForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: misCursos.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \App\Http\Controllers\CursoController::misCursos
+ * @see app/Http/Controllers/CursoController.php:14
+ * @route '/mis-cursos'
+ */
+        misCursosForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: misCursos.url(options),
+            method: 'get',
+        })
+            /**
+* @see \App\Http\Controllers\CursoController::misCursos
+ * @see app/Http/Controllers/CursoController.php:14
+ * @route '/mis-cursos'
+ */
+        misCursosForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: misCursos.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    misCursos.form = misCursosForm

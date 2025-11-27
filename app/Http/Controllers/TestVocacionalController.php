@@ -6,13 +6,47 @@ use App\Models\TestVocacional;
 use App\Models\ResultadoTestVocacional;
 use App\Models\PerfilVocacional;
 use App\Models\PreguntaTest;
+use App\Models\User;
+use App\Services\MLPredictionService;
+use App\Services\ClusteringService;
+use App\Services\EducationalRecommendationService;
+use App\Services\PredictionValidator;
+use App\Services\AgentSynthesisService;
+use App\Services\VocationalFeatureExtractorService;
+use App\Services\VocationalTestIntelligenceService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
 
 class TestVocacionalController extends Controller
 {
+    protected MLPredictionService $mlService;
+    protected ClusteringService $clusteringService;
+    protected EducationalRecommendationService $recommendationService;
+    protected PredictionValidator $validator;
+    protected AgentSynthesisService $agentService;
+    protected VocationalFeatureExtractorService $featureExtractor;
+    protected VocationalTestIntelligenceService $testIntelligence;
+
+    public function __construct(
+        MLPredictionService $mlService,
+        ClusteringService $clusteringService,
+        EducationalRecommendationService $recommendationService,
+        PredictionValidator $validator,
+        AgentSynthesisService $agentService,
+        VocationalFeatureExtractorService $featureExtractor,
+        VocationalTestIntelligenceService $testIntelligence
+    ) {
+        $this->mlService = $mlService;
+        $this->clusteringService = $clusteringService;
+        $this->recommendationService = $recommendationService;
+        $this->validator = $validator;
+        $this->agentService = $agentService;
+        $this->featureExtractor = $featureExtractor;
+        $this->testIntelligence = $testIntelligence;
+    }
     /**
      * Display a listing of available vocational tests
      */
@@ -94,7 +128,7 @@ class TestVocacionalController extends Controller
     }
 
     /**
-     * Submit test responses
+     * Submit test responses (ML-ENHANCED)
      */
     public function submitRespuestas(Request $request, TestVocacional $testVocacional)
     {
@@ -106,16 +140,18 @@ class TestVocacionalController extends Controller
         try {
             DB::beginTransaction();
 
+            $estudiante = auth()->user();
+
             // Crear resultado del test
             $resultado = ResultadoTestVocacional::create([
                 'test_vocacional_id' => $testVocacional->id,
-                'estudiante_id' => auth()->id(),
+                'estudiante_id' => $estudiante->id,
                 'respuestas' => $validated['respuestas'],
                 'fecha_completacion' => now(),
             ]);
 
-            // Analizar respuestas y generar perfil vocacional
-            $this->generarPerfilVocacional(auth()->user(), $testVocacional, $resultado);
+            // MEJORA ML: Analizar respuestas y generar perfil vocacional enriquecido
+            $this->generarPerfilVocacionalML($estudiante, $testVocacional, $resultado);
 
             DB::commit();
 
@@ -124,6 +160,7 @@ class TestVocacionalController extends Controller
                 ->with('success', 'Test completado exitosamente');
         } catch (\Exception $e) {
             DB::rollBack();
+            Log::error("Error al procesar test vocacional: {$e->getMessage()}");
             return back()
                 ->withErrors(['error' => 'Error al procesar el test: ' . $e->getMessage()]);
         }
@@ -224,7 +261,312 @@ class TestVocacionalController extends Controller
     }
 
     /**
-     * Generar perfil vocacional basado en respuestas del test
+     * FASE 3: Generar perfil vocacional MEJORADO CON APIs
+     *
+     * Integra las 3 APIs Python:
+     * - API Career (8001): Predicción de carrera (ML supervisado)
+     * - API Clustering (8002): Clustering de aptitudes (K-Means)
+     * - API Synthesis (8003): Síntesis personalizada con LLM
+     *
+     * Flujo:
+     * 1. Extraer features REALES con VocationalFeatureExtractorService
+     * 2. Llamar API Career → Predicción de carrera + top 3
+     * 3. Llamar API Clustering → Asignación de cluster
+     * 4. Llamar API Synthesis → Narrativa personalizada
+     * 5. Validar coherencia con PredictionValidator
+     * 6. Guardar perfil enriquecido en BD
+     */
+    private function generarPerfilVocacionalML($estudiante, TestVocacional $test, ResultadoTestVocacional $resultado)
+    {
+        try {
+            Log::info("========================================");
+            Log::info("FASE 3: Iniciando análisis vocacional con APIs");
+            Log::info("Estudiante: {$estudiante->id}");
+            Log::info("========================================");
+
+            // ===================================================================
+            // PASO 1: Extraer Features INTELIGENTES del Test + Académicos
+            // ===================================================================
+
+            Log::info("PASO 1: Extrayendo features del test vocacional...");
+
+            // SUBPASO 1A: Procesar respuestas del test vocacional
+            $testFeatures = $this->testIntelligence->procesarRespuestasTest($resultado, $test);
+            Log::info("Features del test extraídos:", [
+                'areas_identificadas' => array_filter(
+                    array_keys($testFeatures),
+                    fn($k) => strpos($k, 'area_') === 0
+                ),
+                'tasa_completacion' => $testFeatures['tasa_completacion'] ?? 0,
+            ]);
+
+            // SUBPASO 1B: Extraer features académicos reales
+            Log::info("PASO 1B: Extrayendo features académicos...");
+            $academicFeatures = $this->featureExtractor->extractVocationalFeatures($estudiante);
+            Log::info("Features académicos extraídos:", [
+                'promedio' => $academicFeatures['promedio'] ?? 'N/A',
+                'asistencia' => $academicFeatures['asistencia'] ?? 'N/A',
+                'area_dominante' => $academicFeatures['area_dominante'] ?? 'N/A',
+            ]);
+
+            // SUBPASO 1C: Combinar features (test + académicos)
+            // Las respuestas del test tienen mayor peso (70%) que académicos (30%)
+            $features = $this->combinarFeatures($testFeatures, $academicFeatures, 0.7);
+            Log::info("Features combinados:", [
+                'total_features' => count($features),
+                'peso_test' => '70%',
+                'peso_academico' => '30%',
+            ]);
+
+            // ===================================================================
+            // PASO 2: Llamar API Career (Puerto 8001)
+            // ===================================================================
+
+            Log::info("PASO 2: Llamando API Career (http://localhost:8001/predict/career/vocational)...");
+            $careerResponse = Http::post('http://localhost:8001/predict/career/vocational', $features);
+
+            if (!$careerResponse->successful()) {
+                throw new \Exception("API Career respondió con error: {$careerResponse->status()}");
+            }
+
+            $careerData = $careerResponse->json();
+            Log::info("Predicción de carrera obtenida:", [
+                'carrera' => $careerData['carrera'] ?? 'N/A',
+                'confianza' => $careerData['confianza'] ?? 0,
+                'compatibilidad' => $careerData['compatibilidad'] ?? 0,
+            ]);
+
+            // ===================================================================
+            // PASO 3: Llamar API Clustering (Puerto 8002)
+            // ===================================================================
+
+            Log::info("PASO 3: Llamando API Clustering (http://localhost:8002/cluster/vocational)...");
+            $clusterResponse = Http::post('http://localhost:8002/cluster/vocational', $features);
+
+            if (!$clusterResponse->successful()) {
+                throw new \Exception("API Clustering respondió con error: {$clusterResponse->status()}");
+            }
+
+            $clusterData = $clusterResponse->json();
+            Log::info("Clustering de aptitudes obtenido:", [
+                'cluster_nombre' => $clusterData['cluster_nombre'] ?? 'N/A',
+                'cluster_id' => $clusterData['cluster_id'] ?? 'N/A',
+                'probabilidad' => $clusterData['probabilidad'] ?? 0,
+            ]);
+
+            // ===================================================================
+            // PASO 4: Llamar API Synthesis (Puerto 8003)
+            // ===================================================================
+
+            Log::info("PASO 4: Llamando API Synthesis (http://localhost:8003/synthesis/vocational)...");
+
+            $synthesisPayload = [
+                'student_id' => $estudiante->id,
+                'nombre_estudiante' => $estudiante->nombre_completo,
+                'promedio_academico' => $features['promedio'] ?? 0,
+                'carrera_predicha' => $careerData['carrera'] ?? 'No determinada',
+                'confianza' => $careerData['confianza'] ?? 0,
+                'cluster_aptitud' => $clusterData['cluster_id'] ?? 0,
+                'cluster_nombre' => $clusterData['cluster_nombre'] ?? 'No determinado',
+                'areas_interes' => $features['areas_score_json'] ?? ['tecnologia' => 50],
+            ];
+
+            $synthesisResponse = Http::post('http://localhost:8003/synthesis/vocational', $synthesisPayload);
+
+            if (!$synthesisResponse->successful()) {
+                Log::warning("API Synthesis respondió con error: {$synthesisResponse->status()}, usando fallback");
+                $synthesisData = $this->generateFallbackSynthesis($careerData, $clusterData, $estudiante);
+            } else {
+                $synthesisData = $synthesisResponse->json();
+            }
+
+            Log::info("Síntesis personalizada obtenida:", [
+                'tipo' => $synthesisData['sintesis_tipo'] ?? 'fallback',
+                'recomendaciones_count' => count($synthesisData['recomendaciones'] ?? []),
+            ]);
+
+            // ===================================================================
+            // PASO 5: Validar Coherencia entre predicciones
+            // ===================================================================
+
+            Log::info("PASO 5: Validando coherencia entre predicciones...");
+            $validation = $this->validator->validatePredictions($estudiante->id, [
+                'carrera' => $careerData,
+                'cluster' => $clusterData,
+            ]);
+
+            Log::info("Validación completada:", [
+                'is_coherent' => $validation['is_coherent'] ?? false,
+                'confidence_score' => $validation['confidence_score'] ?? 0.5,
+            ]);
+
+            // ===================================================================
+            // PASO 6: Guardar Perfil Vocacional Enriquecido en BD
+            // ===================================================================
+
+            Log::info("PASO 6: Guardando perfil vocacional enriquecido en BD...");
+
+            $perfilData = [
+                'estudiante_id' => $estudiante->id,
+                'carrera_predicha_ml' => $careerData['carrera'] ?? 'No determinada',
+                'confianza_prediccion' => round($careerData['confianza'] ?? 0, 3),
+                'cluster_aptitud' => $clusterData['cluster_id'] ?? null,
+                'probabilidad_cluster' => round($clusterData['probabilidad'] ?? 0, 3),
+                'prediccion_detalles' => json_encode([
+                    'carrera_predicha' => $careerData,
+                    'clustering' => $clusterData,
+                    'validacion_coherencia' => $validation,
+                    'features_utilizados' => $features,
+                ]),
+                'recomendaciones_personalizadas' => json_encode([
+                    'narrativa' => $synthesisData['narrativa'] ?? 'No disponible',
+                    'recomendaciones' => $synthesisData['recomendaciones'] ?? [],
+                    'pasos_siguientes' => $synthesisData['pasos_siguientes'] ?? [],
+                    'tipo_sintesis' => $synthesisData['sintesis_tipo'] ?? 'fallback',
+                ]),
+                'fecha_creacion' => now(),
+                'fecha_actualizacion' => now(),
+            ];
+
+            $perfil = PerfilVocacional::updateOrCreate(
+                ['estudiante_id' => $estudiante->id],
+                $perfilData
+            );
+
+            Log::info("========================================");
+            Log::info("FASE 3: Análisis vocacional COMPLETADO");
+            Log::info("Perfil guardado en BD:");
+            Log::info("  - ID: {$perfil->id}");
+            Log::info("  - Carrera: {$perfilData['carrera_predicha_ml']}");
+            Log::info("  - Confianza: {$perfilData['confianza_prediccion']}");
+            Log::info("  - Cluster: {$perfilData['cluster_aptitud']}");
+            Log::info("========================================");
+
+        } catch (\Exception $e) {
+            Log::error("Error en FASE 3: {$e->getMessage()}", [
+                'estudiante_id' => $estudiante->id,
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            // Fallback: Usar análisis manual si las APIs fallan
+            Log::warning("Usando fallback a análisis manual...");
+            $this->generarPerfilVocacional($estudiante, $test, $resultado);
+        }
+    }
+
+    /**
+     * Generar síntesis fallback si API no está disponible
+     */
+    private function generateFallbackSynthesis($careerData, $clusterData, $estudiante): array
+    {
+        $carrera = $careerData['carrera'] ?? 'No determinada';
+        $clusterNombre = $clusterData['cluster_nombre'] ?? 'Desempeño Estándar';
+
+        return [
+            'narrativa' => "Tu perfil vocacional sugiere que {$carrera} podría ser una excelente opción para ti. Basándonos en tu desempeño académico y áreas de interés, te ubicamos en el grupo de {$clusterNombre}, lo que indica que tienes el potencial necesario para destacar en esta carrera.",
+            'recomendaciones' => [
+                "Investiga programas académicos de {$carrera}",
+                "Conecta con profesionales en el área",
+                "Desarrolla habilidades complementarias",
+                "Busca experiencias prácticas",
+                "Mantén un buen promedio académico",
+            ],
+            'pasos_siguientes' => [
+                "Semana 1-2: Investigar universidades",
+                "Mes 1-2: Entrevistar profesionales",
+                "Mes 2-3: Tomar cursos introductorios",
+                "Mes 3+: Buscar oportunidades de práctica",
+            ],
+            'sintesis_tipo' => 'fallback',
+        ];
+    }
+
+    /**
+     * Extraer features vocacionales para modelos ML
+     */
+    private function extraerFeaturesVocacionales($estudiante, $areasScore, $fortalezas): array
+    {
+        $features = [];
+
+        // Features del test
+        $features['areas_score'] = $areasScore;
+        $features['area_dominante'] = max(array_values($areasScore));
+        $features['num_areas_fuertes'] = count(array_filter($areasScore, fn($s) => $s > 70));
+
+        // Features académicos
+        $rendimiento = $estudiante->rendimientoAcademico;
+        if ($rendimiento) {
+            $features['promedio_academico'] = $rendimiento->promedio ?? 0;
+            $features['tendencia'] = $rendimiento->tendencia_temporal ?? 'estable';
+        }
+
+        // Features de comportamiento
+        $features['num_tareas_entregadas'] = $estudiante->trabajos()->count();
+        $features['tasa_entrega'] = $estudiante->trabajos()->count() > 0
+            ? ($estudiante->trabajos()->whereHas('calificacion')->count() / $estudiante->trabajos()->count())
+            : 0;
+
+        // Normalizar features para ML
+        $features['features_normalizados'] = [
+            'promedio' => $features['promedio_academico'] ?? 50,
+            'asistencia' => 80, // Puede obtenerse de otra tabla
+            'trabajos_entregados' => $features['num_tareas_entregadas'] ?? 0,
+            'trabajos_totales' => $estudiante->trabajos()->count() ?? 1,
+            'varianza_calificaciones' => 10, // Puede calcularse
+            'dias_desde_ultima_calificacion' => 0,
+            'num_consultas_materiales' => 0,
+        ];
+
+        return $features;
+    }
+
+    /**
+     * Combinar features inteligentemente
+     *
+     * Combina features del test vocacional con features académicos
+     * usando pesos específicos para darle más importancia al test
+     */
+    private function combinarFeatures(array $testFeatures, array $academicFeatures, float $pesoTest = 0.7): array
+    {
+        $combinados = [];
+        $pesoAcademico = 1 - $pesoTest;
+
+        // Features que vienen del test (70%)
+        foreach ($testFeatures as $key => $value) {
+            if (is_numeric($value)) {
+                $combinados[$key] = $value * $pesoTest;
+            } else {
+                $combinados[$key] = $value; // Mantener strings tal como están
+            }
+        }
+
+        // Features académicos (30%) - combinar si existen versiones comunes
+        foreach ($academicFeatures as $key => $value) {
+            if (is_numeric($value)) {
+                if (isset($combinados[$key]) && is_numeric($combinados[$key])) {
+                    // Combinar si el key ya existe
+                    $combinados[$key] = $combinados[$key] + ($value * $pesoAcademico);
+                } else {
+                    // Agregar si no existe
+                    $combinados[$key] = $value * $pesoAcademico;
+                }
+            }
+        }
+
+        // Normalizar nuevamente para asegurar rango 0-100
+        foreach ($combinados as $key => &$value) {
+            if (is_numeric($value)) {
+                $value = round(max(0, min(100, $value)), 2);
+            }
+        }
+
+        Log::info("Features combinados con pesos: Test {$pesoTest} + Académico {$pesoAcademico}");
+
+        return $combinados;
+    }
+
+    /**
+     * Generar perfil vocacional basado en respuestas del test (versión original fallback)
      */
     private function generarPerfilVocacional($estudiante, TestVocacional $test, ResultadoTestVocacional $resultado)
     {
@@ -244,13 +586,12 @@ class TestVocacionalController extends Controller
             // 5. Guardar perfil
             $perfilData = [
                 'estudiante_id' => $estudiante->id,
-                'test_id' => $test->id,
-                'resultado_id' => $resultado->id,
-                'carreras_recomendadas' => $carreras,
-                'fortalezas' => $fortalezas,
-                'areas_interes' => array_keys($areasScore),
-                'nivel_confianza' => $confianza,
-                'generado_en' => now(),
+                'intereses' => $areasScore,
+                'habilidades' => $fortalezas,
+                'personalidad' => [],
+                'aptitudes' => $this->extraerAptitudes($areasScore),
+                'fecha_creacion' => now(),
+                'fecha_actualizacion' => now(),
             ];
 
             PerfilVocacional::updateOrCreate(
@@ -258,11 +599,37 @@ class TestVocacionalController extends Controller
                 $perfilData
             );
 
-            Log::info("Perfil vocacional generado para estudiante {$estudiante->id}");
+            Log::info("Perfil vocacional tradicional generado para estudiante {$estudiante->id}");
         } catch (\Exception $e) {
             Log::error("Error generando perfil vocacional: {$e->getMessage()}");
             throw $e;
         }
+    }
+
+    /**
+     * Extraer aptitudes de áreas de puntuación
+     */
+    private function extraerAptitudes($areasScore): array
+    {
+        $mapeo = [
+            'ciencias' => ['análisis', 'investigación', 'razonamiento'],
+            'tecnologia' => ['resolución de problemas', 'lógica', 'innovación'],
+            'humanidades' => ['comunicación', 'análisis crítico', 'creatividad'],
+            'artes' => ['creatividad', 'expresión', 'sensibilidad'],
+            'negocios' => ['liderazgo', 'gestión', 'análisis'],
+            'salud' => ['empatía', 'atención', 'precisión'],
+        ];
+
+        $aptitudes = [];
+        foreach ($areasScore as $area => $score) {
+            if (isset($mapeo[$area])) {
+                foreach ($mapeo[$area] as $aptitud) {
+                    $aptitudes[$aptitud] = $score;
+                }
+            }
+        }
+
+        return $aptitudes;
     }
 
     /**
@@ -447,5 +814,214 @@ class TestVocacionalController extends Controller
         $confianza = 0.3 + ($claridad * 0.65);
 
         return round(min(0.95, max(0.3, $confianza)), 2);
+    }
+
+    /**
+     * ====================================
+     * ENDPOINTS API (NUEVO - ML VOCACIONAL)
+     * ====================================
+     */
+
+    /**
+     * Obtener perfil vocacional actual del estudiante autenticado
+     *
+     * GET /api/vocacional/mi-perfil
+     */
+    public function getPerfilVocacional()
+    {
+        try {
+            $estudiante = auth()->user();
+
+            $perfil = PerfilVocacional::where('estudiante_id', $estudiante->id)
+                ->firstOrFail();
+
+            return response()->json([
+                'success' => true,
+                'perfil' => [
+                    'id' => $perfil->id,
+                    'intereses' => $perfil->intereses,
+                    'habilidades' => $perfil->habilidades,
+                    'personalidad' => $perfil->personalidad,
+                    'aptitudes' => $perfil->aptitudes,
+                    'carrera_predicha_ml' => $perfil->carrera_predicha_ml ?? 'No determinada',
+                    'confianza_prediccion' => $perfil->confianza_prediccion ?? 0,
+                    'cluster_aptitud' => $perfil->cluster_aptitud,
+                    'probabilidad_cluster' => $perfil->probabilidad_cluster,
+                    'recomendaciones_personalizadas' => json_decode($perfil->recomendaciones_personalizadas, true) ?? [],
+                    'fecha_actualizacion' => $perfil->fecha_actualizacion,
+                ],
+                'timestamp' => now(),
+            ], 200);
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No vocational profile found. Please complete a vocational test first.',
+            ], 404);
+
+        } catch (\Exception $e) {
+            Log::error("Error getting vocational profile: {$e->getMessage()}");
+            return response()->json([
+                'success' => false,
+                'message' => 'Error retrieving vocational profile',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Obtener recomendaciones de carrera personalizadas
+     *
+     * GET /api/vocacional/recomendaciones-carrera
+     */
+    public function getRecomendacionesCarrera()
+    {
+        try {
+            $estudiante = auth()->user();
+
+            $perfil = PerfilVocacional::where('estudiante_id', $estudiante->id)
+                ->firstOrFail();
+
+            $recomendaciones = json_decode($perfil->recomendaciones_personalizadas, true) ?? [];
+
+            return response()->json([
+                'success' => true,
+                'carrera_predicha' => $perfil->carrera_predicha_ml ?? 'No determinada',
+                'confianza' => round($perfil->confianza_prediccion ?? 0, 3),
+                'recomendaciones' => $recomendaciones,
+                'cluster_aptitudes' => $perfil->cluster_aptitud,
+                'probabilidad_cluster' => round($perfil->probabilidad_cluster ?? 0, 3),
+                'timestamp' => now(),
+            ], 200);
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No vocational profile found',
+            ], 404);
+
+        } catch (\Exception $e) {
+            Log::error("Error getting recommendations: {$e->getMessage()}");
+            return response()->json([
+                'success' => false,
+                'message' => 'Error retrieving recommendations',
+            ], 500);
+        }
+    }
+
+    /**
+     * Obtener análisis detallado vocacional de un estudiante
+     *
+     * GET /api/vocacional/analisis/{studentId}
+     * Solo profesores/admin
+     */
+    public function getAnalisisVocacional($studentId)
+    {
+        try {
+            $estudiante = User::findOrFail($studentId);
+
+            $perfil = PerfilVocacional::where('estudiante_id', $studentId)->first();
+
+            if (!$perfil) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Student has not completed a vocational test',
+                ], 404);
+            }
+
+            $prediccion_detalles = json_decode($perfil->prediccion_detalles, true) ?? [];
+
+            return response()->json([
+                'success' => true,
+                'estudiante' => [
+                    'id' => $estudiante->id,
+                    'nombre' => $estudiante->nombre_completo,
+                    'email' => $estudiante->email,
+                ],
+                'analisis' => [
+                    'intereses' => $perfil->intereses,
+                    'habilidades' => $perfil->habilidades,
+                    'personalidad' => $perfil->personalidad,
+                    'aptitudes' => $perfil->aptitudes,
+                    'carrera_predicha' => $perfil->carrera_predicha_ml,
+                    'confianza_general' => round($perfil->confianza_prediccion ?? 0, 3),
+                ],
+                'detalle_ml' => [
+                    'prediccion_supervisada' => $prediccion_detalles['prediccion_supervisada'] ?? null,
+                    'clustering_no_supervisado' => $prediccion_detalles['clustering_no_supervisado'] ?? null,
+                    'validacion_coherencia' => $prediccion_detalles['validacion_coherencia'] ?? null,
+                    'confianza_manual' => $prediccion_detalles['confianza_manual'] ?? 0,
+                    'confianza_ml' => $prediccion_detalles['confianza_ml'] ?? 0,
+                ],
+                'recomendaciones' => json_decode($perfil->recomendaciones_personalizadas, true) ?? [],
+                'fecha_analisis' => $perfil->fecha_actualizacion,
+                'timestamp' => now(),
+            ], 200);
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Student not found',
+            ], 404);
+
+        } catch (\Exception $e) {
+            Log::error("Error getting vocational analysis: {$e->getMessage()}");
+            return response()->json([
+                'success' => false,
+                'message' => 'Error retrieving vocational analysis',
+            ], 500);
+        }
+    }
+
+    /**
+     * Reporte institucional de vocaciones
+     *
+     * GET /api/vocacional/reporte-institucional
+     * Solo profesores/admin
+     * Query params:
+     *   - limit: max estudiantes (default 50)
+     */
+    public function getReporteInstitucional(\Illuminate\Http\Request $request)
+    {
+        try {
+            $limit = (int)$request->query('limit', 50);
+
+            $perfiles = PerfilVocacional::with('estudiante')
+                ->orderBy('fecha_actualizacion', 'desc')
+                ->limit($limit)
+                ->get();
+
+            $estadisticas = [
+                'total_estudiantes_analizado' => $perfiles->count(),
+                'carreras_predichas' => $perfiles->pluck('carrera_predicha_ml')->countBy()->toArray(),
+                'confianza_promedio' => round($perfiles->avg('confianza_prediccion') ?? 0, 3),
+                'clusters_distribucion' => $perfiles->pluck('cluster_aptitud')->countBy()->toArray(),
+            ];
+
+            $listado = $perfiles->map(function ($perfil) {
+                return [
+                    'estudiante_id' => $perfil->estudiante_id,
+                    'estudiante_nombre' => $perfil->estudiante?->nombre_completo,
+                    'carrera_predicha' => $perfil->carrera_predicha_ml,
+                    'confianza' => round($perfil->confianza_prediccion ?? 0, 3),
+                    'cluster' => $perfil->cluster_aptitud,
+                    'fecha_analisis' => $perfil->fecha_actualizacion,
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'estadisticas' => $estadisticas,
+                'listado' => $listado,
+                'timestamp' => now(),
+            ], 200);
+
+        } catch (\Exception $e) {
+            Log::error("Error getting institutional vocational report: {$e->getMessage()}");
+            return response()->json([
+                'success' => false,
+                'message' => 'Error retrieving vocational report',
+            ], 500);
+        }
     }
 }

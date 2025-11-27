@@ -8,6 +8,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use App\Models\Calificacion;
+use App\Models\Trabajo;
 
 /**
  * ARQUITECTURA DEL SISTEMA DE USUARIOS
@@ -226,5 +228,21 @@ class User extends Authenticatable
             ->withPivot('relacion', 'activo')
             ->wherePivot('activo', true)
             ->where('tipo_usuario', 'padre');
+    }
+
+    /**
+     * Relación con calificaciones (a través de trabajos)
+     * Retorna todas las calificaciones de los trabajos del estudiante
+     */
+    public function calificaciones()
+    {
+        return $this->hasManyThrough(
+            Calificacion::class,
+            Trabajo::class,
+            'estudiante_id',      // FK en trabajos
+            'trabajo_id',          // FK en calificaciones
+            'id',                  // PK en users
+            'id'                   // PK en trabajos
+        );
     }
 }

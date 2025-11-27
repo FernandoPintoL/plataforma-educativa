@@ -211,17 +211,15 @@ class TrainMLModelsCommand extends Command
                         'fecha_prediccion' => Carbon::now()->subDays(rand(0, 5)),
                     ],
                     [
-                        'risk_score' => round($risk_score, 4),
-                        'risk_level' => $risk_level,
-                        'confidence_score' => 0.92,
+                        'score_riesgo' => round($risk_score, 4),
+                        'nivel_riesgo' => $risk_level,
+                        'confianza' => 0.92,
                         'modelo_version' => 'v1.1-auto',
-                        'modelo_tipo' => 'PerformancePredictor',
-                        'features_used' => json_encode([
+                        'factores_influyentes' => json_encode([
                             'promedio_ultimas_notas',
                             'asistencia_porcentaje',
                             'trabajos_entregados_a_tiempo',
                         ]),
-                        'creado_por' => 1,
                     ]
                 );
 

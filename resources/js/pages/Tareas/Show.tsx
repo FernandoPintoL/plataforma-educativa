@@ -553,20 +553,20 @@ export default function Show({ tarea, trabajo, estadisticas }: Props) {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-sm">Entregas:</span>
-                    <span className="font-medium">{estadisticas.total_entregas}</span>
+                    <span className="font-medium">{estadisticas.trabajos_entregados}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-sm">Calificados:</span>
-                    <span className="font-medium">{estadisticas.total_calificados}</span>
+                    <span className="font-medium">{estadisticas.trabajos_calificados}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-sm">Tasa de entrega:</span>
-                    <span className="font-medium">{estadisticas.tasa_entrega.toFixed(1)}%</span>
+                    <span className="font-medium">{estadisticas.porcentaje_entrega.toFixed(1)}%</span>
                   </div>
-                  {estadisticas.promedio_calificacion > 0 && (
+                  {estadisticas.promedio_puntaje > 0 && (
                     <div className="flex justify-between">
                       <span className="text-sm">Promedio:</span>
-                      <span className="font-medium">{estadisticas.promedio_calificacion.toFixed(1)}</span>
+                      <span className="font-medium">{estadisticas.promedio_puntaje.toFixed(1)}</span>
                     </div>
                   )}
 

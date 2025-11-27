@@ -11,6 +11,7 @@ import DiscoveryOrchestrationController from './DiscoveryOrchestrationController
 import AgentController from './AgentController'
 import ContentAnalysisController from './ContentAnalysisController'
 import MiPerfilController from './MiPerfilController'
+import EvaluacionesApiController from './EvaluacionesApiController'
 const Api = {
     AuthTokenController,
 ModuloSidebarController,
@@ -25,6 +26,7 @@ DiscoveryOrchestrationController,
 AgentController,
 ContentAnalysisController,
 MiPerfilController,
+EvaluacionesApiController,
 }
 
 export default Api

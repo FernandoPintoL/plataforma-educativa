@@ -1,6 +1,200 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
 import calificacion from './calificacion'
 /**
+* @see \TareaController::progreso
+ * @see [unknown]:0
+ * @route '/api/trabajos/{trabajoId}/progreso'
+ */
+export const progreso = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: progreso.url(args, options),
+    method: 'get',
+})
+
+progreso.definition = {
+    methods: ["get","head"],
+    url: '/api/trabajos/{trabajoId}/progreso',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \TareaController::progreso
+ * @see [unknown]:0
+ * @route '/api/trabajos/{trabajoId}/progreso'
+ */
+progreso.url = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { trabajoId: args }
+    }
+
+    
+    if (Array.isArray(args)) {
+        args = {
+                    trabajoId: args[0],
+                }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+                        trabajoId: args.trabajoId,
+                }
+
+    return progreso.definition.url
+            .replace('{trabajoId}', parsedArgs.trabajoId.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \TareaController::progreso
+ * @see [unknown]:0
+ * @route '/api/trabajos/{trabajoId}/progreso'
+ */
+progreso.get = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: progreso.url(args, options),
+    method: 'get',
+})
+/**
+* @see \TareaController::progreso
+ * @see [unknown]:0
+ * @route '/api/trabajos/{trabajoId}/progreso'
+ */
+progreso.head = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: progreso.url(args, options),
+    method: 'head',
+})
+
+    /**
+* @see \TareaController::progreso
+ * @see [unknown]:0
+ * @route '/api/trabajos/{trabajoId}/progreso'
+ */
+    const progresoForm = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: progreso.url(args, options),
+        method: 'get',
+    })
+
+            /**
+* @see \TareaController::progreso
+ * @see [unknown]:0
+ * @route '/api/trabajos/{trabajoId}/progreso'
+ */
+        progresoForm.get = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: progreso.url(args, options),
+            method: 'get',
+        })
+            /**
+* @see \TareaController::progreso
+ * @see [unknown]:0
+ * @route '/api/trabajos/{trabajoId}/progreso'
+ */
+        progresoForm.head = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: progreso.url(args, {
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    progreso.form = progresoForm
+/**
+* @see \TareaController::hintsHistorial
+ * @see [unknown]:0
+ * @route '/api/trabajos/{trabajoId}/hints-historial'
+ */
+export const hintsHistorial = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: hintsHistorial.url(args, options),
+    method: 'get',
+})
+
+hintsHistorial.definition = {
+    methods: ["get","head"],
+    url: '/api/trabajos/{trabajoId}/hints-historial',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \TareaController::hintsHistorial
+ * @see [unknown]:0
+ * @route '/api/trabajos/{trabajoId}/hints-historial'
+ */
+hintsHistorial.url = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { trabajoId: args }
+    }
+
+    
+    if (Array.isArray(args)) {
+        args = {
+                    trabajoId: args[0],
+                }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+                        trabajoId: args.trabajoId,
+                }
+
+    return hintsHistorial.definition.url
+            .replace('{trabajoId}', parsedArgs.trabajoId.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \TareaController::hintsHistorial
+ * @see [unknown]:0
+ * @route '/api/trabajos/{trabajoId}/hints-historial'
+ */
+hintsHistorial.get = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: hintsHistorial.url(args, options),
+    method: 'get',
+})
+/**
+* @see \TareaController::hintsHistorial
+ * @see [unknown]:0
+ * @route '/api/trabajos/{trabajoId}/hints-historial'
+ */
+hintsHistorial.head = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: hintsHistorial.url(args, options),
+    method: 'head',
+})
+
+    /**
+* @see \TareaController::hintsHistorial
+ * @see [unknown]:0
+ * @route '/api/trabajos/{trabajoId}/hints-historial'
+ */
+    const hintsHistorialForm = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: hintsHistorial.url(args, options),
+        method: 'get',
+    })
+
+            /**
+* @see \TareaController::hintsHistorial
+ * @see [unknown]:0
+ * @route '/api/trabajos/{trabajoId}/hints-historial'
+ */
+        hintsHistorialForm.get = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: hintsHistorial.url(args, options),
+            method: 'get',
+        })
+            /**
+* @see \TareaController::hintsHistorial
+ * @see [unknown]:0
+ * @route '/api/trabajos/{trabajoId}/hints-historial'
+ */
+        hintsHistorialForm.head = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: hintsHistorial.url(args, {
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    hintsHistorial.form = hintsHistorialForm
+/**
 * @see \App\Http\Controllers\TrabajoController::index
  * @see app/Http/Controllers/TrabajoController.php:18
  * @route '/trabajos'
@@ -890,7 +1084,9 @@ descargarArchivo.head = (args: { trabajo: number | { id: number }, archivoIndex:
     
     descargarArchivo.form = descargarArchivoForm
 const trabajos = {
-    index,
+    progreso,
+hintsHistorial,
+index,
 create,
 store,
 show,

@@ -112,7 +112,7 @@ class PrediccionRiesgo extends Model
      */
     public function scopeByScoreThreshold($query, float $threshold)
     {
-        return $query->where('risk_score', '>=', $threshold);
+        return $query->where('score_riesgo', '>=', $threshold);
     }
 
     /**

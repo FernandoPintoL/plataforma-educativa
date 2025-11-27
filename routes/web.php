@@ -140,6 +140,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('role:profesor|director')
         ->name('evaluaciones.create');
 
+    // Wizard - Creación guiada con IA - solo profesores y directores
+    Route::get('evaluaciones/wizard', [\App\Http\Controllers\EvaluacionController::class, 'wizard'])
+        ->middleware('role:profesor|director')
+        ->name('evaluaciones.wizard');
+
     // Preguntas routes
     Route::post('preguntas', [\App\Http\Controllers\PreguntaController::class, 'store'])
         ->middleware('role:profesor|director')
@@ -172,6 +177,19 @@ Route::middleware(['auth', 'verified', 'role:profesor|director'])->group(functio
 // Evaluaciones - Generic show route (MUST BE LAST!)
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('evaluaciones/{evaluacion}', [\App\Http\Controllers\EvaluacionController::class, 'show'])->name('evaluaciones.show');
+});
+
+// ==================== CURSOS ====================
+Route::middleware(['auth', 'verified'])->group(function () {
+    // Mis cursos - solo para profesores
+    Route::get('mis-cursos', [\App\Http\Controllers\CursoController::class, 'misCursos'])
+        ->middleware('role:profesor')
+        ->name('mis-cursos');
+
+    // Detalle de un curso
+    Route::get('cursos/{curso}', [\App\Http\Controllers\CursoController::class, 'show'])
+        ->middleware('role:profesor')
+        ->name('cursos.show');
 });
 
 // ==================== TAREAS Y TRABAJOS ====================
@@ -241,7 +259,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
 // ==================== REPORTES EDUCATIVOS ====================
-Route::middleware(['auth', 'verified', 'role:director|admin'])->group(function () {
+Route::middleware(['auth', 'verified', 'role:director|admin|profesor'])->group(function () {
     Route::get('reportes', [\App\Http\Controllers\ReportesController::class, 'index'])->name('reportes.index');
     Route::get('reportes/desempeno', [\App\Http\Controllers\ReportesController::class, 'desempenioPorEstudiante'])->name('reportes.desempeno');
     Route::get('reportes/cursos', [\App\Http\Controllers\ReportesController::class, 'progresoPorCurso'])->name('reportes.cursos');
@@ -330,6 +348,63 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('tests-vocacionales/{testVocacional}', [\App\Http\Controllers\TestVocacionalController::class, 'update']);
         Route::delete('tests-vocacionales/{testVocacional}', [\App\Http\Controllers\TestVocacionalController::class, 'destroy'])
             ->name('tests-vocacionales.destroy');
+
+        // ==================== CATEGORÍAS DE TEST ====================
+        Route::post('tests-vocacionales/{testVocacional}/categorias',
+            [\App\Http\Controllers\CategoriaTestController::class, 'store'])
+            ->name('categorias-test.store');
+        Route::put('tests-vocacionales/{testVocacional}/categorias/{categoriaTest}',
+            [\App\Http\Controllers\CategoriaTestController::class, 'update'])
+            ->name('categorias-test.update');
+        Route::delete('tests-vocacionales/{testVocacional}/categorias/{categoriaTest}',
+            [\App\Http\Controllers\CategoriaTestController::class, 'destroy'])
+            ->name('categorias-test.destroy');
+        Route::post('tests-vocacionales/{testVocacional}/categorias/reorder',
+            [\App\Http\Controllers\CategoriaTestController::class, 'reorder'])
+            ->name('categorias-test.reorder');
+        Route::get('tests-vocacionales/{testVocacional}/categorias',
+            [\App\Http\Controllers\CategoriaTestController::class, 'index'])
+            ->name('categorias-test.index');
+        Route::get('tests-vocacionales/{testVocacional}/categorias/{categoriaTest}',
+            [\App\Http\Controllers\CategoriaTestController::class, 'show'])
+            ->name('categorias-test.show');
+
+        // ==================== PREGUNTAS DEL TEST ====================
+        Route::post('tests-vocacionales/{testVocacional}/categorias/{categoriaTest}/preguntas',
+            [\App\Http\Controllers\PreguntaTestController::class, 'store'])
+            ->name('preguntas-test.store');
+        Route::put('tests-vocacionales/{testVocacional}/preguntas/{preguntaTest}',
+            [\App\Http\Controllers\PreguntaTestController::class, 'update'])
+            ->name('preguntas-test.update');
+        Route::delete('tests-vocacionales/{testVocacional}/preguntas/{preguntaTest}',
+            [\App\Http\Controllers\PreguntaTestController::class, 'destroy'])
+            ->name('preguntas-test.destroy');
+        Route::post('tests-vocacionales/{testVocacional}/categorias/{categoriaTest}/preguntas/reorder',
+            [\App\Http\Controllers\PreguntaTestController::class, 'reorder'])
+            ->name('preguntas-test.reorder');
+        Route::get('tests-vocacionales/{testVocacional}/categorias/{categoriaTest}/preguntas',
+            [\App\Http\Controllers\PreguntaTestController::class, 'indexByCategoria'])
+            ->name('preguntas-test.index-by-categoria');
+        Route::get('tests-vocacionales/{testVocacional}/preguntas/{preguntaTest}',
+            [\App\Http\Controllers\PreguntaTestController::class, 'show'])
+            ->name('preguntas-test.show');
+        Route::get('preguntas-test/tipos',
+            [\App\Http\Controllers\PreguntaTestController::class, 'tipos'])
+            ->name('preguntas-test.tipos');
+
+        // ==================== RESPUESTAS DEL TEST ====================
+        Route::get('tests-vocacionales/{testVocacional}/respuestas',
+            [\App\Http\Controllers\RespuestaTestController::class, 'index'])
+            ->name('respuestas-test.index');
+        Route::get('tests-vocacionales/{testVocacional}/respuestas/{resultadoTestVocacional}',
+            [\App\Http\Controllers\RespuestaTestController::class, 'show'])
+            ->name('respuestas-test.show');
+        Route::get('tests-vocacionales/{testVocacional}/respuestas/estadisticas',
+            [\App\Http\Controllers\RespuestaTestController::class, 'estadisticas'])
+            ->name('respuestas-test.estadisticas');
+        Route::get('tests-vocacionales/{testVocacional}/respuestas/export',
+            [\App\Http\Controllers\RespuestaTestController::class, 'export'])
+            ->name('respuestas-test.export');
     });
 });
 

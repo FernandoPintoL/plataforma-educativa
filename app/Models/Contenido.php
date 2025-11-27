@@ -72,6 +72,22 @@ class Contenido extends Model
     }
 
     /**
+     * Relación con Tarea (cuando tipo = 'tarea')
+     */
+    public function tarea(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Tarea::class, 'contenido_id', 'id');
+    }
+
+    /**
+     * Relación con Evaluaciones
+     */
+    public function evaluaciones(): HasMany
+    {
+        return $this->hasMany(Evaluacion::class, 'contenido_id', 'id');
+    }
+
+    /**
      * Publicar el contenido
      */
     public function publicar(): void

@@ -1,6 +1,9 @@
 import Api from './Api'
+import ReportesController from './ReportesController'
 import RecommendationController from './RecommendationController'
 import MLAnalysisController from './MLAnalysisController'
+import MLDashboardController from './MLDashboardController'
+import EvaluacionController from './EvaluacionController'
 import UserController from './UserController'
 import RoleController from './RoleController'
 import PermissionController from './PermissionController'
@@ -13,13 +16,12 @@ import DashboardDirectorController from './DashboardDirectorController'
 import DashboardProfesorController from './DashboardProfesorController'
 import DashboardEstudianteController from './DashboardEstudianteController'
 import DashboardPadreController from './DashboardPadreController'
-import EvaluacionController from './EvaluacionController'
 import PreguntaController from './PreguntaController'
+import CursoController from './CursoController'
 import TareaController from './TareaController'
 import TrabajoController from './TrabajoController'
 import CalificacionController from './CalificacionController'
 import RecursoController from './RecursoController'
-import ReportesController from './ReportesController'
 import ModuloEducativoController from './ModuloEducativoController'
 import LeccionController from './LeccionController'
 import TestVocacionalController from './TestVocacionalController'
@@ -27,8 +29,11 @@ import VocacionalController from './VocacionalController'
 import DashboardAlertsController from './DashboardAlertsController'
 const Controllers = {
     Api,
+ReportesController,
 RecommendationController,
 MLAnalysisController,
+MLDashboardController,
+EvaluacionController,
 UserController,
 RoleController,
 PermissionController,
@@ -41,13 +46,12 @@ DashboardDirectorController,
 DashboardProfesorController,
 DashboardEstudianteController,
 DashboardPadreController,
-EvaluacionController,
 PreguntaController,
+CursoController,
 TareaController,
 TrabajoController,
 CalificacionController,
 RecursoController,
-ReportesController,
 ModuloEducativoController,
 LeccionController,
 TestVocacionalController,

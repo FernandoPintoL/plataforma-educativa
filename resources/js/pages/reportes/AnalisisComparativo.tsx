@@ -43,6 +43,10 @@ export default function AnalisisComparativo({
   promedioGeneral,
   modulosSidebar,
 }: Props) {
+  const toFixed = (value: any, decimals: number = 1): string => {
+    const num = typeof value === 'number' ? value : parseFloat(value);
+    return isNaN(num) ? '0.0' : num.toFixed(decimals);
+  };
   // Datos para gráfico de distribución
   const distribucionChartData = {
     labels: ['Excelente (90+)', 'Bueno (80-89)', 'Regular (70-79)', 'Bajo (<70)'],
@@ -158,7 +162,7 @@ export default function AnalisisComparativo({
             </div>
             <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-lg p-8 text-white">
               <p className="text-sm opacity-90 mb-2">Promedio General Institucional</p>
-              <p className="text-5xl font-bold mb-4">{promedioGeneral.toFixed(1)}</p>
+              <p className="text-5xl font-bold mb-4">{toFixed(promedioGeneral)}</p>
               <p className="text-sm opacity-75">Promedio de todos los estudiantes</p>
             </div>
           </div>
@@ -248,7 +252,7 @@ export default function AnalisisComparativo({
                       </td>
                       <td className="px-6 py-4 font-semibold text-gray-900">{estudiante.nombre}</td>
                       <td className="px-6 py-4 text-center">
-                        <span className="text-2xl font-bold text-green-600">{estudiante.promedio.toFixed(1)}</span>
+                        <span className="text-2xl font-bold text-green-600">{toFixed(estudiante.promedio)}</span>
                       </td>
                       <td className="px-6 py-4 text-center text-gray-700">{estudiante.cursos}</td>
                       <td className="px-6 py-4 text-center text-gray-700">{estudiante.trabajos_entregados}</td>
@@ -284,7 +288,7 @@ export default function AnalisisComparativo({
                       </td>
                       <td className="px-6 py-4 font-semibold text-gray-900">{estudiante.nombre}</td>
                       <td className="px-6 py-4 text-center">
-                        <span className="text-2xl font-bold text-red-600">{estudiante.promedio.toFixed(1)}</span>
+                        <span className="text-2xl font-bold text-red-600">{toFixed(estudiante.promedio)}</span>
                       </td>
                       <td className="px-6 py-4 text-center text-gray-700">{estudiante.cursos}</td>
                       <td className="px-6 py-4 text-center text-gray-700">{estudiante.trabajos_entregados}</td>

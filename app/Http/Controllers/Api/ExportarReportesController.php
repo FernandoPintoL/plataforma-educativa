@@ -23,16 +23,16 @@ class ExportarReportesController extends Controller
         $query = PrediccionRiesgo::with('estudiante');
 
         if ($filtroNivel) {
-            $query->where('risk_level', $filtroNivel);
+            $query->where('nivel_riesgo', $filtroNivel);
         }
 
         $predicciones = $query->get()->map(fn($p) => [
             'id' => $p->id,
             'estudiante' => $p->estudiante?->name ?? 'N/A',
             'email' => $p->estudiante?->email ?? 'N/A',
-            'score_riesgo' => round($p->risk_score, 4),
-            'nivel_riesgo' => $p->risk_level,
-            'confianza' => round($p->confidence_score, 4),
+            'score_riesgo' => round($p->score_riesgo, 4),
+            'nivel_riesgo' => $p->nivel_riesgo,
+            'confianza' => round($p->confianza, 4),
             'fecha_prediccion' => $p->fecha_prediccion?->format('Y-m-d H:i:s'),
             'modelo_version' => $p->modelo_version,
         ]);
@@ -190,9 +190,9 @@ class ExportarReportesController extends Controller
     public function resumenGeneral(Request $request): JsonResponse
     {
         $totalPredicciones = PrediccionRiesgo::count();
-        $riesgoAlto = PrediccionRiesgo::where('risk_level', 'alto')->count();
-        $riesgoMedio = PrediccionRiesgo::where('risk_level', 'medio')->count();
-        $riesgoBajo = PrediccionRiesgo::where('risk_level', 'bajo')->count();
+        $riesgoAlto = PrediccionRiesgo::where('nivel_riesgo', 'alto')->count();
+        $riesgoMedio = PrediccionRiesgo::where('nivel_riesgo', 'medio')->count();
+        $riesgoBajo = PrediccionRiesgo::where('nivel_riesgo', 'bajo')->count();
 
         $totalCarreras = PrediccionCarrera::count();
         $carrerasUnicas = PrediccionCarrera::distinct('carrera_nombre')->count('carrera_nombre');

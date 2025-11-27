@@ -103,14 +103,23 @@ class Tarea extends Contenido
      */
     public function obtenerEstadisticas(): array
     {
-        $trabajos          = $this->trabajos()->get();
+        $trabajos          = $this->trabajos()->with('calificacion')->get();
         $total_estudiantes = $this->contenido->curso->estudiantes()->count();
+
+        // Calcular promedio de puntajes de trabajos calificados
+        $trabajosCalificados = $trabajos->filter(function($trabajo) {
+            return $trabajo->calificacion !== null;
+        });
+
+        $promedio_puntaje = $trabajosCalificados->isNotEmpty()
+            ? $trabajosCalificados->avg('calificacion.puntaje')
+            : 0;
 
         return [
             'total_estudiantes'    => $total_estudiantes,
             'trabajos_entregados'  => $trabajos->where('estado', 'entregado')->count(),
             'trabajos_calificados' => $trabajos->where('estado', 'calificado')->count(),
-            'promedio_puntaje'     => $trabajos->whereHas('calificacion')->avg('calificacion.puntaje') ?? 0,
+            'promedio_puntaje'     => $promedio_puntaje,
             'porcentaje_entrega'   => $total_estudiantes > 0 ? ($trabajos->where('estado', 'entregado')->count() / $total_estudiantes) * 100 : 0,
         ];
     }

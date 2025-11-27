@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Api\AgentController::synthesize
- * @see app/Http/Controllers/Api/AgentController.php:42
+ * @see app/Http/Controllers/Api/AgentController.php:48
  * @route '/api/agent/synthesize/{studentId}'
  */
 export const synthesize = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -16,7 +16,7 @@ synthesize.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\AgentController::synthesize
- * @see app/Http/Controllers/Api/AgentController.php:42
+ * @see app/Http/Controllers/Api/AgentController.php:48
  * @route '/api/agent/synthesize/{studentId}'
  */
 synthesize.url = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -44,7 +44,7 @@ synthesize.url = (args: { studentId: string | number } | [studentId: string | nu
 
 /**
 * @see \App\Http\Controllers\Api\AgentController::synthesize
- * @see app/Http/Controllers/Api/AgentController.php:42
+ * @see app/Http/Controllers/Api/AgentController.php:48
  * @route '/api/agent/synthesize/{studentId}'
  */
 synthesize.post = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -54,7 +54,7 @@ synthesize.post = (args: { studentId: string | number } | [studentId: string | n
 
     /**
 * @see \App\Http\Controllers\Api\AgentController::synthesize
- * @see app/Http/Controllers/Api/AgentController.php:42
+ * @see app/Http/Controllers/Api/AgentController.php:48
  * @route '/api/agent/synthesize/{studentId}'
  */
     const synthesizeForm = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -64,7 +64,7 @@ synthesize.post = (args: { studentId: string | number } | [studentId: string | n
 
             /**
 * @see \App\Http\Controllers\Api\AgentController::synthesize
- * @see app/Http/Controllers/Api/AgentController.php:42
+ * @see app/Http/Controllers/Api/AgentController.php:48
  * @route '/api/agent/synthesize/{studentId}'
  */
         synthesizeForm.post = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -75,7 +75,7 @@ synthesize.post = (args: { studentId: string | number } | [studentId: string | n
     synthesize.form = synthesizeForm
 /**
 * @see \App\Http\Controllers\Api\AgentController::reasoning
- * @see app/Http/Controllers/Api/AgentController.php:98
+ * @see app/Http/Controllers/Api/AgentController.php:104
  * @route '/api/agent/reasoning/{studentId}'
  */
 export const reasoning = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -90,7 +90,7 @@ reasoning.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\AgentController::reasoning
- * @see app/Http/Controllers/Api/AgentController.php:98
+ * @see app/Http/Controllers/Api/AgentController.php:104
  * @route '/api/agent/reasoning/{studentId}'
  */
 reasoning.url = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -118,7 +118,7 @@ reasoning.url = (args: { studentId: string | number } | [studentId: string | num
 
 /**
 * @see \App\Http\Controllers\Api\AgentController::reasoning
- * @see app/Http/Controllers/Api/AgentController.php:98
+ * @see app/Http/Controllers/Api/AgentController.php:104
  * @route '/api/agent/reasoning/{studentId}'
  */
 reasoning.get = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -127,7 +127,7 @@ reasoning.get = (args: { studentId: string | number } | [studentId: string | num
 })
 /**
 * @see \App\Http\Controllers\Api\AgentController::reasoning
- * @see app/Http/Controllers/Api/AgentController.php:98
+ * @see app/Http/Controllers/Api/AgentController.php:104
  * @route '/api/agent/reasoning/{studentId}'
  */
 reasoning.head = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -137,7 +137,7 @@ reasoning.head = (args: { studentId: string | number } | [studentId: string | nu
 
     /**
 * @see \App\Http\Controllers\Api\AgentController::reasoning
- * @see app/Http/Controllers/Api/AgentController.php:98
+ * @see app/Http/Controllers/Api/AgentController.php:104
  * @route '/api/agent/reasoning/{studentId}'
  */
     const reasoningForm = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -147,7 +147,7 @@ reasoning.head = (args: { studentId: string | number } | [studentId: string | nu
 
             /**
 * @see \App\Http\Controllers\Api\AgentController::reasoning
- * @see app/Http/Controllers/Api/AgentController.php:98
+ * @see app/Http/Controllers/Api/AgentController.php:104
  * @route '/api/agent/reasoning/{studentId}'
  */
         reasoningForm.get = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -156,7 +156,7 @@ reasoning.head = (args: { studentId: string | number } | [studentId: string | nu
         })
             /**
 * @see \App\Http\Controllers\Api\AgentController::reasoning
- * @see app/Http/Controllers/Api/AgentController.php:98
+ * @see app/Http/Controllers/Api/AgentController.php:104
  * @route '/api/agent/reasoning/{studentId}'
  */
         reasoningForm.head = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -172,7 +172,7 @@ reasoning.head = (args: { studentId: string | number } | [studentId: string | nu
     reasoning.form = reasoningForm
 /**
 * @see \App\Http\Controllers\Api\AgentController::intervention
- * @see app/Http/Controllers/Api/AgentController.php:149
+ * @see app/Http/Controllers/Api/AgentController.php:155
  * @route '/api/agent/intervention/{studentId}'
  */
 export const intervention = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -187,7 +187,7 @@ intervention.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\AgentController::intervention
- * @see app/Http/Controllers/Api/AgentController.php:149
+ * @see app/Http/Controllers/Api/AgentController.php:155
  * @route '/api/agent/intervention/{studentId}'
  */
 intervention.url = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -215,7 +215,7 @@ intervention.url = (args: { studentId: string | number } | [studentId: string | 
 
 /**
 * @see \App\Http\Controllers\Api\AgentController::intervention
- * @see app/Http/Controllers/Api/AgentController.php:149
+ * @see app/Http/Controllers/Api/AgentController.php:155
  * @route '/api/agent/intervention/{studentId}'
  */
 intervention.post = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -225,7 +225,7 @@ intervention.post = (args: { studentId: string | number } | [studentId: string |
 
     /**
 * @see \App\Http\Controllers\Api\AgentController::intervention
- * @see app/Http/Controllers/Api/AgentController.php:149
+ * @see app/Http/Controllers/Api/AgentController.php:155
  * @route '/api/agent/intervention/{studentId}'
  */
     const interventionForm = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -235,7 +235,7 @@ intervention.post = (args: { studentId: string | number } | [studentId: string |
 
             /**
 * @see \App\Http\Controllers\Api\AgentController::intervention
- * @see app/Http/Controllers/Api/AgentController.php:149
+ * @see app/Http/Controllers/Api/AgentController.php:155
  * @route '/api/agent/intervention/{studentId}'
  */
         interventionForm.post = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -246,7 +246,7 @@ intervention.post = (args: { studentId: string | number } | [studentId: string |
     intervention.form = interventionForm
 /**
 * @see \App\Http\Controllers\Api\AgentController::completeAnalysis
- * @see app/Http/Controllers/Api/AgentController.php:249
+ * @see app/Http/Controllers/Api/AgentController.php:255
  * @route '/api/agent/complete-analysis/{studentId}'
  */
 export const completeAnalysis = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -261,7 +261,7 @@ completeAnalysis.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\AgentController::completeAnalysis
- * @see app/Http/Controllers/Api/AgentController.php:249
+ * @see app/Http/Controllers/Api/AgentController.php:255
  * @route '/api/agent/complete-analysis/{studentId}'
  */
 completeAnalysis.url = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -289,7 +289,7 @@ completeAnalysis.url = (args: { studentId: string | number } | [studentId: strin
 
 /**
 * @see \App\Http\Controllers\Api\AgentController::completeAnalysis
- * @see app/Http/Controllers/Api/AgentController.php:249
+ * @see app/Http/Controllers/Api/AgentController.php:255
  * @route '/api/agent/complete-analysis/{studentId}'
  */
 completeAnalysis.post = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -299,7 +299,7 @@ completeAnalysis.post = (args: { studentId: string | number } | [studentId: stri
 
     /**
 * @see \App\Http\Controllers\Api\AgentController::completeAnalysis
- * @see app/Http/Controllers/Api/AgentController.php:249
+ * @see app/Http/Controllers/Api/AgentController.php:255
  * @route '/api/agent/complete-analysis/{studentId}'
  */
     const completeAnalysisForm = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -309,7 +309,7 @@ completeAnalysis.post = (args: { studentId: string | number } | [studentId: stri
 
             /**
 * @see \App\Http\Controllers\Api\AgentController::completeAnalysis
- * @see app/Http/Controllers/Api/AgentController.php:249
+ * @see app/Http/Controllers/Api/AgentController.php:255
  * @route '/api/agent/complete-analysis/{studentId}'
  */
         completeAnalysisForm.post = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -320,7 +320,7 @@ completeAnalysis.post = (args: { studentId: string | number } | [studentId: stri
     completeAnalysis.form = completeAnalysisForm
 /**
 * @see \App\Http\Controllers\Api\AgentController::health
- * @see app/Http/Controllers/Api/AgentController.php:199
+ * @see app/Http/Controllers/Api/AgentController.php:205
  * @route '/api/agent/health'
  */
 export const health = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -335,7 +335,7 @@ health.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\AgentController::health
- * @see app/Http/Controllers/Api/AgentController.php:199
+ * @see app/Http/Controllers/Api/AgentController.php:205
  * @route '/api/agent/health'
  */
 health.url = (options?: RouteQueryOptions) => {
@@ -344,7 +344,7 @@ health.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\AgentController::health
- * @see app/Http/Controllers/Api/AgentController.php:199
+ * @see app/Http/Controllers/Api/AgentController.php:205
  * @route '/api/agent/health'
  */
 health.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -353,7 +353,7 @@ health.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\AgentController::health
- * @see app/Http/Controllers/Api/AgentController.php:199
+ * @see app/Http/Controllers/Api/AgentController.php:205
  * @route '/api/agent/health'
  */
 health.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -363,7 +363,7 @@ health.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\AgentController::health
- * @see app/Http/Controllers/Api/AgentController.php:199
+ * @see app/Http/Controllers/Api/AgentController.php:205
  * @route '/api/agent/health'
  */
     const healthForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -373,7 +373,7 @@ health.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\AgentController::health
- * @see app/Http/Controllers/Api/AgentController.php:199
+ * @see app/Http/Controllers/Api/AgentController.php:205
  * @route '/api/agent/health'
  */
         healthForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -382,7 +382,7 @@ health.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\AgentController::health
- * @see app/Http/Controllers/Api/AgentController.php:199
+ * @see app/Http/Controllers/Api/AgentController.php:205
  * @route '/api/agent/health'
  */
         healthForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -398,7 +398,7 @@ health.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     health.form = healthForm
 /**
 * @see \App\Http\Controllers\Api\AgentController::info
- * @see app/Http/Controllers/Api/AgentController.php:223
+ * @see app/Http/Controllers/Api/AgentController.php:229
  * @route '/api/agent/info'
  */
 export const info = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -413,7 +413,7 @@ info.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\AgentController::info
- * @see app/Http/Controllers/Api/AgentController.php:223
+ * @see app/Http/Controllers/Api/AgentController.php:229
  * @route '/api/agent/info'
  */
 info.url = (options?: RouteQueryOptions) => {
@@ -422,7 +422,7 @@ info.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\AgentController::info
- * @see app/Http/Controllers/Api/AgentController.php:223
+ * @see app/Http/Controllers/Api/AgentController.php:229
  * @route '/api/agent/info'
  */
 info.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -431,7 +431,7 @@ info.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\AgentController::info
- * @see app/Http/Controllers/Api/AgentController.php:223
+ * @see app/Http/Controllers/Api/AgentController.php:229
  * @route '/api/agent/info'
  */
 info.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -441,7 +441,7 @@ info.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\AgentController::info
- * @see app/Http/Controllers/Api/AgentController.php:223
+ * @see app/Http/Controllers/Api/AgentController.php:229
  * @route '/api/agent/info'
  */
     const infoForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -451,7 +451,7 @@ info.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\AgentController::info
- * @see app/Http/Controllers/Api/AgentController.php:223
+ * @see app/Http/Controllers/Api/AgentController.php:229
  * @route '/api/agent/info'
  */
         infoForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -460,7 +460,7 @@ info.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\AgentController::info
- * @see app/Http/Controllers/Api/AgentController.php:223
+ * @see app/Http/Controllers/Api/AgentController.php:229
  * @route '/api/agent/info'
  */
         infoForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -476,7 +476,7 @@ info.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     info.form = infoForm
 /**
 * @see \App\Http\Controllers\Api\AgentController::test
- * @see app/Http/Controllers/Api/AgentController.php:319
+ * @see app/Http/Controllers/Api/AgentController.php:325
  * @route '/api/agent/test'
  */
 export const test = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -491,7 +491,7 @@ test.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\AgentController::test
- * @see app/Http/Controllers/Api/AgentController.php:319
+ * @see app/Http/Controllers/Api/AgentController.php:325
  * @route '/api/agent/test'
  */
 test.url = (options?: RouteQueryOptions) => {
@@ -500,7 +500,7 @@ test.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\AgentController::test
- * @see app/Http/Controllers/Api/AgentController.php:319
+ * @see app/Http/Controllers/Api/AgentController.php:325
  * @route '/api/agent/test'
  */
 test.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -509,7 +509,7 @@ test.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\AgentController::test
- * @see app/Http/Controllers/Api/AgentController.php:319
+ * @see app/Http/Controllers/Api/AgentController.php:325
  * @route '/api/agent/test'
  */
 test.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -519,7 +519,7 @@ test.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\AgentController::test
- * @see app/Http/Controllers/Api/AgentController.php:319
+ * @see app/Http/Controllers/Api/AgentController.php:325
  * @route '/api/agent/test'
  */
     const testForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -529,7 +529,7 @@ test.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\AgentController::test
- * @see app/Http/Controllers/Api/AgentController.php:319
+ * @see app/Http/Controllers/Api/AgentController.php:325
  * @route '/api/agent/test'
  */
         testForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -538,7 +538,7 @@ test.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\AgentController::test
- * @see app/Http/Controllers/Api/AgentController.php:319
+ * @see app/Http/Controllers/Api/AgentController.php:325
  * @route '/api/agent/test'
  */
         testForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

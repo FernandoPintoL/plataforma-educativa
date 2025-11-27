@@ -78,7 +78,7 @@ class UsersSeeder extends Seeder
         for ($i = 1; $i <= 100; $i++) {
             $firstName = $faker->firstName();
             $lastName = $faker->lastName();
-            $grado = rand(1, 12); // Grados 1-12
+            $grado = rand(1, 6); // Grados 1-6 de Secundaria (Sistema Educativo Boliviano)
 
             $estudiante = User::create([
                 'name' => $firstName,

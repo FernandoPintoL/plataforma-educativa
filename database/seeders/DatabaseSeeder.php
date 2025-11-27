@@ -83,6 +83,9 @@ class DatabaseSeeder extends Seeder
         if (class_exists(RendimientoAcademicoSeeder::class)) {
             $this->call(RendimientoAcademicoSeeder::class);
         }
+        if (class_exists(IntentosEvaluacionSeeder::class)) {
+            $this->call(IntentosEvaluacionSeeder::class);
+        }
 
         // ==================== PASO 6: DATOS ML ====================
         echo "[6/6] Generando datos para análisis de ML...\n";
