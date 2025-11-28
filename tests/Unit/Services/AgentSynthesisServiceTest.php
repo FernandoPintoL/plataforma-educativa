@@ -15,7 +15,6 @@ class AgentSynthesisServiceTest extends TestCase
     {
         parent::setUp();
         $this->service = new AgentSynthesisService();
-        Http::fake();
     }
 
     /**

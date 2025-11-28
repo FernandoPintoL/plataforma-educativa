@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\CursoController::show
- * @see app/Http/Controllers/CursoController.php:63
+ * @see app/Http/Controllers/CursoController.php:97
  * @route '/cursos/{curso}'
  */
 export const show = (args: { curso: number | { id: number } } | [curso: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\CursoController::show
- * @see app/Http/Controllers/CursoController.php:63
+ * @see app/Http/Controllers/CursoController.php:97
  * @route '/cursos/{curso}'
  */
 show.url = (args: { curso: number | { id: number } } | [curso: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -49,7 +49,7 @@ show.url = (args: { curso: number | { id: number } } | [curso: number | { id: nu
 
 /**
 * @see \App\Http\Controllers\CursoController::show
- * @see app/Http/Controllers/CursoController.php:63
+ * @see app/Http/Controllers/CursoController.php:97
  * @route '/cursos/{curso}'
  */
 show.get = (args: { curso: number | { id: number } } | [curso: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -58,7 +58,7 @@ show.get = (args: { curso: number | { id: number } } | [curso: number | { id: nu
 })
 /**
 * @see \App\Http\Controllers\CursoController::show
- * @see app/Http/Controllers/CursoController.php:63
+ * @see app/Http/Controllers/CursoController.php:97
  * @route '/cursos/{curso}'
  */
 show.head = (args: { curso: number | { id: number } } | [curso: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -68,7 +68,7 @@ show.head = (args: { curso: number | { id: number } } | [curso: number | { id: n
 
     /**
 * @see \App\Http\Controllers\CursoController::show
- * @see app/Http/Controllers/CursoController.php:63
+ * @see app/Http/Controllers/CursoController.php:97
  * @route '/cursos/{curso}'
  */
     const showForm = (args: { curso: number | { id: number } } | [curso: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -78,7 +78,7 @@ show.head = (args: { curso: number | { id: number } } | [curso: number | { id: n
 
             /**
 * @see \App\Http\Controllers\CursoController::show
- * @see app/Http/Controllers/CursoController.php:63
+ * @see app/Http/Controllers/CursoController.php:97
  * @route '/cursos/{curso}'
  */
         showForm.get = (args: { curso: number | { id: number } } | [curso: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -87,7 +87,7 @@ show.head = (args: { curso: number | { id: number } } | [curso: number | { id: n
         })
             /**
 * @see \App\Http\Controllers\CursoController::show
- * @see app/Http/Controllers/CursoController.php:63
+ * @see app/Http/Controllers/CursoController.php:97
  * @route '/cursos/{curso}'
  */
         showForm.head = (args: { curso: number | { id: number } } | [curso: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

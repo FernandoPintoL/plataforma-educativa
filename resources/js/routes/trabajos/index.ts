@@ -1,8 +1,8 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
 import calificacion from './calificacion'
 /**
-* @see \TareaController::progreso
- * @see [unknown]:0
+* @see \App\Http\Controllers\TareaController::progreso
+ * @see app/Http/Controllers/TareaController.php:904
  * @route '/api/trabajos/{trabajoId}/progreso'
  */
 export const progreso = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,8 +16,8 @@ progreso.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see \TareaController::progreso
- * @see [unknown]:0
+* @see \App\Http\Controllers\TareaController::progreso
+ * @see app/Http/Controllers/TareaController.php:904
  * @route '/api/trabajos/{trabajoId}/progreso'
  */
 progreso.url = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -44,8 +44,8 @@ progreso.url = (args: { trabajoId: string | number } | [trabajoId: string | numb
 }
 
 /**
-* @see \TareaController::progreso
- * @see [unknown]:0
+* @see \App\Http\Controllers\TareaController::progreso
+ * @see app/Http/Controllers/TareaController.php:904
  * @route '/api/trabajos/{trabajoId}/progreso'
  */
 progreso.get = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -53,8 +53,8 @@ progreso.get = (args: { trabajoId: string | number } | [trabajoId: string | numb
     method: 'get',
 })
 /**
-* @see \TareaController::progreso
- * @see [unknown]:0
+* @see \App\Http\Controllers\TareaController::progreso
+ * @see app/Http/Controllers/TareaController.php:904
  * @route '/api/trabajos/{trabajoId}/progreso'
  */
 progreso.head = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -63,8 +63,8 @@ progreso.head = (args: { trabajoId: string | number } | [trabajoId: string | num
 })
 
     /**
-* @see \TareaController::progreso
- * @see [unknown]:0
+* @see \App\Http\Controllers\TareaController::progreso
+ * @see app/Http/Controllers/TareaController.php:904
  * @route '/api/trabajos/{trabajoId}/progreso'
  */
     const progresoForm = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -73,8 +73,8 @@ progreso.head = (args: { trabajoId: string | number } | [trabajoId: string | num
     })
 
             /**
-* @see \TareaController::progreso
- * @see [unknown]:0
+* @see \App\Http\Controllers\TareaController::progreso
+ * @see app/Http/Controllers/TareaController.php:904
  * @route '/api/trabajos/{trabajoId}/progreso'
  */
         progresoForm.get = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -82,8 +82,8 @@ progreso.head = (args: { trabajoId: string | number } | [trabajoId: string | num
             method: 'get',
         })
             /**
-* @see \TareaController::progreso
- * @see [unknown]:0
+* @see \App\Http\Controllers\TareaController::progreso
+ * @see app/Http/Controllers/TareaController.php:904
  * @route '/api/trabajos/{trabajoId}/progreso'
  */
         progresoForm.head = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -98,8 +98,8 @@ progreso.head = (args: { trabajoId: string | number } | [trabajoId: string | num
     
     progreso.form = progresoForm
 /**
-* @see \TareaController::hintsHistorial
- * @see [unknown]:0
+* @see \App\Http\Controllers\TareaController::hintsHistorial
+ * @see app/Http/Controllers/TareaController.php:1001
  * @route '/api/trabajos/{trabajoId}/hints-historial'
  */
 export const hintsHistorial = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -113,8 +113,8 @@ hintsHistorial.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see \TareaController::hintsHistorial
- * @see [unknown]:0
+* @see \App\Http\Controllers\TareaController::hintsHistorial
+ * @see app/Http/Controllers/TareaController.php:1001
  * @route '/api/trabajos/{trabajoId}/hints-historial'
  */
 hintsHistorial.url = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -141,8 +141,8 @@ hintsHistorial.url = (args: { trabajoId: string | number } | [trabajoId: string 
 }
 
 /**
-* @see \TareaController::hintsHistorial
- * @see [unknown]:0
+* @see \App\Http\Controllers\TareaController::hintsHistorial
+ * @see app/Http/Controllers/TareaController.php:1001
  * @route '/api/trabajos/{trabajoId}/hints-historial'
  */
 hintsHistorial.get = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -150,8 +150,8 @@ hintsHistorial.get = (args: { trabajoId: string | number } | [trabajoId: string 
     method: 'get',
 })
 /**
-* @see \TareaController::hintsHistorial
- * @see [unknown]:0
+* @see \App\Http\Controllers\TareaController::hintsHistorial
+ * @see app/Http/Controllers/TareaController.php:1001
  * @route '/api/trabajos/{trabajoId}/hints-historial'
  */
 hintsHistorial.head = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -160,8 +160,8 @@ hintsHistorial.head = (args: { trabajoId: string | number } | [trabajoId: string
 })
 
     /**
-* @see \TareaController::hintsHistorial
- * @see [unknown]:0
+* @see \App\Http\Controllers\TareaController::hintsHistorial
+ * @see app/Http/Controllers/TareaController.php:1001
  * @route '/api/trabajos/{trabajoId}/hints-historial'
  */
     const hintsHistorialForm = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -170,8 +170,8 @@ hintsHistorial.head = (args: { trabajoId: string | number } | [trabajoId: string
     })
 
             /**
-* @see \TareaController::hintsHistorial
- * @see [unknown]:0
+* @see \App\Http\Controllers\TareaController::hintsHistorial
+ * @see app/Http/Controllers/TareaController.php:1001
  * @route '/api/trabajos/{trabajoId}/hints-historial'
  */
         hintsHistorialForm.get = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -179,8 +179,8 @@ hintsHistorial.head = (args: { trabajoId: string | number } | [trabajoId: string
             method: 'get',
         })
             /**
-* @see \TareaController::hintsHistorial
- * @see [unknown]:0
+* @see \App\Http\Controllers\TareaController::hintsHistorial
+ * @see app/Http/Controllers/TareaController.php:1001
  * @route '/api/trabajos/{trabajoId}/hints-historial'
  */
         hintsHistorialForm.head = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

@@ -16,8 +16,9 @@ class DatabaseSeeder extends Seeder
         // ==================== PASO 1: CONFIGURACIÓN ====================
         echo "[1/6] Configurando roles y permisos...\n";
         $this->call(RolesAndPermissionsSeeder::class);
-        $this->call(PermisosSeeder::class);
+        $this->call(PermisosUnificadosSeeder::class);
         $this->call(ModuloSidebarSeeder::class);
+        $this->call(ModuloSidebarPermisosSeeder::class);
         $this->call(RoleModuloAccesoSeeder::class);
 
         // ==================== PASO 2: ADMIN ====================
@@ -50,6 +51,7 @@ class DatabaseSeeder extends Seeder
         // ==================== PASO 4: DATOS ACADÉMICOS ====================
         echo "[4/6] Generando datos académicos coherentes...\n";
         $this->call(DatosAcademicosSeeder::class);
+        $this->call(TestsVocacionalesSeeder::class);
 
         // ==================== PASO 5: ESTRUCTURA EDUCATIVA ====================
         echo "[5/6] Creando estructura educativa (cursos, tareas, evaluaciones)...\n";

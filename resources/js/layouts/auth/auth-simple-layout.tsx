@@ -1,4 +1,4 @@
-import { dashboard } from '@/routes';
+import { dashboard } from '@/route-helpers';
 import { Link } from '@inertiajs/react';
 import { type PropsWithChildren } from 'react';
 

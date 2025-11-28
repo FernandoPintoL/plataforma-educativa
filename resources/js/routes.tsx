@@ -4,9 +4,6 @@ import Dashboard from './pages/dashboard';
 import CursosIndex from './pages/Cursos/Index';
 import VocacionalIndex from './pages/Vocacional/Index';
 
-// Re-export all route helpers from routes/index
-export * from './routes/index';
-
 export const router = createBrowserRouter([
   {
     path: '/',

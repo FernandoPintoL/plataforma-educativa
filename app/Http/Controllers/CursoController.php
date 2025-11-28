@@ -9,51 +9,85 @@ use Inertia\Inertia;
 class CursoController extends Controller
 {
     /**
-     * Mostrar los cursos del profesor autenticado
+     * Mostrar los cursos del usuario autenticado
+     * - Para profesores: cursos que enseña
+     * - Para estudiantes: cursos en los que está matriculado
      */
     public function misCursos()
     {
         $user = Auth::user();
+        $userRole = $user->hasRole('profesor') ? 'profesor' : 'estudiante';
 
-        // Validar que sea profesor
-        if (!$user->esProfesor() && !$user->hasRole('profesor')) {
-            abort(403, 'Solo los profesores pueden ver sus cursos');
+        // Obtener cursos según el rol
+        if ($userRole === 'profesor') {
+            // Profesor: obtener cursos que enseña
+            $cursos = Curso::where('profesor_id', $user->id)
+                ->with(['estudiantes', 'contenidos.tarea', 'contenidos.evaluaciones'])
+                ->orderBy('fecha_inicio', 'desc')
+                ->get()
+                ->map(function ($curso) {
+                    // Calcular total de tareas y evaluaciones desde los contenidos
+                    $totalTareas = $curso->contenidos->reduce(fn ($sum, $c) => $sum + ($c->tarea ? 1 : 0), 0);
+                    $totalEvaluaciones = $curso->contenidos->sum(fn ($c) => $c->evaluaciones->count());
+
+                    return [
+                        'id' => $curso->id,
+                        'nombre' => $curso->nombre,
+                        'codigo' => $curso->codigo,
+                        'descripcion' => $curso->descripcion,
+                        'estado' => $curso->estado,
+                        'fecha_inicio' => $curso->fecha_inicio?->format('Y-m-d'),
+                        'fecha_fin' => $curso->fecha_fin?->format('Y-m-d'),
+                        'capacidad_maxima' => $curso->capacidad_maxima,
+                        'total_estudiantes' => $curso->estudiantes->count(),
+                        'total_contenidos' => $curso->contenidos->count(),
+                        'total_tareas' => $totalTareas,
+                        'total_evaluaciones' => $totalEvaluaciones,
+                        'profesor' => [
+                            'id' => $curso->profesor->id,
+                            'nombre' => $curso->profesor->name,
+                            'apellido' => $curso->profesor->apellido,
+                        ],
+                        'rol_usuario' => 'profesor',
+                    ];
+                });
+        } else {
+            // Estudiante: obtener cursos matriculados
+            $cursos = $user->cursosComoEstudiante()
+                ->with(['profesor', 'contenidos.tarea', 'contenidos.evaluaciones'])
+                ->orderBy('fecha_inicio', 'desc')
+                ->get()
+                ->map(function ($curso) {
+                    // Calcular total de tareas y evaluaciones desde los contenidos
+                    $totalTareas = $curso->contenidos->reduce(fn ($sum, $c) => $sum + ($c->tarea ? 1 : 0), 0);
+                    $totalEvaluaciones = $curso->contenidos->sum(fn ($c) => $c->evaluaciones->count());
+
+                    return [
+                        'id' => $curso->id,
+                        'nombre' => $curso->nombre,
+                        'codigo' => $curso->codigo,
+                        'descripcion' => $curso->descripcion,
+                        'estado' => $curso->estado,
+                        'fecha_inicio' => $curso->fecha_inicio?->format('Y-m-d'),
+                        'fecha_fin' => $curso->fecha_fin?->format('Y-m-d'),
+                        'capacidad_maxima' => $curso->capacidad_maxima,
+                        'total_contenidos' => $curso->contenidos->count(),
+                        'total_tareas' => $totalTareas,
+                        'total_evaluaciones' => $totalEvaluaciones,
+                        'profesor' => [
+                            'id' => $curso->profesor->id,
+                            'nombre' => $curso->profesor->name,
+                            'apellido' => $curso->profesor->apellido,
+                        ],
+                        'rol_usuario' => 'estudiante',
+                    ];
+                });
         }
-
-        // Obtener los cursos del profesor
-        $cursos = Curso::where('profesor_id', $user->id)
-            ->with(['estudiantes', 'contenidos.tarea', 'contenidos.evaluaciones'])
-            ->orderBy('fecha_inicio', 'desc')
-            ->get()
-            ->map(function ($curso) {
-                // Calcular total de tareas y evaluaciones desde los contenidos
-                $totalTareas = $curso->contenidos->reduce(fn ($sum, $c) => $sum + ($c->tarea ? 1 : 0), 0);
-                $totalEvaluaciones = $curso->contenidos->sum(fn ($c) => $c->evaluaciones->count());
-
-                return [
-                    'id' => $curso->id,
-                    'nombre' => $curso->nombre,
-                    'codigo' => $curso->codigo,
-                    'descripcion' => $curso->descripcion,
-                    'estado' => $curso->estado,
-                    'fecha_inicio' => $curso->fecha_inicio?->format('Y-m-d'),
-                    'fecha_fin' => $curso->fecha_fin?->format('Y-m-d'),
-                    'capacidad_maxima' => $curso->capacidad_maxima,
-                    'total_estudiantes' => $curso->estudiantes->count(),
-                    'total_contenidos' => $curso->contenidos->count(),
-                    'total_tareas' => $totalTareas,
-                    'total_evaluaciones' => $totalEvaluaciones,
-                    'profesor' => [
-                        'id' => $curso->profesor->id,
-                        'nombre' => $curso->profesor->name,
-                        'apellido' => $curso->profesor->apellido,
-                    ],
-                ];
-            });
 
         return Inertia::render('Cursos/MisCursos', [
             'cursos' => $cursos,
             'totalCursos' => $cursos->count(),
+            'userRole' => $userRole,
         ]);
     }
 

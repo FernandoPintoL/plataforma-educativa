@@ -3,7 +3,9 @@
     "allow": [
       "Bash(dir:*)",
       "Bash(timeout 30 python:*)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(find:*)",
+      "Bash(php:*)"
     ],
     "deny": [],
     "ask": []

@@ -181,9 +181,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 // ==================== CURSOS ====================
 Route::middleware(['auth', 'verified'])->group(function () {
-    // Mis cursos - solo para profesores
+    // Mis cursos - para estudiantes (matriculados) y profesores (que enseña)
     Route::get('mis-cursos', [\App\Http\Controllers\CursoController::class, 'misCursos'])
-        ->middleware('role:profesor')
+        ->middleware('role:profesor|estudiante')
         ->name('mis-cursos');
 
     // Detalle de un curso

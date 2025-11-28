@@ -120,14 +120,14 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, user }) => {
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50">
                 <div className="py-1">
                   <Link
-                    href="/perfil"
+                    href="/mi-perfil/riesgo"
                     className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     <UserCircleIcon className="h-4 w-4 mr-3" />
                     Mi Perfil
                   </Link>
                   <Link
-                    href="/configuracion"
+                    href="/settings/appearance"
                     className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     <svg className="h-4 w-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
 /**
-* @see \TestVocacionalController::miPerfil
- * @see [unknown]:0
+* @see \App\Http\Controllers\TestVocacionalController::miPerfil
+ * @see app/Http/Controllers/TestVocacionalController.php:830
  * @route '/api/vocacional/mi-perfil'
  */
 export const miPerfil = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -15,8 +15,8 @@ miPerfil.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see \TestVocacionalController::miPerfil
- * @see [unknown]:0
+* @see \App\Http\Controllers\TestVocacionalController::miPerfil
+ * @see app/Http/Controllers/TestVocacionalController.php:830
  * @route '/api/vocacional/mi-perfil'
  */
 miPerfil.url = (options?: RouteQueryOptions) => {
@@ -24,8 +24,8 @@ miPerfil.url = (options?: RouteQueryOptions) => {
 }
 
 /**
-* @see \TestVocacionalController::miPerfil
- * @see [unknown]:0
+* @see \App\Http\Controllers\TestVocacionalController::miPerfil
+ * @see app/Http/Controllers/TestVocacionalController.php:830
  * @route '/api/vocacional/mi-perfil'
  */
 miPerfil.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -33,8 +33,8 @@ miPerfil.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
-* @see \TestVocacionalController::miPerfil
- * @see [unknown]:0
+* @see \App\Http\Controllers\TestVocacionalController::miPerfil
+ * @see app/Http/Controllers/TestVocacionalController.php:830
  * @route '/api/vocacional/mi-perfil'
  */
 miPerfil.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -43,8 +43,8 @@ miPerfil.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
-* @see \TestVocacionalController::miPerfil
- * @see [unknown]:0
+* @see \App\Http\Controllers\TestVocacionalController::miPerfil
+ * @see app/Http/Controllers/TestVocacionalController.php:830
  * @route '/api/vocacional/mi-perfil'
  */
     const miPerfilForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -53,8 +53,8 @@ miPerfil.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
-* @see \TestVocacionalController::miPerfil
- * @see [unknown]:0
+* @see \App\Http\Controllers\TestVocacionalController::miPerfil
+ * @see app/Http/Controllers/TestVocacionalController.php:830
  * @route '/api/vocacional/mi-perfil'
  */
         miPerfilForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -62,8 +62,8 @@ miPerfil.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
-* @see \TestVocacionalController::miPerfil
- * @see [unknown]:0
+* @see \App\Http\Controllers\TestVocacionalController::miPerfil
+ * @see app/Http/Controllers/TestVocacionalController.php:830
  * @route '/api/vocacional/mi-perfil'
  */
         miPerfilForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -78,8 +78,8 @@ miPerfil.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     miPerfil.form = miPerfilForm
 /**
-* @see \TestVocacionalController::recomendacionesCarrera
- * @see [unknown]:0
+* @see \App\Http\Controllers\TestVocacionalController::recomendacionesCarrera
+ * @see app/Http/Controllers/TestVocacionalController.php:878
  * @route '/api/vocacional/recomendaciones-carrera'
  */
 export const recomendacionesCarrera = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -93,8 +93,8 @@ recomendacionesCarrera.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see \TestVocacionalController::recomendacionesCarrera
- * @see [unknown]:0
+* @see \App\Http\Controllers\TestVocacionalController::recomendacionesCarrera
+ * @see app/Http/Controllers/TestVocacionalController.php:878
  * @route '/api/vocacional/recomendaciones-carrera'
  */
 recomendacionesCarrera.url = (options?: RouteQueryOptions) => {
@@ -102,8 +102,8 @@ recomendacionesCarrera.url = (options?: RouteQueryOptions) => {
 }
 
 /**
-* @see \TestVocacionalController::recomendacionesCarrera
- * @see [unknown]:0
+* @see \App\Http\Controllers\TestVocacionalController::recomendacionesCarrera
+ * @see app/Http/Controllers/TestVocacionalController.php:878
  * @route '/api/vocacional/recomendaciones-carrera'
  */
 recomendacionesCarrera.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -111,8 +111,8 @@ recomendacionesCarrera.get = (options?: RouteQueryOptions): RouteDefinition<'get
     method: 'get',
 })
 /**
-* @see \TestVocacionalController::recomendacionesCarrera
- * @see [unknown]:0
+* @see \App\Http\Controllers\TestVocacionalController::recomendacionesCarrera
+ * @see app/Http/Controllers/TestVocacionalController.php:878
  * @route '/api/vocacional/recomendaciones-carrera'
  */
 recomendacionesCarrera.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -121,8 +121,8 @@ recomendacionesCarrera.head = (options?: RouteQueryOptions): RouteDefinition<'he
 })
 
     /**
-* @see \TestVocacionalController::recomendacionesCarrera
- * @see [unknown]:0
+* @see \App\Http\Controllers\TestVocacionalController::recomendacionesCarrera
+ * @see app/Http/Controllers/TestVocacionalController.php:878
  * @route '/api/vocacional/recomendaciones-carrera'
  */
     const recomendacionesCarreraForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -131,8 +131,8 @@ recomendacionesCarrera.head = (options?: RouteQueryOptions): RouteDefinition<'he
     })
 
             /**
-* @see \TestVocacionalController::recomendacionesCarrera
- * @see [unknown]:0
+* @see \App\Http\Controllers\TestVocacionalController::recomendacionesCarrera
+ * @see app/Http/Controllers/TestVocacionalController.php:878
  * @route '/api/vocacional/recomendaciones-carrera'
  */
         recomendacionesCarreraForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -140,8 +140,8 @@ recomendacionesCarrera.head = (options?: RouteQueryOptions): RouteDefinition<'he
             method: 'get',
         })
             /**
-* @see \TestVocacionalController::recomendacionesCarrera
- * @see [unknown]:0
+* @see \App\Http\Controllers\TestVocacionalController::recomendacionesCarrera
+ * @see app/Http/Controllers/TestVocacionalController.php:878
  * @route '/api/vocacional/recomendaciones-carrera'
  */
         recomendacionesCarreraForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -156,8 +156,8 @@ recomendacionesCarrera.head = (options?: RouteQueryOptions): RouteDefinition<'he
     
     recomendacionesCarrera.form = recomendacionesCarreraForm
 /**
-* @see \TestVocacionalController::analisis
- * @see [unknown]:0
+* @see \App\Http\Controllers\TestVocacionalController::analisis
+ * @see app/Http/Controllers/TestVocacionalController.php:920
  * @route '/api/vocacional/analisis/{studentId}'
  */
 export const analisis = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -171,8 +171,8 @@ analisis.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see \TestVocacionalController::analisis
- * @see [unknown]:0
+* @see \App\Http\Controllers\TestVocacionalController::analisis
+ * @see app/Http/Controllers/TestVocacionalController.php:920
  * @route '/api/vocacional/analisis/{studentId}'
  */
 analisis.url = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -199,8 +199,8 @@ analisis.url = (args: { studentId: string | number } | [studentId: string | numb
 }
 
 /**
-* @see \TestVocacionalController::analisis
- * @see [unknown]:0
+* @see \App\Http\Controllers\TestVocacionalController::analisis
+ * @see app/Http/Controllers/TestVocacionalController.php:920
  * @route '/api/vocacional/analisis/{studentId}'
  */
 analisis.get = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -208,8 +208,8 @@ analisis.get = (args: { studentId: string | number } | [studentId: string | numb
     method: 'get',
 })
 /**
-* @see \TestVocacionalController::analisis
- * @see [unknown]:0
+* @see \App\Http\Controllers\TestVocacionalController::analisis
+ * @see app/Http/Controllers/TestVocacionalController.php:920
  * @route '/api/vocacional/analisis/{studentId}'
  */
 analisis.head = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -218,8 +218,8 @@ analisis.head = (args: { studentId: string | number } | [studentId: string | num
 })
 
     /**
-* @see \TestVocacionalController::analisis
- * @see [unknown]:0
+* @see \App\Http\Controllers\TestVocacionalController::analisis
+ * @see app/Http/Controllers/TestVocacionalController.php:920
  * @route '/api/vocacional/analisis/{studentId}'
  */
     const analisisForm = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -228,8 +228,8 @@ analisis.head = (args: { studentId: string | number } | [studentId: string | num
     })
 
             /**
-* @see \TestVocacionalController::analisis
- * @see [unknown]:0
+* @see \App\Http\Controllers\TestVocacionalController::analisis
+ * @see app/Http/Controllers/TestVocacionalController.php:920
  * @route '/api/vocacional/analisis/{studentId}'
  */
         analisisForm.get = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -237,8 +237,8 @@ analisis.head = (args: { studentId: string | number } | [studentId: string | num
             method: 'get',
         })
             /**
-* @see \TestVocacionalController::analisis
- * @see [unknown]:0
+* @see \App\Http\Controllers\TestVocacionalController::analisis
+ * @see app/Http/Controllers/TestVocacionalController.php:920
  * @route '/api/vocacional/analisis/{studentId}'
  */
         analisisForm.head = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -253,8 +253,8 @@ analisis.head = (args: { studentId: string | number } | [studentId: string | num
     
     analisis.form = analisisForm
 /**
-* @see \TestVocacionalController::reporteInstitucional
- * @see [unknown]:0
+* @see \App\Http\Controllers\TestVocacionalController::reporteInstitucional
+ * @see app/Http/Controllers/TestVocacionalController.php:986
  * @route '/api/vocacional/reporte-institucional'
  */
 export const reporteInstitucional = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -268,8 +268,8 @@ reporteInstitucional.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see \TestVocacionalController::reporteInstitucional
- * @see [unknown]:0
+* @see \App\Http\Controllers\TestVocacionalController::reporteInstitucional
+ * @see app/Http/Controllers/TestVocacionalController.php:986
  * @route '/api/vocacional/reporte-institucional'
  */
 reporteInstitucional.url = (options?: RouteQueryOptions) => {
@@ -277,8 +277,8 @@ reporteInstitucional.url = (options?: RouteQueryOptions) => {
 }
 
 /**
-* @see \TestVocacionalController::reporteInstitucional
- * @see [unknown]:0
+* @see \App\Http\Controllers\TestVocacionalController::reporteInstitucional
+ * @see app/Http/Controllers/TestVocacionalController.php:986
  * @route '/api/vocacional/reporte-institucional'
  */
 reporteInstitucional.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -286,8 +286,8 @@ reporteInstitucional.get = (options?: RouteQueryOptions): RouteDefinition<'get'>
     method: 'get',
 })
 /**
-* @see \TestVocacionalController::reporteInstitucional
- * @see [unknown]:0
+* @see \App\Http\Controllers\TestVocacionalController::reporteInstitucional
+ * @see app/Http/Controllers/TestVocacionalController.php:986
  * @route '/api/vocacional/reporte-institucional'
  */
 reporteInstitucional.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -296,8 +296,8 @@ reporteInstitucional.head = (options?: RouteQueryOptions): RouteDefinition<'head
 })
 
     /**
-* @see \TestVocacionalController::reporteInstitucional
- * @see [unknown]:0
+* @see \App\Http\Controllers\TestVocacionalController::reporteInstitucional
+ * @see app/Http/Controllers/TestVocacionalController.php:986
  * @route '/api/vocacional/reporte-institucional'
  */
     const reporteInstitucionalForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -306,8 +306,8 @@ reporteInstitucional.head = (options?: RouteQueryOptions): RouteDefinition<'head
     })
 
             /**
-* @see \TestVocacionalController::reporteInstitucional
- * @see [unknown]:0
+* @see \App\Http\Controllers\TestVocacionalController::reporteInstitucional
+ * @see app/Http/Controllers/TestVocacionalController.php:986
  * @route '/api/vocacional/reporte-institucional'
  */
         reporteInstitucionalForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -315,8 +315,8 @@ reporteInstitucional.head = (options?: RouteQueryOptions): RouteDefinition<'head
             method: 'get',
         })
             /**
-* @see \TestVocacionalController::reporteInstitucional
- * @see [unknown]:0
+* @see \App\Http\Controllers\TestVocacionalController::reporteInstitucional
+ * @see app/Http/Controllers/TestVocacionalController.php:986
  * @route '/api/vocacional/reporte-institucional'
  */
         reporteInstitucionalForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

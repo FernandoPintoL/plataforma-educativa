@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { AlertCircle, TrendingDown, TrendingUp, Minus } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import axios from '@/config/axiosConfig';
 
 interface RiskData {
     risk_score: number;
@@ -23,24 +24,18 @@ export function RiskWidget() {
     const fetchRiskData = async () => {
         try {
             setLoading(true);
-            const response = await fetch('/api/mi-perfil/riesgo', {
-                method: 'GET',
-                credentials: 'include', // Enviar cookies de sesión
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-            });
+            const response = await axios.get('/api/mi-perfil/riesgo');
 
-            if (!response.ok) {
-                throw new Error('No se pudo cargar datos de riesgo');
+            if (response.data.success) {
+                setRiskData(response.data);
+                setError(null);
+            } else {
+                // No risk data available yet - this is normal for new students
+                setRiskData(null);
+                setError(null);
             }
-
-            const data = await response.json();
-            setRiskData(data);
-            setError(null);
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'Error desconocido');
+            setError(err instanceof Error ? err.message : 'Error cargando datos de riesgo');
             setRiskData(null);
         } finally {
             setLoading(false);

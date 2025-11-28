@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::index
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:28
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:34
  * @route '/api/api/evaluaciones-intentos'
  */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::index
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:28
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:34
  * @route '/api/api/evaluaciones-intentos'
  */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::index
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:28
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:34
  * @route '/api/api/evaluaciones-intentos'
  */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::index
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:28
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:34
  * @route '/api/api/evaluaciones-intentos'
  */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::index
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:28
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:34
  * @route '/api/api/evaluaciones-intentos'
  */
     const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::index
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:28
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:34
  * @route '/api/api/evaluaciones-intentos'
  */
         indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::index
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:28
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:34
  * @route '/api/api/evaluaciones-intentos'
  */
         indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,7 +79,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::show
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:90
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:96
  * @route '/api/api/evaluaciones-intentos/{id}'
  */
 export const show = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::show
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:90
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:96
  * @route '/api/api/evaluaciones-intentos/{id}'
  */
 show.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -122,7 +122,7 @@ show.url = (args: { id: string | number } | [id: string | number ] | string | nu
 
 /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::show
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:90
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:96
  * @route '/api/api/evaluaciones-intentos/{id}'
  */
 show.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -131,7 +131,7 @@ show.get = (args: { id: string | number } | [id: string | number ] | string | nu
 })
 /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::show
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:90
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:96
  * @route '/api/api/evaluaciones-intentos/{id}'
  */
 show.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -141,7 +141,7 @@ show.head = (args: { id: string | number } | [id: string | number ] | string | n
 
     /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::show
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:90
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:96
  * @route '/api/api/evaluaciones-intentos/{id}'
  */
     const showForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -151,7 +151,7 @@ show.head = (args: { id: string | number } | [id: string | number ] | string | n
 
             /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::show
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:90
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:96
  * @route '/api/api/evaluaciones-intentos/{id}'
  */
         showForm.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -160,7 +160,7 @@ show.head = (args: { id: string | number } | [id: string | number ] | string | n
         })
             /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::show
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:90
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:96
  * @route '/api/api/evaluaciones-intentos/{id}'
  */
         showForm.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -176,7 +176,7 @@ show.head = (args: { id: string | number } | [id: string | number ] | string | n
     show.form = showForm
 /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::iniciar
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:142
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:148
  * @route '/api/api/evaluaciones-intentos/{id}/iniciar'
  */
 export const iniciar = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -191,7 +191,7 @@ iniciar.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::iniciar
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:142
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:148
  * @route '/api/api/evaluaciones-intentos/{id}/iniciar'
  */
 iniciar.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -219,7 +219,7 @@ iniciar.url = (args: { id: string | number } | [id: string | number ] | string |
 
 /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::iniciar
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:142
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:148
  * @route '/api/api/evaluaciones-intentos/{id}/iniciar'
  */
 iniciar.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -229,7 +229,7 @@ iniciar.post = (args: { id: string | number } | [id: string | number ] | string 
 
     /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::iniciar
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:142
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:148
  * @route '/api/api/evaluaciones-intentos/{id}/iniciar'
  */
     const iniciarForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -239,7 +239,7 @@ iniciar.post = (args: { id: string | number } | [id: string | number ] | string 
 
             /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::iniciar
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:142
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:148
  * @route '/api/api/evaluaciones-intentos/{id}/iniciar'
  */
         iniciarForm.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -250,7 +250,7 @@ iniciar.post = (args: { id: string | number } | [id: string | number ] | string 
     iniciar.form = iniciarForm
 /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::guardarRespuesta
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:186
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:192
  * @route '/api/api/evaluaciones-intentos/intentos/{intentoId}/respuestas'
  */
 export const guardarRespuesta = (args: { intentoId: string | number } | [intentoId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -265,7 +265,7 @@ guardarRespuesta.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::guardarRespuesta
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:186
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:192
  * @route '/api/api/evaluaciones-intentos/intentos/{intentoId}/respuestas'
  */
 guardarRespuesta.url = (args: { intentoId: string | number } | [intentoId: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -293,7 +293,7 @@ guardarRespuesta.url = (args: { intentoId: string | number } | [intentoId: strin
 
 /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::guardarRespuesta
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:186
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:192
  * @route '/api/api/evaluaciones-intentos/intentos/{intentoId}/respuestas'
  */
 guardarRespuesta.post = (args: { intentoId: string | number } | [intentoId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -303,7 +303,7 @@ guardarRespuesta.post = (args: { intentoId: string | number } | [intentoId: stri
 
     /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::guardarRespuesta
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:186
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:192
  * @route '/api/api/evaluaciones-intentos/intentos/{intentoId}/respuestas'
  */
     const guardarRespuestaForm = (args: { intentoId: string | number } | [intentoId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -313,7 +313,7 @@ guardarRespuesta.post = (args: { intentoId: string | number } | [intentoId: stri
 
             /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::guardarRespuesta
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:186
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:192
  * @route '/api/api/evaluaciones-intentos/intentos/{intentoId}/respuestas'
  */
         guardarRespuestaForm.post = (args: { intentoId: string | number } | [intentoId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -324,7 +324,7 @@ guardarRespuesta.post = (args: { intentoId: string | number } | [intentoId: stri
     guardarRespuesta.form = guardarRespuestaForm
 /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::completar
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:241
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:253
  * @route '/api/api/evaluaciones-intentos/intentos/{intentoId}/completar'
  */
 export const completar = (args: { intentoId: string | number } | [intentoId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -339,7 +339,7 @@ completar.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::completar
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:241
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:253
  * @route '/api/api/evaluaciones-intentos/intentos/{intentoId}/completar'
  */
 completar.url = (args: { intentoId: string | number } | [intentoId: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -367,7 +367,7 @@ completar.url = (args: { intentoId: string | number } | [intentoId: string | num
 
 /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::completar
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:241
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:253
  * @route '/api/api/evaluaciones-intentos/intentos/{intentoId}/completar'
  */
 completar.post = (args: { intentoId: string | number } | [intentoId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -377,7 +377,7 @@ completar.post = (args: { intentoId: string | number } | [intentoId: string | nu
 
     /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::completar
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:241
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:253
  * @route '/api/api/evaluaciones-intentos/intentos/{intentoId}/completar'
  */
     const completarForm = (args: { intentoId: string | number } | [intentoId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -387,7 +387,7 @@ completar.post = (args: { intentoId: string | number } | [intentoId: string | nu
 
             /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::completar
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:241
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:253
  * @route '/api/api/evaluaciones-intentos/intentos/{intentoId}/completar'
  */
         completarForm.post = (args: { intentoId: string | number } | [intentoId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -398,7 +398,7 @@ completar.post = (args: { intentoId: string | number } | [intentoId: string | nu
     completar.form = completarForm
 /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::misIntentos
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:323
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:330
  * @route '/api/api/evaluaciones-intentos/{id}/mis-intentos'
  */
 export const misIntentos = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -413,7 +413,7 @@ misIntentos.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::misIntentos
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:323
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:330
  * @route '/api/api/evaluaciones-intentos/{id}/mis-intentos'
  */
 misIntentos.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -441,7 +441,7 @@ misIntentos.url = (args: { id: string | number } | [id: string | number ] | stri
 
 /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::misIntentos
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:323
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:330
  * @route '/api/api/evaluaciones-intentos/{id}/mis-intentos'
  */
 misIntentos.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -450,7 +450,7 @@ misIntentos.get = (args: { id: string | number } | [id: string | number ] | stri
 })
 /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::misIntentos
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:323
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:330
  * @route '/api/api/evaluaciones-intentos/{id}/mis-intentos'
  */
 misIntentos.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -460,7 +460,7 @@ misIntentos.head = (args: { id: string | number } | [id: string | number ] | str
 
     /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::misIntentos
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:323
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:330
  * @route '/api/api/evaluaciones-intentos/{id}/mis-intentos'
  */
     const misIntentosForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -470,7 +470,7 @@ misIntentos.head = (args: { id: string | number } | [id: string | number ] | str
 
             /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::misIntentos
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:323
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:330
  * @route '/api/api/evaluaciones-intentos/{id}/mis-intentos'
  */
         misIntentosForm.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -479,7 +479,7 @@ misIntentos.head = (args: { id: string | number } | [id: string | number ] | str
         })
             /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::misIntentos
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:323
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:330
  * @route '/api/api/evaluaciones-intentos/{id}/mis-intentos'
  */
         misIntentosForm.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -495,7 +495,7 @@ misIntentos.head = (args: { id: string | number } | [id: string | number ] | str
     misIntentos.form = misIntentosForm
 /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::verIntento
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:364
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:371
  * @route '/api/api/evaluaciones-intentos/intentos/{id}'
  */
 export const verIntento = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -510,7 +510,7 @@ verIntento.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::verIntento
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:364
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:371
  * @route '/api/api/evaluaciones-intentos/intentos/{id}'
  */
 verIntento.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -538,7 +538,7 @@ verIntento.url = (args: { id: string | number } | [id: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::verIntento
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:364
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:371
  * @route '/api/api/evaluaciones-intentos/intentos/{id}'
  */
 verIntento.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -547,7 +547,7 @@ verIntento.get = (args: { id: string | number } | [id: string | number ] | strin
 })
 /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::verIntento
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:364
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:371
  * @route '/api/api/evaluaciones-intentos/intentos/{id}'
  */
 verIntento.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -557,7 +557,7 @@ verIntento.head = (args: { id: string | number } | [id: string | number ] | stri
 
     /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::verIntento
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:364
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:371
  * @route '/api/api/evaluaciones-intentos/intentos/{id}'
  */
     const verIntentoForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -567,7 +567,7 @@ verIntento.head = (args: { id: string | number } | [id: string | number ] | stri
 
             /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::verIntento
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:364
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:371
  * @route '/api/api/evaluaciones-intentos/intentos/{id}'
  */
         verIntentoForm.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -576,7 +576,7 @@ verIntento.head = (args: { id: string | number } | [id: string | number ] | stri
         })
             /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::verIntento
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:364
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:371
  * @route '/api/api/evaluaciones-intentos/intentos/{id}'
  */
         verIntentoForm.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -592,7 +592,7 @@ verIntento.head = (args: { id: string | number } | [id: string | number ] | stri
     verIntento.form = verIntentoForm
 /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::analisisIa
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:429
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:436
  * @route '/api/api/evaluaciones-intentos/intentos/{id}/analisis-ia'
  */
 export const analisisIa = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -607,7 +607,7 @@ analisisIa.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::analisisIa
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:429
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:436
  * @route '/api/api/evaluaciones-intentos/intentos/{id}/analisis-ia'
  */
 analisisIa.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -635,7 +635,7 @@ analisisIa.url = (args: { id: string | number } | [id: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::analisisIa
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:429
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:436
  * @route '/api/api/evaluaciones-intentos/intentos/{id}/analisis-ia'
  */
 analisisIa.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -644,7 +644,7 @@ analisisIa.get = (args: { id: string | number } | [id: string | number ] | strin
 })
 /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::analisisIa
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:429
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:436
  * @route '/api/api/evaluaciones-intentos/intentos/{id}/analisis-ia'
  */
 analisisIa.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -654,7 +654,7 @@ analisisIa.head = (args: { id: string | number } | [id: string | number ] | stri
 
     /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::analisisIa
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:429
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:436
  * @route '/api/api/evaluaciones-intentos/intentos/{id}/analisis-ia'
  */
     const analisisIaForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -664,7 +664,7 @@ analisisIa.head = (args: { id: string | number } | [id: string | number ] | stri
 
             /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::analisisIa
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:429
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:436
  * @route '/api/api/evaluaciones-intentos/intentos/{id}/analisis-ia'
  */
         analisisIaForm.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -673,7 +673,7 @@ analisisIa.head = (args: { id: string | number } | [id: string | number ] | stri
         })
             /**
 * @see \App\Http\Controllers\Api\EvaluacionesApiController::analisisIa
- * @see app/Http/Controllers/Api/EvaluacionesApiController.php:429
+ * @see app/Http/Controllers/Api/EvaluacionesApiController.php:436
  * @route '/api/api/evaluaciones-intentos/intentos/{id}/analisis-ia'
  */
         analisisIaForm.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

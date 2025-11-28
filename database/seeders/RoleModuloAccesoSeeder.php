@@ -4,56 +4,58 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Role;
 
+/**
+ * RoleModuloAccesoSeeder
+ * 
+ * Configura la visibilidad de módulos para cada rol
+ * IMPORTANTE: Usa dinámicamente el nombre del rol, NO IDs hardcodeados
+ * 
+ * Arquitectura de 3 Capas:
+ * - Capa 3: ¿Puede VER el módulo? (Este seeder - role_modulo_acceso)
+ * - Capa 2: ¿Puede HACER la acción? (Spatie permissions)
+ * - Capa 1: ¿Quién eres? (Laravel Auth)
+ */
 class RoleModuloAccesoSeeder extends Seeder
 {
-    /**
-     * Configura la visibilidad de módulos para cada rol
-     *
-     * IMPORTANTE: Este seeder define CUÁLES MÓDULOS son VISIBLES en el sidebar
-     * para cada rol. Es la Capa 3 de la arquitectura de control de acceso.
-     *
-     * Arquitectura de 3 Capas:
-     * - Capa 3: ¿Puede VER el módulo? (Este seeder - role_modulo_acceso)
-     * - Capa 2: ¿Puede HACER la acción? (Spatie permissions)
-     * - Capa 1: ¿Quién eres? (Laravel Auth)
-     */
     public function run(): void
     {
         echo "\n=== CONFIGURANDO VISIBILIDAD DE MÓDULOS POR ROL ===\n\n";
 
-        // Matriz de visibilidad: módulo => array de role_ids
+        // Matriz de visibilidad: módulo => array de role_names (NO ids)
         $modulosVisibles = [
             // MÓDULOS UNIVERSALES (Todos los roles autenticados)
-            'Inicio' => [1, 2, 3, 4, 5, 6, 7],
-            'Mi Perfil' => [1, 2, 3, 4, 5, 6, 7],
-            'Mis Cursos' => [1, 2, 3, 4, 5, 6, 7],
+            'Inicio' => ['admin', 'director', 'profesor', 'estudiante', 'padre', 'coordinador', 'tutor'],
+            'Mi Perfil' => ['admin', 'director', 'profesor', 'estudiante', 'padre', 'coordinador', 'tutor'],
+            'Mis Cursos' => ['admin', 'director', 'profesor', 'estudiante', 'padre', 'coordinador', 'tutor'],
 
             // ADMINISTRACIÓN (Admin, Director)
-            'Gestionar Estudiantes' => [1, 2],
-            'Gestionar Profesores' => [1, 2],
-            'Administración' => [1, 2],
+            'Gestionar Estudiantes' => ['admin', 'director'],
+            'Gestionar Profesores' => ['admin', 'director'],
+            'Administración' => ['admin', 'director'],
 
             // ACADÉMICO - PROFESORES (Admin, Director, Profesor, Coordinador)
-            'Tareas' => [1, 2, 3, 6],
-            'Entregas' => [1, 2, 3, 6],
-            'Evaluaciones' => [1, 2, 3, 6],
-            'Calificaciones' => [1, 2, 3, 4, 6],
-            'Contenido Educativo' => [1, 2, 3, 6],
-            'Recursos' => [1, 2, 3, 6],
+            'Tareas' => ['admin', 'director', 'profesor', 'coordinador'],
+            'Entregas' => ['admin', 'director', 'profesor', 'coordinador'],
+            'Evaluaciones' => ['admin', 'director', 'profesor', 'coordinador'],
+            'Calificaciones' => ['admin', 'director', 'profesor', 'estudiante', 'coordinador'],
+            'Contenido Educativo' => ['admin', 'director', 'profesor', 'coordinador'],
+            'Recursos' => ['admin', 'director', 'profesor', 'coordinador'],
 
             // REPORTES Y ANÁLISIS (Admin, Director, Profesor, Coordinador)
-            'Reportes' => [1, 2, 3, 6],
+            'Reportes' => ['admin', 'director', 'profesor', 'coordinador'],
 
             // 📊 ANÁLISIS DE RIESGO (Admin, Director, Profesor, Coordinador) ⭐
-            'Análisis de Riesgo' => [1, 2, 3, 6],
+            'Análisis de Riesgo' => ['admin', 'director', 'profesor', 'coordinador'],
 
-            // VOCACIONAL Y RECOMENDACIONES (Admin, Estudiante)
-            'Orientación Vocacional' => [1, 4],
-            'Mis Recomendaciones' => [1, 4],
+            // VOCACIONAL Y RECOMENDACIONES (Admin, Estudiante, Padre)
+            'Orientación Vocacional' => ['admin', 'estudiante'],
+            'Mis Recomendaciones' => ['admin', 'estudiante'],
         ];
 
-        foreach ($modulosVisibles as $moduloTitulo => $rolesIds) {
+        // Procesar cada módulo
+        foreach ($modulosVisibles as $moduloTitulo => $rolesNames) {
             // Obtener el módulo principal
             $modulo = DB::table('modulos_sidebar')
                 ->where('titulo', $moduloTitulo)
@@ -65,6 +67,17 @@ class RoleModuloAccesoSeeder extends Seeder
                 continue;
             }
 
+            // Obtener los IDs de los roles por nombre (DINÁMICO)
+            $rolesIds = [];
+            foreach ($rolesNames as $roleName) {
+                $role = Role::where('name', $roleName)->first();
+                if ($role) {
+                    $rolesIds[] = $role->id;
+                } else {
+                    echo "⚠️ Rol no encontrado: {$roleName}\n";
+                }
+            }
+
             // Crear registros de visibilidad para cada rol
             foreach ($rolesIds as $roleId) {
                 DB::table('role_modulo_acceso')->updateOrInsert(
@@ -74,7 +87,7 @@ class RoleModuloAccesoSeeder extends Seeder
                     ],
                     [
                         'visible' => true,
-                        'descripcion' => "Módulo {$moduloTitulo} visible para rol {$roleId}",
+                        'descripcion' => "Módulo {$moduloTitulo} visible para rol ID {$roleId}",
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]

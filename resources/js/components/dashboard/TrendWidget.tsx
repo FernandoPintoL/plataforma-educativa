@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { TrendingDown, TrendingUp, Minus } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import axios from '@/config/axiosConfig';
 
 interface TrendData {
     labels: string[];
@@ -24,27 +25,21 @@ export function TrendWidget() {
     const fetchTrendData = async () => {
         try {
             setLoading(true);
-            const response = await fetch('/api/mi-perfil/riesgo', {
-                method: 'GET',
-                credentials: 'include', // Enviar cookies de sesión
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-            });
+            const response = await axios.get('/api/mi-perfil/riesgo');
 
-            if (!response.ok) {
-                throw new Error('No se pudo cargar datos de tendencia');
+            if (response.data.success) {
+                setTrendData({
+                    trend_data: response.data.trend_data,
+                    trend: response.data.trend,
+                });
+                setError(null);
+            } else {
+                // No trend data available yet
+                setTrendData(null);
+                setError(null);
             }
-
-            const data = await response.json();
-            setTrendData({
-                trend_data: data.trend_data,
-                trend: data.trend,
-            });
-            setError(null);
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'Error desconocido');
+            setError(err instanceof Error ? err.message : 'Error cargando datos de tendencia');
             setTrendData(null);
         } finally {
             setLoading(false);

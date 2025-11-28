@@ -36,9 +36,11 @@ class MiPerfilController extends Controller
 
         if (!$prediccionRiesgo) {
             return response()->json([
-                'message' => 'No hay predicción de riesgo disponible',
+                'success' => false,
+                'data' => null,
+                'message' => 'No hay predicción de riesgo disponible aún. Completa más trabajo académico para generar análisis.',
                 'student_id' => $user->id,
-            ], 404);
+            ], 200);
         }
 
         // Parsear features_used si están en JSON
@@ -76,6 +78,7 @@ class MiPerfilController extends Controller
         $recommendations = $this->obtenerRecomendaciones($prediccionRiesgo->nivel_riesgo);
 
         return response()->json([
+            'success' => true,
             'student_id' => $user->id,
             'risk_score' => (float) $prediccionRiesgo->score_riesgo,
             'risk_level' => strtolower($prediccionRiesgo->nivel_riesgo ?? 'medio'),
@@ -86,7 +89,7 @@ class MiPerfilController extends Controller
             'recent_grades' => $calificacionesRecientes,
             'factors' => $factors,
             'recommendations' => $recommendations,
-        ]);
+        ], 200);
     }
 
     /**
@@ -119,16 +122,19 @@ class MiPerfilController extends Controller
 
         if (empty($prediccionesCarrera)) {
             return response()->json([
-                'message' => 'No hay recomendaciones de carrera disponibles',
+                'success' => false,
+                'data' => null,
+                'message' => 'No hay recomendaciones de carrera disponibles aún. Completa una prueba vocacional.',
                 'student_id' => $user->id,
                 'careers' => [],
-            ]);
+            ], 200);
         }
 
         return response()->json([
+            'success' => true,
             'student_id' => $user->id,
             'careers' => $prediccionesCarrera,
-        ]);
+        ], 200);
     }
 
     /**

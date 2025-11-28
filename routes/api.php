@@ -21,6 +21,12 @@ use App\Http\Controllers\MLDashboardController;
 use App\Http\Controllers\Api\ContentAnalysisController;
 use App\Http\Controllers\EvaluacionController;
 use App\Http\Controllers\Api\EvaluacionesApiController;
+use App\Http\Controllers\Api\ProfessorReviewController;
+use App\Http\Controllers\Api\TestVocacionalApiController;
+use App\Http\Controllers\TestVocacionalController;
+use App\Http\Controllers\TareaController;
+use App\Http\Controllers\Api\LoginController;
+
 
 /**
  * API Routes
@@ -515,11 +521,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 /**
  * Rutas para Análisis de Contenido (Tareas y Evaluaciones)
- * FUERA del grupo auth:sanctum para permitir autenticación por sesión desde React SPA
- * Usa middleware 'auth' en lugar de 'auth:sanctum'
- *
  * Servicio para generar sugerencias de contenido usando IA
  * Acceso: profesores, admin
+ *
+ * NOTA: Usa auth:sanctum para autenticación con SPA (React)
  */
 Route::middleware(['api', 'auth:sanctum'])->prefix('content')->name('content.')->middleware('role:profesor|admin')->group(function () {
     // Analizar contenido y obtener sugerencias
@@ -545,12 +550,11 @@ Route::middleware(['api', 'auth:sanctum'])->prefix('content')->name('content.')-
 
 /**
  * Rutas para Mi Perfil - Datos personales del estudiante autenticado
- * FUERA del grupo auth:sanctum para permitir autenticación por sesión desde React SPA
- * Usa middleware 'auth' en lugar de 'auth:sanctum'
+ * Usa auth:sanctum para autenticación con SPA (React)
  */
 
 // Endpoint de prueba para diagnosticar
-Route::middleware(['api', 'auth'])->get('/mi-perfil-test', function () {
+Route::middleware(['api', 'auth:sanctum'])->get('/mi-perfil-test', function () {
     return response()->json([
         'message' => 'Test endpoint working',
         'user' => \Illuminate\Support\Facades\Auth::user(),
@@ -558,7 +562,7 @@ Route::middleware(['api', 'auth'])->get('/mi-perfil-test', function () {
     ]);
 })->name('mi-perfil.test');
 
-Route::middleware(['api', 'auth'])->prefix('mi-perfil')->name('mi-perfil.')->group(function () {
+Route::middleware(['api', 'auth:sanctum'])->prefix('mi-perfil')->name('mi-perfil.')->group(function () {
     // Obtener datos de riesgo personal (solo estudiante autenticado)
     Route::get('riesgo', [MiPerfilController::class, 'getRiesgo'])
         ->middleware('role:estudiante')
@@ -574,8 +578,10 @@ Route::middleware(['api', 'auth'])->prefix('mi-perfil')->name('mi-perfil.')->gro
  * Rutas para Test Vocacional con ML
  * Análisis de orientación de carrera enriquecido con ML
  * Acceso: estudiantes (su propio perfil), profesores/admin (todos)
+ *
+ * NOTA: Usa auth:sanctum en lugar de 'auth' para SPA (React)
  */
-Route::middleware(['api', 'auth'])->prefix('vocacional')->name('vocacional.')->group(function () {
+Route::middleware(['api', 'auth:sanctum'])->prefix('vocacional')->name('vocacional.')->group(function () {
     // Obtener perfil vocacional personal
     Route::get('mi-perfil', [TestVocacionalController::class, 'getPerfilVocacional'])
         ->middleware('role:estudiante')
@@ -602,7 +608,7 @@ Route::middleware(['api', 'auth'])->prefix('vocacional')->name('vocacional.')->g
  * Hints inteligentes, monitoreo de progreso, detección de dificultad
  * Acceso: estudiantes (su propia tarea), profesores (sus tareas)
  */
-Route::middleware(['api', 'auth'])->prefix('tareas')->name('tareas.')->group(function () {
+Route::middleware(['api', 'auth:sanctum'])->prefix('tareas')->name('tareas.')->group(function () {
     // Obtener hints y análisis para una tarea (estudiantes)
     Route::get('{tareaId}/hints', [TareaController::class, 'getHintsParaTarea'])
         ->middleware('role:estudiante')
@@ -624,7 +630,7 @@ Route::middleware(['api', 'auth'])->prefix('tareas')->name('tareas.')->group(fun
  * Progreso detallado y historial de hints
  * Acceso: estudiante (su trabajo) o profesor (estudiantes de su curso)
  */
-Route::middleware(['api', 'auth'])->prefix('trabajos')->name('trabajos.')->group(function () {
+Route::middleware(['api', 'auth:sanctum'])->prefix('trabajos')->name('trabajos.')->group(function () {
     // Obtener progreso detallado de un trabajo
     Route::get('{trabajoId}/progreso', [TareaController::class, 'getProgresoTrabajo'])
         ->name('progreso');
@@ -640,7 +646,7 @@ Route::middleware(['api', 'auth'])->prefix('trabajos')->name('trabajos.')->group
  * Análisis de preguntas, detección de anomalías, correlaciones
  * Acceso: profesor (sus evaluaciones), estudiante (sus resultados)
  */
-Route::middleware(['api', 'auth'])->prefix('evaluaciones')->name('evaluaciones.')->group(function () {
+Route::middleware(['api', 'auth:sanctum'])->prefix('evaluaciones')->name('evaluaciones.')->group(function () {
     // Obtener análisis detallado de una evaluación (solo profesor)
     Route::get('{evaluacionId}/analisis', [EvaluacionController::class, 'getAnalisisDetallado'])
         ->middleware('role:profesor|admin')
@@ -662,7 +668,7 @@ Route::middleware(['api', 'auth'])->prefix('evaluaciones')->name('evaluaciones.'
  * Incluye: inicio, respuestas, finalización, análisis ML
  * Acceso: estudiantes (sus propios intentos), profesores (análisis)
  */
-Route::middleware(['api', 'auth'])->prefix('api/evaluaciones-intentos')->name('evaluaciones-intentos.')->group(function () {
+Route::middleware(['api', 'auth:sanctum'])->prefix('api/evaluaciones-intentos')->name('evaluaciones-intentos.')->group(function () {
     // Listar evaluaciones disponibles para el estudiante
     Route::get('/', [EvaluacionesApiController::class, 'index'])
         ->middleware('role:estudiante')
@@ -700,3 +706,82 @@ Route::middleware(['api', 'auth'])->prefix('api/evaluaciones-intentos')->name('e
     Route::get('intentos/{id}/analisis-ia', [EvaluacionesApiController::class, 'obtenerAnalisisIA'])
         ->name('analisis-ia');
 });
+
+/**
+ * Rutas para Revisión de Evaluaciones por Profesores (NUEVO)
+ * Calificación inteligente con propuestas automáticas y revisión manual
+ *
+ * Flujo:
+ * 1. Obtener intentos pendientes priorizados
+ * 2. Ver detalle de cada intento con análisis LLM
+ * 3. Confirmar o ajustar calificación
+ *
+ * Acceso: profesor|admin (solo sus cursos en el futuro)
+ */
+Route::middleware(['api', 'auth:sanctum', 'role:profesor|admin'])
+    ->prefix('profesor')
+    ->name('profesor.')
+    ->group(function () {
+
+        /**
+         * GET /api/profesor/evaluaciones/{evaluacionId}/intentos-pendientes
+         * Listar intentos pendientes de revisión con priorización inteligente
+         */
+        Route::get('evaluaciones/{evaluacionId}/intentos-pendientes', [ProfessorReviewController::class, 'intentosPendientes'])
+            ->name('intentos-pendientes');
+
+        /**
+         * GET /api/profesor/intentos/{intentoId}/revision
+         * Ver detalle completo de un intento para revisión
+         * Incluye todas las respuestas con análisis LLM
+         */
+        Route::get('intentos/{intentoId}/revision', [ProfessorReviewController::class, 'detalleRevision'])
+            ->name('detalle-revision');
+
+        /**
+         * POST /api/profesor/intentos/{intentoId}/confirmar
+         * Confirmar calificación automática del sistema
+         * El profesor acepta la propuesta de calificación
+         */
+        Route::post('intentos/{intentoId}/confirmar', [ProfessorReviewController::class, 'confirmar'])
+            ->name('confirmar');
+
+        /**
+         * POST /api/profesor/intentos/{intentoId}/ajustar
+         * Ajustar calificación manualmente
+         * El profesor modifica puntos y recomendaciones de respuestas individuales
+         */
+        Route::post('intentos/{intentoId}/ajustar', [ProfessorReviewController::class, 'ajustar'])
+            ->name('ajustar');
+
+        /**
+         * GET /api/profesor/evaluaciones/{evaluacionId}/estadisticas-revision
+         * Obtener estadísticas de revisión para una evaluación
+         */
+        Route::get('evaluaciones/{evaluacionId}/estadisticas-revision', [ProfessorReviewController::class, 'estadisticasRevision'])
+            ->name('estadisticas-revision');
+    });
+
+/**
+ * Rutas para Tests Vocacionales (API JSON)
+ * Proporciona endpoints JSON para el frontend de orientación vocacional
+ */
+Route::middleware(['api'])->group(function () {
+    /**
+     * GET /api/tests-vocacionales
+     * Obtener lista de tests vocacionales disponibles
+     */
+    Route::get('tests-vocacionales', [TestVocacionalApiController::class, 'index'])
+        ->name('api.tests-vocacionales.index');
+});
+
+// ==================== RUTAS DE AUTENTICACIÓN (SIN CSRF) ====================
+Route::middleware(['api'])->group(function () {
+    Route::post('login', [LoginController::class, 'login'])
+        ->name('api.login');
+    
+    Route::post('logout', [LoginController::class, 'logout'])
+        ->middleware('auth:sanctum')
+        ->name('api.logout');
+});
+

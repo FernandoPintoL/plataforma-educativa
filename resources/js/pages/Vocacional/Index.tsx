@@ -11,8 +11,8 @@ import {
   AcademicCapIcon,
   CheckCircleIcon,
   ClockIcon,
-  AlertIcon,
-  Loader2Icon
+  ExclamationCircleIcon,
+  ArrowPathIcon
 } from '@heroicons/react/24/outline';
 import axios from 'axios';
 
@@ -42,7 +42,7 @@ const VocacionalIndex: React.FC = () => {
         setError(null);
 
         // Fetch available tests
-        const testsResponse = await axios.get('/tests-vocacionales');
+        const testsResponse = await axios.get('/api/tests-vocacionales');
         const tests = testsResponse.data.data || testsResponse.data;
         setTestsDisponibles(
           Array.isArray(tests) ? tests.filter((t: any) => t.activo) : []
@@ -51,12 +51,14 @@ const VocacionalIndex: React.FC = () => {
         // Fetch student's vocational profile
         try {
           const perfilResponse = await axios.get('/api/vocacional/mi-perfil');
-          setPerfilVocacional(perfilResponse.data.data || perfilResponse.data);
-        } catch (err: any) {
-          // Profile might not exist yet if student hasn't completed a test
-          if (err.response?.status !== 404) {
-            console.error('Error fetching profile:', err);
+          if (perfilResponse.data.success) {
+            setPerfilVocacional(perfilResponse.data.perfil);
+          } else {
+            // Profile doesn't exist yet - student hasn't completed a test
+            setPerfilVocacional(null);
           }
+        } catch (err: any) {
+          console.error('Error fetching profile:', err);
           setPerfilVocacional(null);
         }
 
@@ -65,12 +67,14 @@ const VocacionalIndex: React.FC = () => {
           const recomendacionesResponse = await axios.get(
             '/api/vocacional/recomendaciones-carrera'
           );
-          setRecomendaciones(recomendacionesResponse.data.data || recomendacionesResponse.data || []);
-        } catch (err: any) {
-          // Recommendations might not exist yet
-          if (err.response?.status !== 404) {
-            console.error('Error fetching recommendations:', err);
+          if (recomendacionesResponse.data.success) {
+            setRecomendaciones(recomendacionesResponse.data.recomendaciones || []);
+          } else {
+            // Recommendations don't exist yet - student needs to complete a test
+            setRecomendaciones([]);
           }
+        } catch (err: any) {
+          console.error('Error fetching recommendations:', err);
           setRecomendaciones([]);
         }
       } catch (err: any) {
@@ -106,7 +110,7 @@ const VocacionalIndex: React.FC = () => {
         <div className="container mx-auto py-8 px-4">
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
-              <Loader2Icon className="h-12 w-12 text-blue-600 animate-spin mx-auto mb-4" />
+              <ArrowPathIcon className="h-12 w-12 text-blue-600 animate-spin mx-auto mb-4" />
               <p className="text-gray-600">Cargando orientación vocacional...</p>
             </div>
           </div>
@@ -134,7 +138,7 @@ const VocacionalIndex: React.FC = () => {
         {/* Error Alert */}
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex gap-3">
-            <AlertIcon className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+            <ExclamationCircleIcon className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
             <div>
               <p className="text-red-800 font-medium">Error</p>
               <p className="text-red-700 text-sm">{error}</p>
@@ -192,7 +196,7 @@ const VocacionalIndex: React.FC = () => {
 
                 {testsDisponibles.length === 0 ? (
                   <div className="text-center py-12">
-                    <AlertIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <ExclamationCircleIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                     <p className="text-gray-600">No hay tests disponibles en este momento.</p>
                   </div>
                 ) : (

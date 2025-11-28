@@ -354,7 +354,7 @@ logout.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     logout.form = logoutForm
 /**
 * @see \App\Http\Controllers\CursoController::misCursos
- * @see app/Http/Controllers/CursoController.php:14
+ * @see app/Http/Controllers/CursoController.php:16
  * @route '/mis-cursos'
  */
 export const misCursos = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -369,7 +369,7 @@ misCursos.definition = {
 
 /**
 * @see \App\Http\Controllers\CursoController::misCursos
- * @see app/Http/Controllers/CursoController.php:14
+ * @see app/Http/Controllers/CursoController.php:16
  * @route '/mis-cursos'
  */
 misCursos.url = (options?: RouteQueryOptions) => {
@@ -378,7 +378,7 @@ misCursos.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\CursoController::misCursos
- * @see app/Http/Controllers/CursoController.php:14
+ * @see app/Http/Controllers/CursoController.php:16
  * @route '/mis-cursos'
  */
 misCursos.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -387,7 +387,7 @@ misCursos.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\CursoController::misCursos
- * @see app/Http/Controllers/CursoController.php:14
+ * @see app/Http/Controllers/CursoController.php:16
  * @route '/mis-cursos'
  */
 misCursos.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -397,7 +397,7 @@ misCursos.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\CursoController::misCursos
- * @see app/Http/Controllers/CursoController.php:14
+ * @see app/Http/Controllers/CursoController.php:16
  * @route '/mis-cursos'
  */
     const misCursosForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -407,7 +407,7 @@ misCursos.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\CursoController::misCursos
- * @see app/Http/Controllers/CursoController.php:14
+ * @see app/Http/Controllers/CursoController.php:16
  * @route '/mis-cursos'
  */
         misCursosForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -416,7 +416,7 @@ misCursos.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\CursoController::misCursos
- * @see app/Http/Controllers/CursoController.php:14
+ * @see app/Http/Controllers/CursoController.php:16
  * @route '/mis-cursos'
  */
         misCursosForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

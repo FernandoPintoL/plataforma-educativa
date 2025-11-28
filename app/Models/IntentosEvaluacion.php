@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\DB;
 
 /**
  * IntentosEvaluacion - Registra cada intento de estudiante en una evaluación
@@ -273,5 +274,80 @@ class IntentosEvaluacion extends Model
             'recomendaciones_ia' => $analisisData['recomendaciones'] ?? null,
             'ultimo_analisis_ml' => now(),
         ]);
+    }
+
+    /**
+     * Verificar si requiere revisión del profesor
+     * IMPORTANTE: Todas las evaluaciones requieren revisión
+     */
+    public function requiereRevisionProfesor(): bool
+    {
+        return $this->estado === 'entregado';
+    }
+
+    /**
+     * Marcar como calificado por el profesor
+     * Crea registro en tabla calificaciones
+     */
+    public function marcarComoCalificado(int $evaluadorId, ?string $comentario = null): void
+    {
+        DB::transaction(function() use ($evaluadorId, $comentario) {
+            // Actualizar estado
+            $this->update([
+                'estado' => 'calificado',
+                'comentarios' => $comentario ?? $this->comentarios,
+            ]);
+
+            // Crear registro en tabla calificaciones
+            \App\Models\Calificacion::create([
+                'intento_evaluacion_id' => $this->id,
+                'puntaje' => $this->puntaje_obtenido ?? 0,
+                'comentario' => $comentario,
+                'fecha_calificacion' => now(),
+                'evaluador_id' => $evaluadorId,
+            ]);
+        });
+    }
+
+    /**
+     * Obtener prioridad de revisión basada en métricas
+     */
+    public function obtenerPrioridad(): string
+    {
+        // URGENTE: Anomalías o muy baja confianza
+        if ($this->tiene_anomalias || ($this->nivel_confianza_respuestas ?? 0) < 0.5) {
+            return 'urgente';
+        }
+
+        // MEDIA: Confianza media
+        if (($this->nivel_confianza_respuestas ?? 0) < 0.75) {
+            return 'media';
+        }
+
+        // BAJA: Alta confianza sin anomalías
+        return 'baja';
+    }
+
+    /**
+     * Obtener resumen para revisión del profesor
+     */
+    public function obtenerResumenRevision(): array
+    {
+        return [
+            'id' => $this->id,
+            'estudiante_nombre' => $this->estudiante->nombre_completo ?? 'N/A',
+            'estudiante_id' => $this->estudiante_id,
+            'puntaje_obtenido' => $this->puntaje_obtenido ?? 0,
+            'porcentaje_acierto' => $this->porcentaje_acierto ?? 0,
+            'nivel_confianza' => round($this->nivel_confianza_respuestas ?? 0, 2),
+            'tiene_anomalias' => $this->tiene_anomalias ?? false,
+            'prioridad' => $this->obtenerPrioridad(),
+            'patrones_identificados' => $this->patrones_identificados ?? [],
+            'areas_debilidad' => array_slice($this->areas_debilidad ?? [], 0, 3),
+            'areas_fortaleza' => array_slice($this->areas_fortaleza ?? [], 0, 3),
+            'recomendaciones_ia' => $this->recomendaciones_ia ?? [],
+            'fecha_entrega' => $this->fecha_entrega,
+            'estado' => $this->estado,
+        ];
     }
 }

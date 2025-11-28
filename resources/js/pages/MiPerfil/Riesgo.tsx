@@ -5,6 +5,7 @@ import AppLayout from '@/layouts/app-layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import axios from '@/config/axiosConfig';
 
 interface RiskAnalysis {
     student_id: number;
@@ -42,23 +43,20 @@ export default function RiesgoPage() {
     const fetchRiskAnalysis = async () => {
         try {
             setLoading(true);
-            const response = await fetch('/api/mi-perfil/riesgo', {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-            });
+            const response = await axios.get('/api/mi-perfil/riesgo');
 
-            if (!response.ok) {
-                throw new Error('No se pudo cargar el análisis de riesgo');
+            if (response.data.success && response.data.risk_score !== undefined) {
+                // Hay datos de riesgo disponibles
+                setRiskData(response.data);
+                setError(null);
+            } else {
+                // No hay datos de riesgo - esto es normal para estudiantes nuevos
+                setRiskData(null);
+                setError(response.data.message || 'No hay predicción de riesgo disponible aún. Completa más trabajo académico para generar análisis.');
             }
-
-            const data = await response.json();
-            setRiskData(data);
-            setError(null);
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'Error desconocido');
+            setError(err instanceof Error ? err.message : 'Error cargando análisis de riesgo');
+            setRiskData(null);
         } finally {
             setLoading(false);
         }
@@ -202,6 +200,28 @@ export default function RiesgoPage() {
                     <Alert>
                         <AlertCircle className="h-4 w-4" />
                         <AlertDescription>No hay datos disponibles</AlertDescription>
+                    </Alert>
+                </div>
+            </AppLayout>
+        );
+    }
+
+    // Solo procesar si tenemos datos válidos
+    if (!riskData || !riskData.risk_level) {
+        return (
+            <AppLayout>
+                <Head title="Mi Monitoreo de Desempeño" />
+                <div className="max-w-4xl mx-auto py-8">
+                    <Link href="/dashboard" className="flex items-center gap-2 text-blue-600 hover:underline mb-6">
+                        <ArrowLeft className="w-4 h-4" />
+                        Volver al Dashboard
+                    </Link>
+
+                    <Alert>
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertDescription>
+                            {error || 'No hay datos de riesgo disponibles. Completa más trabajos académicos para generar un análisis.'}
+                        </AlertDescription>
                     </Alert>
                 </div>
             </AppLayout>

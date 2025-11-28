@@ -150,7 +150,7 @@ riesgo.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     riesgo.form = riesgoForm
 /**
 * @see \App\Http\Controllers\Api\MiPerfilController::carreras
- * @see app/Http/Controllers/Api/MiPerfilController.php:95
+ * @see app/Http/Controllers/Api/MiPerfilController.php:98
  * @route '/api/mi-perfil/carreras'
  */
 export const carreras = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -165,7 +165,7 @@ carreras.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\MiPerfilController::carreras
- * @see app/Http/Controllers/Api/MiPerfilController.php:95
+ * @see app/Http/Controllers/Api/MiPerfilController.php:98
  * @route '/api/mi-perfil/carreras'
  */
 carreras.url = (options?: RouteQueryOptions) => {
@@ -174,7 +174,7 @@ carreras.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\MiPerfilController::carreras
- * @see app/Http/Controllers/Api/MiPerfilController.php:95
+ * @see app/Http/Controllers/Api/MiPerfilController.php:98
  * @route '/api/mi-perfil/carreras'
  */
 carreras.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -183,7 +183,7 @@ carreras.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\MiPerfilController::carreras
- * @see app/Http/Controllers/Api/MiPerfilController.php:95
+ * @see app/Http/Controllers/Api/MiPerfilController.php:98
  * @route '/api/mi-perfil/carreras'
  */
 carreras.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -193,7 +193,7 @@ carreras.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\MiPerfilController::carreras
- * @see app/Http/Controllers/Api/MiPerfilController.php:95
+ * @see app/Http/Controllers/Api/MiPerfilController.php:98
  * @route '/api/mi-perfil/carreras'
  */
     const carrerasForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -203,7 +203,7 @@ carreras.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\MiPerfilController::carreras
- * @see app/Http/Controllers/Api/MiPerfilController.php:95
+ * @see app/Http/Controllers/Api/MiPerfilController.php:98
  * @route '/api/mi-perfil/carreras'
  */
         carrerasForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -212,7 +212,7 @@ carreras.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\MiPerfilController::carreras
- * @see app/Http/Controllers/Api/MiPerfilController.php:95
+ * @see app/Http/Controllers/Api/MiPerfilController.php:98
  * @route '/api/mi-perfil/carreras'
  */
         carrerasForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

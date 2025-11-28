@@ -29,6 +29,9 @@ class ModuloSidebarSeeder extends Seeder
         // Módulo de Gestión de Estudiantes - Solo visible para directores y coordinadores
         // IMPORTANTE: El nombre cambió de 'Estudiantes' a 'Gestionar Estudiantes'
         // para ser claro que es un módulo ADMINISTRATIVO, no para estudiantes
+        // NOTA: Estas rutas aún no están completamente implementadas en web.php
+        // Se dejan comentadas hasta que se implementen
+        /*
         $gestEstudiantes = ModuloSidebar::firstOrCreate(
             ['titulo' => 'Gestionar Estudiantes', 'ruta' => '/estudiantes', 'es_submenu' => false],
             [
@@ -37,17 +40,19 @@ class ModuloSidebarSeeder extends Seeder
                 'orden'             => 2,
                 'categoria'         => 'Académico',
                 'activo'            => true,
-                'permisos'          => ['estudiantes.index'], // Solo para spatie backup
+                'permisos'          => ['estudiantes.index'],
                 'visible_dashboard' => true,
             ]
         );
+        */
+        $gestEstudiantes = null; // Para evitar undefined
 
         // NUEVO: Módulo "Mi Perfil" para estudiantes ver sus datos
         $miPerfil = ModuloSidebar::firstOrCreate(
-            ['titulo' => 'Mi Perfil', 'ruta' => '/perfil', 'es_submenu' => false],
+            ['titulo' => 'Mi Perfil', 'ruta' => '/mi-perfil/riesgo', 'es_submenu' => false],
             [
                 'icono'             => 'User',
-                'descripcion'       => 'Ver y editar perfil personal',
+                'descripcion'       => 'Ver y editar perfil personal con análisis de riesgo',
                 'orden'             => 2,
                 'categoria'         => 'Personal',
                 'activo'            => true,
@@ -70,67 +75,12 @@ class ModuloSidebarSeeder extends Seeder
             ]
         );
 
-        $estudiantes = $gestEstudiantes; // Para referencias posteriores
-
-        $submenuEstudiantes = [
-            ['titulo' => 'Listado', 'ruta' => '/estudiantes', 'icono' => 'List', 'orden' => 1, 'permisos' => ['estudiantes.index', 'ver-estudiantes']],
-            ['titulo' => 'Nuevo estudiante', 'ruta' => '/estudiantes/create', 'icono' => 'UserPlus', 'orden' => 2, 'permisos' => ['estudiantes.create', 'gestionar-estudiantes']],
-        ];
-
-        foreach ($submenuEstudiantes as $submenu) {
-            ModuloSidebar::firstOrCreate(
-                [
-                    'titulo'          => $submenu['titulo'],
-                    'ruta'            => $submenu['ruta'],
-                    'es_submenu'      => true,
-                    'modulo_padre_id' => $estudiantes->id,
-                ],
-                [
-                    'icono'    => $submenu['icono'],
-                    'orden'    => $submenu['orden'],
-                    'activo'   => true,
-                    'permisos' => $submenu['permisos'],
-                ]
-            );
-        }
-
-        // Módulo de Gestión de Profesores - Solo visible para directores
-        $gestProfesores = ModuloSidebar::firstOrCreate(
-            ['titulo' => 'Gestionar Profesores', 'ruta' => '/profesores', 'es_submenu' => false],
-            [
-                'icono'             => 'UserCheck',
-                'descripcion'       => 'Gestión administrativa de profesores',
-                'orden'             => 4,
-                'categoria'         => 'Académico',
-                'activo'            => true,
-                'permisos'          => ['profesores.index'],
-                'visible_dashboard' => true,
-            ]
-        );
-
-        $profesores = $gestProfesores; // Para referencias posteriores
-
-        $submenuProfesores = [
-            ['titulo' => 'Listado', 'ruta' => '/profesores', 'icono' => 'List', 'orden' => 1, 'permisos' => ['profesores.index', 'gestionar-profesores']],
-            ['titulo' => 'Nuevo profesor', 'ruta' => '/profesores/create', 'icono' => 'UserPlus', 'orden' => 2, 'permisos' => ['profesores.create', 'gestionar-profesores']],
-        ];
-
-        foreach ($submenuProfesores as $submenu) {
-            ModuloSidebar::firstOrCreate(
-                [
-                    'titulo'          => $submenu['titulo'],
-                    'ruta'            => $submenu['ruta'],
-                    'es_submenu'      => true,
-                    'modulo_padre_id' => $profesores->id,
-                ],
-                [
-                    'icono'    => $submenu['icono'],
-                    'orden'    => $submenu['orden'],
-                    'activo'   => true,
-                    'permisos' => $submenu['permisos'],
-                ]
-            );
-        }
+        // COMENTADO: Gestión de estudiantes y profesores no tienen rutas en web.php aún
+        // Se implementarán en futuras versiones
+        /*
+        $estudiantes = $gestEstudiantes;
+        ... submenu code ...
+        */
 
         // Módulo de Tareas - Visible para profesores y estudiantes con diferentes submenús
         $tareas = ModuloSidebar::firstOrCreate(
@@ -167,53 +117,11 @@ class ModuloSidebarSeeder extends Seeder
             );
         }
 
-        // Módulo de Contenido Educativo - Para profesores y directores
-        $contenidoEducativo = ModuloSidebar::firstOrCreate(
-            ['titulo' => 'Contenido Educativo', 'ruta' => '/modulos', 'es_submenu' => false],
-            [
-                'icono'       => 'BookOpen',
-                'descripcion' => 'Gestión de módulos y lecciones educativas',
-                'orden'       => 6,
-                'categoria'   => 'Académico',
-                'activo'      => true,
-                'permisos'    => ['modulos.index', 'lecciones.index', 'ver-contenido-educativo'],
-            ]
-        );
-
-        $submenuContenidoEducativo = [
-            ['titulo' => 'Módulos Educativos', 'ruta' => '/modulos', 'icono' => 'Layers', 'orden' => 1, 'permisos' => ['modulos.index', 'gestionar-modulos']],
-            ['titulo' => 'Lecciones', 'ruta' => '/lecciones', 'icono' => 'FileText', 'orden' => 2, 'permisos' => ['lecciones.index', 'gestionar-lecciones']],
-        ];
-
-        foreach ($submenuContenidoEducativo as $submenu) {
-            ModuloSidebar::firstOrCreate(
-                [
-                    'titulo'          => $submenu['titulo'],
-                    'ruta'            => $submenu['ruta'],
-                    'es_submenu'      => true,
-                    'modulo_padre_id' => $contenidoEducativo->id,
-                ],
-                [
-                    'icono'    => $submenu['icono'],
-                    'orden'    => $submenu['orden'],
-                    'activo'   => true,
-                    'permisos' => $submenu['permisos'],
-                ]
-            );
-        }
-
-        // Módulo de Calificaciones - Visible para profesores, estudiantes y padres
-        ModuloSidebar::firstOrCreate(
-            ['titulo' => 'Calificaciones', 'ruta' => '/calificaciones', 'es_submenu' => false],
-            [
-                'icono'       => 'Award',
-                'descripcion' => 'Gestión de calificaciones',
-                'orden'       => 6,
-                'categoria'   => 'Académico',
-                'activo'      => true,
-                'permisos'    => ['calificaciones.index', 'ver-calificaciones', 'gestionar-calificaciones', 'ver-mis-calificaciones'],
-            ]
-        );
+        // COMENTADO: Contenido Educativo y Calificaciones no tienen rutas en web.php aún
+        // Se implementarán en futuras versiones
+        /*
+        ... código comentado ...
+        */
 
         // Módulo de Evaluaciones - Visible para profesores y estudiantes
         $evaluaciones = ModuloSidebar::firstOrCreate(
@@ -250,119 +158,11 @@ class ModuloSidebarSeeder extends Seeder
             );
         }
 
-        // Módulo de Recursos - Para profesores y directores
-        $recursos = ModuloSidebar::firstOrCreate(
-            ['titulo' => 'Recursos', 'ruta' => '/recursos', 'es_submenu' => false],
-            [
-                'icono'       => 'Folder',
-                'descripcion' => 'Gestión de recursos educativos',
-                'orden'       => 9,
-                'categoria'   => 'Académico',
-                'activo'      => true,
-                'permisos'    => ['recursos.index', 'ver-recursos', 'gestionar-recursos'],
-            ]
-        );
-
-        $submenuRecursos = [
-            ['titulo' => 'Todos los recursos', 'ruta' => '/recursos', 'icono' => 'List', 'orden' => 1, 'permisos' => ['recursos.index', 'ver-recursos']],
-            ['titulo' => 'Crear recurso', 'ruta' => '/recursos/create', 'icono' => 'PlusCircle', 'orden' => 2, 'permisos' => ['recursos.create', 'gestionar-recursos']],
-        ];
-
-        foreach ($submenuRecursos as $submenu) {
-            ModuloSidebar::firstOrCreate(
-                [
-                    'titulo'          => $submenu['titulo'],
-                    'ruta'            => $submenu['ruta'],
-                    'es_submenu'      => true,
-                    'modulo_padre_id' => $recursos->id,
-                ],
-                [
-                    'icono'    => $submenu['icono'],
-                    'orden'    => $submenu['orden'],
-                    'activo'   => true,
-                    'permisos' => $submenu['permisos'],
-                ]
-            );
-        }
-
-        // Módulo de Administración
-        $administracion = ModuloSidebar::firstOrCreate(
-            ['titulo' => 'Administración', 'ruta' => '/usuarios', 'es_submenu' => false],
-            [
-                'icono'       => 'Settings',
-                'descripcion' => 'Configuración del sistema',
-                'orden'       => 17,
-                'categoria'   => 'Administración',
-                'activo'      => true,
-                'permisos'    => ['usuarios.index'],
-            ]
-        );
-
-        // Submódulos de Administración
-        $submenuAdministracion = [
-            ['titulo' => 'Usuarios', 'ruta' => '/usuarios', 'icono' => 'Users', 'orden' => 1, 'permisos' => ['usuarios.index']],
-            ['titulo' => 'Gestionar Usuarios (Admin)', 'ruta' => '/admin/usuarios', 'icono' => 'UserCog', 'orden' => 2, 'permisos' => ['admin.usuarios.index']],
-            ['titulo' => 'Roles', 'ruta' => '/roles', 'icono' => 'Shield', 'orden' => 3, 'permisos' => ['roles.index']],
-            ['titulo' => 'Permisos', 'ruta' => '/permissions', 'icono' => 'Key', 'orden' => 4, 'permisos' => ['permissions.index']],
-            // ['titulo' => 'Módulos Sidebar', 'ruta' => '/modulos-sidebar', 'icono' => 'Layout', 'orden' => 5],
-            // ['titulo' => 'Configuración Global', 'ruta' => '/configuracion-global', 'icono' => 'Cog', 'orden' => 5, 'permisos' => ['configuracion-global.index']],
-        ];
-
-        foreach ($submenuAdministracion as $submenu) {
-            ModuloSidebar::firstOrCreate(
-                [
-                    'titulo'          => $submenu['titulo'],
-                    'ruta'            => $submenu['ruta'],
-                    'es_submenu'      => true,
-                    'modulo_padre_id' => $administracion->id,
-                ],
-                [
-                    'icono'    => $submenu['icono'],
-                    'orden'    => $submenu['orden'],
-                    'activo'   => true,
-                    'permisos' => $submenu['permisos'],
-                ]
-            );
-        }
-
-        // ==================== MÓDULOS ESPECÍFICOS PARA PADRES ====================
-
-        // Módulo de Trabajos/Entregas - Para ver entregas y calificar trabajos
-        $trabajos = ModuloSidebar::firstOrCreate(
-            ['titulo' => 'Entregas', 'ruta' => '/trabajos', 'es_submenu' => false],
-            [
-                'icono'             => 'FileCheck',
-                'descripcion'       => 'Gestión de entregas y trabajos de estudiantes',
-                'orden'             => 5,
-                'categoria'         => 'Académico',
-                'activo'            => true,
-                'permisos'          => ['trabajos.ver'],
-                'visible_dashboard' => true,
-            ]
-        );
-
-        // Submódulos de Trabajos
-        $submenuTrabajos = [
-            ['titulo' => 'Mis Entregas', 'ruta' => '/trabajos', 'icono' => 'DocumentText', 'orden' => 1, 'permisos' => ['trabajos.ver']],
-            ['titulo' => 'Calificar Trabajos', 'ruta' => '/trabajos/calificacion', 'icono' => 'CheckCircle', 'orden' => 2, 'permisos' => ['trabajos.calificar']],
-        ];
-
-        foreach ($submenuTrabajos as $submenu) {
-            ModuloSidebar::firstOrCreate(
-                [
-                    'titulo'          => $submenu['titulo'],
-                    'ruta'            => $submenu['ruta'],
-                    'es_submenu'      => true,
-                    'modulo_padre_id' => $trabajos->id,
-                ],
-                [
-                    'icono'    => $submenu['icono'],
-                    'orden'    => $submenu['orden'],
-                    'activo'   => true,
-                    'permisos' => $submenu['permisos'],
-                ]
-            );
-        }
+        // COMENTADO: Recursos, Administración y Trabajos no tienen rutas en web.php aún
+        // Se implementarán en futuras versiones
+        /*
+        ... código comentado ...
+        */
 
         // Módulo de Reportes Académicos - Para directores/admin ver análisis de rendimiento
         $reportes = ModuloSidebar::firstOrCreate(

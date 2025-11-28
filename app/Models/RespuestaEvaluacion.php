@@ -140,6 +140,7 @@ class RespuestaEvaluacion extends Model
 
     /**
      * Calcular confianza de la respuesta (0-1)
+     * Lógica diferente según tipo de pregunta
      */
     public function calcularConfianza(): float
     {
@@ -148,35 +149,77 @@ class RespuestaEvaluacion extends Model
             return $this->confianza_respuesta;
         }
 
-        // Calcular basado en:
-        // - Tiempo de respuesta (preguntas muy rápidas o muy lentas = baja confianza)
-        // - Cambios en la respuesta (muchos cambios = inseguridad)
-        // - Si es correcta (correctas = mayor confianza)
+        // Determinar tipo de pregunta
+        if (!$this->pregunta) {
+            return 0.5;
+        }
 
-        $confianza = 1.0;
+        $tipo = $this->pregunta->tipo;
 
-        // Penalizar por cambios
+        return match($tipo) {
+            'opcion_multiple', 'verdadero_falso' => $this->calcularConfianzaCerrada(),
+            'respuesta_corta' => $this->calcularConfianzaCorta(),
+            'respuesta_larga' => $this->calcularConfianzaLarga(),
+            default => 0.5
+        };
+    }
+
+    /**
+     * Calcular confianza para preguntas cerradas
+     * Alta confianza si es correcta, baja si es incorrecta
+     */
+    private function calcularConfianzaCerrada(): float
+    {
+        // Para preguntas cerradas, la confianza es binaria
+        return $this->es_correcta ? 1.0 : 0.2;
+    }
+
+    /**
+     * Calcular confianza para respuestas cortas
+     * Basado en: análisis LLM, tiempo, cambios
+     */
+    private function calcularConfianzaCorta(): float
+    {
+        $confianza = 0.7; // Base
+
+        // Si hay análisis LLM (patrones), usar similitud semántica
+        if ($this->patrones && isset($this->patrones['similitud_semantica'])) {
+            $confianza = $this->patrones['similitud_semantica'];
+        }
+
+        // Penalizar por cambios excesivos
+        if ($this->numero_cambios > 2) {
+            $confianza -= 0.2;
+        }
+
+        // Penalizar si hay múltiples intentos
         if ($this->numero_cambios > 0) {
-            $confianza -= ($this->numero_cambios * 0.1);
+            $confianza -= min(0.15, $this->numero_cambios * 0.05);
         }
 
-        // Penalizar si no es correcta
-        if (!$this->esCorrecta()) {
-            $confianza *= 0.7;
-        }
-
-        // Ajustar por tiempo atípico
-        if ($this->pregunta) {
-            $tiempoPromedio = $this->pregunta->tiempo_promedio_respuesta ?? 60;
-            $desviacion = abs($this->tiempo_respuesta - $tiempoPromedio) / max($tiempoPromedio, 1);
-
-            if ($desviacion > 2) {
-                $confianza *= 0.8;
-            }
-        }
-
-        // Asegurar que está entre 0 y 1
+        // Limitar entre 0 y 1
         return max(0, min(1, round($confianza, 2)));
+    }
+
+    /**
+     * Calcular confianza para respuestas largas
+     * Basado principalmente en análisis LLM
+     */
+    private function calcularConfianzaLarga(): float
+    {
+        // Si hay análisis LLM (patrones), usar calidad de ensayo
+        if ($this->patrones && isset($this->patrones['calidad_respuesta'])) {
+            return $this->patrones['calidad_respuesta'];
+        }
+
+        // Si tiene recomendación, probablemente fue analizado
+        if ($this->recomendacion) {
+            // Confianza media por defecto
+            return 0.5;
+        }
+
+        // Sin análisis, baja confianza
+        return 0.3;
     }
 
     /**
@@ -287,6 +330,63 @@ class RespuestaEvaluacion extends Model
             'confianza' => $this->confianza_respuesta,
             'es_anomala' => $this->esAnomala(),
             'patrones' => $this->patrones ?? [],
+        ];
+    }
+
+    /**
+     * Verificar si necesita revisión manual del profesor
+     */
+    public function necesitaRevisionManual(): bool
+    {
+        // Baja confianza
+        if (($this->confianza_respuesta ?? 0) < 0.6) {
+            return true;
+        }
+
+        // Respuesta anómala
+        if ($this->respuesta_anomala) {
+            return true;
+        }
+
+        // Demasiados cambios
+        if ($this->numero_cambios > 3) {
+            return true;
+        }
+
+        // Respuesta sin análisis (sin patrones)
+        if ($this->pregunta && in_array($this->pregunta->tipo, ['respuesta_corta', 'respuesta_larga']) && !$this->patrones) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Obtener resumen detallado para profesor
+     */
+    public function obtenerResumenParaProfesor(): array
+    {
+        return [
+            'id' => $this->id,
+            'pregunta_id' => $this->pregunta_id,
+            'enunciado' => $this->pregunta?->enunciado,
+            'tipo_pregunta' => $this->pregunta?->tipo,
+            'respuesta_estudiante' => $this->respuesta_texto,
+            'es_correcta' => $this->es_correcta,
+            'puntos_obtenidos' => $this->puntos_obtenidos ?? 0,
+            'puntos_totales' => $this->puntos_totales ?? 0,
+            'confianza' => round($this->confianza_respuesta ?? 0, 2),
+            'analisis_llm' => [
+                'conceptos_correctos' => $this->patrones['conceptos_correctos'] ?? [],
+                'errores_encontrados' => $this->patrones['errores_encontrados'] ?? [],
+                'nivel_bloom' => $this->patrones['nivel_bloom'] ?? null,
+                'calidad_respuesta' => $this->patrones['calidad_respuesta'] ?? null,
+            ],
+            'respuesta_anomala' => $this->respuesta_anomala,
+            'recomendacion' => $this->recomendacion,
+            'necesita_revision' => $this->necesitaRevisionManual(),
+            'tiempo_respuesta' => $this->tiempo_respuesta,
+            'numero_cambios' => $this->numero_cambios,
         ];
     }
 }

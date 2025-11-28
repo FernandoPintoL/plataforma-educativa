@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use PHPUnit\Framework\Attributes\Test;
 use App\Models\User;
 use App\Models\Trabajo;
 use App\Models\Contenido;
@@ -46,7 +47,7 @@ class RealTimeMonitoringTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function puede_registrar_actividad_de_inicio_trabajo(): void
     {
         // Registrar actividad de inicio
@@ -65,7 +66,7 @@ class RealTimeMonitoringTest extends TestCase
         $this->assertEquals($this->estudiante->id, $monitoring->estudiante_id);
     }
 
-    /** @test */
+    #[Test]
     public function puede_calcular_progreso_estimado(): void
     {
         // Registrar actividades con progreso
@@ -88,7 +89,7 @@ class RealTimeMonitoringTest extends TestCase
         $this->assertEquals(50, $monitoring->progreso_estimado);
     }
 
-    /** @test */
+    #[Test]
     public function puede_calcular_velocidad_respuesta(): void
     {
         // Registrar actividad con caracteres y tiempo
@@ -109,7 +110,7 @@ class RealTimeMonitoringTest extends TestCase
         $this->assertEquals(100, $monitoring->velocidad_respuesta);
     }
 
-    /** @test */
+    #[Test]
     public function detecta_riesgo_critico_por_abandono(): void
     {
         // Registrar evento de abandono
@@ -126,7 +127,7 @@ class RealTimeMonitoringTest extends TestCase
         $this->assertEquals('critico', $monitoring->nivel_riesgo);
     }
 
-    /** @test */
+    #[Test]
     public function detecta_riesgo_alto_por_bajo_progreso_con_tiempo(): void
     {
         // Registrar múltiples eventos de bajo progreso con tiempo invertido
@@ -155,7 +156,7 @@ class RealTimeMonitoringTest extends TestCase
         $this->assertGreaterThanOrEqual(0.4, $monitoring2->score_riesgo);
     }
 
-    /** @test */
+    #[Test]
     public function genera_alerta_por_abandono(): void
     {
         // Registrar actividad de abandono
@@ -177,7 +178,7 @@ class RealTimeMonitoringTest extends TestCase
         $this->assertDatabaseHas('student_alerts', ['id' => $alerta->id]);
     }
 
-    /** @test */
+    #[Test]
     public function no_genera_alerta_duplicada(): void
     {
         // Registrar actividad de abandono
@@ -198,7 +199,7 @@ class RealTimeMonitoringTest extends TestCase
         $this->assertNull($alerta2);
     }
 
-    /** @test */
+    #[Test]
     public function genera_alerta_por_bajo_progreso_con_tiempo_alto(): void
     {
         // Registrar actividad con bajo progreso y tiempo alto
@@ -228,7 +229,7 @@ class RealTimeMonitoringTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function genera_alerta_por_muchas_correcciones(): void
     {
         // Registrar múltiples cambios de respuesta
@@ -264,7 +265,7 @@ class RealTimeMonitoringTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function detecta_patrones_problematicos_ciclo_correcciones(): void
     {
         // Registrar múltiples cambios de respuesta
@@ -288,7 +289,7 @@ class RealTimeMonitoringTest extends TestCase
         $this->assertTrue($tienePatronCorrecciones);
     }
 
-    /** @test */
+    #[Test]
     public function detecta_patrones_bajo_progreso_tiempo_alto(): void
     {
         // Registrar eventos con bajo progreso pero mucho tiempo
@@ -316,7 +317,7 @@ class RealTimeMonitoringTest extends TestCase
         $this->assertTrue($tienePatronBajoProgreso);
     }
 
-    /** @test */
+    #[Test]
     public function obtiene_estadisticas_sesion(): void
     {
         // Registrar varias actividades
@@ -356,7 +357,7 @@ class RealTimeMonitoringTest extends TestCase
         $this->assertEquals(50, $estadisticas['progreso']); // 2/4 = 50%
     }
 
-    /** @test */
+    #[Test]
     public function api_registra_actividad_correctamente(): void
     {
         $this->actingAs($this->estudiante, 'sanctum');
@@ -391,7 +392,7 @@ class RealTimeMonitoringTest extends TestCase
         $this->assertTrue($response->json('success'));
     }
 
-    /** @test */
+    #[Test]
     public function api_obtiene_resumen_actividad(): void
     {
         $this->actingAs($this->estudiante, 'sanctum');
@@ -420,7 +421,7 @@ class RealTimeMonitoringTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function api_obtiene_alertas_pendientes(): void
     {
         $this->actingAs($this->estudiante, 'sanctum');
@@ -454,7 +455,7 @@ class RealTimeMonitoringTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function api_marca_alerta_como_intervenida(): void
     {
         $this->actingAs($this->profesor, 'sanctum');
@@ -480,7 +481,7 @@ class RealTimeMonitoringTest extends TestCase
         $this->assertNotNull($alerta->fecha_intervencion);
     }
 
-    /** @test */
+    #[Test]
     public function validacion_request_rechaza_evento_inválido(): void
     {
         $this->actingAs($this->estudiante, 'sanctum');
@@ -497,7 +498,7 @@ class RealTimeMonitoringTest extends TestCase
         $response->assertJsonStructure(['errors']);
     }
 
-    /** @test */
+    #[Test]
     public function validacion_request_rechaza_trabajo_inexistente(): void
     {
         $this->actingAs($this->estudiante, 'sanctum');

@@ -12,6 +12,9 @@ import AgentController from './AgentController'
 import ContentAnalysisController from './ContentAnalysisController'
 import MiPerfilController from './MiPerfilController'
 import EvaluacionesApiController from './EvaluacionesApiController'
+import ProfessorReviewController from './ProfessorReviewController'
+import TestVocacionalApiController from './TestVocacionalApiController'
+import LoginController from './LoginController'
 const Api = {
     AuthTokenController,
 ModuloSidebarController,
@@ -27,6 +30,9 @@ AgentController,
 ContentAnalysisController,
 MiPerfilController,
 EvaluacionesApiController,
+ProfessorReviewController,
+TestVocacionalApiController,
+LoginController,
 }
 
 export default Api

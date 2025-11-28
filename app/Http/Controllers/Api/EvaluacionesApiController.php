@@ -8,6 +8,8 @@ use App\Models\IntentosEvaluacion;
 use App\Models\RespuestaEvaluacion;
 use App\Models\User;
 use App\Services\AgentSynthesisService;
+use App\Services\EvaluacionGradingService;
+use App\Jobs\AnalizarRespuestaLargaJob;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -15,10 +17,14 @@ use Illuminate\Support\Facades\Log;
 class EvaluacionesApiController extends Controller
 {
     protected AgentSynthesisService $agentService;
+    protected EvaluacionGradingService $gradingService;
 
-    public function __construct(AgentSynthesisService $agentService)
-    {
+    public function __construct(
+        AgentSynthesisService $agentService,
+        EvaluacionGradingService $gradingService
+    ) {
         $this->agentService = $agentService;
+        $this->gradingService = $gradingService;
     }
 
     /**
@@ -237,6 +243,12 @@ class EvaluacionesApiController extends Controller
     /**
      * Completar un intento de evaluación
      * POST /api/intentos/{intentoId}/completar
+     *
+     * Flujo:
+     * 1. CAPA 1: Validación automática (preguntas cerradas)
+     * 2. CAPA 2: Análisis LLM (preguntas abiertas)
+     * 3. CAPA 3: Confianza y flags (anomalías)
+     * 4. CAPA 4: Espera revisión del profesor (siempre obligatoria)
      */
     public function completarIntento($intentoId, Request $request)
     {
@@ -251,51 +263,15 @@ class EvaluacionesApiController extends Controller
                 return response()->json(['success' => false, 'message' => 'No autorizado'], 403);
             }
 
-            // Calcular puntaje
-            $respuestas = $intento->respuestas_detalladas()->get();
-            $puntajeTotalIntento = 0;
-            $respuestasCorrectas = 0;
-
-            foreach ($respuestas as $respuesta) {
-                // Validar respuesta (comparación simple)
-                $pregunta = $respuesta->pregunta;
-                $esCorrecta = $this->validarRespuesta($respuesta, $pregunta);
-
-                if ($esCorrecta) {
-                    $respuestasCorrectas++;
-                    $puntajeTotalIntento += $pregunta->puntos;
-                }
-
-                $respuesta->update([
-                    'es_correcta' => $esCorrecta,
-                    'puntos_obtenidos' => $esCorrecta ? $pregunta->puntos : 0,
-                    'puntos_totales' => $pregunta->puntos,
-                    'confianza_respuesta' => $respuesta->calcularConfianza(),
-                    'respuesta_anomala' => $respuesta->detectarAnomalias(),
-                ]);
-            }
-
-            // Actualizar intento
-            $puntajeTotal = $intento->evaluacion->preguntas->sum('puntos');
-            $porcentaje = $puntajeTotal > 0 ? round(($puntajeTotalIntento / $puntajeTotal) * 100, 2) : 0;
-
-            $intento->update([
-                'estado' => 'entregado',
-                'fecha_entrega' => now(),
-                'tiempo_total' => $intento->fecha_inicio ? now()->diffInMinutes($intento->fecha_inicio) : 0,
-                'puntaje_obtenido' => $puntajeTotalIntento,
-                'porcentaje_acierto' => $porcentaje,
-                'dificultad_detectada' => $this->calcularDificultadDetectada($respuestas),
-                'nivel_confianza_respuestas' => $respuestas->avg('confianza_respuesta') ?? 0,
-                'tiene_anomalias' => $respuestas->where('respuesta_anomala', true)->isNotEmpty(),
-                'patrones_identificados' => $this->identificarPatrones($intento),
-                'areas_debilidad' => $this->identificarAreas($respuestas, 'debilidad'),
-                'areas_fortaleza' => $this->identificarAreas($respuestas, 'fortaleza'),
-                'recomendaciones_ia' => $this->generarRecomendaciones($intento),
-                'ultimo_analisis_ml' => now(),
-            ]);
+            // NUEVO: Usar EvaluacionGradingService para procesar el intento completo
+            // Esto implementa las 4 capas de calificación
+            $this->gradingService->procesarIntentoCompleto($intento);
 
             DB::commit();
+
+            // NUEVO: Dispatch jobs asíncronos DESPUÉS de confirmar el commit
+            // Esto es para respuestas >500 palabras que necesitan análisis más profundo
+            $this->dispatchAnalysisJobs($intento);
 
             return response()->json([
                 'success' => true,
@@ -305,14 +281,45 @@ class EvaluacionesApiController extends Controller
                     'estado' => $intento->estado,
                     'puntaje_obtenido' => $intento->puntaje_obtenido,
                     'porcentaje_acierto' => $intento->porcentaje_acierto,
+                    'nivel_confianza' => $intento->nivel_confianza_respuestas,
+                    'tiene_anomalias' => $intento->tiene_anomalias,
+                    'requiere_revision_profesor' => true, // Siempre requiere revisión
                     'fecha_entrega' => $intento->fecha_entrega,
                 ],
             ], 200);
 
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error("Error completando intento: {$e->getMessage()}");
-            return response()->json(['success' => false, 'message' => 'Error'], 500);
+            Log::error("Error completando intento: {$e->getMessage()}", [
+                'intento_id' => $intentoId,
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json(['success' => false, 'message' => 'Error al procesar evaluación'], 500);
+        }
+    }
+
+    /**
+     * Dispatch jobs asíncronos para análisis de respuestas largas
+     */
+    private function dispatchAnalysisJobs(IntentosEvaluacion $intento): void
+    {
+        try {
+            $respuestasLargas = $intento->respuestas_detalladas()
+                ->whereHas('pregunta', fn($q) => $q->where('tipo', 'respuesta_larga'))
+                ->get();
+
+            foreach ($respuestasLargas as $respuesta) {
+                $numeroPalabras = str_word_count($respuesta->respuesta_texto ?? '');
+
+                // Solo hacer jobs para respuestas >500 palabras
+                if ($numeroPalabras > 500) {
+                    Log::info("Despachando job de análisis para respuesta larga #{$respuesta->id}");
+                    AnalizarRespuestaLargaJob::dispatch($respuesta->id);
+                }
+            }
+        } catch (\Exception $e) {
+            Log::warning("Error despachando jobs: {$e->getMessage()}");
+            // No lanzar excepción, los jobs son complementarios
         }
     }
 

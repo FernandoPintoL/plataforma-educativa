@@ -79,7 +79,7 @@ getRiesgo.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     getRiesgo.form = getRiesgoForm
 /**
 * @see \App\Http\Controllers\Api\MiPerfilController::getCarreras
- * @see app/Http/Controllers/Api/MiPerfilController.php:95
+ * @see app/Http/Controllers/Api/MiPerfilController.php:98
  * @route '/api/mi-perfil/carreras'
  */
 export const getCarreras = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ getCarreras.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\MiPerfilController::getCarreras
- * @see app/Http/Controllers/Api/MiPerfilController.php:95
+ * @see app/Http/Controllers/Api/MiPerfilController.php:98
  * @route '/api/mi-perfil/carreras'
  */
 getCarreras.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ getCarreras.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\MiPerfilController::getCarreras
- * @see app/Http/Controllers/Api/MiPerfilController.php:95
+ * @see app/Http/Controllers/Api/MiPerfilController.php:98
  * @route '/api/mi-perfil/carreras'
  */
 getCarreras.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -112,7 +112,7 @@ getCarreras.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\MiPerfilController::getCarreras
- * @see app/Http/Controllers/Api/MiPerfilController.php:95
+ * @see app/Http/Controllers/Api/MiPerfilController.php:98
  * @route '/api/mi-perfil/carreras'
  */
 getCarreras.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -122,7 +122,7 @@ getCarreras.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\MiPerfilController::getCarreras
- * @see app/Http/Controllers/Api/MiPerfilController.php:95
+ * @see app/Http/Controllers/Api/MiPerfilController.php:98
  * @route '/api/mi-perfil/carreras'
  */
     const getCarrerasForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -132,7 +132,7 @@ getCarreras.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\MiPerfilController::getCarreras
- * @see app/Http/Controllers/Api/MiPerfilController.php:95
+ * @see app/Http/Controllers/Api/MiPerfilController.php:98
  * @route '/api/mi-perfil/carreras'
  */
         getCarrerasForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -141,7 +141,7 @@ getCarreras.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\MiPerfilController::getCarreras
- * @see app/Http/Controllers/Api/MiPerfilController.php:95
+ * @see app/Http/Controllers/Api/MiPerfilController.php:98
  * @route '/api/mi-perfil/carreras'
  */
         getCarrerasForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

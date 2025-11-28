@@ -856,8 +856,9 @@ class TestVocacionalController extends Controller
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException) {
             return response()->json([
                 'success' => false,
-                'message' => 'No vocational profile found. Please complete a vocational test first.',
-            ], 404);
+                'data' => null,
+                'message' => 'No hay perfil vocacional. Por favor completa una prueba vocacional primero.',
+            ], 200);
 
         } catch (\Exception $e) {
             Log::error("Error getting vocational profile: {$e->getMessage()}");
@@ -897,8 +898,9 @@ class TestVocacionalController extends Controller
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException) {
             return response()->json([
                 'success' => false,
-                'message' => 'No vocational profile found',
-            ], 404);
+                'data' => null,
+                'message' => 'No hay perfil vocacional disponible',
+            ], 200);
 
         } catch (\Exception $e) {
             Log::error("Error getting recommendations: {$e->getMessage()}");
