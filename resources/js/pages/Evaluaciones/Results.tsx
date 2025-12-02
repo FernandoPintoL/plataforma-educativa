@@ -464,6 +464,131 @@ export default function Results({
             </Link>
           </Button>
         </div>
+
+        {/* Recomendaciones - SIEMPRE mostradas */}
+        {recommendations && (
+          <Card className="border-l-4 border-l-purple-500 mt-8">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                {tipo_recomendacion === 'avanzado' ? '🚀 Recursos Avanzados' : '📚 Recursos de Refuerzo'}
+              </CardTitle>
+              <CardDescription className="mt-2">
+                {recommendations.mensaje || 'Recursos personalizados para tu aprendizaje'}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Sección de Áreas a Mejorar */}
+              {recommendations.evaluation_analysis?.areas_debiles && Object.keys(recommendations.evaluation_analysis.areas_debiles).length > 0 && (
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-sm">Áreas a Mejorar:</h4>
+                  <div className="grid gap-3">
+                    {Object.values(recommendations.evaluation_analysis.areas_debiles).map((area: any, idx: number) => {
+                      const errorRate = area.total > 0 ? (area.incorrectas / area.total) * 100 : 0
+                      return (
+                        <div key={idx} className="p-3 border rounded-lg bg-muted/50">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="font-medium text-sm">{area.nombre}</span>
+                            <Badge variant={errorRate > 50 ? 'destructive' : 'secondary'}>
+                              {area.incorrectas}/{area.total} incorrectas
+                            </Badge>
+                          </div>
+                          <div className="text-sm text-muted-foreground">
+                            Tasa de error: {errorRate.toFixed(1)}%
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Sección de Recursos Multi-Formato - NUEVA */}
+              {recommendations.resources_by_format && Object.keys(recommendations.resources_by_format).length > 0 ? (
+                <div className="space-y-4 border-t pt-4">
+                  <div>
+                    <h4 className="font-bold text-base mb-1">🎓 Recursos Educativos Variados</h4>
+                    <p className="text-xs text-gray-500">
+                      {recommendations.total_count} recursos en {Object.keys(recommendations.resources_by_format).length} categorías
+                    </p>
+                  </div>
+
+                  {/* Tabs-like display por categoría */}
+                  <div className="space-y-4">
+                    {Object.entries(recommendations.resources_by_format).map(([category, resources]: [string, any]) => {
+                      const categoryEmojis: any = {
+                        'videos': { emoji: '📺', color: 'from-red-50 to-orange-50', border: 'border-red-200', title: 'Videos Educativos' },
+                        'articles': { emoji: '📄', color: 'from-blue-50 to-cyan-50', border: 'border-blue-200', title: 'Artículos y Guías' },
+                        'exercises': { emoji: '🎯', color: 'from-green-50 to-emerald-50', border: 'border-green-200', title: 'Ejercicios Prácticos' },
+                        'interactive': { emoji: '📱', color: 'from-purple-50 to-pink-50', border: 'border-purple-200', title: 'Apps Interactivas' },
+                        'documentation': { emoji: '📖', color: 'from-indigo-50 to-blue-50', border: 'border-indigo-200', title: 'Documentación' },
+                        'communities': { emoji: '👥', color: 'from-yellow-50 to-orange-50', border: 'border-yellow-200', title: 'Comunidades' },
+                      }
+
+                      const catInfo = categoryEmojis[category] || { emoji: '📌', color: 'from-gray-50 to-slate-50', border: 'border-gray-200', title: category }
+
+                      return (
+                        <div key={category} className={`bg-gradient-to-r ${catInfo.color} p-4 rounded-lg border ${catInfo.border}`}>
+                          <div className="flex items-center justify-between mb-3">
+                            <h5 className="font-bold text-sm">{catInfo.emoji} {catInfo.title}</h5>
+                            <span className="text-xs font-semibold text-gray-600 bg-white px-2 py-1 rounded">
+                              {(resources as any[]).length} recurso{(resources as any[]).length !== 1 ? 's' : ''}
+                            </span>
+                          </div>
+
+                          <div className="space-y-2">
+                            {(resources as any[]).map((resource: any, idx: number) => (
+                              <div key={idx} className="bg-white p-3 rounded-lg border border-gray-100 hover:border-blue-300 hover:shadow-sm transition">
+                                <div className="flex items-start justify-between gap-2">
+                                  <div className="flex-1 min-w-0">
+                                    <p className="font-medium text-sm text-gray-900 line-clamp-2">{resource.title}</p>
+                                    <p className="text-xs text-gray-600 mt-1 line-clamp-2">{resource.description}</p>
+                                    <p className="text-xs font-semibold text-blue-600 mt-2">{resource.source}</p>
+                                  </div>
+                                  <a
+                                    href={resource.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex-shrink-0 mt-1 px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded font-medium transition"
+                                  >
+                                    Abrir
+                                  </a>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+
+                  {/* Resumen */}
+                  {recommendations.breakdown && (
+                    <div className="bg-gradient-to-r from-indigo-50 to-blue-50 p-3 rounded-lg border border-indigo-200">
+                      <p className="text-xs text-gray-700">
+                        <span className="font-bold">Desglose de recursos:</span> {' '}
+                        {Object.entries(recommendations.breakdown).map(([cat, count]: [string, any], i) => (
+                          <span key={cat}>
+                            {i > 0 ? ' • ' : ''}<span className="font-medium">{count} {cat}</span>
+                          </span>
+                        ))}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                  <p className="text-sm text-yellow-800">
+                    El agente está generando recursos personalizados en múltiples formatos basados en tus áreas de mejora...
+                  </p>
+                </div>
+              )}
+
+              {!recommendations.evaluation_analysis?.areas_debiles ? (
+                <p className="text-sm text-muted-foreground">Análisis de recursos en progreso...</p>
+              ) : null}
+            </CardContent>
+          </Card>
+        )}
       </div>
     </AppLayout>
   );

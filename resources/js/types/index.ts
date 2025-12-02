@@ -81,6 +81,7 @@ export interface Pregunta {
   tipo: 'opcion_multiple' | 'verdadero_falso' | 'respuesta_corta' | 'respuesta_larga';
   opciones?: string[];
   respuesta_correcta?: string;
+  tema?: string;
   puntos: number;
   orden: number;
   created_at: string;

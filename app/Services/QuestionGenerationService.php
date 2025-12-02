@@ -367,14 +367,20 @@ class QuestionGenerationService
     {
         return Cache::remember("course_topics_{$cursoId}", 86400, function () use ($cursoId) {
             try {
-                $response = Http::timeout(20)->post(
-                    "{$this->mlNoSupervisadoUrl}/topics/extract",
-                    ['curso_id' => $cursoId]
-                );
+                // NOTA: /topics/extract requiere validación adicional de estructura
+                // Por ahora retornamos array vacío para evitar errores
+                // TODO: Implementar endpoint de temas en no_supervisado
+                Log::info("Topics extraction deshabilitado - usando fallback");
+                return [];
 
-                if ($response->successful()) {
-                    return $response->json()['topics'] ?? [];
-                }
+                // $response = Http::timeout(20)->post(
+                //     "{$this->mlNoSupervisadoUrl}/topics/extract",
+                //     ['curso_id' => $cursoId]
+                // );
+                //
+                // if ($response->successful()) {
+                //     return $response->json()['topics'] ?? [];
+                // }
             } catch (\Exception $e) {
                 Log::warning("Error obteniendo temas: {$e->getMessage()}");
             }
@@ -390,14 +396,19 @@ class QuestionGenerationService
     {
         return Cache::remember("course_clusters_{$cursoId}", 21600, function () use ($cursoId) {
             try {
-                $response = Http::timeout(20)->post(
-                    "{$this->mlNoSupervisadoUrl}/cluster/analysis",
-                    ['curso_id' => $cursoId]
-                );
+                // NOTA: /cluster/analysis es GET en no_supervisado, no POST
+                // Se debe usar /cluster/analysis-course para POST con curso_id
+                // Por ahora retornamos array vacío para evitar errores
+                Log::info("Cluster analysis deshabilitado - usando fallback");
+                return [];
 
-                if ($response->successful()) {
-                    return $response->json()['clusters'] ?? [];
-                }
+                // $response = Http::timeout(20)->get(
+                //     "{$this->mlNoSupervisadoUrl}/cluster/analysis"
+                // );
+                //
+                // if ($response->successful()) {
+                //     return $response->json()['clusters'] ?? [];
+                // }
             } catch (\Exception $e) {
                 Log::warning("Error analizando clusters: {$e->getMessage()}");
             }

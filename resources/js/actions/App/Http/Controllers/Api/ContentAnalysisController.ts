@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Api\ContentAnalysisController::analyze
- * @see app/Http/Controllers/Api/ContentAnalysisController.php:34
+ * @see app/Http/Controllers/Api/ContentAnalysisController.php:35
  * @route '/api/content/analyze'
  */
 export const analyze = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -16,7 +16,7 @@ analyze.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\ContentAnalysisController::analyze
- * @see app/Http/Controllers/Api/ContentAnalysisController.php:34
+ * @see app/Http/Controllers/Api/ContentAnalysisController.php:35
  * @route '/api/content/analyze'
  */
 analyze.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ analyze.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\ContentAnalysisController::analyze
- * @see app/Http/Controllers/Api/ContentAnalysisController.php:34
+ * @see app/Http/Controllers/Api/ContentAnalysisController.php:35
  * @route '/api/content/analyze'
  */
 analyze.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -35,7 +35,7 @@ analyze.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\ContentAnalysisController::analyze
- * @see app/Http/Controllers/Api/ContentAnalysisController.php:34
+ * @see app/Http/Controllers/Api/ContentAnalysisController.php:35
  * @route '/api/content/analyze'
  */
     const analyzeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -45,7 +45,7 @@ analyze.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\ContentAnalysisController::analyze
- * @see app/Http/Controllers/Api/ContentAnalysisController.php:34
+ * @see app/Http/Controllers/Api/ContentAnalysisController.php:35
  * @route '/api/content/analyze'
  */
         analyzeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -56,7 +56,7 @@ analyze.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     analyze.form = analyzeForm
 /**
 * @see \App\Http\Controllers\Api\ContentAnalysisController::analyzeEvaluation
- * @see app/Http/Controllers/Api/ContentAnalysisController.php:169
+ * @see app/Http/Controllers/Api/ContentAnalysisController.php:170
  * @route '/api/content/analyze-evaluation'
  */
 export const analyzeEvaluation = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -71,7 +71,7 @@ analyzeEvaluation.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\ContentAnalysisController::analyzeEvaluation
- * @see app/Http/Controllers/Api/ContentAnalysisController.php:169
+ * @see app/Http/Controllers/Api/ContentAnalysisController.php:170
  * @route '/api/content/analyze-evaluation'
  */
 analyzeEvaluation.url = (options?: RouteQueryOptions) => {
@@ -80,7 +80,7 @@ analyzeEvaluation.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\ContentAnalysisController::analyzeEvaluation
- * @see app/Http/Controllers/Api/ContentAnalysisController.php:169
+ * @see app/Http/Controllers/Api/ContentAnalysisController.php:170
  * @route '/api/content/analyze-evaluation'
  */
 analyzeEvaluation.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -90,7 +90,7 @@ analyzeEvaluation.post = (options?: RouteQueryOptions): RouteDefinition<'post'> 
 
     /**
 * @see \App\Http\Controllers\Api\ContentAnalysisController::analyzeEvaluation
- * @see app/Http/Controllers/Api/ContentAnalysisController.php:169
+ * @see app/Http/Controllers/Api/ContentAnalysisController.php:170
  * @route '/api/content/analyze-evaluation'
  */
     const analyzeEvaluationForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -100,7 +100,7 @@ analyzeEvaluation.post = (options?: RouteQueryOptions): RouteDefinition<'post'> 
 
             /**
 * @see \App\Http\Controllers\Api\ContentAnalysisController::analyzeEvaluation
- * @see app/Http/Controllers/Api/ContentAnalysisController.php:169
+ * @see app/Http/Controllers/Api/ContentAnalysisController.php:170
  * @route '/api/content/analyze-evaluation'
  */
         analyzeEvaluationForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -111,7 +111,7 @@ analyzeEvaluation.post = (options?: RouteQueryOptions): RouteDefinition<'post'> 
     analyzeEvaluation.form = analyzeEvaluationForm
 /**
 * @see \App\Http\Controllers\Api\ContentAnalysisController::generateEvaluation
- * @see app/Http/Controllers/Api/ContentAnalysisController.php:276
+ * @see app/Http/Controllers/Api/ContentAnalysisController.php:277
  * @route '/api/content/generate-evaluation'
  */
 export const generateEvaluation = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -126,7 +126,7 @@ generateEvaluation.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\ContentAnalysisController::generateEvaluation
- * @see app/Http/Controllers/Api/ContentAnalysisController.php:276
+ * @see app/Http/Controllers/Api/ContentAnalysisController.php:277
  * @route '/api/content/generate-evaluation'
  */
 generateEvaluation.url = (options?: RouteQueryOptions) => {
@@ -135,7 +135,7 @@ generateEvaluation.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\ContentAnalysisController::generateEvaluation
- * @see app/Http/Controllers/Api/ContentAnalysisController.php:276
+ * @see app/Http/Controllers/Api/ContentAnalysisController.php:277
  * @route '/api/content/generate-evaluation'
  */
 generateEvaluation.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -145,7 +145,7 @@ generateEvaluation.post = (options?: RouteQueryOptions): RouteDefinition<'post'>
 
     /**
 * @see \App\Http\Controllers\Api\ContentAnalysisController::generateEvaluation
- * @see app/Http/Controllers/Api/ContentAnalysisController.php:276
+ * @see app/Http/Controllers/Api/ContentAnalysisController.php:277
  * @route '/api/content/generate-evaluation'
  */
     const generateEvaluationForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -155,7 +155,7 @@ generateEvaluation.post = (options?: RouteQueryOptions): RouteDefinition<'post'>
 
             /**
 * @see \App\Http\Controllers\Api\ContentAnalysisController::generateEvaluation
- * @see app/Http/Controllers/Api/ContentAnalysisController.php:276
+ * @see app/Http/Controllers/Api/ContentAnalysisController.php:277
  * @route '/api/content/generate-evaluation'
  */
         generateEvaluationForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -166,7 +166,7 @@ generateEvaluation.post = (options?: RouteQueryOptions): RouteDefinition<'post'>
     generateEvaluation.form = generateEvaluationForm
 /**
 * @see \App\Http\Controllers\Api\ContentAnalysisController::generateQuestions
- * @see app/Http/Controllers/Api/ContentAnalysisController.php:431
+ * @see app/Http/Controllers/Api/ContentAnalysisController.php:432
  * @route '/api/content/generate-questions'
  */
 export const generateQuestions = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -181,7 +181,7 @@ generateQuestions.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\ContentAnalysisController::generateQuestions
- * @see app/Http/Controllers/Api/ContentAnalysisController.php:431
+ * @see app/Http/Controllers/Api/ContentAnalysisController.php:432
  * @route '/api/content/generate-questions'
  */
 generateQuestions.url = (options?: RouteQueryOptions) => {
@@ -190,7 +190,7 @@ generateQuestions.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\ContentAnalysisController::generateQuestions
- * @see app/Http/Controllers/Api/ContentAnalysisController.php:431
+ * @see app/Http/Controllers/Api/ContentAnalysisController.php:432
  * @route '/api/content/generate-questions'
  */
 generateQuestions.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -200,7 +200,7 @@ generateQuestions.post = (options?: RouteQueryOptions): RouteDefinition<'post'> 
 
     /**
 * @see \App\Http\Controllers\Api\ContentAnalysisController::generateQuestions
- * @see app/Http/Controllers/Api/ContentAnalysisController.php:431
+ * @see app/Http/Controllers/Api/ContentAnalysisController.php:432
  * @route '/api/content/generate-questions'
  */
     const generateQuestionsForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -210,7 +210,7 @@ generateQuestions.post = (options?: RouteQueryOptions): RouteDefinition<'post'> 
 
             /**
 * @see \App\Http\Controllers\Api\ContentAnalysisController::generateQuestions
- * @see app/Http/Controllers/Api/ContentAnalysisController.php:431
+ * @see app/Http/Controllers/Api/ContentAnalysisController.php:432
  * @route '/api/content/generate-questions'
  */
         generateQuestionsForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -220,8 +220,63 @@ generateQuestions.post = (options?: RouteQueryOptions): RouteDefinition<'post'> 
     
     generateQuestions.form = generateQuestionsForm
 /**
+* @see \App\Http\Controllers\Api\ContentAnalysisController::validateQuestionsCoherence
+ * @see app/Http/Controllers/Api/ContentAnalysisController.php:551
+ * @route '/api/content/validate-questions-coherence'
+ */
+export const validateQuestionsCoherence = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: validateQuestionsCoherence.url(options),
+    method: 'post',
+})
+
+validateQuestionsCoherence.definition = {
+    methods: ["post"],
+    url: '/api/content/validate-questions-coherence',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\Api\ContentAnalysisController::validateQuestionsCoherence
+ * @see app/Http/Controllers/Api/ContentAnalysisController.php:551
+ * @route '/api/content/validate-questions-coherence'
+ */
+validateQuestionsCoherence.url = (options?: RouteQueryOptions) => {
+    return validateQuestionsCoherence.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Api\ContentAnalysisController::validateQuestionsCoherence
+ * @see app/Http/Controllers/Api/ContentAnalysisController.php:551
+ * @route '/api/content/validate-questions-coherence'
+ */
+validateQuestionsCoherence.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: validateQuestionsCoherence.url(options),
+    method: 'post',
+})
+
+    /**
+* @see \App\Http\Controllers\Api\ContentAnalysisController::validateQuestionsCoherence
+ * @see app/Http/Controllers/Api/ContentAnalysisController.php:551
+ * @route '/api/content/validate-questions-coherence'
+ */
+    const validateQuestionsCoherenceForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        action: validateQuestionsCoherence.url(options),
+        method: 'post',
+    })
+
+            /**
+* @see \App\Http\Controllers\Api\ContentAnalysisController::validateQuestionsCoherence
+ * @see app/Http/Controllers/Api/ContentAnalysisController.php:551
+ * @route '/api/content/validate-questions-coherence'
+ */
+        validateQuestionsCoherenceForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+            action: validateQuestionsCoherence.url(options),
+            method: 'post',
+        })
+    
+    validateQuestionsCoherence.form = validateQuestionsCoherenceForm
+/**
 * @see \App\Http\Controllers\Api\ContentAnalysisController::health
- * @see app/Http/Controllers/Api/ContentAnalysisController.php:541
+ * @see app/Http/Controllers/Api/ContentAnalysisController.php:603
  * @route '/api/content/health'
  */
 export const health = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -236,7 +291,7 @@ health.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\ContentAnalysisController::health
- * @see app/Http/Controllers/Api/ContentAnalysisController.php:541
+ * @see app/Http/Controllers/Api/ContentAnalysisController.php:603
  * @route '/api/content/health'
  */
 health.url = (options?: RouteQueryOptions) => {
@@ -245,7 +300,7 @@ health.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\ContentAnalysisController::health
- * @see app/Http/Controllers/Api/ContentAnalysisController.php:541
+ * @see app/Http/Controllers/Api/ContentAnalysisController.php:603
  * @route '/api/content/health'
  */
 health.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -254,7 +309,7 @@ health.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\ContentAnalysisController::health
- * @see app/Http/Controllers/Api/ContentAnalysisController.php:541
+ * @see app/Http/Controllers/Api/ContentAnalysisController.php:603
  * @route '/api/content/health'
  */
 health.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -264,7 +319,7 @@ health.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\ContentAnalysisController::health
- * @see app/Http/Controllers/Api/ContentAnalysisController.php:541
+ * @see app/Http/Controllers/Api/ContentAnalysisController.php:603
  * @route '/api/content/health'
  */
     const healthForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -274,7 +329,7 @@ health.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\ContentAnalysisController::health
- * @see app/Http/Controllers/Api/ContentAnalysisController.php:541
+ * @see app/Http/Controllers/Api/ContentAnalysisController.php:603
  * @route '/api/content/health'
  */
         healthForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -283,7 +338,7 @@ health.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\ContentAnalysisController::health
- * @see app/Http/Controllers/Api/ContentAnalysisController.php:541
+ * @see app/Http/Controllers/Api/ContentAnalysisController.php:603
  * @route '/api/content/health'
  */
         healthForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -297,6 +352,6 @@ health.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
     
     health.form = healthForm
-const ContentAnalysisController = { analyze, analyzeEvaluation, generateEvaluation, generateQuestions, health }
+const ContentAnalysisController = { analyze, analyzeEvaluation, generateEvaluation, generateQuestions, validateQuestionsCoherence, health }
 
 export default ContentAnalysisController

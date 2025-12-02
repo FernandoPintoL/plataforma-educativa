@@ -27,6 +27,20 @@ logger.logSuccess('APP', 'Sistema de logging inicializado', {
   wsLogger: 'Disponible también en window.wsLogger'
 });
 
+// Función global para ver logs de evaluación
+(window as any).getEvaluacionLogs = () => {
+  const logs = JSON.parse(localStorage.getItem('evaluacion_debug_logs') || '[]');
+  console.table(logs);
+  return logs;
+};
+
+(window as any).clearEvaluacionLogs = () => {
+  localStorage.removeItem('evaluacion_debug_logs');
+  console.log('✅ Logs de evaluación limpiados');
+};
+
+console.log('💡 TIP: Usa getEvaluacionLogs() para ver logs de evaluación o clearEvaluacionLogs() para limpiar');
+
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 createInertiaApp({

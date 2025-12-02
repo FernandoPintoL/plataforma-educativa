@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import AnalisisIAWidget from '@/components/Tareas/AnalisisIAWidget';
+import AnalisisIAConBoton from '@/components/Tareas/AnalisisIAConBoton';
 import { type BreadcrumbItem } from '@/types';
 import {
   ArrowLeftIcon,
@@ -318,7 +318,13 @@ export default function Calificar({ trabajo, analisisIA }: Props) {
 
             {/* Análisis de IA */}
             {trabajo.respuestas?.archivos && trabajo.respuestas.archivos.some(a => a.nombre.toLowerCase().endsWith('.pdf')) && (
-              <AnalisisIAWidget analisisIA={analisisIA} />
+              <AnalisisIAConBoton
+                trabajo={trabajo}
+                analisisIA={analisisIA}
+                onAnalisisCompleto={(resultado) => {
+                  console.log('✅ Análisis completado:', resultado);
+                }}
+              />
             )}
 
             {/* Formulario de Calificación */}

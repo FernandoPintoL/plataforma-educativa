@@ -38,6 +38,7 @@ interface Pregunta {
   tipo: string
   opciones: string[]
   respuesta_correcta: string
+  tema?: string
   puntos: number
 }
 
@@ -64,6 +65,7 @@ interface EvaluacionFormProps {
   cursos: Course[]
   onSubmit: (e: React.FormEvent, estado: string) => void
   onPreviewDataChange?: (previewData: any) => void
+  hideButtons?: boolean  // Si true, no renderiza botones (el Wizard los maneja)
 }
 
 export default function EvaluacionForm({
@@ -74,8 +76,11 @@ export default function EvaluacionForm({
   cursos,
   onSubmit,
   onPreviewDataChange,
+  hideButtons = false,
 }: EvaluacionFormProps) {
   const [preguntas, setPreguntas] = useState<Pregunta[]>(data.preguntas || [])
+  const [puntuacionMaxima, setPuntuacionMaxima] = useState<number>(100)
+  const [puntuacionEditada, setPuntuacionEditada] = useState<number>(data.puntuacion_total || 0)
 
   // Debounce para notificar cambios al preview y actualizar puntuación total
   useEffect(() => {
@@ -108,6 +113,7 @@ export default function EvaluacionForm({
       tipo: 'opcion_multiple',
       opciones: ['', '', '', ''],
       respuesta_correcta: '',
+      tema: '',
       puntos: 0,
     }
     setPreguntas([...preguntas, nuevaPregunta])
@@ -149,11 +155,77 @@ export default function EvaluacionForm({
   }
 
   const puntuacionTotal = preguntas.reduce((sum, p) => sum + Number(p.puntos || 0), 0)
+  const excedePuntuacion = puntuacionTotal > puntuacionMaxima
+  const porcentajeUtilizado = puntuacionMaxima > 0 ? (puntuacionTotal / puntuacionMaxima) * 100 : 0
+
+  /**
+   * Normalizar/redistribuir puntos para que quepan dentro de la puntuación máxima
+   */
+  const normalizarPuntos = () => {
+    if (preguntas.length === 0 || puntuacionTotal === 0) return
+
+    const factor = puntuacionMaxima / puntuacionTotal
+    const preguntasNormalizadas = preguntas.map((p) => ({
+      ...p,
+      puntos: Math.round(p.puntos * factor),
+    }))
+
+    // Ajustar diferencias de redondeo
+    const nuevaSuma = preguntasNormalizadas.reduce((sum, p) => sum + p.puntos, 0)
+    const diferencia = puntuacionMaxima - nuevaSuma
+
+    if (diferencia !== 0 && preguntasNormalizadas.length > 0) {
+      preguntasNormalizadas[0].puntos += diferencia
+    }
+
+    setPreguntas(preguntasNormalizadas)
+  }
+
+  /**
+   * Distribuir puntos equitativamente según la puntuación máxima
+   */
+  const distribuirEquitativamente = () => {
+    if (preguntas.length === 0) return
+
+    const puntosPorPregunta = Math.floor(puntuacionMaxima / preguntas.length)
+    const resto = puntuacionMaxima % preguntas.length
+
+    const preguntasDistribuidas = preguntas.map((p, idx) => ({
+      ...p,
+      puntos: puntosPorPregunta + (idx < resto ? 1 : 0),
+    }))
+
+    setPreguntas(preguntasDistribuidas)
+  }
 
   const handleFormSubmit = (e: React.FormEvent, estado: string) => {
     e.preventDefault()
+
+    // Validar que no se exceda la puntuación
+    if (excedePuntuacion) {
+      console.error('❌ Error: La puntuación total excede el máximo permitido')
+      alert(`⚠️ Error de validación: La suma de puntos (${puntuacionTotal}) excede la puntuación máxima (${puntuacionMaxima}).\n\nUsa "Normalizar Puntos" o "Distribuir Equitativamente" para corregir.`)
+      return
+    }
+
+    console.log('🔵 [EvaluacionForm] handleFormSubmit llamado con estado:', estado)
+    console.log('📋 [EvaluacionForm] Datos del formulario:', {
+      titulo: data.titulo,
+      tipo_evaluacion: data.tipo_evaluacion,
+      preguntas: preguntas.length,
+      puntuacion_total: puntuacionTotal,
+      puntuacion_maxima: puntuacionMaxima,
+      estado: estado,
+      fecha_inicio: data.fecha_inicio,
+      fecha_fin: data.fecha_fin,
+      tiempo_limite: data.tiempo_limite,
+    })
+
     setData('preguntas', preguntas)
-    setData('puntuacion_total', puntuacionTotal || data.puntuacion_total)
+    // Usar la puntuación máxima como la puntuación total si se configura
+    setData('puntuacion_total', puntuacionTotal || puntuacionMaxima)
+
+    console.log('📤 [EvaluacionForm] Enviando datos con estado:', estado)
 
     // Llamar al callback onSubmit (que será manejado por la página)
     const event = new Event('submit', { bubbles: true })
@@ -162,7 +234,9 @@ export default function EvaluacionForm({
   }
 
   return (
-    <form onSubmit={(e) => handleFormSubmit(e, 'borrador')} className="space-y-6">
+    <form id="evaluacion-form" className="space-y-6">
+      {/* Input hidden para el estado - asegurar que se envíe */}
+      <input type="hidden" name="estado" value={data.estado} onChange={() => {}} />
       {/* Información General */}
       <Card>
         <CardHeader>
@@ -382,9 +456,18 @@ export default function EvaluacionForm({
               <div className="text-sm text-muted-foreground">Total de Preguntas</div>
               <div className="text-3xl font-bold text-primary">{preguntas.length}</div>
             </div>
-            <div className="bg-white rounded-lg p-4 border">
-              <div className="text-sm text-muted-foreground">Puntuación Total</div>
-              <div className="text-3xl font-bold text-green-600">{puntuacionTotal} pts</div>
+            <div className={`bg-white rounded-lg p-4 border ${excedePuntuacion ? 'border-red-300 bg-red-50' : 'border-green-300 bg-green-50'}`}>
+              <div className="text-sm text-muted-foreground mb-2">Puntuación Total</div>
+              <div className={`text-3xl font-bold ${excedePuntuacion ? 'text-red-600' : 'text-green-600'}`}>
+                {puntuacionTotal} <span className="text-lg">/</span> {puntuacionMaxima} pts
+              </div>
+              <div className="mt-2 bg-gray-200 rounded-full h-2">
+                <div
+                  className={`h-2 rounded-full transition-all ${excedePuntuacion ? 'bg-red-500' : 'bg-green-500'}`}
+                  style={{ width: `${Math.min(porcentajeUtilizado, 100)}%` }}
+                />
+              </div>
+              <div className="text-xs text-muted-foreground mt-1">{porcentajeUtilizado.toFixed(0)}% utilizado</div>
             </div>
             <div className="bg-white rounded-lg p-4 border">
               <div className="text-sm text-muted-foreground">Tiempo Estimado</div>
@@ -392,8 +475,80 @@ export default function EvaluacionForm({
             </div>
           </div>
 
+          {/* Control de Puntuación Máxima */}
+          <div className="border-t pt-4 space-y-3">
+            <div className="flex items-end gap-3">
+              <div className="flex-1">
+                <Label htmlFor="puntuacion_maxima" className="text-sm font-semibold">
+                  Puntuación Máxima (Total)
+                </Label>
+                <Input
+                  id="puntuacion_maxima"
+                  type="number"
+                  min="1"
+                  max="500"
+                  value={puntuacionMaxima}
+                  onChange={(e) => setPuntuacionMaxima(Number(e.target.value))}
+                  className="mt-1"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Define el máximo de puntos posibles en esta evaluación
+                </p>
+              </div>
+            </div>
+
+            {/* Advertencia y opciones si se excede */}
+            {excedePuntuacion && (
+              <Alert className="border-red-300 bg-red-50">
+                <ExclamationTriangleIcon className="h-4 w-4 text-red-600" />
+                <AlertDescription className="text-red-800">
+                  ⚠️ La suma de puntos ({puntuacionTotal}) excede la puntuación máxima ({puntuacionMaxima}).
+                  Elige una opción para corregir:
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {/* Botones de acción */}
+            {preguntas.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {excedePuntuacion && (
+                  <>
+                    <Button
+                      type="button"
+                      onClick={normalizarPuntos}
+                      variant="outline"
+                      size="sm"
+                      className="border-orange-300 text-orange-700 hover:bg-orange-50"
+                    >
+                      📊 Normalizar Puntos
+                    </Button>
+                    <Button
+                      type="button"
+                      onClick={distribuirEquitativamente}
+                      variant="outline"
+                      size="sm"
+                      className="border-blue-300 text-blue-700 hover:bg-blue-50"
+                    >
+                      ⚖️ Distribuir Equitativamente
+                    </Button>
+                  </>
+                )}
+                {!excedePuntuacion && preguntas.length > 0 && (
+                  <Button
+                    type="button"
+                    onClick={distribuirEquitativamente}
+                    variant="outline"
+                    size="sm"
+                  >
+                    ⚖️ Distribuir Equitativamente
+                  </Button>
+                )}
+              </div>
+            )}
+          </div>
+
           {/* Validación */}
-          <div className="space-y-2">
+          <div className="space-y-2 border-t pt-4">
             <div className="flex items-center gap-2">
               {preguntas.length > 0 ? (
                 <CheckCircleIcon className="h-5 w-5 text-green-600" />
@@ -413,6 +568,16 @@ export default function EvaluacionForm({
                 <ExclamationTriangleIcon className="h-5 w-5 text-yellow-600" />
               )}
               <span className="text-sm">Título {data.titulo.length > 0 ? 'completado' : 'requerido'}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              {!excedePuntuacion ? (
+                <CheckCircleIcon className="h-5 w-5 text-green-600" />
+              ) : (
+                <ExclamationTriangleIcon className="h-5 w-5 text-red-600" />
+              )}
+              <span className={`text-sm ${excedePuntuacion ? 'text-red-600' : ''}`}>
+                Puntuación dentro de límites {!excedePuntuacion ? '✓' : `(${puntuacionTotal}/${puntuacionMaxima})`}
+              </span>
             </div>
           </div>
         </CardContent>
@@ -529,6 +694,23 @@ export default function EvaluacionForm({
                       </div>
                     </div>
 
+                    {/* Tema/Concepto */}
+                    <div>
+                      <Label className="text-sm font-semibold">
+                        Tema o Concepto <span className="text-muted-foreground text-xs">(opcional)</span>
+                      </Label>
+                      <Input
+                        value={pregunta.tema || ''}
+                        onChange={(e) => handlePreguntaChange(index, 'tema', e.target.value)}
+                        placeholder="Ej: Álgebra Lineal, Verbos Irregulares, Ciclo del Agua..."
+                        disabled={processing}
+                        className="mt-2"
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Ayuda al sistema a generar recomendaciones precisas si el estudiante falla esta pregunta
+                      </p>
+                    </div>
+
                     {/* Opciones (solo para opción múltiple) */}
                     {pregunta.tipo === 'opcion_multiple' && (
                       <div>
@@ -637,24 +819,26 @@ export default function EvaluacionForm({
         </CardContent>
       </Card>
 
-      {/* Botones de Acción */}
-      <div className="flex gap-4">
-        <Button
-          type="submit"
-          disabled={processing || preguntas.length === 0}
-          variant="outline"
-        >
-          Guardar como Borrador
-        </Button>
-        <Button
-          type="button"
-          onClick={(e) => handleFormSubmit(e, 'publicado')}
-          disabled={processing || preguntas.length === 0}
-        >
-          <PlusIcon className="h-4 w-4 mr-2" />
-          Publicar Evaluación
-        </Button>
-      </div>
+      {/* Botones de Acción - Solo si no están ocultos */}
+      {!hideButtons && (
+        <div className="flex gap-4">
+          <Button
+            type="submit"
+            disabled={processing || preguntas.length === 0}
+            variant="outline"
+          >
+            Guardar como Borrador
+          </Button>
+          <Button
+            type="button"
+            onClick={(e) => handleFormSubmit(e, 'publicado')}
+            disabled={processing || preguntas.length === 0}
+          >
+            <PlusIcon className="h-4 w-4 mr-2" />
+            Publicar Evaluación
+          </Button>
+        </div>
+      )}
     </form>
   )
 }

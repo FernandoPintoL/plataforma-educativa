@@ -18,6 +18,7 @@ class Pregunta extends Model
         'tipo',
         'opciones',
         'respuesta_correcta',
+        'tema',
         'puntos',
         'orden',
     ];
@@ -151,5 +152,22 @@ class Pregunta extends Model
             'respuestas_correctas' => $respuestasCorrectas,
             'porcentaje_acierto' => $totalRespuestas > 0 ? ($respuestasCorrectas / $totalRespuestas) * 100 : 0,
         ];
+    }
+
+    /**
+     * Accessor: Obtener tema con valor por defecto 'General'
+     * Garantiza que tema siempre tenga un valor para análisis
+     */
+    public function getTemaAttribute($value): string
+    {
+        return $value ?? 'General';
+    }
+
+    /**
+     * Scope: Filtrar preguntas por tema
+     */
+    public function scopeByTema($query, string $tema)
+    {
+        return $query->where('tema', $tema);
     }
 }

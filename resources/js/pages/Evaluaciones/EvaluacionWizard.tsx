@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useForm, usePage } from '@inertiajs/react'
+import { useForm, usePage, router } from '@inertiajs/react'
 import AppLayout from '@/layouts/app-layout'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -39,6 +39,14 @@ interface Pregunta {
   puntos: number
 }
 
+interface ValidationResult {
+  pregunta_id: number | string
+  enunciado: string
+  coherence_score: number
+  is_coherent: boolean
+  feedback: string
+}
+
 interface Props {
   cursos: Curso[]
 }
@@ -51,22 +59,57 @@ const breadcrumbs: BreadcrumbItem[] = [
 type WizardMode = 'ia' | 'manual' | null
 type WizardStep = 1 | 2 | 3 | 4
 
+/**
+ * Generar fechas por defecto coherentes
+ * - Inicio: Mañana a las 8:00 AM
+ * - Fin: Mismo día a las 9:00 AM (60 minutos después)
+ */
+const generateDefaultDates = () => {
+  const now = new Date()
+
+  // Fecha de inicio: Mañana a las 8:00 AM
+  const inicio = new Date(now)
+  inicio.setDate(inicio.getDate() + 1)
+  inicio.setHours(8, 0, 0, 0)
+
+  // Fecha de fin: Mismo día a las 9:00 AM (60 minutos después)
+  const fin = new Date(inicio)
+  fin.setHours(9, 0, 0, 0)
+
+  // Formato: YYYY-MM-DDTHH:mm (compatible con input datetime-local)
+  const formatDateTime = (date: Date) => {
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    const hours = String(date.getHours()).padStart(2, '0')
+    const minutes = String(date.getMinutes()).padStart(2, '0')
+    return `${year}-${month}-${day}T${hours}:${minutes}`
+  }
+
+  return {
+    fecha_inicio: formatDateTime(inicio),
+    fecha_fin: formatDateTime(fin),
+  }
+}
+
 export default function EvaluacionWizard({ cursos }: Props) {
   const { csrf_token } = usePage().props
+
+  const defaultDates = generateDefaultDates()
 
   const { data, setData, post, processing, errors } = useForm({
     titulo: '',
     descripcion: '',
     curso_id: '',
-    fecha_inicio: '',
-    fecha_fin: '',
+    fecha_inicio: defaultDates.fecha_inicio,
+    fecha_fin: defaultDates.fecha_fin,
     tipo_evaluacion: 'examen',
     puntuacion_total: 100,
     tiempo_limite: 60,
     calificacion_automatica: true,
     mostrar_respuestas: true,
-    permite_reintento: false,
-    max_reintentos: 1,
+    permite_reintento: true,
+    max_reintentos: 3,
     estado: 'borrador',
     preguntas: [] as Pregunta[],
   })
@@ -75,6 +118,40 @@ export default function EvaluacionWizard({ cursos }: Props) {
   const [mode, setMode] = useState<WizardMode>(null)
   const [generatingEvaluation, setGeneratingEvaluation] = useState(false)
   const [generationError, setGenerationError] = useState<string | null>(null)
+  const [generationProgress, setGenerationProgress] = useState<{ step: number; total: number; message: string }>({ step: 0, total: 0, message: '' })
+  const [dificultadDistribucion, setDificultadDistribucion] = useState({
+    facil: 2,
+    medio: 3,
+    dificil: 0,
+  })
+  const [validationResults, setValidationResults] = useState<ValidationResult[]>([])
+  const [isValidating, setIsValidating] = useState(false)
+  const [temasSeleccionados, setTemasSeleccionados] = useState<string[]>([])
+  const [nuevoTema, setNuevoTema] = useState('')
+
+  // Aplicar presets automáticamente cuando cambia el tipo de evaluación
+  useEffect(() => {
+    const presets = getRetryPresetsByType(data.tipo_evaluacion)
+    setData('permite_reintento', presets.permite_reintento)
+    setData('max_reintentos', presets.max_reintentos)
+  }, [data.tipo_evaluacion, setData])
+
+  const getRetryPresetsByType = (tipo: string): { permite_reintento: boolean; max_reintentos: number } => {
+    switch (tipo) {
+      case 'quiz':
+        return { permite_reintento: true, max_reintentos: 3 }
+      case 'practica':
+        return { permite_reintento: true, max_reintentos: 5 }
+      case 'parcial':
+        return { permite_reintento: false, max_reintentos: 1 }
+      case 'final':
+        return { permite_reintento: false, max_reintentos: 1 }
+      case 'examen':
+        return { permite_reintento: true, max_reintentos: 2 }
+      default:
+        return { permite_reintento: true, max_reintentos: 3 }
+    }
+  }
 
   const canProceedStep2 = data.titulo.trim().length >= 5 && data.curso_id
 
@@ -154,12 +231,95 @@ export default function EvaluacionWizard({ cursos }: Props) {
     setData('preguntas', updatedQuestions)
   }
 
+  const totalPreguntas = dificultadDistribucion.facil + dificultadDistribucion.medio + dificultadDistribucion.dificil
+
   const handleGenerateQuestions = async () => {
     setGeneratingEvaluation(true)
     setGenerationError(null)
+    setGenerationProgress({ step: 0, total: 0, message: '' })
 
     try {
-      const response = await fetch('/api/content/generate-questions', {
+      const todasLasPreguntas: Pregunta[] = []
+      const dificultades = [
+        { nivel: 'facil', cantidad: dificultadDistribucion.facil, numero: 1, label: 'Fácil' },
+        { nivel: 'intermedia', cantidad: dificultadDistribucion.medio, numero: 2, label: 'Medio' },
+        { nivel: 'dificil', cantidad: dificultadDistribucion.dificil, numero: 3, label: 'Difícil' },
+      ]
+
+      for (const { nivel, cantidad, numero, label } of dificultades) {
+        if (cantidad === 0) continue
+
+        setGenerationProgress({
+          step: numero,
+          total: 3,
+          message: `Generando preguntas de nivel ${label} (${cantidad} preguntas)...`,
+        })
+
+        const requestBody: any = {
+          titulo: data.titulo,
+          tipo_evaluacion: data.tipo_evaluacion,
+          curso_id: parseInt(data.curso_id.toString()),
+          cantidad_preguntas: cantidad,
+          dificultad_deseada: nivel,
+        }
+
+        // Solo incluir temas si hay alguno seleccionado
+        if (temasSeleccionados.length > 0) {
+          requestBody.temas = temasSeleccionados
+        }
+
+        console.log('📤 Request a generar preguntas:', requestBody)
+
+        const response = await fetch('/api/content/generate-questions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrf_token as string,
+            'Accept': 'application/json',
+          },
+          credentials: 'same-origin',
+          body: JSON.stringify(requestBody),
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          console.error('❌ Error en respuesta:', errorData)
+          throw new Error(
+            errorData.message ||
+              errorData.errors ||
+              `Error generando preguntas de nivel ${nivel}`
+          )
+        }
+
+        const result = await response.json()
+        console.log('✅ Preguntas generadas:', result.preguntas?.length || 0)
+        const newQuestions = result.preguntas || []
+        todasLasPreguntas.push(...newQuestions)
+      }
+
+      // Add all generated questions to existing ones
+      const preguntasActualizadas = [...data.preguntas, ...todasLasPreguntas]
+      setData('preguntas', preguntasActualizadas)
+      setGenerationProgress({ step: 3, total: 3, message: '✅ Preguntas generadas exitosamente' })
+
+      // Validar coherencia después de generar
+      await validateCoherence(data.titulo, preguntasActualizadas)
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Error desconocido'
+      setGenerationError(message)
+      setGenerationProgress({ step: 0, total: 0, message: '' })
+    } finally {
+      setGeneratingEvaluation(false)
+      setTimeout(() => setGenerationProgress({ step: 0, total: 0, message: '' }), 2000)
+    }
+  }
+
+  const validateCoherence = async (titulo: string, preguntas: Pregunta[]) => {
+    if (preguntas.length === 0) return
+
+    setIsValidating(true)
+    try {
+      const response = await fetch('/api/content/validate-questions-coherence', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -168,38 +328,67 @@ export default function EvaluacionWizard({ cursos }: Props) {
         },
         credentials: 'same-origin',
         body: JSON.stringify({
-          titulo: data.titulo,
-          tipo_evaluacion: data.tipo_evaluacion,
-          curso_id: parseInt(data.curso_id.toString()),
-          cantidad_preguntas: 5,
-          dificultad_deseada: 'intermedia',
+          titulo: titulo,
+          preguntas: preguntas.map((p, idx) => ({
+            id: idx,
+            enunciado: p.enunciado,
+          })),
         }),
       })
 
-      if (!response.ok) {
-        throw new Error('Error generando preguntas')
+      if (response.ok) {
+        const result = await response.json()
+        setValidationResults(result.validaciones || [])
+        console.log('✅ Validación de coherencia completada', result.resumen)
       }
-
-      const result = await response.json()
-
-      // Add generated questions to existing ones
-      const newQuestions = result.preguntas || []
-      setData('preguntas', [...data.preguntas, ...newQuestions])
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Error desconocido'
-      setGenerationError(message)
+      console.error('Error validando coherencia:', err)
+      // No mostrar error, continuar sin validación
     } finally {
-      setGeneratingEvaluation(false)
+      setIsValidating(false)
     }
   }
 
+  const agregarTema = () => {
+    if (nuevoTema.trim() && !temasSeleccionados.includes(nuevoTema.trim())) {
+      setTemasSeleccionados([...temasSeleccionados, nuevoTema.trim()])
+      setNuevoTema('')
+    }
+  }
+
+  const removerTema = (tema: string) => {
+    setTemasSeleccionados(temasSeleccionados.filter((t) => t !== tema))
+  }
+
   const handleFinish = (estado: string) => {
-    setData('estado', estado)
-    post('/evaluaciones')
+    console.log('📡 Guardando evaluación con estado:', estado)
+
+    // Crear objeto con TODOS los datos incluyendo el estado
+    const datosCompletos = {
+      ...data,
+      estado: estado, // FORZAR el estado aquí
+    }
+
+    console.log('✅ Datos a guardar - Estado:', datosCompletos.estado)
+
+    // Usar router.post() para tener control total sobre los datos
+    router.post('/evaluaciones', datosCompletos, {
+      onSuccess: () => {
+        console.log('✅ Evaluación guardada')
+        // Redirigir después de 500ms para asegurar
+        setTimeout(() => {
+          window.location.href = '/evaluaciones'
+        }, 500)
+      },
+      onError: (errors: any) => {
+        console.error('❌ Error:', errors)
+      },
+    })
   }
 
   const handleSubmit = (e: React.FormEvent, estado: string) => {
     e.preventDefault()
+    console.log('🔵 [EvaluacionWizard] handleSubmit llamado con estado:', estado)
     handleFinish(estado)
   }
 
@@ -387,6 +576,69 @@ export default function EvaluacionWizard({ cursos }: Props) {
                 {errors.curso_id && <p className="text-sm text-red-500 mt-1">{errors.curso_id}</p>}
               </div>
 
+              {/* Campos solo para modo IA - Seleccionar temas/conceptos */}
+              {mode === 'ia' && (
+                <div className="space-y-3 pt-4 border-t bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg">
+                  <div>
+                    <Label className="text-sm font-semibold flex items-center gap-2">
+                      <SparklesIcon className="h-4 w-4 text-blue-600" />
+                      Temas/Conceptos (Opcional)
+                    </Label>
+                    <p className="text-xs text-muted-foreground mt-1 mb-2">
+                      Especifica los temas que deseas evaluar. Las preguntas serán más coherentes y específicas.
+                    </p>
+
+                    {/* Input para agregar nuevos temas */}
+                    <div className="flex gap-2 mb-3">
+                      <Input
+                        placeholder="Ej: Derivadas, Integrales, Funciones..."
+                        value={nuevoTema}
+                        onChange={(e) => setNuevoTema(e.target.value)}
+                        onKeyPress={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault()
+                            agregarTema()
+                          }
+                        }}
+                        className="text-sm"
+                      />
+                      <Button
+                        type="button"
+                        onClick={agregarTema}
+                        variant="outline"
+                        className="whitespace-nowrap"
+                        disabled={!nuevoTema.trim()}
+                      >
+                        + Agregar
+                      </Button>
+                    </div>
+
+                    {/* Temas seleccionados */}
+                    {temasSeleccionados.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {temasSeleccionados.map((tema, idx) => (
+                          <Badge
+                            key={idx}
+                            variant="secondary"
+                            className="px-3 py-1.5 flex items-center gap-2 bg-blue-200 text-blue-900 hover:bg-blue-300 cursor-pointer"
+                            onClick={() => removerTema(tema)}
+                          >
+                            {tema}
+                            <span className="ml-1 text-xs">✕</span>
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+
+                    {temasSeleccionados.length === 0 && (
+                      <p className="text-xs text-muted-foreground italic">
+                        Sin temas específicos - La IA generará preguntas generales del curso
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+
               {/* Campos solo para modo manual - aparecer con animación suave */}
               {mode === 'manual' && (
                 <div className="space-y-4 pt-4 border-t">
@@ -448,15 +700,16 @@ export default function EvaluacionWizard({ cursos }: Props) {
           <Card>
             <CardHeader>
               <CardTitle>
-                {mode === 'ia' ? 'Paso 3: Revisar y Editar' : 'Paso 3: Agregar Preguntas'}
+                {mode === 'ia' ? 'Paso 3: Generar y Revisar Preguntas' : 'Paso 3: Agregar Preguntas'}
               </CardTitle>
               <CardDescription>
                 {mode === 'ia'
-                  ? 'Revisa las preguntas generadas y edita si es necesario'
+                  ? 'Configura los niveles de dificultad y genera preguntas coherentes con el título'
                   : 'Agrega y personaliza las preguntas de tu evaluación'}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
+              {/* Error Alert */}
               {generationError && (
                 <Alert variant="destructive">
                   <ExclamationTriangleIcon className="h-4 w-4" />
@@ -465,44 +718,292 @@ export default function EvaluacionWizard({ cursos }: Props) {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={handleGenerateEvaluation}
+                      onClick={() => setGenerationError(null)}
                       className="ml-4"
                     >
-                      Reintentar
+                      Descartar
                     </Button>
                   </AlertDescription>
                 </Alert>
               )}
 
+              {/* IA Mode: Difficulty Distribution Selector */}
+              {mode === 'ia' && !generatingEvaluation && (
+                <div className="p-4 border rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50">
+                  <h3 className="font-semibold text-sm mb-4 flex items-center gap-2">
+                    <SparklesIcon className="h-4 w-4 text-blue-600" />
+                    Distribución de Dificultad
+                  </h3>
+                  <p className="text-xs text-muted-foreground mb-4">
+                    Especifica cuántas preguntas deseas de cada nivel. Total: <strong>{totalPreguntas}</strong>
+                  </p>
+
+                  <div className="grid grid-cols-3 gap-4">
+                    {/* Fácil */}
+                    <div>
+                      <Label htmlFor="dif-facil" className="text-xs font-medium text-green-700 block mb-2">
+                        Fácil
+                      </Label>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            setDificultadDistribucion((d) => ({
+                              ...d,
+                              facil: Math.max(0, d.facil - 1),
+                            }))
+                          }
+                          className="h-8 w-8 p-0"
+                        >
+                          −
+                        </Button>
+                        <input
+                          id="dif-facil"
+                          type="number"
+                          min="0"
+                          value={dificultadDistribucion.facil}
+                          onChange={(e) =>
+                            setDificultadDistribucion((d) => ({
+                              ...d,
+                              facil: Math.max(0, parseInt(e.target.value) || 0),
+                            }))
+                          }
+                          className="w-12 text-center border rounded py-1 text-sm font-medium"
+                        />
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            setDificultadDistribucion((d) => ({
+                              ...d,
+                              facil: d.facil + 1,
+                            }))
+                          }
+                          className="h-8 w-8 p-0"
+                        >
+                          +
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Medio */}
+                    <div>
+                      <Label htmlFor="dif-medio" className="text-xs font-medium text-yellow-700 block mb-2">
+                        Medio
+                      </Label>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            setDificultadDistribucion((d) => ({
+                              ...d,
+                              medio: Math.max(0, d.medio - 1),
+                            }))
+                          }
+                          className="h-8 w-8 p-0"
+                        >
+                          −
+                        </Button>
+                        <input
+                          id="dif-medio"
+                          type="number"
+                          min="0"
+                          value={dificultadDistribucion.medio}
+                          onChange={(e) =>
+                            setDificultadDistribucion((d) => ({
+                              ...d,
+                              medio: Math.max(0, parseInt(e.target.value) || 0),
+                            }))
+                          }
+                          className="w-12 text-center border rounded py-1 text-sm font-medium"
+                        />
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            setDificultadDistribucion((d) => ({
+                              ...d,
+                              medio: d.medio + 1,
+                            }))
+                          }
+                          className="h-8 w-8 p-0"
+                        >
+                          +
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Difícil */}
+                    <div>
+                      <Label htmlFor="dif-dificil" className="text-xs font-medium text-red-700 block mb-2">
+                        Difícil
+                      </Label>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            setDificultadDistribucion((d) => ({
+                              ...d,
+                              dificil: Math.max(0, d.dificil - 1),
+                            }))
+                          }
+                          className="h-8 w-8 p-0"
+                        >
+                          −
+                        </Button>
+                        <input
+                          id="dif-dificil"
+                          type="number"
+                          min="0"
+                          value={dificultadDistribucion.dificil}
+                          onChange={(e) =>
+                            setDificultadDistribucion((d) => ({
+                              ...d,
+                              dificil: Math.max(0, parseInt(e.target.value) || 0),
+                            }))
+                          }
+                          className="w-12 text-center border rounded py-1 text-sm font-medium"
+                        />
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            setDificultadDistribucion((d) => ({
+                              ...d,
+                              dificil: d.dificil + 1,
+                            }))
+                          }
+                          className="h-8 w-8 p-0"
+                        >
+                          +
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Progress Feedback */}
+              {generatingEvaluation && generationProgress.total > 0 && (
+                <div className="space-y-3 p-4 border rounded-lg bg-blue-50">
+                  <div className="flex items-center gap-2">
+                    <div className="animate-spin h-4 w-4 border-2 border-blue-600 border-t-transparent rounded-full" />
+                    <p className="text-sm font-medium">{generationProgress.message}</p>
+                  </div>
+                  <Progress
+                    value={(generationProgress.step / generationProgress.total) * 100}
+                    className="h-2"
+                  />
+                  <p className="text-xs text-muted-foreground text-right">
+                    Paso {generationProgress.step} de {generationProgress.total}
+                  </p>
+                </div>
+              )}
+
+              {/* Success Message */}
+              {generationProgress.message === '✅ Preguntas generadas exitosamente' && !generatingEvaluation && (
+                <Alert className="bg-green-50 border-green-200">
+                  <CheckCircleIcon className="h-4 w-4 text-green-600" />
+                  <AlertDescription className="text-green-800">
+                    {generationProgress.message}
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              {/* Questions List */}
               {data.preguntas.length > 0 ? (
                 <div className="space-y-3">
-                  <div className="p-3 bg-blue-50 rounded border border-blue-200">
+                  <div className="p-3 bg-blue-50 rounded border border-blue-200 flex items-center justify-between">
                     <p className="text-sm">
                       <strong>{data.preguntas.length}</strong> preguntas
                       {mode === 'ia' && ' generadas'}
                     </p>
+                    {mode === 'ia' && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleGenerateQuestions}
+                        disabled={generatingEvaluation || totalPreguntas === 0}
+                        className="text-xs"
+                      >
+                        <SparklesIcon className="h-3 w-3 mr-1" />
+                        Generar más
+                      </Button>
+                    )}
                   </div>
 
-                  {data.preguntas.map((pregunta, idx) => (
-                    <div key={idx} className="p-4 bg-gray-50 rounded border flex items-start justify-between">
-                      <div className="flex-1">
-                        <p className="text-sm font-medium">
-                          Pregunta {idx + 1} ({pregunta.tipo})
-                        </p>
-                        <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                          {pregunta.enunciado}
-                        </p>
-                        <Badge className="mt-2">{pregunta.puntos} pts</Badge>
+                  {data.preguntas.map((pregunta, idx) => {
+                    const validation = validationResults[idx]
+                    const coherenceColor =
+                      validation && validation.is_coherent
+                        ? validation.coherence_score >= 0.8
+                          ? 'bg-green-50 border-green-200'
+                          : 'bg-blue-50 border-blue-200'
+                        : 'bg-yellow-50 border-yellow-200'
+
+                    return (
+                      <div key={idx} className={`p-4 rounded border flex items-start justify-between hover:shadow-md transition ${coherenceColor}`}>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <p className="text-sm font-medium">Pregunta {idx + 1}</p>
+                            <Badge variant="secondary" className="text-xs">
+                              {pregunta.tipo}
+                            </Badge>
+
+                            {/* Coherence Badge */}
+                            {validation && (
+                              <Badge
+                                className={`text-xs ml-auto ${
+                                  validation.is_coherent
+                                    ? validation.coherence_score >= 0.8
+                                      ? 'bg-green-600 hover:bg-green-700'
+                                      : 'bg-blue-600 hover:bg-blue-700'
+                                    : 'bg-yellow-600 hover:bg-yellow-700'
+                                }`}
+                                title={validation.feedback}
+                              >
+                                {validation.coherence_score >= 0.8 && '✓ Muy coherente'}
+                                {validation.coherence_score >= 0.6 && validation.coherence_score < 0.8 && '✓ Coherente'}
+                                {validation.coherence_score < 0.6 && '⚠️ Revisar coherencia'}
+                              </Badge>
+                            )}
+                          </div>
+
+                          <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                            {pregunta.enunciado}
+                          </p>
+
+                          <div className="flex gap-2 mt-2 items-center">
+                            <Badge>{pregunta.puntos} pts</Badge>
+                            {validation && (
+                              <span className="text-xs text-muted-foreground">
+                                Coherencia: {(validation.coherence_score * 100).toFixed(0)}%
+                              </span>
+                            )}
+                          </div>
+
+                          {validation && !validation.is_coherent && (
+                            <p className="text-xs text-yellow-700 mt-2 italic">
+                              💡 {validation.feedback}
+                            </p>
+                          )}
+                        </div>
+
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleRemoveQuestion(idx)}
+                          className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                          title="Eliminar pregunta"
+                        >
+                          ✕
+                        </Button>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleRemoveQuestion(idx)}
-                      >
-                        Eliminar
-                      </Button>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -510,19 +1011,19 @@ export default function EvaluacionWizard({ cursos }: Props) {
                     <AlertDescription>
                       {generatingEvaluation
                         ? 'Generando preguntas con IA...'
-                        : 'No hay preguntas. Agrega al menos una para continuar.'}
+                        : 'No hay preguntas. ' + (mode === 'ia' ? 'Configura la dificultad y genera preguntas.' : 'Agrega al menos una para continuar.')}
                     </AlertDescription>
                   </Alert>
 
-                  {mode === 'ia' && (
+                  {mode === 'ia' && !generatingEvaluation && totalPreguntas > 0 && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <Button
                         onClick={handleGenerateQuestions}
                         disabled={generatingEvaluation}
-                        className="w-full"
+                        className="w-full bg-blue-600 hover:bg-blue-700"
                       >
                         <SparklesIcon className="h-4 w-4 mr-2" />
-                        {generatingEvaluation ? 'Generando...' : 'Generar Preguntas con IA'}
+                        Generar {totalPreguntas} Preguntas
                       </Button>
                       <Button
                         onClick={handleAddManualQuestion}
@@ -543,13 +1044,13 @@ export default function EvaluacionWizard({ cursos }: Props) {
                 </div>
               )}
 
-              {mode === 'manual' && (
+              {mode === 'manual' && data.preguntas.length > 0 && (
                 <Button onClick={handleAddManualQuestion} variant="outline" className="w-full">
-                  + Agregar Pregunta
+                  + Agregar Otra Pregunta
                 </Button>
               )}
 
-              <div className="flex gap-2 pt-4">
+              <div className="flex gap-2 pt-4 border-t">
                 <Button
                   variant="outline"
                   onClick={() => setCurrentStep(2)}
@@ -562,7 +1063,7 @@ export default function EvaluacionWizard({ cursos }: Props) {
                   disabled={data.preguntas.length === 0 || generatingEvaluation}
                   className="flex-1"
                 >
-                  Continuar
+                  Continuar al Paso 4
                 </Button>
               </div>
             </CardContent>
@@ -579,6 +1080,7 @@ export default function EvaluacionWizard({ cursos }: Props) {
               processing={processing}
               cursos={cursos}
               onSubmit={handleSubmit}
+              hideButtons={true}
             />
 
             <div className="flex gap-2 mt-6">

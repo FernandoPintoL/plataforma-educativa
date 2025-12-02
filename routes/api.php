@@ -545,6 +545,10 @@ Route::middleware(['api', 'auth:sanctum'])->prefix('content')->name('content.')-
     Route::post('generate-questions', [ContentAnalysisController::class, 'generateQuestions'])
         ->name('generate-questions');
 
+    // Validar coherencia de preguntas con el título de la evaluación
+    Route::post('validate-questions-coherence', [ContentAnalysisController::class, 'validateQuestionsCoherence'])
+        ->name('validate-questions-coherence');
+
     // Verificar salud del servicio de análisis
     Route::get('health', [ContentAnalysisController::class, 'health'])
         ->name('health');

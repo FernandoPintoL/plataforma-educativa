@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\EvaluacionController::ver
- * @see app/Http/Controllers/EvaluacionController.php:1136
+ * @see app/Http/Controllers/EvaluacionController.php:1200
  * @route '/evaluaciones/{evaluacion}/intentos/{trabajo}'
  */
 export const ver = (args: { evaluacion: number | { id: number }, trabajo: number | { id: number } } | [evaluacion: number | { id: number }, trabajo: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ ver.definition = {
 
 /**
 * @see \App\Http\Controllers\EvaluacionController::ver
- * @see app/Http/Controllers/EvaluacionController.php:1136
+ * @see app/Http/Controllers/EvaluacionController.php:1200
  * @route '/evaluaciones/{evaluacion}/intentos/{trabajo}'
  */
 ver.url = (args: { evaluacion: number | { id: number }, trabajo: number | { id: number } } | [evaluacion: number | { id: number }, trabajo: number | { id: number } ], options?: RouteQueryOptions) => {
@@ -46,7 +46,7 @@ ver.url = (args: { evaluacion: number | { id: number }, trabajo: number | { id: 
 
 /**
 * @see \App\Http\Controllers\EvaluacionController::ver
- * @see app/Http/Controllers/EvaluacionController.php:1136
+ * @see app/Http/Controllers/EvaluacionController.php:1200
  * @route '/evaluaciones/{evaluacion}/intentos/{trabajo}'
  */
 ver.get = (args: { evaluacion: number | { id: number }, trabajo: number | { id: number } } | [evaluacion: number | { id: number }, trabajo: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -55,7 +55,7 @@ ver.get = (args: { evaluacion: number | { id: number }, trabajo: number | { id: 
 })
 /**
 * @see \App\Http\Controllers\EvaluacionController::ver
- * @see app/Http/Controllers/EvaluacionController.php:1136
+ * @see app/Http/Controllers/EvaluacionController.php:1200
  * @route '/evaluaciones/{evaluacion}/intentos/{trabajo}'
  */
 ver.head = (args: { evaluacion: number | { id: number }, trabajo: number | { id: number } } | [evaluacion: number | { id: number }, trabajo: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -65,7 +65,7 @@ ver.head = (args: { evaluacion: number | { id: number }, trabajo: number | { id:
 
     /**
 * @see \App\Http\Controllers\EvaluacionController::ver
- * @see app/Http/Controllers/EvaluacionController.php:1136
+ * @see app/Http/Controllers/EvaluacionController.php:1200
  * @route '/evaluaciones/{evaluacion}/intentos/{trabajo}'
  */
     const verForm = (args: { evaluacion: number | { id: number }, trabajo: number | { id: number } } | [evaluacion: number | { id: number }, trabajo: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -75,7 +75,7 @@ ver.head = (args: { evaluacion: number | { id: number }, trabajo: number | { id:
 
             /**
 * @see \App\Http\Controllers\EvaluacionController::ver
- * @see app/Http/Controllers/EvaluacionController.php:1136
+ * @see app/Http/Controllers/EvaluacionController.php:1200
  * @route '/evaluaciones/{evaluacion}/intentos/{trabajo}'
  */
         verForm.get = (args: { evaluacion: number | { id: number }, trabajo: number | { id: number } } | [evaluacion: number | { id: number }, trabajo: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -84,7 +84,7 @@ ver.head = (args: { evaluacion: number | { id: number }, trabajo: number | { id:
         })
             /**
 * @see \App\Http\Controllers\EvaluacionController::ver
- * @see app/Http/Controllers/EvaluacionController.php:1136
+ * @see app/Http/Controllers/EvaluacionController.php:1200
  * @route '/evaluaciones/{evaluacion}/intentos/{trabajo}'
  */
         verForm.head = (args: { evaluacion: number | { id: number }, trabajo: number | { id: number } } | [evaluacion: number | { id: number }, trabajo: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

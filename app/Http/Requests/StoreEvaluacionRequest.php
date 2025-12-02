@@ -43,6 +43,7 @@ class StoreEvaluacionRequest extends FormRequest
             'preguntas.*.tipo' => ['required_with:preguntas', 'in:opcion_multiple,verdadero_falso,respuesta_corta,respuesta_larga'],
             'preguntas.*.opciones' => ['nullable', 'array'],
             'preguntas.*.respuesta_correcta' => ['required_with:preguntas', 'string'],
+            'preguntas.*.tema' => ['nullable', 'string', 'max:100'],
             'preguntas.*.puntos' => ['required_with:preguntas', 'numeric', 'min:0'],
         ];
     }
@@ -70,14 +71,42 @@ class StoreEvaluacionRequest extends FormRequest
 
     /**
      * Prepare the data for validation.
+     *
+     * Implementa presets inteligentes basados en el tipo de evaluación:
+     * - quiz: 3 reintentos, auto-grading, mostrar respuestas
+     * - practica: 5 reintentos, auto-grading, mostrar respuestas
+     * - parcial/final: sin reintentos, sin mostrar respuestas
+     * - examen: 2 reintentos, auto-grading, sin mostrar respuestas
      */
     protected function prepareForValidation(): void
     {
+        // Obtener presets según tipo de evaluación
+        $presets = $this->getRetryPresetsByType($this->input('tipo_evaluacion'));
+
         $this->merge([
             'calificacion_automatica' => $this->boolean('calificacion_automatica', true),
             'mostrar_respuestas' => $this->boolean('mostrar_respuestas', true),
-            'permite_reintento' => $this->boolean('permite_reintento', false),
+            'permite_reintento' => $this->boolean('permite_reintento', $presets['permite_reintento']),
+            'max_reintentos' => $this->input('max_reintentos', $presets['max_reintentos']),
             'estado' => $this->input('estado', 'borrador'),
         ]);
+    }
+
+    /**
+     * Obtener presets de reintentos según el tipo de evaluación
+     *
+     * @param string|null $tipo Tipo de evaluación
+     * @return array Array con claves 'permite_reintento' y 'max_reintentos'
+     */
+    private function getRetryPresetsByType(?string $tipo): array
+    {
+        return match($tipo) {
+            'quiz' => ['permite_reintento' => true, 'max_reintentos' => 3],
+            'practica' => ['permite_reintento' => true, 'max_reintentos' => 5],
+            'parcial' => ['permite_reintento' => false, 'max_reintentos' => 1],
+            'final' => ['permite_reintento' => false, 'max_reintentos' => 1],
+            'examen' => ['permite_reintento' => true, 'max_reintentos' => 2],
+            default => ['permite_reintento' => true, 'max_reintentos' => 3],
+        };
     }
 }

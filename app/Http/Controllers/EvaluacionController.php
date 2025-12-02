@@ -141,7 +141,7 @@ class EvaluacionController extends Controller
 
         $cursos = $user->cursosComoProfesor()->get();
 
-        return Inertia::render('Evaluaciones/Create', [
+        return Inertia::render('Evaluaciones/EvaluacionWizard', [
             'cursos' => $cursos,
         ]);
     }
@@ -177,6 +177,19 @@ class EvaluacionController extends Controller
     public function store(StoreEvaluacionRequest $request)
     {
         try {
+            // 📋 LOGS DE DEBUG
+            Log::info('🔵 [EvaluacionController.store] Iniciando creación de evaluación');
+            Log::info('📥 [EvaluacionController.store] Datos recibidos del request:', [
+                'titulo' => $request->titulo,
+                'tipo_evaluacion' => $request->tipo_evaluacion,
+                'curso_id' => $request->curso_id,
+                'estado' => $request->estado,
+                'fecha_inicio' => $request->fecha_inicio,
+                'fecha_fin' => $request->fecha_fin,
+                'tiempo_limite' => $request->tiempo_limite,
+                'preguntas_count' => is_array($request->preguntas) ? count($request->preguntas) : 0,
+            ]);
+
             DB::beginTransaction();
 
             // Crear contenido base
@@ -191,6 +204,11 @@ class EvaluacionController extends Controller
                 'estado' => $request->estado ?? 'borrador',
             ]);
 
+            Log::info('✅ [EvaluacionController.store] Contenido creado', [
+                'contenido_id' => $contenido->id,
+                'estado_guardado' => $contenido->estado,
+            ]);
+
             // Crear la evaluación
             $evaluacion = Evaluacion::create([
                 'contenido_id' => $contenido->id,
@@ -199,8 +217,8 @@ class EvaluacionController extends Controller
                 'tiempo_limite' => $request->tiempo_limite,
                 'calificacion_automatica' => $request->calificacion_automatica ?? true,
                 'mostrar_respuestas' => $request->mostrar_respuestas ?? true,
-                'permite_reintento' => $request->permite_reintento ?? false,
-                'max_reintentos' => $request->max_reintentos ?? 1,
+                'permite_reintento' => $request->permite_reintento ?? true,
+                'max_reintentos' => $request->max_reintentos ?? 3,
             ]);
 
             // ANÁLISIS ML DE PREGUNTAS
@@ -211,24 +229,21 @@ class EvaluacionController extends Controller
 
             // Si la evaluación se publica, notificar a estudiantes
             if ($request->estado === 'publicado') {
-                $curso = Curso::find($request->curso_id);
-                $estudiantes = $curso->estudiantes;
-
-                foreach ($estudiantes as $estudiante) {
-                    \App\Models\Notificacion::crear(
-                        destinatario: $estudiante,
-                        tipo: 'evaluacion',
-                        titulo: 'Nueva evaluación disponible',
-                        contenido: "Se ha publicado una nueva evaluación: {$request->titulo}",
-                        datos_adicionales: [
-                            'evaluacion_id' => $evaluacion->id,
-                            'curso_id' => $request->curso_id,
-                        ]
-                    );
-                }
+                Log::info('📢 [EvaluacionController.store] Evaluación PUBLICADA');
+                // TODO: Implementar notificaciones sin romper las existentes
+                // $curso = Curso::find($request->curso_id);
+                // $estudiantes = $curso->estudiantes;
+                // foreach ($estudiantes as $estudiante) { ... }
+            } else {
+                Log::info('📝 [EvaluacionController.store] Evaluación guardada como BORRADOR');
             }
 
             DB::commit();
+
+            Log::info('✅ [EvaluacionController.store] Evaluación creada exitosamente', [
+                'evaluacion_id' => $evaluacion->id,
+                'estado_final' => $contenido->estado,
+            ]);
 
             return redirect()
                 ->route('evaluaciones.show', $evaluacion->id)
@@ -354,6 +369,18 @@ class EvaluacionController extends Controller
     public function update(UpdateEvaluacionRequest $request, Evaluacion $evaluacion)
     {
         try {
+            Log::info('🔵 [EvaluacionController.update] Iniciando actualización', [
+                'evaluacion_id' => $evaluacion->id,
+                'titulo' => $evaluacion->contenido?->titulo,
+                'estado_actual' => $evaluacion->contenido?->estado,
+            ]);
+
+            Log::info('📥 [EvaluacionController.update] Datos recibidos:', [
+                'titulo' => $request->titulo,
+                'estado' => $request->estado,
+                'fecha_limite' => $request->fecha_limite,
+            ]);
+
             DB::beginTransaction();
 
             // Actualizar contenido
@@ -362,6 +389,10 @@ class EvaluacionController extends Controller
                 'descripcion' => $request->descripcion ?? $evaluacion->contenido->descripcion,
                 'fecha_limite' => $request->fecha_limite ?? $evaluacion->contenido->fecha_limite,
                 'estado' => $request->estado ?? $evaluacion->contenido->estado,
+            ]);
+
+            Log::info('✅ [EvaluacionController.update] Contenido actualizado', [
+                'estado_nuevo' => $evaluacion->contenido->estado,
             ]);
 
             // Actualizar evaluación
@@ -396,12 +427,23 @@ class EvaluacionController extends Controller
 
             DB::commit();
 
+            Log::info('✅ [EvaluacionController.update] Evaluación actualizada exitosamente', [
+                'evaluacion_id' => $evaluacion->id,
+                'estado_final' => $evaluacion->contenido->estado,
+            ]);
+
             return redirect()
                 ->route('evaluaciones.show', $evaluacion->id)
                 ->with('success', 'Evaluación actualizada exitosamente.');
 
         } catch (\Exception $e) {
             DB::rollBack();
+
+            Log::error('❌ [EvaluacionController.update] Error en actualización', [
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
 
             return back()
                 ->withErrors(['error' => 'Error al actualizar la evaluación: ' . $e->getMessage()])
@@ -719,37 +761,44 @@ class EvaluacionController extends Controller
             $puedeReintentar = $totalIntentos < $evaluacion->max_reintentos;
         }
 
-        // Obtener recomendaciones SOLO si NO puede intentar de nuevo
-        // Las recomendaciones son para ayudar al estudiante cuando ya no puede mejorar más
+        // NUEVA LÓGICA: Generar recomendaciones SIEMPRE (invertir lógica anterior)
+        // - Si puede reintentar: recomendaciones para mejorar la nota
+        // - Si no puede: recomendaciones para próxima evaluación
         $recommendations = null;
         $tipoRecomendacion = null; // 'avanzado' o 'refuerzo'
+        $mensajeRecomendacion = null;
 
-        if (!$puedeReintentar) {
-            // Determinar tipo de recomendación según desempeño
-            $porcentajeCalificacion = ($calificacionValue / $evaluacion->puntuacion_total) * 100;
+        $porcentajeCalificacion = ($calificacionValue / $evaluacion->puntuacion_total) * 100;
 
-            if ($porcentajeCalificacion >= 90) {
-                $tipoRecomendacion = 'avanzado'; // Recursos avanzados
-            } else {
-                $tipoRecomendacion = 'refuerzo'; // Recursos para reforzar
+        // Determinar tipo y mensaje según desempeño Y capacidad de reintento
+        if ($porcentajeCalificacion >= 90) {
+            $tipoRecomendacion = 'avanzado';
+            $mensajeRecomendacion = $puedeReintentar
+                ? 'Excelente desempeño! Recursos avanzados para profundizar:'
+                : 'Excelente desempeño! Explora estos recursos para tu próxima evaluación:';
+        } else {
+            $tipoRecomendacion = 'refuerzo';
+            $mensajeRecomendacion = $puedeReintentar
+                ? 'Recursos para mejorar antes de tu próximo intento:'
+                : 'Revisa estos recursos para reforzar conceptos:';
+        }
+
+        try {
+            // Generar análisis y recomendaciones
+            $analysisService = new \App\Services\EvaluationAnalysisService();
+            $analysisData = $analysisService->analyzeAndRecommend($trabajo, $evaluacion);
+
+            // Si se generaron recomendaciones, incluirlas con mensaje
+            if (!empty($analysisData)) {
+                $recommendations = $analysisData;
+                $recommendations['mensaje'] = $mensajeRecomendacion;
             }
-
-            try {
-                // Intentar generar análisis para mostrar recomendaciones
-                $analysisService = new \App\Services\EvaluationAnalysisService();
-                $analysisData = $analysisService->analyzeAndRecommend($trabajo, $evaluacion);
-
-                // Si se generaron recomendaciones, incluirlas
-                if (!empty($analysisData)) {
-                    $recommendations = $analysisData;
-                }
-            } catch (\Exception $e) {
-                // Si falla el análisis, continuar sin recomendaciones (se mostrarán en carga)
-                \Log::warning('Error obteniendo recomendaciones en results()', [
-                    'trabajo_id' => $trabajo->id,
-                    'error' => $e->getMessage(),
-                ]);
-            }
+        } catch (\Exception $e) {
+            // Si falla el análisis, continuar sin recomendaciones
+            \Log::warning('Error obteniendo recomendaciones en results()', [
+                'trabajo_id' => $trabajo->id,
+                'error' => $e->getMessage(),
+            ]);
         }
 
         $trabajoData = [
@@ -800,6 +849,7 @@ class EvaluacionController extends Controller
                     'tipo' => $preguntaData['tipo'],
                     'opciones' => $preguntaData['opciones'] ?? null,
                     'respuesta_correcta' => $preguntaData['respuesta_correcta'],
+                    'tema' => $preguntaData['tema'] ?? null,
                     'puntos' => $preguntaData['puntos'],
                     'orden' => $index + 1,
                 ]);
@@ -867,18 +917,32 @@ class EvaluacionController extends Controller
 
     /**
      * Extraer conceptos de una pregunta
+     *
+     * Prioridad 1: Usar campo tema si existe (más preciso)
+     * Prioridad 2: Heurística mejorada con keywords si no hay tema
      */
     private function extraerConceptosPreguntas(Pregunta $pregunta): array
     {
-        $conceptos = [];
+        // Prioridad 1: Si el campo tema está definido, usarlo directamente
+        if (!empty($pregunta->tema)) {
+            return [$pregunta->tema];
+        }
 
-        // Análisis simple de palabras clave
+        // Prioridad 2: Fallback a heurística mejorada con más keywords
+        $conceptos = [];
         $enunciado = strtolower($pregunta->enunciado);
+
         $palabras_clave = [
-            'lógica' => ['if', 'condition', 'booleano'],
-            'bucles' => ['for', 'while', 'repetir'],
-            'funciones' => ['función', 'method', 'parámetro'],
-            'datos' => ['array', 'lista', 'estructura'],
+            'Lógica' => ['if', 'condition', 'booleano', 'condicional', 'else'],
+            'Bucles' => ['for', 'while', 'repetir', 'iteración', 'do', 'foreach'],
+            'Funciones' => ['función', 'function', 'method', 'parámetro', 'return', 'llamada'],
+            'Estructuras de Datos' => ['array', 'lista', 'estructura', 'variable', 'arreglo'],
+            'Matemáticas' => ['suma', 'resta', 'multiplicación', 'división', 'ecuación', 'número'],
+            'Strings' => ['cadena', 'string', 'texto', 'caracteres', 'concatenar', 'substring'],
+            'Objetos' => ['clase', 'objeto', 'instancia', 'propiedad', 'atributo', 'method'],
+            'Bases de Datos' => ['sql', 'consulta', 'tabla', 'relación', 'clave', 'foránea'],
+            'Web' => ['html', 'css', 'javascript', 'dom', 'evento', 'formulario'],
+            'Entrada/Salida' => ['input', 'output', 'lectura', 'escritura', 'archivo'],
         ];
 
         foreach ($palabras_clave as $concepto => $palabras) {
@@ -890,7 +954,7 @@ class EvaluacionController extends Controller
             }
         }
 
-        return $conceptos ?: ['general'];
+        return $conceptos ?: ['General'];
     }
 
     /**

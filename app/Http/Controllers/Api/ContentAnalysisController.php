@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Services\QuestionGenerationService;
 use App\Services\QuestionBankService;
+use App\Services\CoherenceValidationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -441,12 +442,19 @@ class ContentAnalysisController extends Controller
             'contexto' => 'nullable|string',
         ]);
 
+        // Validar temas de forma más flexible
+        $temas = [];
+        if ($request->has('temas') && is_array($request->temas)) {
+            $temas = array_filter($request->temas, fn($t) => is_string($t) && strlen(trim($t)) >= 2);
+        }
+
         try {
             Log::info('Iniciando generación inteligente de preguntas', [
                 'titulo' => substr($validated['titulo'], 0, 50),
                 'cantidad' => $validated['cantidad_preguntas'],
                 'dificultad' => $validated['dificultad_deseada'],
                 'curso_id' => $validated['curso_id'],
+                'temas' => $temas,
             ]);
 
             // Verificar que el curso existe
@@ -460,6 +468,7 @@ class ContentAnalysisController extends Controller
                 'cantidad_preguntas' => $validated['cantidad_preguntas'],
                 'dificultad_deseada' => $validated['dificultad_deseada'],
                 'contexto' => $validated['contexto'] ?? '',
+                'temas' => $temas,
                 'user_id' => auth()->id() ?? 1,
             ]);
 
@@ -531,6 +540,59 @@ class ContentAnalysisController extends Controller
             ];
         }
         return $preguntas;
+    }
+
+    /**
+     * Validar coherencia entre el título de una evaluación y sus preguntas
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function validateQuestionsCoherence(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'titulo' => 'required|string|min:3|max:255',
+                'preguntas' => 'required|array|min:1',
+                'preguntas.*.enunciado' => 'required|string|min:5',
+                'preguntas.*.id' => 'nullable|integer',
+            ]);
+
+            Log::info('Validando coherencia de preguntas', [
+                'titulo' => $validated['titulo'],
+                'cantidad_preguntas' => count($validated['preguntas']),
+            ]);
+
+            $coherenceService = new CoherenceValidationService();
+            $result = $coherenceService->validateQuestions(
+                $validated['titulo'],
+                $validated['preguntas']
+            );
+
+            return response()->json($result);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::warning('Error de validación', [
+                'errors' => $e->errors(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Datos inválidos',
+                'errors' => $e->errors(),
+            ], 422);
+
+        } catch (\Exception $e) {
+            Log::error('Error validando coherencia', [
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al validar coherencia',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**

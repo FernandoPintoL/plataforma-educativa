@@ -11,11 +11,18 @@ class UpdateEvaluacionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        $evaluacion = $this->route('evaluacione'); // Laravel pluraliza a 'evaluacione'
+        // Obtener la evaluación del parámetro de ruta
+        $evaluacion = $this->route('evaluacion');
+
+        // Si no hay evaluación, denegar acceso
+        if (!$evaluacion) {
+            return false;
+        }
 
         // Solo el profesor creador puede actualizar
         return $this->user() &&
                $this->user()->esProfesor() &&
+               $evaluacion->contenido &&
                $evaluacion->contenido->creador_id === $this->user()->id;
     }
 
