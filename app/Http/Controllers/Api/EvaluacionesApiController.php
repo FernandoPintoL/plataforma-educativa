@@ -8,6 +8,7 @@ use App\Models\IntentosEvaluacion;
 use App\Models\RespuestaEvaluacion;
 use App\Models\User;
 use App\Services\AgentSynthesisService;
+use App\Services\StudentEvaluationAnalysisService;
 use App\Services\EvaluacionGradingService;
 use App\Jobs\AnalizarRespuestaLargaJob;
 use Illuminate\Http\Request;
@@ -17,13 +18,16 @@ use Illuminate\Support\Facades\Log;
 class EvaluacionesApiController extends Controller
 {
     protected AgentSynthesisService $agentService;
+    protected StudentEvaluationAnalysisService $evaluationAnalysisService;
     protected EvaluacionGradingService $gradingService;
 
     public function __construct(
         AgentSynthesisService $agentService,
+        StudentEvaluationAnalysisService $evaluationAnalysisService,
         EvaluacionGradingService $gradingService
     ) {
         $this->agentService = $agentService;
+        $this->evaluationAnalysisService = $evaluationAnalysisService;
         $this->gradingService = $gradingService;
     }
 
@@ -437,28 +441,27 @@ class EvaluacionesApiController extends Controller
     {
         try {
             $user = $request->user();
-            $intento = IntentosEvaluacion::with('estudiante', 'evaluacion.preguntas', 'respuestas_detalladas')->findOrFail($id);
+            $intento = IntentosEvaluacion::with('estudiante', 'evaluacion.contenido', 'evaluacion.preguntas')->findOrFail($id);
 
             // Verificar acceso
             if ($intento->estudiante_id !== $user->id && !$user->esProfesor()) {
                 return response()->json(['success' => false, 'message' => 'No autorizado'], 403);
             }
 
-            // Llamar al servicio de síntesis del agente
-            $synthesis = $this->agentService->synthesizeStudentEvaluation(
-                $intento->estudiante,
-                $intento,
-                $intento->evaluacion
-            );
+            // Llamar al servicio de análisis de evaluación con agente
+            $analisis = $this->evaluationAnalysisService->analizarEvaluacion($intento);
 
             return response()->json([
                 'success' => true,
-                'data' => $synthesis,
+                'data' => $analisis,
             ], 200);
 
         } catch (\Exception $e) {
-            Log::error("Error obteniendo análisis IA: {$e->getMessage()}");
-            return response()->json(['success' => false, 'message' => 'Error'], 500);
+            Log::error("Error obteniendo análisis IA: {$e->getMessage()}", [
+                'intento_id' => $id,
+                'exception' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['success' => false, 'message' => 'Error al generar análisis'], 500);
         }
     }
 

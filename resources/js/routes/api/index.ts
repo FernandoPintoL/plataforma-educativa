@@ -1,5 +1,6 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
 import auth from './auth'
+import vocacional from './vocacional'
 import testsVocacionales from './tests-vocacionales'
 /**
 * @see \App\Http\Controllers\Api\LoginController::login
@@ -113,6 +114,7 @@ logout.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     logout.form = logoutForm
 const api = {
     auth,
+vocacional,
 testsVocacionales,
 login,
 logout,

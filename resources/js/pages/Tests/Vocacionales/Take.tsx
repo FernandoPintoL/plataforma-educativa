@@ -8,10 +8,16 @@ import { Label } from '../../../components/ui/label';
 import { Alert, AlertDescription } from '../../../components/ui/alert';
 import { Clock, AlertCircle, CheckCircle } from 'lucide-react';
 
+interface Opcion {
+  valor: string;
+  texto: string;
+  puntuacion?: number;
+}
+
 interface Pregunta {
   id: number;
-  pregunta: string;
-  opciones?: string[];
+  enunciado: string;
+  opciones?: Opcion[];
   tipo: string;
 }
 
@@ -32,19 +38,39 @@ interface TestVocacional {
 interface TakeProps {
   test: TestVocacional;
   preguntas: Categoria[];
+  respuestasGuardadas?: Record<number, any>;
 }
 
-export default function Take({ test, preguntas }: TakeProps) {
+export default function Take({ test, preguntas, respuestasGuardadas = {} }: TakeProps) {
   const { data, setData, post, processing } = useForm<{
     respuestas: Record<number, any>;
   }>({
-    respuestas: {},
+    respuestas: respuestasGuardadas,
   });
 
   const [tiempoInicio] = useState(Date.now());
   const [tiempoRestante, setTiempoRestante] = useState(test.duracion_estimada * 60);
   const [paginaActual, setPaginaActual] = useState(0);
   const [respuestasCompletadas, setRespuestasCompletadas] = useState(0);
+
+  // DEBUG: Loguear datos recibidos del backend
+  useEffect(() => {
+    console.log('=== TEST VOCACIONAL DEBUG ===');
+    console.log('Test ID:', test.id);
+    console.log('Test Nombre:', test.nombre);
+    console.log('Categorías recibidas:', preguntas);
+    console.log('Total categorías:', preguntas.length);
+    console.log('Respuestas Guardadas (desde props):', respuestasGuardadas);
+    console.log('Data.respuestas (desde estado):', data.respuestas);
+    preguntas.forEach((cat, idx) => {
+      console.log(`  Categoría ${idx}: ${cat.nombre} - ${cat.preguntas?.length || 0} preguntas`);
+      cat.preguntas?.forEach((preg, pregIdx) => {
+        const opciones = preg.opciones?.map(o => o.valor).join(', ') || 'sin opciones';
+        const respuestaGuardada = data.respuestas[preg.id];
+        console.log(`    Pregunta ${preg.id}: opciones=[${opciones}] respuesta=${respuestaGuardada}`);
+      });
+    });
+  }, [data.respuestas]);
 
   // Calcular total de preguntas
   const totalPreguntas = preguntas.reduce(
@@ -89,14 +115,25 @@ export default function Take({ test, preguntas }: TakeProps) {
     });
 
     // Auto-save draft to localStorage
+    // IMPORTANTE: Solo guardar respuestas de ESTE test (preguntas del 1 al totalPreguntas)
     if (typeof window !== 'undefined') {
+      // Filtrar solo respuestas válidas para este test
+      const respuestasValidas = Object.fromEntries(
+        Object.entries(nuevasRespuestas).filter(([pregId]) => {
+          const id = parseInt(pregId);
+          return id >= 1 && id <= totalPreguntas;
+        })
+      );
+
       localStorage.setItem(
         `test_draft_${test.id}`,
         JSON.stringify({
-          respuestas: nuevasRespuestas,
+          respuestas: respuestasValidas,
           timestamp: new Date().toISOString(),
         })
       );
+
+      console.log('Draft guardado en localStorage:', respuestasValidas);
     }
   };
 
@@ -127,16 +164,36 @@ export default function Take({ test, preguntas }: TakeProps) {
     }
   };
 
-  // Restore draft on mount
+  // Restore draft on mount (solo si no hay respuestas guardadas del servidor)
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      // Si hay respuestas guardadas del servidor, no cargar draft
+      if (Object.keys(respuestasGuardadas).length > 0) {
+        console.log('Respuestas del servidor encontradas. Ignorando draft local.');
+        // Limpiar draft anterior
+        localStorage.removeItem(`test_draft_${test.id}`);
+        return;
+      }
+
+      // Si no hay respuestas del servidor, cargar draft local
       const draft = localStorage.getItem(`test_draft_${test.id}`);
       if (draft) {
         try {
           const { respuestas } = JSON.parse(draft);
-          setData({ ...data, respuestas });
+
+          // Filtrar solo respuestas válidas para este test
+          const respuestasValidas = Object.fromEntries(
+            Object.entries(respuestas).filter(([pregId]) => {
+              const id = parseInt(pregId);
+              return id >= 1 && id <= totalPreguntas;
+            })
+          );
+
+          setData({ ...data, respuestas: respuestasValidas });
+          console.log('Draft restaurado del localStorage (filtrado):', respuestasValidas);
         } catch (err) {
           console.error('Error restoring draft:', err);
+          localStorage.removeItem(`test_draft_${test.id}`);
         }
       }
     }
@@ -195,6 +252,16 @@ export default function Take({ test, preguntas }: TakeProps) {
                 </Alert>
               )}
 
+              {/* Mensaje de respuestas guardadas recuperadas */}
+              {Object.keys(respuestasGuardadas).length > 0 && (
+                <Alert className="border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950">
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <AlertDescription className="text-green-800 dark:text-green-200">
+                    ✓ Se han cargado {Object.keys(respuestasGuardadas).length} respuestas guardadas previamente.
+                  </AlertDescription>
+                </Alert>
+              )}
+
               {/* Progreso */}
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
@@ -248,7 +315,7 @@ export default function Take({ test, preguntas }: TakeProps) {
                         <span className="flex-shrink-0 w-6 h-6 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-sm font-medium">
                           {pregIndex + 1}
                         </span>
-                        <span className="flex-1">{pregunta.pregunta}</span>
+                        <span className="flex-1">{pregunta.enunciado}</span>
                         {data.respuestas[pregunta.id] && (
                           <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
                         )}
@@ -256,40 +323,34 @@ export default function Take({ test, preguntas }: TakeProps) {
                     </CardHeader>
 
                     <CardContent>
-                      {pregunta.tipo === 'multiple_choice' ? (
-                        <RadioGroup
-                          value={
-                            data.respuestas[pregunta.id]?.toString() || ''
-                          }
-                          onValueChange={(val) =>
-                            handleRespuesta(pregunta.id, val)
-                          }
-                        >
-                          <div className="space-y-3">
-                            {pregunta.opciones?.map((opcion, idx) => (
-                              <div
-                                key={idx}
-                                className="flex items-center space-x-2 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                      <RadioGroup
+                        value={
+                          data.respuestas[pregunta.id]?.toString() || ''
+                        }
+                        onValueChange={(val) =>
+                          handleRespuesta(pregunta.id, val)
+                        }
+                      >
+                        <div className="space-y-3">
+                          {pregunta.opciones?.map((opcion, idx) => (
+                            <div
+                              key={idx}
+                              className="flex items-center space-x-2 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                            >
+                              <RadioGroupItem
+                                value={opcion.valor}
+                                id={`pregunta_${pregunta.id}_opcion_${opcion.valor}`}
+                              />
+                              <Label
+                                htmlFor={`pregunta_${pregunta.id}_opcion_${opcion.valor}`}
+                                className="flex-1 cursor-pointer"
                               >
-                                <RadioGroupItem
-                                  value={idx.toString()}
-                                  id={`pregunta_${pregunta.id}_opcion_${idx}`}
-                                />
-                                <Label
-                                  htmlFor={`pregunta_${pregunta.id}_opcion_${idx}`}
-                                  className="flex-1 cursor-pointer"
-                                >
-                                  {opcion}
-                                </Label>
-                              </div>
-                            ))}
-                          </div>
-                        </RadioGroup>
-                      ) : (
-                        <div className="text-gray-600 dark:text-gray-400">
-                          Tipo de pregunta: {pregunta.tipo}
+                                {opcion.texto}
+                              </Label>
+                            </div>
+                          ))}
                         </div>
-                      )}
+                      </RadioGroup>
                     </CardContent>
                   </Card>
                 ))}

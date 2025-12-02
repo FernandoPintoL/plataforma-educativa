@@ -21,9 +21,10 @@ class StoreRespuestaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'evaluacion_id' => ['required', 'exists:evaluaciones,id'],
+            // evaluacion_id viene como parámetro de URL (implicit route model binding)
+            // No necesita validación aquí
             'respuestas' => ['required', 'array'],
-            'respuestas.*' => ['required', 'string'],
+            // Acepta tanto formato plano como formato con pregunta_id
             'tiempo_usado' => ['nullable', 'integer', 'min:0'], // en minutos
         ];
     }
@@ -34,8 +35,6 @@ class StoreRespuestaRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'evaluacion_id.required' => 'La evaluación es requerida.',
-            'evaluacion_id.exists' => 'La evaluación no existe.',
             'respuestas.required' => 'Debe proporcionar respuestas.',
             'respuestas.array' => 'El formato de respuestas no es válido.',
         ];

@@ -4,6 +4,7 @@ import AppLayout from '@/layouts/app-layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card';
 import { Button } from '../../../components/ui/button';
 import { Badge } from '../../../components/ui/badge';
+import AgentSynthesis from '../../../components/VocationalProfile/AgentSynthesis';
 import {
   Award,
   TrendingUp,
@@ -66,6 +67,21 @@ export default function Resultados({ test, resultado, perfil }: ResultadosProps)
     { label: 'Tests Vocacionales', href: '/tests-vocacionales' },
     { label: 'Resultados' },
   ];
+
+  // NUEVO: Parsear respuestas si es string JSON
+  const respuestasObjeto = React.useMemo(() => {
+    try {
+      if (typeof resultado.respuestas === 'string') {
+        return JSON.parse(resultado.respuestas);
+      }
+      return resultado.respuestas || {};
+    } catch (err) {
+      console.error('Error parsing respuestas:', err);
+      return {};
+    }
+  }, [resultado.respuestas]);
+
+  const respuestasCount = Object.keys(respuestasObjeto).length;
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('es-ES', {
@@ -138,7 +154,7 @@ export default function Resultados({ test, resultado, perfil }: ResultadosProps)
                     Preguntas respondidas
                   </p>
                   <p className="font-medium text-gray-900 dark:text-white mt-1">
-                    {Object.keys(resultado.respuestas).length}
+                    {respuestasCount}
                   </p>
                 </div>
                 <div>
@@ -463,6 +479,9 @@ export default function Resultados({ test, resultado, perfil }: ResultadosProps)
                 </CardContent>
               </Card>
             )}
+
+            {/* Agent Synthesis - Análisis Inteligente */}
+            <AgentSynthesis triggerLoad={true} />
           </div>
         ) : (
           <Card>

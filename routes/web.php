@@ -161,6 +161,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::middleware(['auth', 'verified', 'role:estudiante'])->group(function () {
     Route::get('evaluaciones/{evaluacion}/take', [\App\Http\Controllers\EvaluacionController::class, 'take'])->name('evaluaciones.take');
     Route::get('evaluaciones/{evaluacion}/results', [\App\Http\Controllers\EvaluacionController::class, 'results'])->name('evaluaciones.results');
+    Route::get('evaluaciones/{evaluacion}/intentos/{trabajo}', [\App\Http\Controllers\EvaluacionController::class, 'verIntento'])->name('evaluaciones.intentos.ver');
     Route::post('evaluaciones/{evaluacion}/submit', [\App\Http\Controllers\EvaluacionController::class, 'submitRespuestas'])->name('evaluaciones.submit');
 });
 
@@ -333,6 +334,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->name('tests-vocacionales.submit');
         Route::get('tests-vocacionales/{testVocacional}/resultados', [\App\Http\Controllers\TestVocacionalController::class, 'resultados'])
             ->name('tests-vocacionales.resultados');
+
+        // FASE 3: Perfil Vocacional Combinado
+        Route::post('perfil-vocacional/generar', [\App\Http\Controllers\TestVocacionalController::class, 'generarPerfilCombinado'])
+            ->name('perfil-vocacional.generar');
+        Route::get('perfil-vocacional/obtener', [\App\Http\Controllers\TestVocacionalController::class, 'obtenerPerfilCombinado'])
+            ->name('perfil-vocacional.obtener');
+        Route::get('perfil-vocacional', [\App\Http\Controllers\TestVocacionalController::class, 'mostrarPerfilCombinado'])
+            ->name('perfil-vocacional.mostrar');
     });
 
     // Profesores y directores pueden crear/editar tests

@@ -14,12 +14,16 @@ class Notificacion extends Model
 
     protected $fillable = [
         'titulo',
+        'contenido',
         'descripcion',
         'fecha',
         'usuario_id',
+        'destinatario_id',
         'leido',
+        'leida',
         'tipo',
         'datos',
+        'datos_adicionales',
         'prediccion_riesgo_id',
         'fecha_lectura',
     ];
@@ -28,8 +32,11 @@ class Notificacion extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'fecha_lectura' => 'datetime',
+        'fecha' => 'datetime',
         'leida' => 'boolean',
+        'leido' => 'boolean',
         'datos' => 'array',
+        'datos_adicionales' => 'array',
     ];
 
     /**

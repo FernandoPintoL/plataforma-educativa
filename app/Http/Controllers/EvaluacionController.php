@@ -247,12 +247,12 @@ class EvaluacionController extends Controller
      * Display the specified resource (ML-ENHANCED)
      * Enriquece con análisis de patrones, anomalías, correlaciones
      */
-    public function show(Evaluacion $evaluacione)
+    public function show(Evaluacion $evaluacion)
     {
         $user = auth()->user();
 
         // Cargar relaciones
-        $evaluacione->load([
+        $evaluacion->load([
             'contenido.curso',
             'contenido.creador',
             'preguntas' => function ($query) {
@@ -261,7 +261,7 @@ class EvaluacionController extends Controller
         ]);
 
         // Verificar que la evaluación tiene contenido asociado
-        if (!$evaluacione->contenido) {
+        if (!$evaluacion->contenido) {
             abort(404, 'La evaluación no tiene contenido asociado.');
         }
 
@@ -269,12 +269,12 @@ class EvaluacionController extends Controller
         if ($user->esEstudiante()) {
             // Estudiante solo puede ver evaluaciones de sus cursos
             $cursosIds = $user->cursosComoEstudiante()->pluck('cursos.id');
-            if (!$cursosIds->contains($evaluacione->contenido->curso_id)) {
+            if (!$cursosIds->contains($evaluacion->contenido->curso_id)) {
                 abort(403, 'No tienes acceso a esta evaluación.');
             }
 
             // Obtener el trabajo del estudiante si existe
-            $trabajo = $evaluacione->contenido->trabajos()
+            $trabajo = $evaluacion->contenido->trabajos()
                 ->where('estudiante_id', $user->id)
                 ->with('calificacion')
                 ->latest()
@@ -284,37 +284,37 @@ class EvaluacionController extends Controller
             $ml_insights = [];
             if ($trabajo && $trabajo->calificacion) {
                 try {
-                    $ml_insights = $this->enriquecerResultadosEstudiante($trabajo, $evaluacione, $user);
+                    $ml_insights = $this->enriquecerResultadosEstudiante($trabajo, $evaluacion, $user);
                 } catch (\Exception $e) {
                     Log::warning("Error enriqueciendo resultados: {$e->getMessage()}");
                 }
             }
 
             return Inertia::render('Evaluaciones/Show', [
-                'evaluacion' => $evaluacione,
+                'evaluacion' => $evaluacion,
                 'trabajo' => $trabajo,
                 'estadisticas' => null,
                 'ml_insights' => $ml_insights,
             ]);
         } elseif ($user->esProfesor()) {
             // Profesor solo puede ver sus propias evaluaciones
-            if ($evaluacione->contenido->creador_id !== $user->id) {
+            if ($evaluacion->contenido->creador_id !== $user->id) {
                 abort(403, 'No tienes acceso a esta evaluación.');
             }
 
             // ENRIQUECIMIENTO ML para profesor
             $ml_analysis = [];
             try {
-                $ml_analysis = $this->analizarEvaluacionML($evaluacione);
+                $ml_analysis = $this->analizarEvaluacionML($evaluacion);
             } catch (\Exception $e) {
                 Log::warning("Error analizando evaluación: {$e->getMessage()}");
             }
 
             // Obtener estadísticas de la evaluación
-            $estadisticas = $evaluacione->obtenerEstadisticas();
+            $estadisticas = $evaluacion->obtenerEstadisticas();
 
             return Inertia::render('Evaluaciones/Show', [
-                'evaluacion' => $evaluacione,
+                'evaluacion' => $evaluacion,
                 'trabajo' => null,
                 'estadisticas' => $estadisticas,
                 'ml_analysis' => $ml_analysis,
@@ -327,23 +327,23 @@ class EvaluacionController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Evaluacion $evaluacione)
+    public function edit(Evaluacion $evaluacion)
     {
         $user = auth()->user();
 
         // Verificar que sea el profesor creador
-        if (!$user->esProfesor() || $evaluacione->contenido->creador_id !== $user->id) {
+        if (!$user->esProfesor() || $evaluacion->contenido->creador_id !== $user->id) {
             abort(403, 'No tienes permiso para editar esta evaluación.');
         }
 
-        $evaluacione->load(['contenido.curso', 'preguntas' => function ($query) {
+        $evaluacion->load(['contenido.curso', 'preguntas' => function ($query) {
             $query->orderBy('orden');
         }]);
 
         $cursos = $user->cursosComoProfesor()->get();
 
         return Inertia::render('Evaluaciones/Edit', [
-            'evaluacion' => $evaluacione,
+            'evaluacion' => $evaluacion,
             'cursos' => $cursos,
         ]);
     }
@@ -351,33 +351,33 @@ class EvaluacionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateEvaluacionRequest $request, Evaluacion $evaluacione)
+    public function update(UpdateEvaluacionRequest $request, Evaluacion $evaluacion)
     {
         try {
             DB::beginTransaction();
 
             // Actualizar contenido
-            $evaluacione->contenido->update([
-                'titulo' => $request->titulo ?? $evaluacione->contenido->titulo,
-                'descripcion' => $request->descripcion ?? $evaluacione->contenido->descripcion,
-                'fecha_limite' => $request->fecha_limite ?? $evaluacione->contenido->fecha_limite,
-                'estado' => $request->estado ?? $evaluacione->contenido->estado,
+            $evaluacion->contenido->update([
+                'titulo' => $request->titulo ?? $evaluacion->contenido->titulo,
+                'descripcion' => $request->descripcion ?? $evaluacion->contenido->descripcion,
+                'fecha_limite' => $request->fecha_limite ?? $evaluacion->contenido->fecha_limite,
+                'estado' => $request->estado ?? $evaluacion->contenido->estado,
             ]);
 
             // Actualizar evaluación
-            $evaluacione->update([
-                'tipo_evaluacion' => $request->tipo_evaluacion ?? $evaluacione->tipo_evaluacion,
-                'puntuacion_total' => $request->puntuacion_total ?? $evaluacione->puntuacion_total,
-                'tiempo_limite' => $request->tiempo_limite ?? $evaluacione->tiempo_limite,
-                'calificacion_automatica' => $request->calificacion_automatica ?? $evaluacione->calificacion_automatica,
-                'mostrar_respuestas' => $request->mostrar_respuestas ?? $evaluacione->mostrar_respuestas,
-                'permite_reintento' => $request->permite_reintento ?? $evaluacione->permite_reintento,
-                'max_reintentos' => $request->max_reintentos ?? $evaluacione->max_reintentos,
+            $evaluacion->update([
+                'tipo_evaluacion' => $request->tipo_evaluacion ?? $evaluacion->tipo_evaluacion,
+                'puntuacion_total' => $request->puntuacion_total ?? $evaluacion->puntuacion_total,
+                'tiempo_limite' => $request->tiempo_limite ?? $evaluacion->tiempo_limite,
+                'calificacion_automatica' => $request->calificacion_automatica ?? $evaluacion->calificacion_automatica,
+                'mostrar_respuestas' => $request->mostrar_respuestas ?? $evaluacion->mostrar_respuestas,
+                'permite_reintento' => $request->permite_reintento ?? $evaluacion->permite_reintento,
+                'max_reintentos' => $request->max_reintentos ?? $evaluacion->max_reintentos,
             ]);
 
             // Si se está publicando por primera vez, notificar a estudiantes
-            if ($request->estado === 'publicado' && $evaluacione->contenido->estado !== 'publicado') {
-                $curso = Curso::find($evaluacione->contenido->curso_id);
+            if ($request->estado === 'publicado' && $evaluacion->contenido->estado !== 'publicado') {
+                $curso = Curso::find($evaluacion->contenido->curso_id);
                 $estudiantes = $curso->estudiantes;
 
                 foreach ($estudiantes as $estudiante) {
@@ -385,10 +385,10 @@ class EvaluacionController extends Controller
                         destinatario: $estudiante,
                         tipo: 'evaluacion',
                         titulo: 'Nueva evaluación disponible',
-                        contenido: "Se ha publicado una nueva evaluación: {$evaluacione->contenido->titulo}",
+                        contenido: "Se ha publicado una nueva evaluación: {$evaluacion->contenido->titulo}",
                         datos_adicionales: [
-                            'evaluacion_id' => $evaluacione->id,
-                            'curso_id' => $evaluacione->contenido->curso_id,
+                            'evaluacion_id' => $evaluacion->id,
+                            'curso_id' => $evaluacion->contenido->curso_id,
                         ]
                     );
                 }
@@ -397,7 +397,7 @@ class EvaluacionController extends Controller
             DB::commit();
 
             return redirect()
-                ->route('evaluaciones.show', $evaluacione->id)
+                ->route('evaluaciones.show', $evaluacion->id)
                 ->with('success', 'Evaluación actualizada exitosamente.');
 
         } catch (\Exception $e) {
@@ -412,12 +412,12 @@ class EvaluacionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Evaluacion $evaluacione)
+    public function destroy(Evaluacion $evaluacion)
     {
         $user = auth()->user();
 
         // Verificar que sea el profesor creador
-        if (!$user->esProfesor() || $evaluacione->contenido->creador_id !== $user->id) {
+        if (!$user->esProfesor() || $evaluacion->contenido->creador_id !== $user->id) {
             abort(403, 'No tienes permiso para eliminar esta evaluación.');
         }
 
@@ -425,17 +425,17 @@ class EvaluacionController extends Controller
             DB::beginTransaction();
 
             // Eliminar preguntas
-            $evaluacione->preguntas()->delete();
+            $evaluacion->preguntas()->delete();
 
             // Eliminar trabajos asociados
-            foreach ($evaluacione->contenido->trabajos as $trabajo) {
+            foreach ($evaluacion->contenido->trabajos as $trabajo) {
                 $trabajo->calificaciones()->delete();
                 $trabajo->delete();
             }
 
             // Eliminar evaluación y contenido
-            $contenidoId = $evaluacione->contenido_id;
-            $evaluacione->delete();
+            $contenidoId = $evaluacion->contenido_id;
+            $evaluacion->delete();
             Contenido::find($contenidoId)->delete();
 
             DB::commit();
@@ -455,7 +455,7 @@ class EvaluacionController extends Controller
     /**
      * Página para tomar la evaluación (estudiante)
      */
-    public function take(Evaluacion $evaluacione)
+    public function take(Evaluacion $evaluacion)
     {
         $user = auth()->user();
 
@@ -466,24 +466,24 @@ class EvaluacionController extends Controller
 
         // Verificar que el estudiante esté inscrito en el curso
         $cursosIds = $user->cursosComoEstudiante()->pluck('cursos.id');
-        if (!$cursosIds->contains($evaluacione->contenido->curso_id)) {
+        if (!$cursosIds->contains($evaluacion->contenido->curso_id)) {
             abort(403, 'No tienes acceso a esta evaluación.');
         }
 
         // Verificar que la evaluación esté publicada
-        if ($evaluacione->contenido->estado !== 'publicado') {
+        if ($evaluacion->contenido->estado !== 'publicado') {
             return back()->withErrors(['error' => 'Esta evaluación no está disponible.']);
         }
 
         // Verificar si ya tiene un trabajo en progreso o terminado
-        $trabajoExistente = $evaluacione->contenido->trabajos()
+        $trabajoExistente = $evaluacion->contenido->trabajos()
             ->where('estudiante_id', $user->id)
             ->latest()
             ->first();
 
         // Verificar reintentos
         if ($trabajoExistente && $trabajoExistente->estaCalificado()) {
-            if (!$evaluacione->puedeReintentar($user)) {
+            if (!$evaluacion->puedeReintentar($user)) {
                 return back()->withErrors([
                     'error' => 'Has agotado el número máximo de intentos para esta evaluación.'
                 ]);
@@ -491,7 +491,7 @@ class EvaluacionController extends Controller
         }
 
         // Cargar preguntas (sin respuestas correctas para el estudiante)
-        $evaluacione->load([
+        $evaluacion->load([
             'contenido.curso',
             'preguntas' => function ($query) {
                 $query->orderBy('orden')->select([
@@ -507,7 +507,7 @@ class EvaluacionController extends Controller
         ]);
 
         return Inertia::render('Evaluaciones/Take', [
-            'evaluacion' => $evaluacione,
+            'evaluacion' => $evaluacion,
             'trabajo_existente' => $trabajoExistente,
         ]);
     }
@@ -515,46 +515,94 @@ class EvaluacionController extends Controller
     /**
      * Guardar respuestas de la evaluación
      */
-    public function submitRespuestas(StoreRespuestaRequest $request, Evaluacion $evaluacione)
+    public function submitRespuestas(StoreRespuestaRequest $request, Evaluacion $evaluacion)
     {
         $user = $request->user();
 
         try {
             DB::beginTransaction();
 
+            // DEBUG: Registrar qué se está recibiendo
+            \Log::info('submitRespuestas recibió', [
+                'respuestas_raw' => $request->respuestas,
+                'respuestas_type' => gettype($request->respuestas),
+                'evaluacion_id' => $evaluacion->id,
+            ]);
+
+            // Procesar respuestas para enriquecerlas con información de corrección
+            $respuestasEnriquecidas = $this->enriquecerRespuestas($request->respuestas, $evaluacion);
+
+            // DEBUG: Registrar qué se enriqueció
+            \Log::info('submitRespuestas enriqueció', [
+                'respuestas_enriquecidas' => $respuestasEnriquecidas,
+                'count' => count($respuestasEnriquecidas),
+            ]);
+
             // Crear el trabajo del estudiante
             $trabajo = Trabajo::create([
-                'contenido_id' => $evaluacione->contenido_id,
+                'contenido_id' => $evaluacion->contenido_id,
                 'estudiante_id' => $user->id,
                 'estado' => 'entregado',
                 'fecha_inicio' => now()->subMinutes($request->tiempo_usado ?? 0),
                 'fecha_entrega' => now(),
-                'respuestas' => $request->respuestas,
+                'respuestas' => $respuestasEnriquecidas,
             ]);
 
             // Si tiene calificación automática, calificar inmediatamente
-            if ($evaluacione->calificacion_automatica) {
-                $evaluacione->calificarAutomaticamente($trabajo);
+            if ($evaluacion->calificacion_automatica) {
+                $evaluacion->calificarAutomaticamente($trabajo);
             }
 
-            // Notificar al profesor
-            \App\Models\Notificacion::crear(
-                destinatario: $evaluacione->contenido->creador,
-                tipo: 'evaluacion',
-                titulo: 'Evaluación completada',
-                contenido: "{$user->name} ha completado la evaluación: {$evaluacione->contenido->titulo}",
-                datos_adicionales: [
-                    'evaluacion_id' => $evaluacione->id,
+            // Notificar al profesor usando los campos reales de la tabla
+            \App\Models\Notificacion::create([
+                'titulo' => 'Evaluación completada',
+                'contenido' => "{$user->name} ha completado la evaluación: {$evaluacion->contenido->titulo}",
+                'fecha' => now(),
+                'destinatario_id' => $evaluacion->contenido->creador->id,
+                'tipo' => 'evaluacion',
+                'datos_adicionales' => [
+                    'evaluacion_id' => $evaluacion->id,
                     'trabajo_id' => $trabajo->id,
                     'estudiante_id' => $user->id,
-                ]
-            );
+                ],
+            ]);
 
             DB::commit();
 
+            // PASO ASINCRÓNICO: Generar recomendaciones personalizadas mediante el agente
+            // Se ejecuta DESPUÉS de guardar la evaluación para no bloquear la respuesta
+            try {
+                dispatch(function () use ($trabajo, $evaluacion) {
+                    $analysisService = new \App\Services\EvaluationAnalysisService();
+                    $recommendations = $analysisService->analyzeAndRecommend($trabajo, $evaluacion);
+
+                    // Notificar al estudiante sobre las recomendaciones disponibles
+                    if (!empty($recommendations)) {
+                        \App\Models\Notificacion::create([
+                            'titulo' => 'Recomendaciones de mejora disponibles',
+                            'contenido' => "El agente ha analizado tu evaluación y generado recomendaciones personalizadas para mejorar en {$evaluacion->contenido->titulo}",
+                            'fecha' => now(),
+                            'destinatario_id' => $trabajo->estudiante_id,
+                            'tipo' => 'recomendacion',
+                            'datos_adicionales' => [
+                                'evaluacion_id' => $evaluacion->id,
+                                'trabajo_id' => $trabajo->id,
+                                'recommendation_type' => 'evaluacion_feedback',
+                            ],
+                        ]);
+                    }
+                });
+            } catch (\Exception $e) {
+                // Log del error pero no bloquea la respuesta al estudiante
+                \Log::warning('Error generando recomendaciones asincrónicas', [
+                    'trabajo_id' => $trabajo->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+
             return redirect()
-                ->route('evaluaciones.results', $evaluacione->id)
-                ->with('success', 'Evaluación enviada exitosamente.');
+                ->route('evaluaciones.results', $evaluacion->id)
+                ->with('success', 'Evaluación enviada exitosamente. El agente está generando recomendaciones personalizadas para ti.');
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -568,7 +616,7 @@ class EvaluacionController extends Controller
     /**
      * Ver resultados de la evaluación (estudiante)
      */
-    public function results(Evaluacion $evaluacione)
+    public function results(Evaluacion $evaluacion)
     {
         $user = auth()->user();
 
@@ -578,12 +626,12 @@ class EvaluacionController extends Controller
         }
 
         // Cargar relaciones necesarias
-        $evaluacione->load([
+        $evaluacion->load([
             'contenido.curso',
-            'preguntas' => function ($query) use ($evaluacione) {
+            'preguntas' => function ($query) use ($evaluacion) {
                 $query->orderBy('orden');
                 // Solo mostrar respuestas correctas si está configurado
-                if (!$evaluacione->mostrar_respuestas) {
+                if (!$evaluacion->mostrar_respuestas) {
                     $query->select([
                         'id',
                         'evaluacion_id',
@@ -598,18 +646,18 @@ class EvaluacionController extends Controller
         ]);
 
         // Verificar que la evaluación tiene contenido
-        if (!$evaluacione->contenido) {
+        if (!$evaluacion->contenido) {
             abort(404, 'La evaluación no tiene contenido asociado.');
         }
 
         // Verificar que el estudiante está inscrito en el curso
         $cursosIds = $user->cursosComoEstudiante()->pluck('cursos.id');
-        if (!$cursosIds->contains($evaluacione->contenido->curso_id)) {
+        if (!$cursosIds->contains($evaluacion->contenido->curso_id)) {
             abort(403, 'No tienes acceso a esta evaluación.');
         }
 
         // Obtener el último trabajo del estudiante
-        $trabajo = $evaluacione->contenido->trabajos()
+        $trabajo = $evaluacion->contenido->trabajos()
             ->where('estudiante_id', $user->id)
             ->with('calificacion')
             ->latest()
@@ -619,10 +667,109 @@ class EvaluacionController extends Controller
             abort(404, 'No has completado esta evaluación aún.');
         }
 
+        // Asegurar que respuestas es un array - manejar todos los tipos de datos posibles
+        $respuestasArray = [];
+        if (!empty($trabajo->respuestas)) {
+            if (is_array($trabajo->respuestas)) {
+                // Si ya es un array, usarlo directamente
+                $respuestasArray = $trabajo->respuestas;
+            } elseif (is_object($trabajo->respuestas)) {
+                // Si es un objeto (stdClass), convertir a array
+                $respuestasArray = json_decode(json_encode($trabajo->respuestas), true) ?? [];
+            } elseif (is_string($trabajo->respuestas)) {
+                // Si es una cadena JSON, decodificar
+                $respuestasArray = json_decode($trabajo->respuestas, true) ?? [];
+            }
+        }
+
+        // Convertir formato antiguo al nuevo formato enriquecido si es necesario
+        $respuestasArray = $this->convertirFormatoAntiguoRespuestas($respuestasArray, $evaluacion);
+
+        // Obtener el puntaje de la calificación
+        // Prioridad: 1. De la BD (si existe), 2. Calcular desde respuestas enriquecidas
+        $calificacionValue = 0;
+
+        if ($trabajo->calificacion && isset($trabajo->calificacion->puntaje)) {
+            $calificacionValue = (float) $trabajo->calificacion->puntaje;
+        } else {
+            // Calcular desde respuestas enriquecidas
+            \Log::info('Calculando calificación desde respuestas', [
+                'respuestas_array' => $respuestasArray,
+                'trabajo_id' => $trabajo->id,
+            ]);
+
+            $calificacionValue = array_sum(array_map(function($r) {
+                return $r['puntos_obtenidos'] ?? 0;
+            }, $respuestasArray));
+
+            \Log::info('Calificación calculada', [
+                'calificacion' => $calificacionValue,
+                'trabajo_id' => $trabajo->id,
+            ]);
+        }
+
+        // Contar intentos del estudiante
+        $totalIntentos = $evaluacion->contenido->trabajos()
+            ->where('estudiante_id', $user->id)
+            ->count();
+
+        // Determinar si puede intentar de nuevo
+        $puedeReintentar = false;
+        if ($evaluacion->permite_reintento && $evaluacion->max_reintentos > 0) {
+            $puedeReintentar = $totalIntentos < $evaluacion->max_reintentos;
+        }
+
+        // Obtener recomendaciones SOLO si NO puede intentar de nuevo
+        // Las recomendaciones son para ayudar al estudiante cuando ya no puede mejorar más
+        $recommendations = null;
+        $tipoRecomendacion = null; // 'avanzado' o 'refuerzo'
+
+        if (!$puedeReintentar) {
+            // Determinar tipo de recomendación según desempeño
+            $porcentajeCalificacion = ($calificacionValue / $evaluacion->puntuacion_total) * 100;
+
+            if ($porcentajeCalificacion >= 90) {
+                $tipoRecomendacion = 'avanzado'; // Recursos avanzados
+            } else {
+                $tipoRecomendacion = 'refuerzo'; // Recursos para reforzar
+            }
+
+            try {
+                // Intentar generar análisis para mostrar recomendaciones
+                $analysisService = new \App\Services\EvaluationAnalysisService();
+                $analysisData = $analysisService->analyzeAndRecommend($trabajo, $evaluacion);
+
+                // Si se generaron recomendaciones, incluirlas
+                if (!empty($analysisData)) {
+                    $recommendations = $analysisData;
+                }
+            } catch (\Exception $e) {
+                // Si falla el análisis, continuar sin recomendaciones (se mostrarán en carga)
+                \Log::warning('Error obteniendo recomendaciones en results()', [
+                    'trabajo_id' => $trabajo->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+
+        $trabajoData = [
+            'id' => $trabajo->id,
+            'calificacion' => $calificacionValue,
+            'tiempo_usado' => $trabajo->tiempo_usado,
+            'estado' => $trabajo->estado,
+            'fecha_entrega' => $trabajo->fecha_entrega,
+            'respuestas' => $respuestasArray,
+        ];
+
         return Inertia::render('Evaluaciones/Results', [
-            'evaluacion' => $evaluacione,
-            'trabajo' => $trabajo,
-            'mostrar_respuestas' => $evaluacione->mostrar_respuestas,
+            'evaluacion' => $evaluacion,
+            'trabajo' => $trabajoData,
+            'mostrar_respuestas' => $evaluacion->mostrar_respuestas,
+            'recommendations' => $recommendations,
+            'tipo_recomendacion' => $tipoRecomendacion, // 'avanzado' o 'refuerzo'
+            'intento_actual' => $totalIntentos,
+            'max_intentos' => $evaluacion->max_reintentos,
+            'puede_reintentar' => $puedeReintentar,
         ]);
     }
 
@@ -981,5 +1128,240 @@ class EvaluacionController extends Controller
             Log::error("Error obteniendo recomendaciones: {$e->getMessage()}");
             return response()->json(['success' => false, 'message' => 'Error'], 500);
         }
+    }
+
+    /**
+     * Ver un intento específico de evaluación
+     */
+    public function verIntento(Evaluacion $evaluacion, Trabajo $trabajo)
+    {
+        $user = auth()->user();
+
+        // Solo estudiantes pueden ver sus propios intentos
+        if (!$user->esEstudiante()) {
+            abort(403);
+        }
+
+        // Verificar que el trabajo pertenece al estudiante autenticado
+        if ($trabajo->estudiante_id != $user->id) {
+            abort(403, 'No puedes ver este intento.');
+        }
+
+        // Cargar relaciones necesarias
+        $evaluacion->load([
+            'contenido.curso',
+            'preguntas' => function ($query) use ($evaluacion) {
+                $query->orderBy('orden');
+                if (!$evaluacion->mostrar_respuestas) {
+                    $query->select(['id', 'evaluacion_id', 'enunciado', 'tipo', 'opciones', 'puntos', 'orden']);
+                }
+            },
+        ]);
+
+        $trabajo->load('calificacion');
+
+        // Verificar que el trabajo pertenece a esta evaluación
+        if ($trabajo->contenido_id != $evaluacion->contenido_id) {
+            abort(404, 'Este intento no pertenece a esta evaluación.');
+        }
+
+        // Verificar que el estudiante está inscrito en el curso
+        $cursosIds = $user->cursosComoEstudiante()->pluck('cursos.id');
+        if (!$cursosIds->contains($evaluacion->contenido->curso_id)) {
+            abort(403, 'No tienes acceso a esta evaluación.');
+        }
+
+        // Asegurar que respuestas es un array - manejar todos los tipos de datos posibles
+        $respuestasArray = [];
+        if (!empty($trabajo->respuestas)) {
+            if (is_array($trabajo->respuestas)) {
+                // Si ya es un array, usarlo directamente
+                $respuestasArray = $trabajo->respuestas;
+            } elseif (is_object($trabajo->respuestas)) {
+                // Si es un objeto (stdClass), convertir a array
+                $respuestasArray = json_decode(json_encode($trabajo->respuestas), true) ?? [];
+            } elseif (is_string($trabajo->respuestas)) {
+                // Si es una cadena JSON, decodificar
+                $respuestasArray = json_decode($trabajo->respuestas, true) ?? [];
+            }
+        }
+
+        // Convertir formato antiguo al nuevo formato enriquecido si es necesario
+        $respuestasArray = $this->convertirFormatoAntiguoRespuestas($respuestasArray, $evaluacion);
+
+        // Extraer solo el puntaje de la calificación
+        $calificacionPuntaje = 0;
+        if ($trabajo->calificacion && isset($trabajo->calificacion->puntaje)) {
+            $calificacionPuntaje = (float) $trabajo->calificacion->puntaje;
+        }
+
+        // Contar intentos del estudiante y determinar cuál es este intento
+        $todosLosIntentos = $evaluacion->contenido->trabajos()
+            ->where('estudiante_id', $user->id)
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        $numeroIntento = $todosLosIntentos->search(function ($t) use ($trabajo) {
+            return $t->id === $trabajo->id;
+        }) + 1;
+
+        $totalIntentos = $todosLosIntentos->count();
+
+        $trabajoData = [
+            'id' => $trabajo->id,
+            'calificacion' => $calificacionPuntaje,
+            'tiempo_usado' => $trabajo->tiempo_usado,
+            'estado' => $trabajo->estado,
+            'fecha_entrega' => $trabajo->fecha_entrega,
+            'respuestas' => $respuestasArray,
+        ];
+
+        return Inertia::render('Evaluaciones/VerIntento', [
+            'evaluacion' => $evaluacion,
+            'trabajo' => $trabajoData,
+            'mostrar_respuestas' => $evaluacion->mostrar_respuestas,
+            'numero_intento' => $numeroIntento,
+            'total_intentos' => $totalIntentos,
+            'max_intentos' => $evaluacion->max_reintentos,
+        ]);
+    }
+
+    /**
+     * Enriquecer respuestas con información de corrección
+     *
+     * @param array $respuestas Array de respuestas del estudiante
+     * @param Evaluacion $evaluacion Evaluación asociada
+     * @return array Respuestas enriquecidas con es_correcta y puntos_obtenidos
+     */
+    private function enriquecerRespuestas(array $respuestas, Evaluacion $evaluacion): array
+    {
+        // Cargar preguntas de la evaluación
+        $preguntas = $evaluacion->preguntas()->get();
+
+        $respuestasEnriquecidas = [];
+
+        foreach ($respuestas as $key => $value) {
+            // Manejo flexible de formatos:
+            // 1. Si es un string: {16: '120'} → pregunta_id=16, respuesta='120'
+            // 2. Si es un objeto: {pregunta_id: 16, respuesta: '120'}
+
+            $preguntaId = null;
+            $respuestaTexto = null;
+
+            if (is_string($value)) {
+                // Formato 1: La key es pregunta_id, el valor es la respuesta
+                if (is_numeric($key)) {
+                    $preguntaId = (int)$key;
+                    $respuestaTexto = $value;
+                }
+            } else {
+                // Formato 2: Es un objeto/array con pregunta_id y respuesta
+                $respuestaData = is_array($value) ? $value : (array) $value;
+                $preguntaId = $respuestaData['pregunta_id'] ?? (is_numeric($key) ? (int)$key : null);
+                $respuestaTexto = $respuestaData['respuesta'] ?? null;
+            }
+
+            if (!$preguntaId) {
+                continue;
+            }
+
+            // Encontrar la pregunta
+            $pregunta = $preguntas->firstWhere('id', $preguntaId);
+
+            if (!$pregunta) {
+                continue;
+            }
+
+            // Verificar si la respuesta es correcta
+            $esCorrecta = false;
+            $puntosObtenidos = 0;
+
+            if ($respuestaTexto) {
+                $respuestaEstudiante = trim($respuestaTexto);
+                $respuestaCorrecta = trim($pregunta->respuesta_correcta ?? '');
+
+                // Comparación flexible (case-insensitive para texto)
+                $esCorrecta = strtolower($respuestaEstudiante) === strtolower($respuestaCorrecta);
+
+                if ($esCorrecta) {
+                    $puntosObtenidos = $pregunta->puntos ?? 0;
+                }
+            }
+
+            // Crear respuesta enriquecida
+            $respuestasEnriquecidas[] = [
+                'id' => null,
+                'pregunta_id' => $preguntaId,
+                'respuesta' => $respuestaTexto,
+                'es_correcta' => $esCorrecta,
+                'puntos_obtenidos' => $puntosObtenidos,
+            ];
+        }
+
+        return $respuestasEnriquecidas;
+    }
+
+    /**
+     * Convertir respuestas del formato antiguo al nuevo formato enriquecido
+     *
+     * Detecta si las respuestas están en formato antiguo (objeto con keys numéricas)
+     * y las convierte al nuevo formato (array de objetos con pregunta_id, respuesta, etc.)
+     *
+     * @param array $respuestas Respuestas que pueden estar en formato antiguo o nuevo
+     * @param Evaluacion $evaluacion Evaluación asociada
+     * @return array Respuestas en formato enriquecido
+     */
+    private function convertirFormatoAntiguoRespuestas(array $respuestas, Evaluacion $evaluacion): array
+    {
+        if (empty($respuestas)) {
+            return [];
+        }
+
+        // Detectar si está en formato antiguo (keys numéricas sin 'pregunta_id')
+        $primerElemento = reset($respuestas);
+        $esFormatoAntiguo = is_string($primerElemento) || is_numeric($primerElemento) ||
+                           (is_array($primerElemento) && !isset($primerElemento['pregunta_id']) && isset($primerElemento[0]) === false);
+
+        // Si ya está en formato nuevo, retornar tal cual
+        if (!$esFormatoAntiguo && is_array($primerElemento) && isset($primerElemento['pregunta_id'])) {
+            return $respuestas;
+        }
+
+        // Convertir formato antiguo al nuevo
+        $preguntas = $evaluacion->preguntas()->get();
+        $respuestasConvertidas = [];
+
+        // El formato antiguo es: {"16": "120", "17": "Verdadero", ...}
+        // Convertir a: [{"pregunta_id": 16, "respuesta": "120", ...}, ...]
+        foreach ($respuestas as $preguntaId => $respuestaTexto) {
+            $preguntaId = (int) $preguntaId;
+            $pregunta = $preguntas->firstWhere('id', $preguntaId);
+
+            // Verificar si la respuesta es correcta
+            $esCorrecta = false;
+            $puntosObtenidos = 0;
+
+            if ($pregunta && $respuestaTexto) {
+                $respuestaEstudiante = trim($respuestaTexto);
+                $respuestaCorrecta = trim($pregunta->respuesta_correcta ?? '');
+
+                $esCorrecta = strtolower($respuestaEstudiante) === strtolower($respuestaCorrecta);
+
+                if ($esCorrecta) {
+                    $puntosObtenidos = $pregunta->puntos ?? 0;
+                }
+            }
+
+            // Incluir la respuesta incluso si la pregunta no existe
+            // (puede haber sido eliminada o modificada después de que se guardó la respuesta)
+            $respuestasConvertidas[] = [
+                'pregunta_id' => $preguntaId,
+                'respuesta' => $respuestaTexto,
+                'es_correcta' => $esCorrecta,
+                'puntos_obtenidos' => $puntosObtenidos,
+            ];
+        }
+
+        return $respuestasConvertidas;
     }
 }

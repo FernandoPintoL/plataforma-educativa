@@ -1,0 +1,1 @@
+    Route::get('evaluaciones/{evaluacion}/intentos/{trabajo}', [\App\Http\Controllers\EvaluacionController::class, 'verIntento'])->name('evaluaciones.intentos.ver');

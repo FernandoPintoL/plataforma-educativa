@@ -11,7 +11,7 @@ class PreguntaTest extends Model
 {
     use HasFactory;
 
-    protected $table = 'pregunta_tests';
+    protected $table = 'preguntas_test';
 
     protected $fillable = [
         'categoria_test_id',
@@ -106,14 +106,13 @@ class PreguntaTest extends Model
      */
     public function getOpcionesFormateadas(): array
     {
-        if (! $this->opciones) {
-            return [];
-        }
-
         $opcionesFormateadas = [];
 
         switch ($this->tipo) {
             case 'opcion_multiple':
+                if (! $this->opciones) {
+                    return [];
+                }
                 foreach ($this->opciones as $index => $opcion) {
                     $opcionesFormateadas[] = [
                         'valor' => $opcion['valor'] ?? chr(65 + $index),

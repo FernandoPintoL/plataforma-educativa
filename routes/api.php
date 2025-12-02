@@ -23,6 +23,8 @@ use App\Http\Controllers\EvaluacionController;
 use App\Http\Controllers\Api\EvaluacionesApiController;
 use App\Http\Controllers\Api\ProfessorReviewController;
 use App\Http\Controllers\Api\TestVocacionalApiController;
+use App\Http\Controllers\Api\RiasecPsychometricAnalysisController;
+use App\Http\Controllers\Api\RiasecMLDataController;
 use App\Http\Controllers\TestVocacionalController;
 use App\Http\Controllers\TareaController;
 use App\Http\Controllers\Api\LoginController;
@@ -592,6 +594,16 @@ Route::middleware(['api', 'auth:sanctum'])->prefix('vocacional')->name('vocacion
         ->middleware('role:estudiante')
         ->name('recomendaciones-carrera');
 
+    // Obtener recomendaciones de carrera en formato para UI (nuevo endpoint)
+    Route::get('recomendaciones-carrera-formato', [TestVocacionalController::class, 'obtenerRecomendacionesCarreraFormato'])
+        ->middleware('auth:sanctum')
+        ->name('recomendaciones-carrera-formato');
+
+    // Obtener recomendaciones de carrera CON ANÁLISIS DEL AGENTE
+    Route::get('recomendaciones-carrera-con-agente', [TestVocacionalController::class, 'obtenerRecomendacionesCarreraConAgente'])
+        ->middleware('auth:sanctum')
+        ->name('recomendaciones-carrera-con-agente');
+
     // Análisis detallado de un estudiante (solo profesores/admin)
     Route::get('analisis/{studentId}', [TestVocacionalController::class, 'getAnalisisVocacional'])
         ->middleware('role:profesor|admin')
@@ -601,6 +613,104 @@ Route::middleware(['api', 'auth:sanctum'])->prefix('vocacional')->name('vocacion
     Route::get('reporte-institucional', [TestVocacionalController::class, 'getReporteInstitucional'])
         ->middleware('role:profesor|admin')
         ->name('reporte-institucional');
+
+    // Agente de síntesis inteligente
+    Route::get('generar-sintesis-agente', [TestVocacionalController::class, 'generarSintesisAgente'])
+        ->middleware('auth:sanctum')
+        ->name('generar-sintesis-agente');
+});
+
+/**
+ * Rutas para Análisis Psicométrico RIASEC
+ * Validación de confiabilidad y validez del test (Cronbach's Alpha, correlaciones, descriptivas)
+ * Acceso: profesor|admin (análisis de validación)
+ *
+ * NOTA: Requires psychometric report viewing permissions
+ */
+Route::middleware(['api', 'auth:sanctum'])->prefix('psychometric')->name('psychometric.')->group(function () {
+    // Obtener Cronbach's Alpha para todas las dimensiones de un test
+    Route::get('test/{testId}/cronbachs-alphas', [\App\Http\Controllers\Api\RiasecPsychometricAnalysisController::class, 'getCronbachsAlphas'])
+        ->middleware('role:profesor|admin')
+        ->name('cronbachs-alphas');
+
+    // Obtener Cronbach's Alpha para una dimensión específica
+    Route::get('category/{categoryId}/cronbachs-alpha', [\App\Http\Controllers\Api\RiasecPsychometricAnalysisController::class, 'getCronbachsAlpha'])
+        ->middleware('role:profesor|admin')
+        ->name('cronbachs-alpha');
+
+    // Obtener matriz de correlaciones para un test
+    Route::get('test/{testId}/correlation-matrix', [\App\Http\Controllers\Api\RiasecPsychometricAnalysisController::class, 'getCorrelationMatrix'])
+        ->middleware('role:profesor|admin')
+        ->name('correlation-matrix');
+
+    // Obtener correlación entre dos dimensiones específicas
+    Route::get('correlation/{cat1Id}/{cat2Id}', [\App\Http\Controllers\Api\RiasecPsychometricAnalysisController::class, 'getCorrelation'])
+        ->middleware('role:profesor|admin')
+        ->name('correlation');
+
+    // Obtener estadísticas descriptivas de una dimensión
+    Route::get('category/{categoryId}/descriptives', [\App\Http\Controllers\Api\RiasecPsychometricAnalysisController::class, 'getDimensionDescriptives'])
+        ->middleware('role:profesor|admin')
+        ->name('descriptives');
+
+    // Obtener reporte psicométrico completo para un test
+    Route::get('test/{testId}/full-report', [\App\Http\Controllers\Api\RiasecPsychometricAnalysisController::class, 'getFullReport'])
+        ->middleware('role:profesor|admin')
+        ->name('full-report');
+});
+
+/**
+ * Rutas para Preparación de Datos ML RIASEC
+ * Extrae datos para modelos ML supervisados (predicción) y no supervisados (clustering)
+ * Acceso: profesor|admin
+ *
+ * NOTA: Provides datasets for machine learning pipelines
+ */
+Route::middleware(['api', 'auth:sanctum'])->prefix('ml-data')->name('ml-data.')->group(function () {
+    // Obtener scores RIASEC para todos los estudiantes
+    Route::get('test/{testId}/riasec-scores', [RiasecMLDataController::class, 'getRiasecScores'])
+        ->middleware('role:profesor|admin')
+        ->name('riasec-scores');
+
+    // Obtener dataset supervisado (predicción de carrera)
+    Route::get('test/{testId}/supervised-dataset', [RiasecMLDataController::class, 'getSupervisedDataset'])
+        ->middleware('role:profesor|admin')
+        ->name('supervised-dataset');
+
+    // Obtener dataset no supervisado (clustering)
+    Route::get('test/{testId}/unsupervised-dataset', [RiasecMLDataController::class, 'getUnsupervisedDataset'])
+        ->middleware('role:profesor|admin')
+        ->name('unsupervised-dataset');
+
+    // Exportar dataset supervisado como CSV
+    Route::get('test/{testId}/export/supervised', [RiasecMLDataController::class, 'exportSupervisedCsv'])
+        ->middleware('role:profesor|admin')
+        ->name('export-supervised');
+
+    // Exportar dataset no supervisado como CSV
+    Route::get('test/{testId}/export/unsupervised', [RiasecMLDataController::class, 'exportUnsupervisedCsv'])
+        ->middleware('role:profesor|admin')
+        ->name('export-unsupervised');
+
+    // Obtener estadísticas del dataset supervisado
+    Route::get('test/{testId}/supervised-dataset/statistics', [RiasecMLDataController::class, 'getSupervisedStatistics'])
+        ->middleware('role:profesor|admin')
+        ->name('supervised-statistics');
+
+    // Obtener importancia de features
+    Route::get('test/{testId}/feature-importance', [RiasecMLDataController::class, 'getFeatureImportance'])
+        ->middleware('role:profesor|admin')
+        ->name('feature-importance');
+
+    // Crear train/test split
+    Route::post('test/{testId}/train-test-split', [RiasecMLDataController::class, 'createTrainTestSplit'])
+        ->middleware('role:profesor|admin')
+        ->name('train-test-split');
+
+    // Obtener resumen completo de datos ML
+    Route::get('test/{testId}/summary', [RiasecMLDataController::class, 'getMlDataSummary'])
+        ->middleware('role:profesor|admin')
+        ->name('summary');
 });
 
 /**
@@ -773,6 +883,14 @@ Route::middleware(['api'])->group(function () {
      */
     Route::get('tests-vocacionales', [TestVocacionalApiController::class, 'index'])
         ->name('api.tests-vocacionales.index');
+
+    /**
+     * GET /api/vocacional/generar-sintesis-agente
+     * Generar síntesis inteligente del perfil vocacional usando el agente IA
+     */
+    Route::get('vocacional/generar-sintesis-agente', [TestVocacionalController::class, 'generarSintesisAgente'])
+        ->middleware('auth:sanctum')
+        ->name('api.vocacional.generar-sintesis-agente');
 });
 
 // ==================== RUTAS DE AUTENTICACIÓN (SIN CSRF) ====================

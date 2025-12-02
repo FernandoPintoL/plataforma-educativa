@@ -123,7 +123,7 @@ class Evaluacion extends Contenido
      */
     public function puedeReintentar(User $estudiante): bool
     {
-        if (! $this->permite_reintentos()) {
+        if (! $this->permiteReintentos()) {
             return false;
         }
 
@@ -161,7 +161,7 @@ class Evaluacion extends Contenido
         $trabajos          = $this->contenido->trabajos()->get();
         $total_estudiantes = $this->contenido->curso->estudiantes()->count();
 
-        $calificaciones = $trabajos->whereHas('calificacion')->pluck('calificacion.puntaje');
+        $calificaciones = $trabajos->filter(fn($trabajo) => $trabajo->calificacion !== null)->pluck('calificacion.puntaje');
 
         return [
             'total_estudiantes'     => $total_estudiantes,

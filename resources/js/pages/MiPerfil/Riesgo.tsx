@@ -234,7 +234,7 @@ export default function RiesgoPage() {
         <AppLayout>
             <Head title="Mi Monitoreo de Desempeño" />
 
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-4xl mx-auto p-6">
                 {/* Breadcrumb */}
                 <Link href="/dashboard" className="flex items-center gap-2 text-blue-600 hover:underline mb-6">
                     <ArrowLeft className="w-4 h-4" />

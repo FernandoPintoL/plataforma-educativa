@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\TestVocacionalController::index
- * @see app/Http/Controllers/TestVocacionalController.php:53
+ * @see app/Http/Controllers/TestVocacionalController.php:54
  * @route '/tests-vocacionales'
  */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\TestVocacionalController::index
- * @see app/Http/Controllers/TestVocacionalController.php:53
+ * @see app/Http/Controllers/TestVocacionalController.php:54
  * @route '/tests-vocacionales'
  */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\TestVocacionalController::index
- * @see app/Http/Controllers/TestVocacionalController.php:53
+ * @see app/Http/Controllers/TestVocacionalController.php:54
  * @route '/tests-vocacionales'
  */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\TestVocacionalController::index
- * @see app/Http/Controllers/TestVocacionalController.php:53
+ * @see app/Http/Controllers/TestVocacionalController.php:54
  * @route '/tests-vocacionales'
  */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\TestVocacionalController::index
- * @see app/Http/Controllers/TestVocacionalController.php:53
+ * @see app/Http/Controllers/TestVocacionalController.php:54
  * @route '/tests-vocacionales'
  */
     const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\TestVocacionalController::index
- * @see app/Http/Controllers/TestVocacionalController.php:53
+ * @see app/Http/Controllers/TestVocacionalController.php:54
  * @route '/tests-vocacionales'
  */
         indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\TestVocacionalController::index
- * @see app/Http/Controllers/TestVocacionalController.php:53
+ * @see app/Http/Controllers/TestVocacionalController.php:54
  * @route '/tests-vocacionales'
  */
         indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,7 +79,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\TestVocacionalController::show
- * @see app/Http/Controllers/TestVocacionalController.php:106
+ * @see app/Http/Controllers/TestVocacionalController.php:107
  * @route '/tests-vocacionales/{testVocacional}'
  */
 export const show = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\TestVocacionalController::show
- * @see app/Http/Controllers/TestVocacionalController.php:106
+ * @see app/Http/Controllers/TestVocacionalController.php:107
  * @route '/tests-vocacionales/{testVocacional}'
  */
 show.url = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -127,7 +127,7 @@ show.url = (args: { testVocacional: number | { id: number } } | [testVocacional:
 
 /**
 * @see \App\Http\Controllers\TestVocacionalController::show
- * @see app/Http/Controllers/TestVocacionalController.php:106
+ * @see app/Http/Controllers/TestVocacionalController.php:107
  * @route '/tests-vocacionales/{testVocacional}'
  */
 show.get = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -136,7 +136,7 @@ show.get = (args: { testVocacional: number | { id: number } } | [testVocacional:
 })
 /**
 * @see \App\Http\Controllers\TestVocacionalController::show
- * @see app/Http/Controllers/TestVocacionalController.php:106
+ * @see app/Http/Controllers/TestVocacionalController.php:107
  * @route '/tests-vocacionales/{testVocacional}'
  */
 show.head = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -146,7 +146,7 @@ show.head = (args: { testVocacional: number | { id: number } } | [testVocacional
 
     /**
 * @see \App\Http\Controllers\TestVocacionalController::show
- * @see app/Http/Controllers/TestVocacionalController.php:106
+ * @see app/Http/Controllers/TestVocacionalController.php:107
  * @route '/tests-vocacionales/{testVocacional}'
  */
     const showForm = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -156,7 +156,7 @@ show.head = (args: { testVocacional: number | { id: number } } | [testVocacional
 
             /**
 * @see \App\Http\Controllers\TestVocacionalController::show
- * @see app/Http/Controllers/TestVocacionalController.php:106
+ * @see app/Http/Controllers/TestVocacionalController.php:107
  * @route '/tests-vocacionales/{testVocacional}'
  */
         showForm.get = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -165,7 +165,7 @@ show.head = (args: { testVocacional: number | { id: number } } | [testVocacional
         })
             /**
 * @see \App\Http\Controllers\TestVocacionalController::show
- * @see app/Http/Controllers/TestVocacionalController.php:106
+ * @see app/Http/Controllers/TestVocacionalController.php:107
  * @route '/tests-vocacionales/{testVocacional}'
  */
         showForm.head = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -181,7 +181,7 @@ show.head = (args: { testVocacional: number | { id: number } } | [testVocacional
     show.form = showForm
 /**
 * @see \App\Http\Controllers\TestVocacionalController::take
- * @see app/Http/Controllers/TestVocacionalController.php:118
+ * @see app/Http/Controllers/TestVocacionalController.php:121
  * @route '/tests-vocacionales/{testVocacional}/tomar'
  */
 export const take = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -196,7 +196,7 @@ take.definition = {
 
 /**
 * @see \App\Http\Controllers\TestVocacionalController::take
- * @see app/Http/Controllers/TestVocacionalController.php:118
+ * @see app/Http/Controllers/TestVocacionalController.php:121
  * @route '/tests-vocacionales/{testVocacional}/tomar'
  */
 take.url = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -229,7 +229,7 @@ take.url = (args: { testVocacional: number | { id: number } } | [testVocacional:
 
 /**
 * @see \App\Http\Controllers\TestVocacionalController::take
- * @see app/Http/Controllers/TestVocacionalController.php:118
+ * @see app/Http/Controllers/TestVocacionalController.php:121
  * @route '/tests-vocacionales/{testVocacional}/tomar'
  */
 take.get = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -238,7 +238,7 @@ take.get = (args: { testVocacional: number | { id: number } } | [testVocacional:
 })
 /**
 * @see \App\Http\Controllers\TestVocacionalController::take
- * @see app/Http/Controllers/TestVocacionalController.php:118
+ * @see app/Http/Controllers/TestVocacionalController.php:121
  * @route '/tests-vocacionales/{testVocacional}/tomar'
  */
 take.head = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -248,7 +248,7 @@ take.head = (args: { testVocacional: number | { id: number } } | [testVocacional
 
     /**
 * @see \App\Http\Controllers\TestVocacionalController::take
- * @see app/Http/Controllers/TestVocacionalController.php:118
+ * @see app/Http/Controllers/TestVocacionalController.php:121
  * @route '/tests-vocacionales/{testVocacional}/tomar'
  */
     const takeForm = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -258,7 +258,7 @@ take.head = (args: { testVocacional: number | { id: number } } | [testVocacional
 
             /**
 * @see \App\Http\Controllers\TestVocacionalController::take
- * @see app/Http/Controllers/TestVocacionalController.php:118
+ * @see app/Http/Controllers/TestVocacionalController.php:121
  * @route '/tests-vocacionales/{testVocacional}/tomar'
  */
         takeForm.get = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -267,7 +267,7 @@ take.head = (args: { testVocacional: number | { id: number } } | [testVocacional
         })
             /**
 * @see \App\Http\Controllers\TestVocacionalController::take
- * @see app/Http/Controllers/TestVocacionalController.php:118
+ * @see app/Http/Controllers/TestVocacionalController.php:121
  * @route '/tests-vocacionales/{testVocacional}/tomar'
  */
         takeForm.head = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -283,7 +283,7 @@ take.head = (args: { testVocacional: number | { id: number } } | [testVocacional
     take.form = takeForm
 /**
 * @see \App\Http\Controllers\TestVocacionalController::submit
- * @see app/Http/Controllers/TestVocacionalController.php:133
+ * @see app/Http/Controllers/TestVocacionalController.php:180
  * @route '/tests-vocacionales/{testVocacional}/enviar'
  */
 export const submit = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -298,7 +298,7 @@ submit.definition = {
 
 /**
 * @see \App\Http\Controllers\TestVocacionalController::submit
- * @see app/Http/Controllers/TestVocacionalController.php:133
+ * @see app/Http/Controllers/TestVocacionalController.php:180
  * @route '/tests-vocacionales/{testVocacional}/enviar'
  */
 submit.url = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -331,7 +331,7 @@ submit.url = (args: { testVocacional: number | { id: number } } | [testVocaciona
 
 /**
 * @see \App\Http\Controllers\TestVocacionalController::submit
- * @see app/Http/Controllers/TestVocacionalController.php:133
+ * @see app/Http/Controllers/TestVocacionalController.php:180
  * @route '/tests-vocacionales/{testVocacional}/enviar'
  */
 submit.post = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -341,7 +341,7 @@ submit.post = (args: { testVocacional: number | { id: number } } | [testVocacion
 
     /**
 * @see \App\Http\Controllers\TestVocacionalController::submit
- * @see app/Http/Controllers/TestVocacionalController.php:133
+ * @see app/Http/Controllers/TestVocacionalController.php:180
  * @route '/tests-vocacionales/{testVocacional}/enviar'
  */
     const submitForm = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -351,7 +351,7 @@ submit.post = (args: { testVocacional: number | { id: number } } | [testVocacion
 
             /**
 * @see \App\Http\Controllers\TestVocacionalController::submit
- * @see app/Http/Controllers/TestVocacionalController.php:133
+ * @see app/Http/Controllers/TestVocacionalController.php:180
  * @route '/tests-vocacionales/{testVocacional}/enviar'
  */
         submitForm.post = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -362,7 +362,7 @@ submit.post = (args: { testVocacional: number | { id: number } } | [testVocacion
     submit.form = submitForm
 /**
 * @see \App\Http\Controllers\TestVocacionalController::resultados
- * @see app/Http/Controllers/TestVocacionalController.php:172
+ * @see app/Http/Controllers/TestVocacionalController.php:291
  * @route '/tests-vocacionales/{testVocacional}/resultados'
  */
 export const resultados = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -377,7 +377,7 @@ resultados.definition = {
 
 /**
 * @see \App\Http\Controllers\TestVocacionalController::resultados
- * @see app/Http/Controllers/TestVocacionalController.php:172
+ * @see app/Http/Controllers/TestVocacionalController.php:291
  * @route '/tests-vocacionales/{testVocacional}/resultados'
  */
 resultados.url = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -410,7 +410,7 @@ resultados.url = (args: { testVocacional: number | { id: number } } | [testVocac
 
 /**
 * @see \App\Http\Controllers\TestVocacionalController::resultados
- * @see app/Http/Controllers/TestVocacionalController.php:172
+ * @see app/Http/Controllers/TestVocacionalController.php:291
  * @route '/tests-vocacionales/{testVocacional}/resultados'
  */
 resultados.get = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -419,7 +419,7 @@ resultados.get = (args: { testVocacional: number | { id: number } } | [testVocac
 })
 /**
 * @see \App\Http\Controllers\TestVocacionalController::resultados
- * @see app/Http/Controllers/TestVocacionalController.php:172
+ * @see app/Http/Controllers/TestVocacionalController.php:291
  * @route '/tests-vocacionales/{testVocacional}/resultados'
  */
 resultados.head = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -429,7 +429,7 @@ resultados.head = (args: { testVocacional: number | { id: number } } | [testVoca
 
     /**
 * @see \App\Http\Controllers\TestVocacionalController::resultados
- * @see app/Http/Controllers/TestVocacionalController.php:172
+ * @see app/Http/Controllers/TestVocacionalController.php:291
  * @route '/tests-vocacionales/{testVocacional}/resultados'
  */
     const resultadosForm = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -439,7 +439,7 @@ resultados.head = (args: { testVocacional: number | { id: number } } | [testVoca
 
             /**
 * @see \App\Http\Controllers\TestVocacionalController::resultados
- * @see app/Http/Controllers/TestVocacionalController.php:172
+ * @see app/Http/Controllers/TestVocacionalController.php:291
  * @route '/tests-vocacionales/{testVocacional}/resultados'
  */
         resultadosForm.get = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -448,7 +448,7 @@ resultados.head = (args: { testVocacional: number | { id: number } } | [testVoca
         })
             /**
 * @see \App\Http\Controllers\TestVocacionalController::resultados
- * @see app/Http/Controllers/TestVocacionalController.php:172
+ * @see app/Http/Controllers/TestVocacionalController.php:291
  * @route '/tests-vocacionales/{testVocacional}/resultados'
  */
         resultadosForm.head = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -464,7 +464,7 @@ resultados.head = (args: { testVocacional: number | { id: number } } | [testVoca
     resultados.form = resultadosForm
 /**
 * @see \App\Http\Controllers\TestVocacionalController::create
- * @see app/Http/Controllers/TestVocacionalController.php:68
+ * @see app/Http/Controllers/TestVocacionalController.php:69
  * @route '/tests-vocacionales/crear'
  */
 export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -479,7 +479,7 @@ create.definition = {
 
 /**
 * @see \App\Http\Controllers\TestVocacionalController::create
- * @see app/Http/Controllers/TestVocacionalController.php:68
+ * @see app/Http/Controllers/TestVocacionalController.php:69
  * @route '/tests-vocacionales/crear'
  */
 create.url = (options?: RouteQueryOptions) => {
@@ -488,7 +488,7 @@ create.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\TestVocacionalController::create
- * @see app/Http/Controllers/TestVocacionalController.php:68
+ * @see app/Http/Controllers/TestVocacionalController.php:69
  * @route '/tests-vocacionales/crear'
  */
 create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -497,7 +497,7 @@ create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\TestVocacionalController::create
- * @see app/Http/Controllers/TestVocacionalController.php:68
+ * @see app/Http/Controllers/TestVocacionalController.php:69
  * @route '/tests-vocacionales/crear'
  */
 create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -507,7 +507,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\TestVocacionalController::create
- * @see app/Http/Controllers/TestVocacionalController.php:68
+ * @see app/Http/Controllers/TestVocacionalController.php:69
  * @route '/tests-vocacionales/crear'
  */
     const createForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -517,7 +517,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\TestVocacionalController::create
- * @see app/Http/Controllers/TestVocacionalController.php:68
+ * @see app/Http/Controllers/TestVocacionalController.php:69
  * @route '/tests-vocacionales/crear'
  */
         createForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -526,7 +526,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\TestVocacionalController::create
- * @see app/Http/Controllers/TestVocacionalController.php:68
+ * @see app/Http/Controllers/TestVocacionalController.php:69
  * @route '/tests-vocacionales/crear'
  */
         createForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -542,7 +542,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     create.form = createForm
 /**
 * @see \App\Http\Controllers\TestVocacionalController::store
- * @see app/Http/Controllers/TestVocacionalController.php:76
+ * @see app/Http/Controllers/TestVocacionalController.php:77
  * @route '/tests-vocacionales'
  */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -557,7 +557,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\TestVocacionalController::store
- * @see app/Http/Controllers/TestVocacionalController.php:76
+ * @see app/Http/Controllers/TestVocacionalController.php:77
  * @route '/tests-vocacionales'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -566,7 +566,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\TestVocacionalController::store
- * @see app/Http/Controllers/TestVocacionalController.php:76
+ * @see app/Http/Controllers/TestVocacionalController.php:77
  * @route '/tests-vocacionales'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -576,7 +576,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\TestVocacionalController::store
- * @see app/Http/Controllers/TestVocacionalController.php:76
+ * @see app/Http/Controllers/TestVocacionalController.php:77
  * @route '/tests-vocacionales'
  */
     const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -586,7 +586,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\TestVocacionalController::store
- * @see app/Http/Controllers/TestVocacionalController.php:76
+ * @see app/Http/Controllers/TestVocacionalController.php:77
  * @route '/tests-vocacionales'
  */
         storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -597,7 +597,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\TestVocacionalController::edit
- * @see app/Http/Controllers/TestVocacionalController.php:192
+ * @see app/Http/Controllers/TestVocacionalController.php:311
  * @route '/tests-vocacionales/{testVocacional}/editar'
  */
 export const edit = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -612,7 +612,7 @@ edit.definition = {
 
 /**
 * @see \App\Http\Controllers\TestVocacionalController::edit
- * @see app/Http/Controllers/TestVocacionalController.php:192
+ * @see app/Http/Controllers/TestVocacionalController.php:311
  * @route '/tests-vocacionales/{testVocacional}/editar'
  */
 edit.url = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -645,7 +645,7 @@ edit.url = (args: { testVocacional: number | { id: number } } | [testVocacional:
 
 /**
 * @see \App\Http\Controllers\TestVocacionalController::edit
- * @see app/Http/Controllers/TestVocacionalController.php:192
+ * @see app/Http/Controllers/TestVocacionalController.php:311
  * @route '/tests-vocacionales/{testVocacional}/editar'
  */
 edit.get = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -654,7 +654,7 @@ edit.get = (args: { testVocacional: number | { id: number } } | [testVocacional:
 })
 /**
 * @see \App\Http\Controllers\TestVocacionalController::edit
- * @see app/Http/Controllers/TestVocacionalController.php:192
+ * @see app/Http/Controllers/TestVocacionalController.php:311
  * @route '/tests-vocacionales/{testVocacional}/editar'
  */
 edit.head = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -664,7 +664,7 @@ edit.head = (args: { testVocacional: number | { id: number } } | [testVocacional
 
     /**
 * @see \App\Http\Controllers\TestVocacionalController::edit
- * @see app/Http/Controllers/TestVocacionalController.php:192
+ * @see app/Http/Controllers/TestVocacionalController.php:311
  * @route '/tests-vocacionales/{testVocacional}/editar'
  */
     const editForm = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -674,7 +674,7 @@ edit.head = (args: { testVocacional: number | { id: number } } | [testVocacional
 
             /**
 * @see \App\Http\Controllers\TestVocacionalController::edit
- * @see app/Http/Controllers/TestVocacionalController.php:192
+ * @see app/Http/Controllers/TestVocacionalController.php:311
  * @route '/tests-vocacionales/{testVocacional}/editar'
  */
         editForm.get = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -683,7 +683,7 @@ edit.head = (args: { testVocacional: number | { id: number } } | [testVocacional
         })
             /**
 * @see \App\Http\Controllers\TestVocacionalController::edit
- * @see app/Http/Controllers/TestVocacionalController.php:192
+ * @see app/Http/Controllers/TestVocacionalController.php:311
  * @route '/tests-vocacionales/{testVocacional}/editar'
  */
         editForm.head = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -699,7 +699,7 @@ edit.head = (args: { testVocacional: number | { id: number } } | [testVocacional
     edit.form = editForm
 /**
 * @see \App\Http\Controllers\TestVocacionalController::update
- * @see app/Http/Controllers/TestVocacionalController.php:204
+ * @see app/Http/Controllers/TestVocacionalController.php:323
  * @route '/tests-vocacionales/{testVocacional}'
  */
 export const update = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -714,7 +714,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\TestVocacionalController::update
- * @see app/Http/Controllers/TestVocacionalController.php:204
+ * @see app/Http/Controllers/TestVocacionalController.php:323
  * @route '/tests-vocacionales/{testVocacional}'
  */
 update.url = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -747,7 +747,7 @@ update.url = (args: { testVocacional: number | { id: number } } | [testVocaciona
 
 /**
 * @see \App\Http\Controllers\TestVocacionalController::update
- * @see app/Http/Controllers/TestVocacionalController.php:204
+ * @see app/Http/Controllers/TestVocacionalController.php:323
  * @route '/tests-vocacionales/{testVocacional}'
  */
 update.put = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -757,7 +757,7 @@ update.put = (args: { testVocacional: number | { id: number } } | [testVocaciona
 
     /**
 * @see \App\Http\Controllers\TestVocacionalController::update
- * @see app/Http/Controllers/TestVocacionalController.php:204
+ * @see app/Http/Controllers/TestVocacionalController.php:323
  * @route '/tests-vocacionales/{testVocacional}'
  */
     const updateForm = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -772,7 +772,7 @@ update.put = (args: { testVocacional: number | { id: number } } | [testVocaciona
 
             /**
 * @see \App\Http\Controllers\TestVocacionalController::update
- * @see app/Http/Controllers/TestVocacionalController.php:204
+ * @see app/Http/Controllers/TestVocacionalController.php:323
  * @route '/tests-vocacionales/{testVocacional}'
  */
         updateForm.put = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -788,7 +788,7 @@ update.put = (args: { testVocacional: number | { id: number } } | [testVocaciona
     update.form = updateForm
 /**
 * @see \App\Http\Controllers\TestVocacionalController::destroy
- * @see app/Http/Controllers/TestVocacionalController.php:234
+ * @see app/Http/Controllers/TestVocacionalController.php:353
  * @route '/tests-vocacionales/{testVocacional}'
  */
 export const destroy = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -803,7 +803,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\TestVocacionalController::destroy
- * @see app/Http/Controllers/TestVocacionalController.php:234
+ * @see app/Http/Controllers/TestVocacionalController.php:353
  * @route '/tests-vocacionales/{testVocacional}'
  */
 destroy.url = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -836,7 +836,7 @@ destroy.url = (args: { testVocacional: number | { id: number } } | [testVocacion
 
 /**
 * @see \App\Http\Controllers\TestVocacionalController::destroy
- * @see app/Http/Controllers/TestVocacionalController.php:234
+ * @see app/Http/Controllers/TestVocacionalController.php:353
  * @route '/tests-vocacionales/{testVocacional}'
  */
 destroy.delete = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -846,7 +846,7 @@ destroy.delete = (args: { testVocacional: number | { id: number } } | [testVocac
 
     /**
 * @see \App\Http\Controllers\TestVocacionalController::destroy
- * @see app/Http/Controllers/TestVocacionalController.php:234
+ * @see app/Http/Controllers/TestVocacionalController.php:353
  * @route '/tests-vocacionales/{testVocacional}'
  */
     const destroyForm = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -861,7 +861,7 @@ destroy.delete = (args: { testVocacional: number | { id: number } } | [testVocac
 
             /**
 * @see \App\Http\Controllers\TestVocacionalController::destroy
- * @see app/Http/Controllers/TestVocacionalController.php:234
+ * @see app/Http/Controllers/TestVocacionalController.php:353
  * @route '/tests-vocacionales/{testVocacional}'
  */
         destroyForm.delete = (args: { testVocacional: number | { id: number } } | [testVocacional: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

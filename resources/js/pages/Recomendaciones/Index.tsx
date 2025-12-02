@@ -91,7 +91,7 @@ export default function RecommendationsIndex() {
         <AppLayout>
             <Head title="Mis Recomendaciones Educativas" />
 
-            <div className="space-y-6">
+            <div className="space-y-6 p-6">
                 {/* Encabezado */}
                 <div className="flex justify-between items-start">
                     <div>

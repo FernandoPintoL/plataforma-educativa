@@ -40,7 +40,7 @@ class VocationalTestIntelligenceService
     {
         Log::info("VocationalTestIntelligenceService: Procesando respuestas del test");
 
-        $respuestas = json_decode($resultado->respuestas ?? '{}', true);
+        $respuestas = $resultado->getRespuestasArray();
         $features = [];
 
         // =====================================================================

@@ -72,11 +72,26 @@ export default function Take({ evaluacion, trabajo_existente }: Props) {
     tiempo_usado: 0,
   });
 
+  // Monitorear cambios en el estado de procesamiento
+  useEffect(() => {
+    if (processing) {
+      console.log('🔄 ENVIANDO FORMULARIO AL SERVIDOR...');
+    }
+  }, [processing]);
+
   const [tiempoRestante, setTiempoRestante] = useState(
     evaluacion.tiempo_limite ? evaluacion.tiempo_limite * 60 : null
   );
   const [iniciado, setIniciado] = useState(false);
   const [mostrarAdvertencia, setMostrarAdvertencia] = useState(false);
+
+  // Monitorear errores de validación
+  useEffect(() => {
+    if (errors && Object.keys(errors).length > 0) {
+      console.error('❌ ERRORES DE VALIDACIÓN RECIBIDOS DEL SERVIDOR:');
+      console.error(errors);
+    }
+  }, [errors]);
 
   // Temporizador
   useEffect(() => {
@@ -125,10 +140,39 @@ export default function Take({ evaluacion, trabajo_existente }: Props) {
       ? evaluacion.tiempo_limite - (tiempoRestante ? Math.floor(tiempoRestante / 60) : 0)
       : 0;
 
-    post(`/evaluaciones/${evaluacion.id}/submit`, {
-      data: {
-        ...data,
-        tiempo_usado: tiempoUsado,
+    // Convertir respuestas de objeto a array
+    const respuestasArray = Object.entries(data.respuestas).map(([pregunta_id, respuesta]) => ({
+      pregunta_id: parseInt(pregunta_id),
+      respuesta: respuesta,
+    }));
+
+    const submitData = {
+      evaluacion_id: evaluacion.id,
+      respuestas: respuestasArray,
+      tiempo_usado: tiempoUsado,
+    };
+
+    // DEBUG: Mostrar en consola qué se está enviando
+    console.log('📤 ENVIANDO EVALUACIÓN');
+    console.log('Evaluación ID:', evaluacion.id);
+    console.log('Respuestas (objeto original):', data.respuestas);
+    console.log('Respuestas (array convertido):', Object.values(data.respuestas));
+    console.log('Tiempo usado:', tiempoUsado, 'minutos');
+    console.log('Datos completos a enviar:', submitData);
+    console.log('URL destino:', `/evaluaciones/${evaluacion.id}/submit`);
+
+    post(`/evaluaciones/${evaluacion.id}/submit`, submitData, {
+      onSuccess: (page) => {
+        console.log('✅ RESPUESTA EXITOSA DEL SERVIDOR');
+        console.log('Página recibida:', page);
+        console.log('URL actual:', window.location.href);
+      },
+      onError: (errors) => {
+        console.error('❌ ERROR EN LA RESPUESTA DEL SERVIDOR');
+        console.error('Errores recibidos:', errors);
+      },
+      onFinish: () => {
+        console.log('⏹️ SOLICITUD FINALIZADA');
       },
     });
   };

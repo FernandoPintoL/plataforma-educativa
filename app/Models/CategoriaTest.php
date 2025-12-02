@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,7 +10,7 @@ class CategoriaTest extends Model
 {
     use HasFactory;
 
-    protected $table = 'categoria_tests';
+    protected $table = 'categorias_test';
 
     protected $fillable = [
         'test_vocacional_id',
@@ -41,7 +40,7 @@ class CategoriaTest extends Model
      */
     public function calcularPuntaje(array $respuestas): float
     {
-        $puntajeTotal = 0;
+        $puntajeTotal         = 0;
         $preguntasRespondidas = 0;
 
         foreach ($respuestas as $respuesta) {
@@ -64,15 +63,15 @@ class CategoriaTest extends Model
      */
     public function obtenerEstadisticas(): array
     {
-        $totalPreguntas = $this->preguntas()->count();
+        $totalPreguntas  = $this->preguntas()->count();
         $totalRespuestas = $this->preguntas()
             ->withCount('respuestas')
             ->get()
             ->sum('respuestas_count');
 
         return [
-            'total_preguntas' => $totalPreguntas,
-            'total_respuestas' => $totalRespuestas,
+            'total_preguntas'                  => $totalPreguntas,
+            'total_respuestas'                 => $totalRespuestas,
             'promedio_respuestas_por_pregunta' => $totalPreguntas > 0 ? $totalRespuestas / $totalPreguntas : 0,
         ];
     }
@@ -99,13 +98,13 @@ class CategoriaTest extends Model
     public function obtenerInformacion(): array
     {
         return [
-            'id' => $this->id,
-            'nombre' => $this->nombre,
-            'descripcion' => $this->descripcion,
-            'orden' => $this->orden,
+            'id'              => $this->id,
+            'nombre'          => $this->nombre,
+            'descripcion'     => $this->descripcion,
+            'orden'           => $this->orden,
             'total_preguntas' => $this->preguntas()->count(),
             'tiene_preguntas' => $this->tienePreguntas(),
-            'estadisticas' => $this->obtenerEstadisticas(),
+            'estadisticas'    => $this->obtenerEstadisticas(),
         ];
     }
 }

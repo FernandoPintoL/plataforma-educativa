@@ -87,10 +87,10 @@ class RespuestaTestController extends Controller
                 ],
                 'fecha_completacion' => $resultado->fecha_completacion?->format('Y-m-d H:i:s'),
                 'estado' => $resultado->fecha_completacion ? 'completado' : 'pendiente',
-                'preguntas_respondidas' => count(json_decode($resultado->respuestas ?? '{}', true)),
+                'preguntas_respondidas' => count($resultado->getRespuestasArray()),
                 'total_preguntas' => $resultado->test->getTotalPreguntas(),
                 'tasa_completacion' => $resultado->fecha_completacion
-                    ? round((count(json_decode($resultado->respuestas ?? '{}', true)) / $resultado->test->getTotalPreguntas()) * 100)
+                    ? round((count($resultado->getRespuestasArray()) / $resultado->test->getTotalPreguntas()) * 100)
                     : 0,
                 'perfil_vocacional' => $resultado->perfilVocacional ? [
                     'carrera_predicha_ml' => $resultado->perfilVocacional->carrera_predicha_ml,
@@ -130,7 +130,7 @@ class RespuestaTestController extends Controller
         $resultado->load(['estudiante', 'perfilVocacional', 'test.categorias.preguntas']);
 
         // Transform respuestas into detailed view
-        $respuestasArray = json_decode($resultado->respuestas ?? '{}', true);
+        $respuestasArray = $resultado->getRespuestasArray();
         $respuestasDetalladas = [];
 
         foreach ($test->categorias as $categoria) {

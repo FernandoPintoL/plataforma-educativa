@@ -37,6 +37,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | GROQ API - Agente de síntesis vocacional
+    |--------------------------------------------------------------------------
+    |
+    | Configuración para la API de GROQ (Claude a través de GROQ)
+    | Usado para generar síntesis inteligentes de perfiles vocacionales
+    |
+    */
+    'groq' => [
+        'api_key' => env('GROQ_API_KEY'),
+        'model' => env('GROQ_MODEL', 'mixtral-8x7b-32768'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | SIN (Servicio de Impuestos Nacionales) - Bolivia
     |--------------------------------------------------------------------------
     |

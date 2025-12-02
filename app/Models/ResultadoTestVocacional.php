@@ -17,17 +17,40 @@ class ResultadoTestVocacional extends Model
         'estudiante_id',
         'test_vocacional_id',
         'fecha',
+        'fecha_completacion',
         'puntajes_por_categoria',
+        'respuestas',
+        'puntuacion_total',
+        'perfil_vocacional',
+        'recomendaciones',
     ];
 
     protected $casts = [
         'fecha' => 'datetime',
+        'fecha_completacion' => 'datetime',
         'puntajes_por_categoria' => 'array',
+        'respuestas' => 'array',
     ];
 
     /**
      * Relación con el estudiante
      */
+    /**
+     * Obtener respuestas como array, sin importar si están almacenadas como JSON o array
+     */
+    public function getRespuestasArray(): array
+    {
+        if (is_array($this->respuestas)) {
+            return $this->respuestas;
+        }
+
+        if (is_string($this->respuestas)) {
+            return json_decode($this->respuestas, true) ?? [];
+        }
+
+        return [];
+    }
+
     public function estudiante(): BelongsTo
     {
         return $this->belongsTo(User::class, 'estudiante_id');

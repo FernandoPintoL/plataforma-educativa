@@ -4,6 +4,7 @@ import AppLayout from '@/layouts/app-layout';
 import { useAuth } from '../../contexts/AuthContext';
 import { type BreadcrumbItem } from '@/types';
 import { TestVocacional, PerfilVocacional, RecomendacionCarrera } from '../../types';
+import AgentSynthesis from '../../components/VocationalProfile/AgentSynthesis';
 import {
   MapIcon,
   PlayIcon,
@@ -62,20 +63,46 @@ const VocacionalIndex: React.FC = () => {
           setPerfilVocacional(null);
         }
 
-        // Fetch career recommendations
+        // Fetch career recommendations with AI analysis
         try {
           const recomendacionesResponse = await axios.get(
-            '/api/vocacional/recomendaciones-carrera'
+            '/api/vocacional/recomendaciones-carrera-con-agente'
           );
           if (recomendacionesResponse.data.success) {
-            setRecomendaciones(recomendacionesResponse.data.recomendaciones || []);
+            // Combinar top 5 con análisis del agente + resto sin análisis
+            const todasRecomendaciones = [
+              ...(recomendacionesResponse.data.recomendaciones || []),
+              ...(recomendacionesResponse.data.todas_las_carreras || [])
+            ];
+            setRecomendaciones(todasRecomendaciones);
           } else {
-            // Recommendations don't exist yet - student needs to complete a test
-            setRecomendaciones([]);
+            // Fallback: usar endpoint sin agente si hay error
+            try {
+              const fallbackResponse = await axios.get(
+                '/api/vocacional/recomendaciones-carrera-formato'
+              );
+              if (fallbackResponse.data.success) {
+                setRecomendaciones(fallbackResponse.data.recomendaciones || []);
+              } else {
+                setRecomendaciones([]);
+              }
+            } catch {
+              setRecomendaciones([]);
+            }
           }
         } catch (err: any) {
           console.error('Error fetching recommendations:', err);
-          setRecomendaciones([]);
+          // Fallback: usar endpoint sin agente
+          try {
+            const fallbackResponse = await axios.get(
+              '/api/vocacional/recomendaciones-carrera-formato'
+            );
+            if (fallbackResponse.data.success) {
+              setRecomendaciones(fallbackResponse.data.recomendaciones || []);
+            }
+          } catch {
+            setRecomendaciones([]);
+          }
         }
       } catch (err: any) {
         console.error('Error fetching vocational data:', err);
@@ -256,52 +283,57 @@ const VocacionalIndex: React.FC = () => {
                     </button>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {/* Intereses */}
-                    {perfilVocacional.intereses && Object.keys(perfilVocacional.intereses).length > 0 && (
-                      <div className="bg-gray-50 rounded-lg p-6">
-                        <h4 className="text-lg font-semibold text-gray-900 mb-4">Intereses</h4>
-                        <div className="space-y-3">
-                          {Object.entries(perfilVocacional.intereses).map(([area, puntaje]) => (
-                            <div key={area}>
-                              <div className="flex justify-between text-sm mb-1">
-                                <span className="text-gray-700">{area}</span>
-                                <span className="text-gray-500">{typeof puntaje === 'number' ? `${puntaje}%` : puntaje}</span>
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      {/* Intereses */}
+                      {perfilVocacional.intereses && Object.keys(perfilVocacional.intereses).length > 0 && (
+                        <div className="bg-gray-50 rounded-lg p-6">
+                          <h4 className="text-lg font-semibold text-gray-900 mb-4">Intereses</h4>
+                          <div className="space-y-3">
+                            {Object.entries(perfilVocacional.intereses).map(([area, puntaje]) => (
+                              <div key={area}>
+                                <div className="flex justify-between text-sm mb-1">
+                                  <span className="text-gray-700">{area}</span>
+                                  <span className="text-gray-500">{typeof puntaje === 'number' ? `${puntaje}%` : puntaje}</span>
+                                </div>
+                                <div className="w-full bg-gray-200 rounded-full h-2">
+                                  <div
+                                    className="bg-blue-600 h-2 rounded-full"
+                                    style={{ width: `${typeof puntaje === 'number' ? puntaje : 0}%` }}
+                                  />
+                                </div>
                               </div>
-                              <div className="w-full bg-gray-200 rounded-full h-2">
-                                <div
-                                  className="bg-blue-600 h-2 rounded-full"
-                                  style={{ width: `${typeof puntaje === 'number' ? puntaje : 0}%` }}
-                                />
-                              </div>
-                            </div>
-                          ))}
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
 
-                    {/* Habilidades */}
-                    {perfilVocacional.habilidades && Object.keys(perfilVocacional.habilidades).length > 0 && (
-                      <div className="bg-gray-50 rounded-lg p-6">
-                        <h4 className="text-lg font-semibold text-gray-900 mb-4">Habilidades</h4>
-                        <div className="space-y-3">
-                          {Object.entries(perfilVocacional.habilidades).map(([habilidad, puntaje]) => (
-                            <div key={habilidad}>
-                              <div className="flex justify-between text-sm mb-1">
-                                <span className="text-gray-700">{habilidad}</span>
-                                <span className="text-gray-500">{typeof puntaje === 'number' ? `${puntaje}%` : puntaje}</span>
+                      {/* Habilidades */}
+                      {perfilVocacional.habilidades && Object.keys(perfilVocacional.habilidades).length > 0 && (
+                        <div className="bg-gray-50 rounded-lg p-6">
+                          <h4 className="text-lg font-semibold text-gray-900 mb-4">Habilidades</h4>
+                          <div className="space-y-3">
+                            {Object.entries(perfilVocacional.habilidades).map(([habilidad, puntaje]) => (
+                              <div key={habilidad}>
+                                <div className="flex justify-between text-sm mb-1">
+                                  <span className="text-gray-700">{habilidad}</span>
+                                  <span className="text-gray-500">{typeof puntaje === 'number' ? `${puntaje}%` : puntaje}</span>
+                                </div>
+                                <div className="w-full bg-gray-200 rounded-full h-2">
+                                  <div
+                                    className="bg-green-600 h-2 rounded-full"
+                                    style={{ width: `${typeof puntaje === 'number' ? puntaje : 0}%` }}
+                                  />
+                                </div>
                               </div>
-                              <div className="w-full bg-gray-200 rounded-full h-2">
-                                <div
-                                  className="bg-green-600 h-2 rounded-full"
-                                  style={{ width: `${typeof puntaje === 'number' ? puntaje : 0}%` }}
-                                />
-                              </div>
-                            </div>
-                          ))}
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
+                    </div>
+
+                    {/* Agent Synthesis - Análisis Inteligente */}
+                    <AgentSynthesis triggerLoad={true} />
                   </div>
                 )}
               </div>
@@ -310,76 +342,138 @@ const VocacionalIndex: React.FC = () => {
             {/* Recomendaciones Tab */}
             {activeTab === 'recomendaciones' && (
               <div className="space-y-6">
-                <div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-4">Carreras Recomendadas</h3>
-                  <p className="text-gray-600 mb-6">
-                    Basado en tu perfil vocacional, estas son las carreras que mejor se adaptan a ti.
+                {/* Header mejorado */}
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950 rounded-xl p-6 border border-blue-200 dark:border-blue-800">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
+                      <AcademicCapIcon className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Carreras Recomendadas</h3>
+                  </div>
+                  <p className="text-gray-700 dark:text-gray-300 ml-11 leading-relaxed">
+                    Basado en tu perfil vocacional, IA ha analizado tus intereses y aptitudes para encontrar las carreras que mejor se adaptan a ti.
                   </p>
                 </div>
 
                 {recomendaciones.length === 0 ? (
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-8 text-center">
-                    <ChartBarIcon className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-                    <h4 className="text-lg font-medium text-gray-900 mb-2">Sin Recomendaciones Aún</h4>
-                    <p className="text-gray-600">
-                      Completa un test vocacional para recibir recomendaciones de carreras basadas en tus intereses y aptitudes.
+                  <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950 border-2 border-dashed border-blue-300 dark:border-blue-700 rounded-xl p-12 text-center">
+                    <div className="flex justify-center mb-4">
+                      <div className="p-4 bg-blue-100 dark:bg-blue-900 rounded-full">
+                        <ChartBarIcon className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+                      </div>
+                    </div>
+                    <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Sin Recomendaciones Aún</h4>
+                    <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto">
+                      Completa un test vocacional para recibir recomendaciones personalizadas de carreras basadas en tus intereses y aptitudes.
                     </p>
                   </div>
                 ) : (
                   <div className="space-y-4">
                     {recomendaciones.map((recomendacion, index) => (
-                      <div key={recomendacion.id || index} className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <div className="flex items-center mb-2">
-                              <AcademicCapIcon className="h-5 w-5 text-blue-600 mr-2" />
-                              <h4 className="text-lg font-semibold text-gray-900">
-                                {recomendacion.carrera?.nombre || 'Carrera'}
-                              </h4>
+                      <div
+                        key={recomendacion.id || index}
+                        className={`rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 ${
+                          index < 5
+                            ? 'border-2 border-blue-300 dark:border-blue-700 bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-blue-950 dark:via-gray-900 dark:to-indigo-950 shadow-md'
+                            : 'border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900'
+                        }`}
+                      >
+                        <div className="p-6">
+                          {/* Top row: Insignia + Nombre + Compatibilidad */}
+                          <div className="flex items-start justify-between mb-4">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-3 mb-2">
+                                {index < 5 && (
+                                  <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-blue-400 to-indigo-500 text-white shadow-md">
+                                    ✨ Top {index + 1}
+                                  </span>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <AcademicCapIcon className="h-6 w-6 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+                                <h4 className="text-xl font-bold text-gray-900 dark:text-white">
+                                  {recomendacion.carrera?.nombre || 'Carrera'}
+                                </h4>
+                              </div>
                             </div>
-                            {recomendacion.carrera?.descripcion && (
-                              <p className="text-gray-600 mb-4">
-                                {recomendacion.carrera.descripcion}
+
+                            {/* Círculo de compatibilidad mejorado */}
+                            <div className="ml-4 flex-shrink-0 flex flex-col items-center">
+                              <div className={`relative flex items-center justify-center w-20 h-20 rounded-full font-bold text-2xl shadow-lg ${
+                                recomendacion.compatibilidad >= 0.8
+                                  ? 'bg-gradient-to-br from-green-400 to-emerald-600 text-white'
+                                  : recomendacion.compatibilidad >= 0.6
+                                  ? 'bg-gradient-to-br from-blue-400 to-indigo-600 text-white'
+                                  : 'bg-gradient-to-br from-amber-400 to-orange-600 text-white'
+                              }`}>
+                                {Math.round(recomendacion.compatibilidad * 100)}
+                                <span className="absolute text-xs font-normal">%</span>
+                              </div>
+                              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mt-2 text-center">compatibilidad</p>
+                            </div>
+                          </div>
+
+                          {/* Justificación inteligente - Destacada y mejorada */}
+                          {recomendacion.justificacion && !recomendacion.justificacion.includes('Analizando') && (
+                            <div className={`mb-4 rounded-lg overflow-hidden border-l-4 p-4 ${
+                              index < 5
+                                ? 'border-l-blue-500 bg-white dark:bg-gray-800 shadow-sm'
+                                : 'border-l-gray-300 bg-gray-50 dark:bg-gray-800'
+                            }`}>
+                              <p className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wide mb-2 flex items-center gap-1">
+                                💡 Por qué esta carrera
                               </p>
-                            )}
+                              <p className="text-sm leading-relaxed text-gray-800 dark:text-gray-200 font-medium">
+                                {recomendacion.justificacion}
+                              </p>
+                            </div>
+                          )}
+
+                          {/* Descripción de la carrera */}
+                          {recomendacion.carrera?.descripcion && (
+                            <p className="text-gray-700 dark:text-gray-300 mb-4 text-sm leading-relaxed">
+                              {recomendacion.carrera.descripcion}
+                            </p>
+                          )}
+
+                          {/* Información de duración y nivel */}
+                          <div className="grid grid-cols-2 gap-4 mb-4">
                             {recomendacion.carrera?.duracion_anos && (
-                              <div className="flex items-center text-sm text-gray-500 mb-2">
-                                <span className="font-medium">Duración:</span>
-                                <span className="ml-1">{recomendacion.carrera.duracion_anos} años</span>
+                              <div className="flex items-center gap-2 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                <span className="text-lg">⏱️</span>
+                                <div>
+                                  <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Duración</p>
+                                  <p className="text-sm font-bold text-gray-900 dark:text-white">{recomendacion.carrera.duracion_anos} años</p>
+                                </div>
                               </div>
                             )}
                             {recomendacion.carrera?.nivel_educativo && (
-                              <div className="flex items-center text-sm text-gray-500 mb-4">
-                                <span className="font-medium">Nivel:</span>
-                                <span className="ml-1 capitalize">{recomendacion.carrera.nivel_educativo}</span>
+                              <div className="flex items-center gap-2 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                <span className="text-lg">📚</span>
+                                <div>
+                                  <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Nivel</p>
+                                  <p className="text-sm font-bold text-gray-900 dark:text-white capitalize">{recomendacion.carrera.nivel_educativo}</p>
+                                </div>
                               </div>
                             )}
-                            {recomendacion.justificacion && (
-                              <p className="text-sm text-gray-700 mb-4">
-                                <strong>Justificación:</strong> {recomendacion.justificacion}
-                              </p>
-                            )}
-                            {recomendacion.carrera?.areas_conocimiento && (
+                          </div>
+
+                          {/* Áreas de conocimiento - Mejoradas */}
+                          {recomendacion.carrera?.areas_conocimiento && recomendacion.carrera.areas_conocimiento.length > 0 && (
+                            <div>
+                              <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2">Áreas de estudio</p>
                               <div className="flex flex-wrap gap-2">
-                                {recomendacion.carrera.areas_conocimiento.map((area, index) => (
+                                {recomendacion.carrera.areas_conocimiento.map((area, idx) => (
                                   <span
-                                    key={index}
-                                    className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                                    key={idx}
+                                    className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors cursor-default"
                                   >
-                                    {area}
+                                    📍 {area}
                                   </span>
                                 ))}
                               </div>
-                            )}
-                          </div>
-                          <div className="ml-4 text-right">
-                            <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getCompatibilityColor(recomendacion.compatibilidad)}`}>
-                              {getCompatibilityText(recomendacion.compatibilidad)}
                             </div>
-                            <div className="text-2xl font-bold text-gray-900 mt-2">
-                              {Math.round(recomendacion.compatibilidad * 100)}%
-                            </div>
-                          </div>
+                          )}
                         </div>
                       </div>
                     ))}

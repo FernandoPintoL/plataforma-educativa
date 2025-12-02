@@ -53,6 +53,21 @@ class DatabaseSeeder extends Seeder
         $this->call(DatosAcademicosSeeder::class);
         $this->call(TestsVocacionalesSeeder::class);
 
+        // ==================== PASO 4.1: TEST VOCACIONAL RIASEC VALIDADO ====================
+        echo "[4.1/6] Creando Test RIASEC validado con datos de validación...\n";
+        if (class_exists(TestRiasecSeeder::class)) {
+            $this->call(TestRiasecSeeder::class);
+        }
+        if (class_exists(RiasecValidationDataSeeder::class)) {
+            $this->call(RiasecValidationDataSeeder::class);
+        }
+
+        // ==================== PASO 4.2: MAPEANDO CARRERAS CON PERFILES RIASEC ====================
+        echo "[4.2/6] Mapeando carreras con perfiles RIASEC para ML...\n";
+        if (class_exists(CarrerasRiasecProfileSeeder::class)) {
+            $this->call(CarrerasRiasecProfileSeeder::class);
+        }
+
         // ==================== PASO 5: ESTRUCTURA EDUCATIVA ====================
         echo "[5/6] Creando estructura educativa (cursos, tareas, evaluaciones)...\n";
         if (class_exists(CursosSeeder::class)) {
@@ -95,6 +110,18 @@ class DatabaseSeeder extends Seeder
             $this->call(PrediccionesSeeder::class);
         }
 
+        // ==================== PASO 6.5: DATOS DE EJEMPLO PARA EXPOSICIÓN ====================
+        echo "[6.5/6] Creando datos de ejemplo para exposición (Estudiante + Padre + Profesor)...\n";
+        if (class_exists(DatosEjemploExposicionSeeder::class)) {
+            $this->call(DatosEjemploExposicionSeeder::class);
+        }
+
+        // ==================== PASO 6.6: EVALUACIONES CON ANÁLISIS IA ====================
+        echo "[6.6/6] Creando evaluaciones de ejemplo con análisis IA...\n";
+        if (class_exists(EvaluacionesEjemploSeeder::class)) {
+            $this->call(EvaluacionesEjemploSeeder::class);
+        }
+
         echo "\n=== SEEDING COMPLETADO EXITOSAMENTE ===\n";
         echo "Base de datos lista con:\n";
         echo "  • 1 Admin\n";
@@ -102,6 +129,8 @@ class DatabaseSeeder extends Seeder
         echo "  • 100 Profesores\n";
         echo "  • 100 Padres\n";
         echo "  • 100 Estudiantes con datos académicos coherentes\n";
-        echo "  • Datos vinculados para análisis de ML\n\n";
+        echo "  • 1 Estudiante + 1 Padre + 1 Profesor ejemplo (para exposición)\n";
+        echo "  • Datos vinculados para análisis de ML\n";
+        echo "  • Datos vocacionales completos (tests, perfiles, síntesis)\n\n";
     }
 }

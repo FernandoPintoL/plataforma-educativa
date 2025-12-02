@@ -11,6 +11,8 @@ import DiscoveryOrchestrationController from './DiscoveryOrchestrationController
 import AgentController from './AgentController'
 import ContentAnalysisController from './ContentAnalysisController'
 import MiPerfilController from './MiPerfilController'
+import RiasecPsychometricAnalysisController from './RiasecPsychometricAnalysisController'
+import RiasecMLDataController from './RiasecMLDataController'
 import EvaluacionesApiController from './EvaluacionesApiController'
 import ProfessorReviewController from './ProfessorReviewController'
 import TestVocacionalApiController from './TestVocacionalApiController'
@@ -29,6 +31,8 @@ DiscoveryOrchestrationController,
 AgentController,
 ContentAnalysisController,
 MiPerfilController,
+RiasecPsychometricAnalysisController,
+RiasecMLDataController,
 EvaluacionesApiController,
 ProfessorReviewController,
 TestVocacionalApiController,

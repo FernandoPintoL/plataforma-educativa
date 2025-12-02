@@ -14,6 +14,7 @@ use App\Services\PredictionValidator;
 use App\Services\AgentSynthesisService;
 use App\Services\VocationalFeatureExtractorService;
 use App\Services\VocationalTestIntelligenceService;
+use App\Services\AgentProfileSynthesisService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
@@ -114,53 +115,171 @@ class TestVocacionalController extends Controller
 
     /**
      * Show the form for taking the test (para estudiantes)
+     *
+     * MEJORA: Carga respuestas previas si el test ya fue respondido
      */
     public function take(TestVocacional $testVocacional)
     {
         $preguntas = $testVocacional->categorias()
             ->with('preguntas')
-            ->get();
+            ->get()
+            ->map(function($categoria) {
+                return [
+                    'id' => $categoria->id,
+                    'nombre' => $categoria->nombre,
+                    'descripcion' => $categoria->descripcion,
+                    'preguntas' => $categoria->preguntas->map(function($pregunta) {
+                        return [
+                            'id' => $pregunta->id,
+                            'enunciado' => $pregunta->enunciado,
+                            'tipo' => $pregunta->tipo,
+                            'opciones' => $pregunta->getOpcionesFormateadas(),
+                            'orden' => $pregunta->orden,
+                        ];
+                    })->sortBy('orden')->values(),
+                ];
+            })->sortBy('id')->values();
+
+        // NUEVO: Obtener respuestas previas si existen
+        $estudiante = auth()->user();
+        $respuestasGuardadas = [];
+
+        if ($estudiante) {
+            $resultadoPrevio = ResultadoTestVocacional::where('test_vocacional_id', $testVocacional->id)
+                ->where('estudiante_id', $estudiante->id)
+                ->latest()
+                ->first();
+
+            if ($resultadoPrevio && $resultadoPrevio->respuestas) {
+                // Usar el método helper que maneja ambos casos (array o JSON string)
+                $respuestasGuardadas = $resultadoPrevio->getRespuestasArray();
+            }
+        }
+
+        // DEBUG: Loguear datos para debuggeo
+        Log::info('Test Vocacional Take - Debug', [
+            'test_id' => $testVocacional->id,
+            'test_name' => $testVocacional->nombre,
+            'categorias_count' => $preguntas->count(),
+            'respuestas_guardadas_count' => count($respuestasGuardadas),
+        ]);
 
         return Inertia::render('Tests/Vocacionales/Take', [
             'test' => $testVocacional,
             'preguntas' => $preguntas,
+            'respuestasGuardadas' => $respuestasGuardadas,
         ]);
     }
 
     /**
      * Submit test responses (ML-ENHANCED)
+     *
+     * MEJORA: Ahora acepta respuestas en formato {preguntaId: respuestaValor}
+     * donde respuestaValor puede ser 'verdadero'/'falso', '1-5', etc.
      */
     public function submitRespuestas(Request $request, TestVocacional $testVocacional)
     {
+        // DEBUG INICIAL: Loguear request recibido
+        Log::info("=== SUBMITRESPUESTAS - INICIO ===", [
+            'test_vocacional_id' => $testVocacional->id,
+            'test_nombre' => $testVocacional->nombre,
+            'request_data' => $request->all(),
+        ]);
+
         $validated = $request->validate([
             'respuestas' => 'required|array',
-            'respuestas.*' => 'integer|exists:preguntas_tests,id',
+            'respuestas.*' => 'required|string',  // Cambio: Aceptar strings (valores de respuestas)
+        ]);
+
+        Log::info("Request validado", [
+            'respuestas_count' => count($validated['respuestas']),
+            'respuestas_keys' => array_keys($validated['respuestas']),
         ]);
 
         try {
             DB::beginTransaction();
 
             $estudiante = auth()->user();
+            Log::info("Estudiante autenticado", [
+                'user_id' => $estudiante->id,
+                'user_email' => $estudiante->email,
+            ]);
+
+            // Validar que todas las preguntas del test fueron respondidas
+            $preguntasCount = $testVocacional->categorias()
+                ->with('preguntas')
+                ->get()
+                ->sum(fn($cat) => $cat->preguntas->count());
+
+            Log::info("Total preguntas calculado", [
+                'expected_count' => $preguntasCount,
+                'received_count' => count($validated['respuestas']),
+                'match' => count($validated['respuestas']) == $preguntasCount,
+            ]);
+
+            if (count($validated['respuestas']) != $preguntasCount) {
+                Log::warning("Validación fallida: respuestas incompletas", [
+                    'test_id' => $testVocacional->id,
+                    'estudiante_id' => $estudiante->id,
+                    'expected' => $preguntasCount,
+                    'received' => count($validated['respuestas']),
+                ]);
+                return back()->withErrors([
+                    'error' => "Debes responder todas las {$preguntasCount} preguntas. Respondiste " . count($validated['respuestas'])
+                ]);
+            }
 
             // Crear resultado del test
-            $resultado = ResultadoTestVocacional::create([
+            // NOTA: La conversión a JSON es manejada automáticamente por el cast 'array' en el modelo
+            $resultadoData = [
                 'test_vocacional_id' => $testVocacional->id,
                 'estudiante_id' => $estudiante->id,
-                'respuestas' => $validated['respuestas'],
+                'respuestas' => $validated['respuestas'],  // Laravel lo convertirá a JSON automáticamente
                 'fecha_completacion' => now(),
+            ];
+
+            Log::info("Datos preparados para create()", [
+                'test_vocacional_id' => $resultadoData['test_vocacional_id'],
+                'estudiante_id' => $resultadoData['estudiante_id'],
+                'respuestas_keys' => array_keys($validated['respuestas']),
+                'respuestas_count' => count($validated['respuestas']),
+                'fecha_completacion' => $resultadoData['fecha_completacion'],
+            ]);
+
+            $resultado = ResultadoTestVocacional::create($resultadoData);
+
+            Log::info("Resultado creado exitosamente", [
+                'resultado_id' => $resultado->id,
+                'test_id' => $resultado->test_vocacional_id,
+                'estudiante_id' => $resultado->estudiante_id,
             ]);
 
             // MEJORA ML: Analizar respuestas y generar perfil vocacional enriquecido
+            Log::info("Iniciando generación de perfil ML...");
             $this->generarPerfilVocacionalML($estudiante, $testVocacional, $resultado);
 
             DB::commit();
+
+            Log::info("=== SUBMITRESPUESTAS - COMPLETADO EXITOSAMENTE ===", [
+                'resultado_id' => $resultado->id,
+                'test_id' => $testVocacional->id,
+                'estudiante_id' => $estudiante->id,
+            ]);
 
             return redirect()
                 ->route('tests-vocacionales.resultados', $testVocacional)
                 ->with('success', 'Test completado exitosamente');
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error("Error al procesar test vocacional: {$e->getMessage()}");
+            Log::error("=== SUBMITRESPUESTAS - ERROR ===", [
+                'error_message' => $e->getMessage(),
+                'error_code' => $e->getCode(),
+                'trace' => $e->getTraceAsString(),
+                'test_id' => $testVocacional->id,
+                'estudiante_id' => auth()->id(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
             return back()
                 ->withErrors(['error' => 'Error al procesar el test: ' . $e->getMessage()]);
         }
@@ -611,21 +730,24 @@ class TestVocacionalController extends Controller
      */
     private function extraerAptitudes($areasScore): array
     {
+        // Mapeo dinámico de categorías a aptitudes
         $mapeo = [
-            'ciencias' => ['análisis', 'investigación', 'razonamiento'],
-            'tecnologia' => ['resolución de problemas', 'lógica', 'innovación'],
-            'humanidades' => ['comunicación', 'análisis crítico', 'creatividad'],
-            'artes' => ['creatividad', 'expresión', 'sensibilidad'],
-            'negocios' => ['liderazgo', 'gestión', 'análisis'],
-            'salud' => ['empatía', 'atención', 'precisión'],
+            'habilidades stem' => ['análisis', 'investigación', 'razonamiento', 'resolución de problemas', 'lógica'],
+            'creatividad' => ['creatividad', 'innovación', 'expresión', 'imaginación'],
+            'comunicación' => ['comunicación', 'expresión verbal', 'escritura', 'persuasión'],
+            'liderazgo' => ['liderazgo', 'gestión', 'coordinación', 'toma de decisiones'],
         ];
 
         $aptitudes = [];
         foreach ($areasScore as $area => $score) {
-            if (isset($mapeo[$area])) {
-                foreach ($mapeo[$area] as $aptitud) {
+            $areaLower = strtolower($area);
+            if (isset($mapeo[$areaLower])) {
+                foreach ($mapeo[$areaLower] as $aptitud) {
                     $aptitudes[$aptitud] = $score;
                 }
+            } else {
+                // Si no hay mapeo específico, devolver el area como aptitud
+                $aptitudes[$area] = $score;
             }
         }
 
@@ -634,38 +756,93 @@ class TestVocacionalController extends Controller
 
     /**
      * Procesar respuestas del test y extraer áreas de interés
+     * MEJORADO: Usa las categorías reales del test
      */
     private function procesarRespuestasTest($resultado): array
     {
-        $respuestas = $resultado->respuestas ?? [];
+        $respuestas = $resultado->getRespuestasArray(); // Usar el método helper
+        $test = $resultado->testVocacional;
 
-        $areas = [
-            'ciencias' => 0,
-            'tecnologia' => 0,
-            'humanidades' => 0,
-            'artes' => 0,
-            'negocios' => 0,
-            'salud' => 0,
-        ];
+        // Inicializar scores para cada categoría del test
+        $areas = [];
+        foreach ($test->categorias as $cat) {
+            $areas[strtolower($cat->nombre)] = 0;
+        }
+
+        // Si no hay respuestas, devolver áreas vacías
+        if (empty($respuestas)) {
+            return $areas;
+        }
 
         // Procesar cada respuesta
-        foreach ($respuestas as $id_pregunta => $respuesta_data) {
-            // Si viene como ID simple o como array con puntuación
-            $puntuacion = is_array($respuesta_data) ? ($respuesta_data['puntuacion'] ?? 0) : 1;
-
-            // Intentar obtener la pregunta y su área
+        foreach ($respuestas as $id_pregunta => $respuesta_valor) {
             try {
                 $pregunta = PreguntaTest::find($id_pregunta);
 
-                if ($pregunta && isset($pregunta->area) && isset($areas[$pregunta->area])) {
-                    $areas[$pregunta->area] += $puntuacion;
+                if (!$pregunta) {
+                    continue;
+                }
+
+                // Obtener la categoría de la pregunta
+                $categoria = $pregunta->categoriaTest;
+                if (!$categoria) {
+                    continue;
+                }
+
+                // Convertir respuesta a puntuación (1-5 típicamente)
+                $puntuacion = $this->convertirRespuestaAPuntuacion($respuesta_valor);
+
+                // Agregar al score de la categoría
+                $categoryKey = strtolower($categoria->nombre);
+                if (isset($areas[$categoryKey])) {
+                    $areas[$categoryKey] += $puntuacion;
                 }
             } catch (\Exception $e) {
-                Log::warning("Pregunta {$id_pregunta} no encontrada: {$e->getMessage()}");
+                Log::warning("Error procesando pregunta {$id_pregunta}: {$e->getMessage()}");
+            }
+        }
+
+        // Normalizar scores a porcentaje (0-100)
+        $totalPreguntas = count($respuestas);
+        if ($totalPreguntas > 0) {
+            foreach ($areas as $key => $score) {
+                // Convertir a porcentaje basado en número de preguntas de esa categoría
+                $areas[$key] = round(($score / $totalPreguntas) * 100, 2);
             }
         }
 
         return $areas;
+    }
+
+    /**
+     * Convertir valor de respuesta a puntuación numérica
+     */
+    private function convertirRespuestaAPuntuacion($valor): float
+    {
+        // Mapear valores comunes a puntuaciones
+        $mapeos = [
+            'totalmente_en_desacuerdo' => 1,
+            'en_desacuerdo' => 2,
+            'neutral' => 3,
+            'de_acuerdo' => 4,
+            'totalmente_de_acuerdo' => 5,
+            'falso' => 1,
+            'verdadero' => 5,
+        ];
+
+        // Si es un número, devolverlo como float
+        if (is_numeric($valor)) {
+            return (float) $valor;
+        }
+
+        // Si es una string conocida, devolver su puntuación
+        $valorMinuscula = strtolower(trim($valor));
+        if (isset($mapeos[$valorMinuscula])) {
+            return (float) $mapeos[$valorMinuscula];
+        }
+
+        // Default: considerar como verdadero/positivo
+        return 3.0;
     }
 
     /**
@@ -1023,6 +1200,580 @@ class TestVocacionalController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error retrieving vocational report',
+            ], 500);
+        }
+    }
+
+    /**
+     * Generar perfil vocacional combinado (Fase 3)
+     * Combina resultados de los 3 tests en un perfil único
+     */
+    public function generarPerfilCombinado(Request $request)
+    {
+        try {
+            $estudiante_id = auth()->id();
+
+            Log::info('Generando perfil combinado para estudiante: ' . $estudiante_id);
+
+            // Verificar que el estudiante haya completado los 3 tests
+            $test1 = ResultadoTestVocacional::where('estudiante_id', $estudiante_id)
+                ->where('test_vocacional_id', 52) // Explorador de Carreras
+                ->latest()
+                ->first();
+
+            $test2 = ResultadoTestVocacional::where('estudiante_id', $estudiante_id)
+                ->where('test_vocacional_id', 54) // Preferencias Laborales
+                ->latest()
+                ->first();
+
+            $test3 = ResultadoTestVocacional::where('estudiante_id', $estudiante_id)
+                ->where('test_vocacional_id', 55) // RIASEC
+                ->latest()
+                ->first();
+
+            if (!$test1 || !$test2 || !$test3) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Debes completar los 3 tests antes de generar tu perfil combinado',
+                    'tests_completados' => [
+                        'test_1' => $test1 ? true : false,
+                        'test_2' => $test2 ? true : false,
+                        'test_3' => $test3 ? true : false,
+                    ]
+                ], 400);
+            }
+
+            // Crear o actualizar perfil combinado
+            $perfil = \App\Models\PerfilVocacionalCombinado::updateOrCreate(
+                ['estudiante_id' => $estudiante_id],
+                [
+                    'resultado_test_1_id' => $test1->id,
+                    'resultado_test_2_id' => $test2->id,
+                    'resultado_test_3_id' => $test3->id,
+                ]
+            );
+
+            // Generar perfil combinado
+            $perfil->generarPerfilCombinado();
+
+            Log::info('Perfil combinado generado exitosamente para estudiante: ' . $estudiante_id);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Perfil vocacional combinado generado exitosamente',
+                'perfil' => $perfil->obtenerPerfilFormateado(),
+            ], 200);
+
+        } catch (\Exception $e) {
+            Log::error('Error generando perfil combinado: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al generar el perfil: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Obtener perfil combinado existente
+     */
+    public function obtenerPerfilCombinado()
+    {
+        try {
+            $estudiante_id = auth()->id();
+
+            $perfil = \App\Models\PerfilVocacionalCombinado::where('estudiante_id', $estudiante_id)
+                ->latest()
+                ->first();
+
+            if (!$perfil) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No hay perfil combinado generado aún',
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'perfil' => $perfil->obtenerPerfilFormateado(),
+            ], 200);
+
+        } catch (\Exception $e) {
+            Log::error('Error obteniendo perfil combinado: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener el perfil',
+            ], 500);
+        }
+    }
+
+    /**
+     * Vista para mostrar perfil combinado
+     */
+    public function mostrarPerfilCombinado()
+    {
+        try {
+            $estudiante_id = auth()->id();
+
+            $perfil = \App\Models\PerfilVocacionalCombinado::where('estudiante_id', $estudiante_id)
+                ->latest()
+                ->first();
+
+            // Obtener progreso de tests
+            $test1 = ResultadoTestVocacional::where('estudiante_id', $estudiante_id)
+                ->where('test_vocacional_id', 52)
+                ->latest()
+                ->first();
+            $test2 = ResultadoTestVocacional::where('estudiante_id', $estudiante_id)
+                ->where('test_vocacional_id', 54)
+                ->latest()
+                ->first();
+            $test3 = ResultadoTestVocacional::where('estudiante_id', $estudiante_id)
+                ->where('test_vocacional_id', 55)
+                ->latest()
+                ->first();
+
+            $progreso = [
+                'test_1_completado' => $test1 ? true : false,
+                'test_2_completado' => $test2 ? true : false,
+                'test_3_completado' => $test3 ? true : false,
+                'todos_completados' => $test1 && $test2 && $test3,
+            ];
+
+            $breadcrumbs = [
+                ['label' => 'Inicio', 'href' => '/dashboard'],
+                ['label' => 'Tests Vocacionales', 'href' => '/tests-vocacionales'],
+                ['label' => 'Mi Perfil Vocacional'],
+            ];
+
+            return Inertia::render('Tests/Vocacionales/PerfilCombinado', [
+                'perfil' => $perfil ? $perfil->obtenerPerfilFormateado() : null,
+                'progreso' => $progreso,
+                'breadcrumbs' => $breadcrumbs,
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Error en mostrarPerfilCombinado: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'Error al cargar el perfil']);
+        }
+    }
+
+    /**
+     * Generar síntesis inteligente del perfil con el Agente (GROQ)
+     *
+     * GET /api/vocacional/generar-sintesis-agente
+     */
+    public function generarSintesisAgente(Request $request, AgentProfileSynthesisService $agentService)
+    {
+        try {
+            $estudiante = auth()->user();
+
+            Log::info("Iniciando generación de síntesis agente", [
+                'student_id' => $estudiante->id,
+            ]);
+
+            // Obtener perfil vocacional
+            $perfil = PerfilVocacional::where('estudiante_id', $estudiante->id)
+                ->latest()
+                ->first();
+
+            if (!$perfil) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No hay perfil vocacional disponible. Completa un test primero.',
+                ], 404);
+            }
+
+            // Generar síntesis con el agente
+            $sintesis = $agentService->generarSintesisInteligente($estudiante, $perfil);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Síntesis generada exitosamente',
+                'data' => [
+                    'sintesis' => $sintesis['sintesis'],
+                    'recomendaciones' => $sintesis['recomendaciones'],
+                    'pasos_siguientes' => $sintesis['pasos_siguientes'],
+                    'fortalezas' => $sintesis['fortalezas'],
+                    'areas_mejora' => $sintesis['areas_mejora'],
+                ],
+                'timestamp' => now(),
+            ], 200);
+
+        } catch (\Exception $e) {
+            Log::error("Error generando síntesis agente: {$e->getMessage()}", [
+                'student_id' => auth()->id(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al generar síntesis: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Obtener recomendaciones de carreras CON ANÁLISIS DEL AGENTE
+     * Combina ML (compatibilidad) + Agente (justificaciones inteligentes)
+     */
+    public function obtenerRecomendacionesCarreraConAgente(
+        Request $request,
+        AgentProfileSynthesisService $agentService
+    ) {
+        try {
+            $estudiante = auth()->user();
+
+            // Obtener perfil vocacional
+            $perfil = PerfilVocacional::where('estudiante_id', $estudiante->id)
+                ->latest()
+                ->first();
+
+            if (!$perfil) {
+                return response()->json([
+                    'success' => false,
+                    'recomendaciones' => [],
+                    'message' => 'No hay perfil vocacional disponible',
+                ], 200);
+            }
+
+            // Obtener todas las carreras
+            $carreras = \App\Models\Carrera::where('activo', true)
+                ->get();
+
+            if ($carreras->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'recomendaciones' => [],
+                    'message' => 'No hay carreras disponibles',
+                ], 200);
+            }
+
+            $recomendaciones = [];
+            $intereses = $perfil->intereses ?? [];
+            $habilidades = $perfil->habilidades ?? [];
+
+            // Calcular compatibilidad para cada carrera
+            foreach ($carreras as $carrera) {
+                $compatibilidad = 0.5; // Base del 50%
+
+                // Aumentar compatibilidad si hay match con intereses
+                if (!empty($intereses) && !empty($carrera->intereses_relacionados)) {
+                    $interesesCarrera = is_array($carrera->intereses_relacionados)
+                        ? $carrera->intereses_relacionados
+                        : json_decode($carrera->intereses_relacionados, true);
+
+                    if (is_array($interesesCarrera)) {
+                        $matches = count(array_intersect(array_keys($intereses), array_keys($interesesCarrera)));
+                        $compatibilidad += ($matches * 0.1);
+                    }
+                }
+
+                // Aumentar compatibilidad si hay match con habilidades
+                if (!empty($habilidades) && !empty($carrera->habilidades_requeridas)) {
+                    $habilidadesCarrera = is_array($carrera->habilidades_requeridas)
+                        ? $carrera->habilidades_requeridas
+                        : json_decode($carrera->habilidades_requeridas, true);
+
+                    if (is_array($habilidadesCarrera)) {
+                        $matches = count(array_intersect(array_keys($habilidades), $habilidadesCarrera));
+                        $compatibilidad += ($matches * 0.1);
+                    }
+                }
+
+                // Usar carrera predicha si existe
+                if ($perfil->carrera_predicha_ml &&
+                    strtolower($carrera->nombre) === strtolower($perfil->carrera_predicha_ml)) {
+                    $compatibilidad = min(($perfil->confianza_prediccion ?? 0.7), 1.0);
+                }
+
+                // Limitar a rango 0-1
+                $compatibilidad = min(max($compatibilidad, 0), 1.0);
+
+                $recomendaciones[] = [
+                    'id' => $carrera->id,
+                    'carrera' => [
+                        'id' => $carrera->id,
+                        'nombre' => $carrera->nombre,
+                        'descripcion' => $carrera->descripcion,
+                        'duracion_anos' => $carrera->duracion_anos ?? 4,
+                        'nivel_educativo' => $carrera->nivel_educativo ?? 'pregrado',
+                        'areas_conocimiento' => $carrera->areas_conocimiento
+                            ? (is_array($carrera->areas_conocimiento)
+                                ? $carrera->areas_conocimiento
+                                : json_decode($carrera->areas_conocimiento, true))
+                            : [],
+                    ],
+                    'compatibilidad' => $compatibilidad,
+                    'justificacion' => "Analizando compatibilidad...", // Placeholder, será reemplazado por agente
+                ];
+            }
+
+            // Ordenar por compatibilidad (descendente)
+            usort($recomendaciones, fn($a, $b) => $b['compatibilidad'] <=> $a['compatibilidad']);
+
+            // Top 5 para análisis del agente (para optimizar performance)
+            $top5Recomendaciones = array_slice($recomendaciones, 0, 5);
+
+            // Generar justificaciones inteligentes con el agente
+            foreach ($top5Recomendaciones as &$recomendacion) {
+                try {
+                    $justificacionAgente = $this->generarJustificacionCarrera(
+                        $estudiante,
+                        $perfil,
+                        $recomendacion['carrera'],
+                        $recomendacion['compatibilidad'],
+                        $agentService
+                    );
+                    $recomendacion['justificacion'] = $justificacionAgente;
+                } catch (\Exception $e) {
+                    Log::warning("Error generando justificación con agente: {$e->getMessage()}");
+                    $recomendacion['justificacion'] = "Esta carrera es compatible con tu perfil vocacional basado en tus intereses y habilidades.";
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'recomendaciones' => $top5Recomendaciones, // Top 5 con justificaciones del agente
+                'todas_las_carreras' => array_slice($recomendaciones, 5), // Resto sin justificaciones
+                'total' => count($recomendaciones),
+                'timestamp' => now(),
+            ], 200);
+
+        } catch (\Exception $e) {
+            Log::error("Error obteniendo recomendaciones con agente: {$e->getMessage()}", [
+                'student_id' => auth()->id(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'recomendaciones' => [],
+                'message' => 'Error al obtener recomendaciones',
+            ], 500);
+        }
+    }
+
+    /**
+     * Generar justificación inteligente para una carrera usando el agente
+     */
+    private function generarJustificacionCarrera(
+        User $estudiante,
+        PerfilVocacional $perfil,
+        array $carrera,
+        float $compatibilidad,
+        AgentProfileSynthesisService $agentService
+    ): string {
+        try {
+            // Preparar contexto para el agente
+            $contexto = [
+                'nombre_estudiante' => $estudiante->nombre_completo,
+                'carrera_nombre' => $carrera['nombre'],
+                'compatibilidad' => round($compatibilidad * 100),
+                'intereses' => $perfil->intereses ?? [],
+                'habilidades' => $perfil->habilidades ?? [],
+                'carrera_predicha' => $perfil->carrera_predicha_ml,
+                'areas_conocimiento' => $carrera['areas_conocimiento'],
+            ];
+
+            // Construir prompt para el agente
+            $prompt = $this->construirPromptJustificacionCarrera($contexto);
+
+            // Llamar al agente a través de HTTP
+            $response = \Illuminate\Support\Facades\Http::timeout(15)
+                ->post("{$this->obtenerAgentUrl()}/synthesize", [
+                    'student_id' => $estudiante->id,
+                    'discoveries' => [
+                        'intereses' => $perfil->intereses ?? [],
+                        'habilidades' => $perfil->habilidades ?? [],
+                    ],
+                    'predictions' => [
+                        'carrera_predicha' => $carrera['nombre'],
+                        'confianza' => $compatibilidad,
+                        'tipo' => 'carrera_justification',
+                    ],
+                    'context' => 'carrera_recommendation_justification',
+                    'custom_prompt' => $prompt,
+                ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                $synthesis = $data['synthesis'] ?? $data['reasoning'] ?? null;
+
+                if ($synthesis) {
+                    // Si es un array, convertir a string
+                    if (is_array($synthesis)) {
+                        $synthesis = implode(' ', array_filter($synthesis, 'is_string'));
+                    }
+                    return $synthesis;
+                }
+            }
+
+            // Fallback si el agente falla
+            return "Esta carrera de {$carrera['nombre']} es compatible ({$contexto['compatibilidad']}%) con tu perfil vocacional. Combina bien con tus intereses y habilidades identificadas.";
+
+        } catch (\Exception $e) {
+            Log::error("Error en generarJustificacionCarrera: {$e->getMessage()}");
+            return "Carrera compatible con tu perfil. Te invitamos a explorar más detalles.";
+        }
+    }
+
+    /**
+     * Construir prompt para justificación de carrera
+     */
+    private function construirPromptJustificacionCarrera(array $contexto): string
+    {
+        $interesesStr = implode(', ', array_map(
+            fn($k, $v) => "$k ($v%)",
+            array_keys($contexto['intereses']),
+            $contexto['intereses']
+        ));
+
+        $habilidadesStr = implode(', ', array_keys($contexto['habilidades']));
+        $areasStr = implode(', ', $contexto['areas_conocimiento'] ?? []);
+
+        return <<<PROMPT
+Por favor, proporciona una justificación BREVE (1-2 oraciones) sobre por qué la carrera de {$contexto['carrera_nombre']} es una buena recomendación para el estudiante {$contexto['nombre_estudiante']}.
+
+Datos del estudiante:
+- Intereses: $interesesStr
+- Habilidades: $habilidadesStr
+- Carrera predicha por ML: {$contexto['carrera_predicha']}
+- Compatibilidad con esta carrera: {$contexto['compatibilidad']}%
+
+Áreas de conocimiento de {$contexto['carrera_nombre']}: $areasStr
+
+Instrucciones:
+- Sé conciso y motivador
+- Conecta los intereses/habilidades con la carrera
+- Evita ser genérico
+- Máximo 2 oraciones
+PROMPT;
+    }
+
+    /**
+     * Obtener URL del agente (centralizado para facilitar cambios)
+     */
+    private function obtenerAgentUrl(): string
+    {
+        $host = config('app.agent_host', 'localhost');
+        $port = config('app.agent_port', 8003);
+        return "http://{$host}:{$port}";
+    }
+
+    /**
+     * Obtener recomendaciones de carreras para el tab de Recomendaciones
+     * Devuelve carreras en formato compatible con el componente Vocacional/Index.tsx
+     */
+    public function obtenerRecomendacionesCarreraFormato(Request $request)
+    {
+        try {
+            $estudiante = auth()->user();
+
+            // Obtener perfil vocacional
+            $perfil = PerfilVocacional::where('estudiante_id', $estudiante->id)
+                ->latest()
+                ->first();
+
+            if (!$perfil) {
+                return response()->json([
+                    'success' => false,
+                    'recomendaciones' => [],
+                    'message' => 'No hay perfil vocacional disponible',
+                ], 200);
+            }
+
+            // Obtener todas las carreras
+            $carreras = \App\Models\Carrera::where('activo', true)
+                ->get();
+
+            if ($carreras->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'recomendaciones' => [],
+                    'message' => 'No hay carreras disponibles',
+                ], 200);
+            }
+
+            $recomendaciones = [];
+            $intereses = $perfil->intereses ?? [];
+            $habilidades = $perfil->habilidades ?? [];
+
+            // Calcular compatibilidad para cada carrera
+            foreach ($carreras as $carrera) {
+                $compatibilidad = 0.5; // Base del 50%
+
+                // Aumentar compatibilidad si hay match con intereses
+                if (!empty($intereses) && !empty($carrera->intereses_relacionados)) {
+                    $interesesCarrera = is_array($carrera->intereses_relacionados)
+                        ? $carrera->intereses_relacionados
+                        : json_decode($carrera->intereses_relacionados, true);
+
+                    if (is_array($interesesCarrera)) {
+                        $matches = count(array_intersect(array_keys($intereses), array_keys($interesesCarrera)));
+                        $compatibilidad += ($matches * 0.1);
+                    }
+                }
+
+                // Aumentar compatibilidad si hay match con habilidades
+                if (!empty($habilidades) && !empty($carrera->habilidades_requeridas)) {
+                    $habilidadesCarrera = is_array($carrera->habilidades_requeridas)
+                        ? $carrera->habilidades_requeridas
+                        : json_decode($carrera->habilidades_requeridas, true);
+
+                    if (is_array($habilidadesCarrera)) {
+                        $matches = count(array_intersect(array_keys($habilidades), $habilidadesCarrera));
+                        $compatibilidad += ($matches * 0.1);
+                    }
+                }
+
+                // Usar carrera predicha si existe
+                if ($perfil->carrera_predicha_ml &&
+                    strtolower($carrera->nombre) === strtolower($perfil->carrera_predicha_ml)) {
+                    $compatibilidad = min(($perfil->confianza_prediccion ?? 0.7), 1.0);
+                }
+
+                // Limitar a rango 0-1
+                $compatibilidad = min(max($compatibilidad, 0), 1.0);
+
+                $recomendaciones[] = [
+                    'id' => $carrera->id,
+                    'carrera' => [
+                        'id' => $carrera->id,
+                        'nombre' => $carrera->nombre,
+                        'descripcion' => $carrera->descripcion,
+                        'duracion_anos' => $carrera->duracion_anos ?? 4,
+                        'nivel_educativo' => $carrera->nivel_educativo ?? 'pregrado',
+                        'areas_conocimiento' => $carrera->areas_conocimiento
+                            ? (is_array($carrera->areas_conocimiento)
+                                ? $carrera->areas_conocimiento
+                                : json_decode($carrera->areas_conocimiento, true))
+                            : [],
+                    ],
+                    'compatibilidad' => $compatibilidad,
+                    'justificacion' => "Basado en tu perfil vocacional y análisis de coincidencia con esta carrera.",
+                ];
+            }
+
+            // Ordenar por compatibilidad (descendente)
+            usort($recomendaciones, fn($a, $b) => $b['compatibilidad'] <=> $a['compatibilidad']);
+
+            return response()->json([
+                'success' => true,
+                'recomendaciones' => array_slice($recomendaciones, 0, 10), // Top 10
+                'total' => count($recomendaciones),
+                'timestamp' => now(),
+            ], 200);
+
+        } catch (\Exception $e) {
+            Log::error("Error obteniendo recomendaciones: {$e->getMessage()}", [
+                'student_id' => auth()->id(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'recomendaciones' => [],
+                'message' => 'Error al obtener recomendaciones',
             ], 500);
         }
     }
