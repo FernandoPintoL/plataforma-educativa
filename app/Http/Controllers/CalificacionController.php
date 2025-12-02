@@ -6,6 +6,7 @@ use App\Models\Calificacion;
 use App\Models\Trabajo;
 use App\Http\Requests\StoreCalificacionRequest;
 use App\Services\FeedbackIntellicentService;
+use App\Services\DeteccionIAService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -74,8 +75,20 @@ class CalificacionController extends Controller
         try {
             DB::beginTransaction();
 
+            Log::info('=== INICIANDO CALIFICACIÓN ===', [
+                'trabajo_id' => $trabajo->id,
+                'profesor_id' => auth()->id(),
+                'puntaje_recibido' => $request->puntaje,
+                'comentario' => substr($request->comentario ?? '', 0, 50),
+                'timestamp' => now(),
+            ]);
+
             // Verificar que el trabajo esté entregado
             if (!$trabajo->estaEntregado()) {
+                Log::warning('Intento de calificar trabajo no entregado', [
+                    'trabajo_id' => $trabajo->id,
+                    'estado_actual' => $trabajo->estado,
+                ]);
                 return back()->withErrors([
                     'error' => 'No puedes calificar un trabajo que no ha sido entregado.'
                 ]);
@@ -83,25 +96,80 @@ class CalificacionController extends Controller
 
             // Verificar si ya existe una calificación
             if ($trabajo->calificacion) {
-                return back()->withErrors([
-                    'error' => 'Este trabajo ya ha sido calificado. Usa la opción de actualizar si deseas modificar la calificación.'
+                // Si ya existe, actualizar en lugar de rechazar
+                $calificacion = $trabajo->calificacion;
+                Log::info('Actualizando calificación existente', [
+                    'calificacion_id' => $calificacion->id,
+                    'trabajo_id' => $trabajo->id,
+                    'puntaje_anterior' => $calificacion->puntaje,
+                    'puntaje_nuevo' => $request->puntaje,
+                ]);
+                $calificacion->update([
+                    'puntaje' => $request->puntaje,
+                    'comentario' => $request->comentario,
+                    'fecha_calificacion' => now(),
+                    'evaluador_id' => auth()->id(),
+                    'criterios_evaluacion' => $request->criterios_evaluacion,
+                ]);
+                Log::info('Calificación actualizada en BD', [
+                    'calificacion_id' => $calificacion->id,
+                    'puntaje_actualizado' => $calificacion->puntaje,
+                ]);
+            } else {
+                // Crear la calificación si no existe
+                Log::info('Creando nueva calificación', [
+                    'trabajo_id' => $trabajo->id,
+                    'puntaje' => $request->puntaje,
+                ]);
+                $calificacion = Calificacion::create([
+                    'trabajo_id' => $trabajo->id,
+                    'puntaje' => $request->puntaje,
+                    'comentario' => $request->comentario,
+                    'fecha_calificacion' => now(),
+                    'evaluador_id' => auth()->id(),
+                    'criterios_evaluacion' => $request->criterios_evaluacion,
+                ]);
+                Log::info('Calificación creada en BD', [
+                    'calificacion_id' => $calificacion->id,
+                    'puntaje' => $calificacion->puntaje,
                 ]);
             }
-
-            // Crear la calificación
-            $calificacion = Calificacion::create([
-                'trabajo_id' => $trabajo->id,
-                'puntaje' => $request->puntaje,
-                'comentario' => $request->comentario,
-                'fecha_calificacion' => now(),
-                'evaluador_id' => auth()->id(),
-                'criterios_evaluacion' => $request->criterios_evaluacion,
-            ]);
 
             // Actualizar estado del trabajo a "calificado"
             $trabajo->update([
                 'estado' => 'calificado',
             ]);
+            Log::info('Estado del trabajo actualizado a calificado', [
+                'trabajo_id' => $trabajo->id,
+                'estado' => $trabajo->estado,
+            ]);
+
+            DB::commit();
+            Log::info('=== TRANSACCIÓN COMPROMETIDA ===', [
+                'calificacion_id' => $calificacion->id,
+                'trabajo_id' => $trabajo->id,
+                'puntaje_final' => $calificacion->puntaje,
+                'timestamp' => now(),
+            ]);
+
+            // NOTA: Los siguientes servicios se ejecutan DESPUÉS de confirmar la transacción
+            // para que si fallan, no afecten el guardado de la calificación
+
+            // Analizar PDF en busca de contenido generado por IA
+            try {
+                $deteccionIAService = new DeteccionIAService();
+                $deteccionIAService->analizarDocumentoDeCalificacion($calificacion);
+                Log::info('Análisis de IA iniciado para calificación', [
+                    'calificacion_id' => $calificacion->id,
+                    'trabajo_id' => $trabajo->id,
+                ]);
+            } catch (\Exception $iaError) {
+                Log::error('Error en análisis de IA', [
+                    'calificacion_id' => $calificacion->id,
+                    'error' => $iaError->getMessage(),
+                ]);
+                // No afecta el flujo de calificación si el análisis de IA falla
+            }
 
             // Generar feedback inteligente de forma asincrónica
             try {
@@ -119,23 +187,26 @@ class CalificacionController extends Controller
                 // No afecta el flujo de calificación si el feedback falla
             }
 
-            // Notificar al estudiante
-            \App\Models\Notificacion::crear(
-                destinatario: $trabajo->estudiante,
-                tipo: 'calificacion',
-                titulo: 'Trabajo calificado',
-                contenido: "Tu trabajo '{$trabajo->contenido->titulo}' ha sido calificado. Puntaje: {$request->puntaje}",
-                datos_adicionales: [
-                    'trabajo_id' => $trabajo->id,
-                    'calificacion_id' => $calificacion->id,
-                    'puntaje' => $request->puntaje,
-                ]
-            );
-
-            DB::commit();
+            // Notificar al estudiante (con manejo de errores para no afectar la calificación)
+            try {
+                \App\Models\Notificacion::crear(
+                    destinatario: $trabajo->estudiante,
+                    tipo: 'calificacion',
+                    titulo: 'Trabajo calificado',
+                    contenido: "Tu trabajo '{$trabajo->contenido->titulo}' ha sido calificado. Puntaje: {$request->puntaje}",
+                    datos_adicionales: [
+                        'trabajo_id' => $trabajo->id,
+                        'calificacion_id' => $calificacion->id,
+                        'puntaje' => $request->puntaje,
+                    ]
+                );
+            } catch (\Exception $notificationError) {
+                // Si falla la notificación, registrar en logs pero no afectar la calificación
+                Log::warning('Error al notificar al estudiante sobre la calificación: ' . $notificationError->getMessage());
+            }
 
             return redirect()
-                ->route('trabajos.show', $trabajo->id)
+                ->route('trabajos.calificar', $trabajo->id)
                 ->with('success', 'Trabajo calificado exitosamente.');
 
         } catch (\Exception $e) {
@@ -167,15 +238,20 @@ class CalificacionController extends Controller
             'trabajo.contenido.curso',
             'trabajo.contenido.tarea',
             'trabajo.estudiante',
-            'evaluador'
+            'evaluador',
+            'analisisIA'
         ]);
 
         // Cargar feedback inteligente si existe
         $feedback = \App\Models\FeedbackAnalysis::where('calificacion_id', $calificacion->id)->first();
 
+        // Cargar análisis de IA si existe
+        $analisisIA = $calificacion->analisisIA;
+
         return Inertia::render('Calificaciones/Show', [
             'calificacion' => $calificacion,
             'feedback' => $feedback,
+            'analisisIA' => $analisisIA,
         ]);
     }
 
@@ -258,7 +334,7 @@ class CalificacionController extends Controller
             DB::commit();
 
             return redirect()
-                ->route('trabajos.show', $calificacion->trabajo_id)
+                ->route('trabajos.index')
                 ->with('success', 'Calificación eliminada exitosamente.');
 
         } catch (\Exception $e) {

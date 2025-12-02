@@ -21,6 +21,14 @@ class Calificacion extends Model
         'criterios_evaluacion',
     ];
 
+    /**
+     * Relación con análisis de IA
+     */
+    public function analisisIA()
+    {
+        return $this->hasOne(AnalisisIADocumento::class);
+    }
+
     protected $casts = [
         'fecha_calificacion' => 'datetime',
         'criterios_evaluacion' => 'array',

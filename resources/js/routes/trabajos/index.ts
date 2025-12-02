@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 import calificacion from './calificacion'
 /**
 * @see \App\Http\Controllers\TareaController::progreso
- * @see app/Http/Controllers/TareaController.php:904
+ * @see app/Http/Controllers/TareaController.php:906
  * @route '/api/trabajos/{trabajoId}/progreso'
  */
 export const progreso = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -17,7 +17,7 @@ progreso.definition = {
 
 /**
 * @see \App\Http\Controllers\TareaController::progreso
- * @see app/Http/Controllers/TareaController.php:904
+ * @see app/Http/Controllers/TareaController.php:906
  * @route '/api/trabajos/{trabajoId}/progreso'
  */
 progreso.url = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -45,7 +45,7 @@ progreso.url = (args: { trabajoId: string | number } | [trabajoId: string | numb
 
 /**
 * @see \App\Http\Controllers\TareaController::progreso
- * @see app/Http/Controllers/TareaController.php:904
+ * @see app/Http/Controllers/TareaController.php:906
  * @route '/api/trabajos/{trabajoId}/progreso'
  */
 progreso.get = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -54,7 +54,7 @@ progreso.get = (args: { trabajoId: string | number } | [trabajoId: string | numb
 })
 /**
 * @see \App\Http\Controllers\TareaController::progreso
- * @see app/Http/Controllers/TareaController.php:904
+ * @see app/Http/Controllers/TareaController.php:906
  * @route '/api/trabajos/{trabajoId}/progreso'
  */
 progreso.head = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -64,7 +64,7 @@ progreso.head = (args: { trabajoId: string | number } | [trabajoId: string | num
 
     /**
 * @see \App\Http\Controllers\TareaController::progreso
- * @see app/Http/Controllers/TareaController.php:904
+ * @see app/Http/Controllers/TareaController.php:906
  * @route '/api/trabajos/{trabajoId}/progreso'
  */
     const progresoForm = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -74,7 +74,7 @@ progreso.head = (args: { trabajoId: string | number } | [trabajoId: string | num
 
             /**
 * @see \App\Http\Controllers\TareaController::progreso
- * @see app/Http/Controllers/TareaController.php:904
+ * @see app/Http/Controllers/TareaController.php:906
  * @route '/api/trabajos/{trabajoId}/progreso'
  */
         progresoForm.get = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -83,7 +83,7 @@ progreso.head = (args: { trabajoId: string | number } | [trabajoId: string | num
         })
             /**
 * @see \App\Http\Controllers\TareaController::progreso
- * @see app/Http/Controllers/TareaController.php:904
+ * @see app/Http/Controllers/TareaController.php:906
  * @route '/api/trabajos/{trabajoId}/progreso'
  */
         progresoForm.head = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -99,7 +99,7 @@ progreso.head = (args: { trabajoId: string | number } | [trabajoId: string | num
     progreso.form = progresoForm
 /**
 * @see \App\Http\Controllers\TareaController::hintsHistorial
- * @see app/Http/Controllers/TareaController.php:1001
+ * @see app/Http/Controllers/TareaController.php:1003
  * @route '/api/trabajos/{trabajoId}/hints-historial'
  */
 export const hintsHistorial = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -114,7 +114,7 @@ hintsHistorial.definition = {
 
 /**
 * @see \App\Http\Controllers\TareaController::hintsHistorial
- * @see app/Http/Controllers/TareaController.php:1001
+ * @see app/Http/Controllers/TareaController.php:1003
  * @route '/api/trabajos/{trabajoId}/hints-historial'
  */
 hintsHistorial.url = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -142,7 +142,7 @@ hintsHistorial.url = (args: { trabajoId: string | number } | [trabajoId: string 
 
 /**
 * @see \App\Http\Controllers\TareaController::hintsHistorial
- * @see app/Http/Controllers/TareaController.php:1001
+ * @see app/Http/Controllers/TareaController.php:1003
  * @route '/api/trabajos/{trabajoId}/hints-historial'
  */
 hintsHistorial.get = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -151,7 +151,7 @@ hintsHistorial.get = (args: { trabajoId: string | number } | [trabajoId: string 
 })
 /**
 * @see \App\Http\Controllers\TareaController::hintsHistorial
- * @see app/Http/Controllers/TareaController.php:1001
+ * @see app/Http/Controllers/TareaController.php:1003
  * @route '/api/trabajos/{trabajoId}/hints-historial'
  */
 hintsHistorial.head = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -161,7 +161,7 @@ hintsHistorial.head = (args: { trabajoId: string | number } | [trabajoId: string
 
     /**
 * @see \App\Http\Controllers\TareaController::hintsHistorial
- * @see app/Http/Controllers/TareaController.php:1001
+ * @see app/Http/Controllers/TareaController.php:1003
  * @route '/api/trabajos/{trabajoId}/hints-historial'
  */
     const hintsHistorialForm = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -171,7 +171,7 @@ hintsHistorial.head = (args: { trabajoId: string | number } | [trabajoId: string
 
             /**
 * @see \App\Http\Controllers\TareaController::hintsHistorial
- * @see app/Http/Controllers/TareaController.php:1001
+ * @see app/Http/Controllers/TareaController.php:1003
  * @route '/api/trabajos/{trabajoId}/hints-historial'
  */
         hintsHistorialForm.get = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -180,7 +180,7 @@ hintsHistorial.head = (args: { trabajoId: string | number } | [trabajoId: string
         })
             /**
 * @see \App\Http\Controllers\TareaController::hintsHistorial
- * @see app/Http/Controllers/TareaController.php:1001
+ * @see app/Http/Controllers/TareaController.php:1003
  * @route '/api/trabajos/{trabajoId}/hints-historial'
  */
         hintsHistorialForm.head = (args: { trabajoId: string | number } | [trabajoId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -196,7 +196,7 @@ hintsHistorial.head = (args: { trabajoId: string | number } | [trabajoId: string
     hintsHistorial.form = hintsHistorialForm
 /**
 * @see \App\Http\Controllers\TrabajoController::index
- * @see app/Http/Controllers/TrabajoController.php:18
+ * @see app/Http/Controllers/TrabajoController.php:19
  * @route '/trabajos'
  */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -211,7 +211,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\TrabajoController::index
- * @see app/Http/Controllers/TrabajoController.php:18
+ * @see app/Http/Controllers/TrabajoController.php:19
  * @route '/trabajos'
  */
 index.url = (options?: RouteQueryOptions) => {
@@ -220,7 +220,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\TrabajoController::index
- * @see app/Http/Controllers/TrabajoController.php:18
+ * @see app/Http/Controllers/TrabajoController.php:19
  * @route '/trabajos'
  */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -229,7 +229,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\TrabajoController::index
- * @see app/Http/Controllers/TrabajoController.php:18
+ * @see app/Http/Controllers/TrabajoController.php:19
  * @route '/trabajos'
  */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -239,7 +239,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\TrabajoController::index
- * @see app/Http/Controllers/TrabajoController.php:18
+ * @see app/Http/Controllers/TrabajoController.php:19
  * @route '/trabajos'
  */
     const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -249,7 +249,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\TrabajoController::index
- * @see app/Http/Controllers/TrabajoController.php:18
+ * @see app/Http/Controllers/TrabajoController.php:19
  * @route '/trabajos'
  */
         indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -258,7 +258,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\TrabajoController::index
- * @see app/Http/Controllers/TrabajoController.php:18
+ * @see app/Http/Controllers/TrabajoController.php:19
  * @route '/trabajos'
  */
         indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -352,7 +352,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     create.form = createForm
 /**
 * @see \App\Http\Controllers\TrabajoController::store
- * @see app/Http/Controllers/TrabajoController.php:74
+ * @see app/Http/Controllers/TrabajoController.php:75
  * @route '/trabajos'
  */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -367,7 +367,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\TrabajoController::store
- * @see app/Http/Controllers/TrabajoController.php:74
+ * @see app/Http/Controllers/TrabajoController.php:75
  * @route '/trabajos'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -376,7 +376,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\TrabajoController::store
- * @see app/Http/Controllers/TrabajoController.php:74
+ * @see app/Http/Controllers/TrabajoController.php:75
  * @route '/trabajos'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -386,7 +386,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\TrabajoController::store
- * @see app/Http/Controllers/TrabajoController.php:74
+ * @see app/Http/Controllers/TrabajoController.php:75
  * @route '/trabajos'
  */
     const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -396,7 +396,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\TrabajoController::store
- * @see app/Http/Controllers/TrabajoController.php:74
+ * @see app/Http/Controllers/TrabajoController.php:75
  * @route '/trabajos'
  */
         storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -407,10 +407,10 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\TrabajoController::show
- * @see app/Http/Controllers/TrabajoController.php:169
+ * @see app/Http/Controllers/TrabajoController.php:0
  * @route '/trabajos/{trabajo}'
  */
-export const show = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { trabajo: string | number } | [trabajo: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -422,17 +422,14 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\TrabajoController::show
- * @see app/Http/Controllers/TrabajoController.php:169
+ * @see app/Http/Controllers/TrabajoController.php:0
  * @route '/trabajos/{trabajo}'
  */
-show.url = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+show.url = (args: { trabajo: string | number } | [trabajo: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { trabajo: args }
     }
 
-            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-            args = { trabajo: args.id }
-        }
     
     if (Array.isArray(args)) {
         args = {
@@ -443,9 +440,7 @@ show.url = (args: { trabajo: number | { id: number } } | [trabajo: number | { id
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        trabajo: typeof args.trabajo === 'object'
-                ? args.trabajo.id
-                : args.trabajo,
+                        trabajo: args.trabajo,
                 }
 
     return show.definition.url
@@ -455,48 +450,48 @@ show.url = (args: { trabajo: number | { id: number } } | [trabajo: number | { id
 
 /**
 * @see \App\Http\Controllers\TrabajoController::show
- * @see app/Http/Controllers/TrabajoController.php:169
+ * @see app/Http/Controllers/TrabajoController.php:0
  * @route '/trabajos/{trabajo}'
  */
-show.get = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { trabajo: string | number } | [trabajo: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
 /**
 * @see \App\Http\Controllers\TrabajoController::show
- * @see app/Http/Controllers/TrabajoController.php:169
+ * @see app/Http/Controllers/TrabajoController.php:0
  * @route '/trabajos/{trabajo}'
  */
-show.head = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { trabajo: string | number } | [trabajo: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
 
     /**
 * @see \App\Http\Controllers\TrabajoController::show
- * @see app/Http/Controllers/TrabajoController.php:169
+ * @see app/Http/Controllers/TrabajoController.php:0
  * @route '/trabajos/{trabajo}'
  */
-    const showForm = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const showForm = (args: { trabajo: string | number } | [trabajo: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: show.url(args, options),
         method: 'get',
     })
 
             /**
 * @see \App\Http\Controllers\TrabajoController::show
- * @see app/Http/Controllers/TrabajoController.php:169
+ * @see app/Http/Controllers/TrabajoController.php:0
  * @route '/trabajos/{trabajo}'
  */
-        showForm.get = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.get = (args: { trabajo: string | number } | [trabajo: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, options),
             method: 'get',
         })
             /**
 * @see \App\Http\Controllers\TrabajoController::show
- * @see app/Http/Controllers/TrabajoController.php:169
+ * @see app/Http/Controllers/TrabajoController.php:0
  * @route '/trabajos/{trabajo}'
  */
-        showForm.head = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.head = (args: { trabajo: string | number } | [trabajo: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -606,7 +601,7 @@ edit.head = (args: { trabajo: string | number } | [trabajo: string | number ] | 
     edit.form = editForm
 /**
 * @see \App\Http\Controllers\TrabajoController::update
- * @see app/Http/Controllers/TrabajoController.php:197
+ * @see app/Http/Controllers/TrabajoController.php:176
  * @route '/trabajos/{trabajo}'
  */
 export const update = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -621,7 +616,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\TrabajoController::update
- * @see app/Http/Controllers/TrabajoController.php:197
+ * @see app/Http/Controllers/TrabajoController.php:176
  * @route '/trabajos/{trabajo}'
  */
 update.url = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -654,7 +649,7 @@ update.url = (args: { trabajo: number | { id: number } } | [trabajo: number | { 
 
 /**
 * @see \App\Http\Controllers\TrabajoController::update
- * @see app/Http/Controllers/TrabajoController.php:197
+ * @see app/Http/Controllers/TrabajoController.php:176
  * @route '/trabajos/{trabajo}'
  */
 update.put = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -663,7 +658,7 @@ update.put = (args: { trabajo: number | { id: number } } | [trabajo: number | { 
 })
 /**
 * @see \App\Http\Controllers\TrabajoController::update
- * @see app/Http/Controllers/TrabajoController.php:197
+ * @see app/Http/Controllers/TrabajoController.php:176
  * @route '/trabajos/{trabajo}'
  */
 update.patch = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -673,7 +668,7 @@ update.patch = (args: { trabajo: number | { id: number } } | [trabajo: number | 
 
     /**
 * @see \App\Http\Controllers\TrabajoController::update
- * @see app/Http/Controllers/TrabajoController.php:197
+ * @see app/Http/Controllers/TrabajoController.php:176
  * @route '/trabajos/{trabajo}'
  */
     const updateForm = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -688,7 +683,7 @@ update.patch = (args: { trabajo: number | { id: number } } | [trabajo: number | 
 
             /**
 * @see \App\Http\Controllers\TrabajoController::update
- * @see app/Http/Controllers/TrabajoController.php:197
+ * @see app/Http/Controllers/TrabajoController.php:176
  * @route '/trabajos/{trabajo}'
  */
         updateForm.put = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -702,7 +697,7 @@ update.patch = (args: { trabajo: number | { id: number } } | [trabajo: number | 
         })
             /**
 * @see \App\Http\Controllers\TrabajoController::update
- * @see app/Http/Controllers/TrabajoController.php:197
+ * @see app/Http/Controllers/TrabajoController.php:176
  * @route '/trabajos/{trabajo}'
  */
         updateForm.patch = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -718,7 +713,7 @@ update.patch = (args: { trabajo: number | { id: number } } | [trabajo: number | 
     update.form = updateForm
 /**
 * @see \App\Http\Controllers\TrabajoController::destroy
- * @see app/Http/Controllers/TrabajoController.php:260
+ * @see app/Http/Controllers/TrabajoController.php:239
  * @route '/trabajos/{trabajo}'
  */
 export const destroy = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -733,7 +728,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\TrabajoController::destroy
- * @see app/Http/Controllers/TrabajoController.php:260
+ * @see app/Http/Controllers/TrabajoController.php:239
  * @route '/trabajos/{trabajo}'
  */
 destroy.url = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -766,7 +761,7 @@ destroy.url = (args: { trabajo: number | { id: number } } | [trabajo: number | {
 
 /**
 * @see \App\Http\Controllers\TrabajoController::destroy
- * @see app/Http/Controllers/TrabajoController.php:260
+ * @see app/Http/Controllers/TrabajoController.php:239
  * @route '/trabajos/{trabajo}'
  */
 destroy.delete = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -776,7 +771,7 @@ destroy.delete = (args: { trabajo: number | { id: number } } | [trabajo: number 
 
     /**
 * @see \App\Http\Controllers\TrabajoController::destroy
- * @see app/Http/Controllers/TrabajoController.php:260
+ * @see app/Http/Controllers/TrabajoController.php:239
  * @route '/trabajos/{trabajo}'
  */
     const destroyForm = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -791,7 +786,7 @@ destroy.delete = (args: { trabajo: number | { id: number } } | [trabajo: number 
 
             /**
 * @see \App\Http\Controllers\TrabajoController::destroy
- * @see app/Http/Controllers/TrabajoController.php:260
+ * @see app/Http/Controllers/TrabajoController.php:239
  * @route '/trabajos/{trabajo}'
  */
         destroyForm.delete = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -807,7 +802,7 @@ destroy.delete = (args: { trabajo: number | { id: number } } | [trabajo: number 
     destroy.form = destroyForm
 /**
 * @see \App\Http\Controllers\TrabajoController::entregar
- * @see app/Http/Controllers/TrabajoController.php:74
+ * @see app/Http/Controllers/TrabajoController.php:75
  * @route '/tareas/{tarea}/entregar'
  */
 export const entregar = (args: { tarea: number | { id: number } } | [tarea: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -822,7 +817,7 @@ entregar.definition = {
 
 /**
 * @see \App\Http\Controllers\TrabajoController::entregar
- * @see app/Http/Controllers/TrabajoController.php:74
+ * @see app/Http/Controllers/TrabajoController.php:75
  * @route '/tareas/{tarea}/entregar'
  */
 entregar.url = (args: { tarea: number | { id: number } } | [tarea: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -855,7 +850,7 @@ entregar.url = (args: { tarea: number | { id: number } } | [tarea: number | { id
 
 /**
 * @see \App\Http\Controllers\TrabajoController::entregar
- * @see app/Http/Controllers/TrabajoController.php:74
+ * @see app/Http/Controllers/TrabajoController.php:75
  * @route '/tareas/{tarea}/entregar'
  */
 entregar.post = (args: { tarea: number | { id: number } } | [tarea: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -865,7 +860,7 @@ entregar.post = (args: { tarea: number | { id: number } } | [tarea: number | { i
 
     /**
 * @see \App\Http\Controllers\TrabajoController::entregar
- * @see app/Http/Controllers/TrabajoController.php:74
+ * @see app/Http/Controllers/TrabajoController.php:75
  * @route '/tareas/{tarea}/entregar'
  */
     const entregarForm = (args: { tarea: number | { id: number } } | [tarea: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -875,7 +870,7 @@ entregar.post = (args: { tarea: number | { id: number } } | [tarea: number | { i
 
             /**
 * @see \App\Http\Controllers\TrabajoController::entregar
- * @see app/Http/Controllers/TrabajoController.php:74
+ * @see app/Http/Controllers/TrabajoController.php:75
  * @route '/tareas/{tarea}/entregar'
  */
         entregarForm.post = (args: { tarea: number | { id: number } } | [tarea: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -886,7 +881,7 @@ entregar.post = (args: { tarea: number | { id: number } } | [tarea: number | { i
     entregar.form = entregarForm
 /**
 * @see \App\Http\Controllers\TrabajoController::calificar
- * @see app/Http/Controllers/TrabajoController.php:334
+ * @see app/Http/Controllers/TrabajoController.php:313
  * @route '/trabajos/{trabajo}/calificar'
  */
 export const calificar = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -901,7 +896,7 @@ calificar.definition = {
 
 /**
 * @see \App\Http\Controllers\TrabajoController::calificar
- * @see app/Http/Controllers/TrabajoController.php:334
+ * @see app/Http/Controllers/TrabajoController.php:313
  * @route '/trabajos/{trabajo}/calificar'
  */
 calificar.url = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -934,7 +929,7 @@ calificar.url = (args: { trabajo: number | { id: number } } | [trabajo: number |
 
 /**
 * @see \App\Http\Controllers\TrabajoController::calificar
- * @see app/Http/Controllers/TrabajoController.php:334
+ * @see app/Http/Controllers/TrabajoController.php:313
  * @route '/trabajos/{trabajo}/calificar'
  */
 calificar.get = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -943,7 +938,7 @@ calificar.get = (args: { trabajo: number | { id: number } } | [trabajo: number |
 })
 /**
 * @see \App\Http\Controllers\TrabajoController::calificar
- * @see app/Http/Controllers/TrabajoController.php:334
+ * @see app/Http/Controllers/TrabajoController.php:313
  * @route '/trabajos/{trabajo}/calificar'
  */
 calificar.head = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -953,7 +948,7 @@ calificar.head = (args: { trabajo: number | { id: number } } | [trabajo: number 
 
     /**
 * @see \App\Http\Controllers\TrabajoController::calificar
- * @see app/Http/Controllers/TrabajoController.php:334
+ * @see app/Http/Controllers/TrabajoController.php:313
  * @route '/trabajos/{trabajo}/calificar'
  */
     const calificarForm = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -963,7 +958,7 @@ calificar.head = (args: { trabajo: number | { id: number } } | [trabajo: number 
 
             /**
 * @see \App\Http\Controllers\TrabajoController::calificar
- * @see app/Http/Controllers/TrabajoController.php:334
+ * @see app/Http/Controllers/TrabajoController.php:313
  * @route '/trabajos/{trabajo}/calificar'
  */
         calificarForm.get = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -972,7 +967,7 @@ calificar.head = (args: { trabajo: number | { id: number } } | [trabajo: number 
         })
             /**
 * @see \App\Http\Controllers\TrabajoController::calificar
- * @see app/Http/Controllers/TrabajoController.php:334
+ * @see app/Http/Controllers/TrabajoController.php:313
  * @route '/trabajos/{trabajo}/calificar'
  */
         calificarForm.head = (args: { trabajo: number | { id: number } } | [trabajo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -988,7 +983,7 @@ calificar.head = (args: { trabajo: number | { id: number } } | [trabajo: number 
     calificar.form = calificarForm
 /**
 * @see \App\Http\Controllers\TrabajoController::descargarArchivo
- * @see app/Http/Controllers/TrabajoController.php:301
+ * @see app/Http/Controllers/TrabajoController.php:280
  * @route '/trabajos/{trabajo}/archivo/{archivoIndex}'
  */
 export const descargarArchivo = (args: { trabajo: number | { id: number }, archivoIndex: string | number } | [trabajo: number | { id: number }, archivoIndex: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -1003,7 +998,7 @@ descargarArchivo.definition = {
 
 /**
 * @see \App\Http\Controllers\TrabajoController::descargarArchivo
- * @see app/Http/Controllers/TrabajoController.php:301
+ * @see app/Http/Controllers/TrabajoController.php:280
  * @route '/trabajos/{trabajo}/archivo/{archivoIndex}'
  */
 descargarArchivo.url = (args: { trabajo: number | { id: number }, archivoIndex: string | number } | [trabajo: number | { id: number }, archivoIndex: string | number ], options?: RouteQueryOptions) => {
@@ -1031,7 +1026,7 @@ descargarArchivo.url = (args: { trabajo: number | { id: number }, archivoIndex: 
 
 /**
 * @see \App\Http\Controllers\TrabajoController::descargarArchivo
- * @see app/Http/Controllers/TrabajoController.php:301
+ * @see app/Http/Controllers/TrabajoController.php:280
  * @route '/trabajos/{trabajo}/archivo/{archivoIndex}'
  */
 descargarArchivo.get = (args: { trabajo: number | { id: number }, archivoIndex: string | number } | [trabajo: number | { id: number }, archivoIndex: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -1040,7 +1035,7 @@ descargarArchivo.get = (args: { trabajo: number | { id: number }, archivoIndex: 
 })
 /**
 * @see \App\Http\Controllers\TrabajoController::descargarArchivo
- * @see app/Http/Controllers/TrabajoController.php:301
+ * @see app/Http/Controllers/TrabajoController.php:280
  * @route '/trabajos/{trabajo}/archivo/{archivoIndex}'
  */
 descargarArchivo.head = (args: { trabajo: number | { id: number }, archivoIndex: string | number } | [trabajo: number | { id: number }, archivoIndex: string | number ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -1050,7 +1045,7 @@ descargarArchivo.head = (args: { trabajo: number | { id: number }, archivoIndex:
 
     /**
 * @see \App\Http\Controllers\TrabajoController::descargarArchivo
- * @see app/Http/Controllers/TrabajoController.php:301
+ * @see app/Http/Controllers/TrabajoController.php:280
  * @route '/trabajos/{trabajo}/archivo/{archivoIndex}'
  */
     const descargarArchivoForm = (args: { trabajo: number | { id: number }, archivoIndex: string | number } | [trabajo: number | { id: number }, archivoIndex: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -1060,7 +1055,7 @@ descargarArchivo.head = (args: { trabajo: number | { id: number }, archivoIndex:
 
             /**
 * @see \App\Http\Controllers\TrabajoController::descargarArchivo
- * @see app/Http/Controllers/TrabajoController.php:301
+ * @see app/Http/Controllers/TrabajoController.php:280
  * @route '/trabajos/{trabajo}/archivo/{archivoIndex}'
  */
         descargarArchivoForm.get = (args: { trabajo: number | { id: number }, archivoIndex: string | number } | [trabajo: number | { id: number }, archivoIndex: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -1069,7 +1064,7 @@ descargarArchivo.head = (args: { trabajo: number | { id: number }, archivoIndex:
         })
             /**
 * @see \App\Http\Controllers\TrabajoController::descargarArchivo
- * @see app/Http/Controllers/TrabajoController.php:301
+ * @see app/Http/Controllers/TrabajoController.php:280
  * @route '/trabajos/{trabajo}/archivo/{archivoIndex}'
  */
         descargarArchivoForm.head = (args: { trabajo: number | { id: number }, archivoIndex: string | number } | [trabajo: number | { id: number }, archivoIndex: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

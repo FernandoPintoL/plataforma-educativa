@@ -7,6 +7,7 @@ use App\Models\Tarea;
 use App\Http\Requests\StoreTrabajoRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -91,11 +92,12 @@ class TrabajoController extends Controller
             );
 
             // Verificar que no esté ya entregado
-            if ($trabajo->estaEntregado() || $trabajo->estaCalificado()) {
-                return back()->withErrors([
-                    'error' => 'Este trabajo ya fue entregado y no puede ser modificado.'
-                ]);
-            }
+            // TEMPORALMENTE COMENTADO: Permitir reentregas durante el desarrollo
+            // if ($trabajo->estaEntregado() || $trabajo->estaCalificado()) {
+            //     return back()->withErrors([
+            //         'error' => 'Este trabajo ya fue entregado y no puede ser modificado.'
+            //     ]);
+            // }
 
             // Verificar fecha límite
             if ($tarea->fecha_limite && now() > $tarea->fecha_limite) {
@@ -135,18 +137,23 @@ class TrabajoController extends Controller
             $trabajo->entregar();
             $trabajo->save();
 
-            // Notificar al profesor
-            \App\Models\Notificacion::crear(
-                destinatario: $tarea->contenido->creador,
-                tipo: 'trabajo',
-                titulo: 'Nuevo trabajo entregado',
-                contenido: "{$user->name} ha entregado la tarea: {$tarea->contenido->titulo}",
-                datos_adicionales: [
-                    'trabajo_id' => $trabajo->id,
-                    'tarea_id' => $tarea->id,
-                    'estudiante_id' => $user->id,
-                ]
-            );
+            // Notificar al profesor (con manejo de errores para no afectar la entrega)
+            try {
+                \App\Models\Notificacion::crear(
+                    destinatario: $tarea->contenido->creador,
+                    tipo: 'trabajo',
+                    titulo: 'Nuevo trabajo entregado',
+                    contenido: "{$user->name} ha entregado la tarea: {$tarea->contenido->titulo}",
+                    datos_adicionales: [
+                        'trabajo_id' => $trabajo->id,
+                        'tarea_id' => $tarea->id,
+                        'estudiante_id' => $user->id,
+                    ]
+                );
+            } catch (\Exception $notificationError) {
+                // Si falla la notificación, registrar en logs pero no afectar la entrega
+                \Illuminate\Support\Facades\Log::warning('Error al crear notificación de trabajo entregado: ' . $notificationError->getMessage());
+            }
 
             DB::commit();
 
@@ -161,34 +168,6 @@ class TrabajoController extends Controller
                 ->withErrors(['error' => 'Error al entregar el trabajo: ' . $e->getMessage()])
                 ->withInput();
         }
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Trabajo $trabajo)
-    {
-        $user = auth()->user();
-
-        // Verificar permisos
-        if ($user->esEstudiante() && $trabajo->estudiante_id !== $user->id) {
-            abort(403, 'No tienes acceso a este trabajo.');
-        }
-
-        if ($user->esProfesor() && $trabajo->contenido->creador_id !== $user->id) {
-            abort(403, 'No tienes acceso a este trabajo.');
-        }
-
-        $trabajo->load([
-            'contenido.curso',
-            'contenido.tarea',
-            'estudiante',
-            'calificacion.evaluador'
-        ]);
-
-        return Inertia::render('Trabajos/Show', [
-            'trabajo' => $trabajo,
-        ]);
     }
 
     /**
@@ -347,15 +326,31 @@ class TrabajoController extends Controller
             ]);
         }
 
+        // Forzar refresh del modelo para obtener datos frescos de la BD
+        // Esto es crítico después de un POST que actualiza la calificación
+        $trabajo->refresh();
+
         $trabajo->load([
             'contenido.curso',
             'contenido.tarea',
             'estudiante',
-            'calificacion'
+            'calificacion',
+            'calificacion.analisisIA'
         ]);
+
+        Log::info('Cargando página de calificación con datos frescos', [
+            'trabajo_id' => $trabajo->id,
+            'calificacion_id' => $trabajo->calificacion?->id,
+            'puntaje_actual' => $trabajo->calificacion?->puntaje,
+            'timestamp' => now(),
+        ]);
+
+        // Obtener análisis de IA si existe
+        $analisisIA = $trabajo->calificacion?->analisisIA;
 
         return Inertia::render('Trabajos/Calificar', [
             'trabajo' => $trabajo,
+            'analisisIA' => $analisisIA,
         ]);
     }
 }

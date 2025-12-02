@@ -97,6 +97,7 @@ class TareaController extends Controller
             'tareas' => $tareas,
             'cursos' => $cursos,
             'filters' => $request->only(['curso_id', 'estado', 'search', 'sort', 'direction']),
+            'userRole' => $user->esProfesor() ? 'profesor' : ($user->esEstudiante() ? 'estudiante' : 'otro'),
         ]);
     }
 
@@ -252,10 +253,10 @@ class TareaController extends Controller
                 }
             }
 
-            return Inertia::render('Tareas/Show', [
+            // Vista para estudiante
+            return Inertia::render('Tareas/ViewEstudiante', [
                 'tarea' => $tarea,
                 'trabajo' => $trabajo,
-                'estadisticas' => null,
                 'ml_insights' => $enriquecimiento_ml,
             ]);
         } elseif ($user->esProfesor()) {
@@ -275,9 +276,9 @@ class TareaController extends Controller
                 Log::warning("Error analizando tarea ML: {$e->getMessage()}");
             }
 
-            return Inertia::render('Tareas/Show', [
+            // Vista para profesor
+            return Inertia::render('Tareas/ViewProfesor', [
                 'tarea' => $tarea,
-                'trabajo' => null,
                 'estadisticas' => $estadisticas,
                 'ml_analysis' => $analisis_ml,
             ]);
@@ -375,11 +376,12 @@ class TareaController extends Controller
     {
         try {
             // Usar AnomalyDetectionService para detectar si hay dificultad
-            $anomalias = $this->anomalyService->detectar(1); // 1 = tarea
-            $tarea_anomalias = array_filter($anomalias, fn($a) => $a['contenido_id'] === $tarea->contenido_id);
+            $anomalias = $this->anomalyService->getStudentAnomalies($trabajo->estudiante_id);
 
-            if (!empty($tarea_anomalias)) {
-                $anomalia = reset($tarea_anomalias);
+            // Buscar anomalías relacionadas con esta tarea
+            if (!empty($anomalias)) {
+                // Retornar la primera anomalía encontrada
+                $anomalia = reset($anomalias);
                 return [
                     'nivel' => $anomalia['anomaly_score'] ?? 0.5,
                     'tipo' => $anomalia['anomaly_type'] ?? 'dificultad_general',

@@ -71,6 +71,7 @@ interface Props {
     estado?: string;
     search?: string;
   };
+  userRole: 'profesor' | 'estudiante' | 'otro';
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -80,10 +81,11 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-export default function Index({ tareas, cursos, filters }: Props) {
+export default function Index({ tareas, cursos, filters, userRole }: Props) {
   const [search, setSearch] = useState(filters.search || '');
   const [cursoId, setCursoId] = useState(filters.curso_id || 'all');
   const [estado, setEstado] = useState(filters.estado || 'all');
+  const esProfesor = userRole === 'profesor';
 
   const handleFilter = () => {
     router.get(
@@ -291,11 +293,13 @@ export default function Index({ tareas, cursos, filters }: Props) {
                             Ver
                           </Button>
                         </Link>
-                        <Link href={`/tareas/${tarea.id}/edit`}>
-                          <Button size="sm" variant="ghost">
-                            Editar
-                          </Button>
-                        </Link>
+                        {esProfesor && (
+                          <Link href={`/tareas/${tarea.id}/edit`}>
+                            <Button size="sm" variant="ghost">
+                              Editar
+                            </Button>
+                          </Link>
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>

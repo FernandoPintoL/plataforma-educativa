@@ -2,8 +2,8 @@ import React from 'react';
 import { Link } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 import { Head } from '@inertiajs/react';
-import { RiskWidget } from '@/components/Dashboard/RiskWidget';
-import { TrendWidget } from '@/components/Dashboard/TrendWidget';
+import { RiskWidget } from '@/components/dashboard/RiskWidget';
+import { TrendWidget } from '@/components/dashboard/TrendWidget';
 import {
   AcademicCapIcon,
   DocumentTextIcon,

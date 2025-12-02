@@ -36,9 +36,9 @@ class RoleModuloAccesoSeeder extends Seeder
             'Administración' => ['admin', 'director'],
 
             // ACADÉMICO - PROFESORES (Admin, Director, Profesor, Coordinador)
-            'Tareas' => ['admin', 'director', 'profesor', 'coordinador'],
-            'Entregas' => ['admin', 'director', 'profesor', 'coordinador'],
-            'Evaluaciones' => ['admin', 'director', 'profesor', 'coordinador'],
+            'Tareas' => ['admin', 'director', 'profesor', 'coordinador', 'estudiante'],
+            'Entregas' => ['admin', 'director', 'profesor', 'coordinador', 'estudiante'],
+            'Evaluaciones' => ['admin', 'director', 'profesor', 'coordinador', 'estudiante'],
             'Calificaciones' => ['admin', 'director', 'profesor', 'estudiante', 'coordinador'],
             'Contenido Educativo' => ['admin', 'director', 'profesor', 'coordinador'],
             'Recursos' => ['admin', 'director', 'profesor', 'coordinador'],

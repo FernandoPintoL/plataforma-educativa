@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { useForm } from '@inertiajs/react';
+import React, { useState, useEffect } from 'react';
+import { useForm, router } from '@inertiajs/react';
+import { toast } from 'sonner';
 import AppLayout from '@/layouts/app-layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import AnalisisIAWidget from '@/components/Tareas/AnalisisIAWidget';
 import { type BreadcrumbItem } from '@/types';
 import {
   ArrowLeftIcon,
@@ -63,8 +65,18 @@ interface Trabajo {
   };
 }
 
+interface AnalisisIA {
+  id: number;
+  porcentaje_ia: number;
+  estado: string;
+  fecha_analisis?: string;
+  detalles_analisis?: Record<string, any>;
+  mensaje_error?: string;
+}
+
 interface Props {
   trabajo: Trabajo;
+  analisisIA?: AnalisisIA | null;
 }
 
 interface Criterio {
@@ -73,7 +85,7 @@ interface Criterio {
   comentario: string;
 }
 
-export default function Calificar({ trabajo }: Props) {
+export default function Calificar({ trabajo, analisisIA }: Props) {
   const breadcrumbs: BreadcrumbItem[] = [
     {
       title: 'Trabajos',
@@ -121,10 +133,64 @@ export default function Calificar({ trabajo }: Props) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (confirm('¿Estás seguro de enviar esta calificación? El estudiante recibirá una notificación.')) {
-      post(`/trabajos/${trabajo.id}/calificar`);
-    }
+
+    console.log('═══════════════════════════════════════');
+    console.log('🔵 INICIANDO ENVÍO DE CALIFICACIÓN');
+    console.log('═══════════════════════════════════════');
+    console.log('Datos a enviar:', {
+      trabajo_id: trabajo.id,
+      puntaje: data.puntaje,
+      comentario: data.comentario?.substring(0, 50) + '...',
+      criterios: data.criterios_evaluacion.length,
+      timestamp: new Date().toISOString(),
+    });
+
+    const loadingToastId = toast.loading('Guardando calificación...');
+
+    post(`/trabajos/${trabajo.id}/calificar`, {
+      onSuccess: () => {
+        console.log('═══════════════════════════════════════');
+        console.log('✅ RESPUESTA EXITOSA DEL SERVIDOR');
+        console.log('═══════════════════════════════════════');
+        console.log('Calificación guardada correctamente');
+        console.log('Puntaje guardado:', data.puntaje);
+
+        toast.dismiss(loadingToastId);
+        toast.success('✓ Calificación guardada exitosamente');
+
+        console.log('⏳ Recargando página en 1.5 segundos...');
+
+        // Recargar la página de forma simple para obtener datos frescos
+        setTimeout(() => {
+          console.log('🔄 RECARGANDO con window.location.reload()');
+          window.location.reload();
+        }, 1500);
+      },
+      onError: (errors: any) => {
+        console.log('═══════════════════════════════════════');
+        console.log('❌ ERROR EN LA RESPUESTA');
+        console.log('═══════════════════════════════════════');
+        console.log('Errores recibidos:', errors);
+        console.log('Tipo de error:', typeof errors);
+
+        toast.dismiss(loadingToastId);
+        const errorMessage = errors.error || 'Error al guardar la calificación';
+        console.log('Mensaje de error a mostrar:', errorMessage);
+        toast.error(errorMessage);
+      },
+    });
   };
+
+  // Mostrar toast cuando hay cambios en los errores
+  useEffect(() => {
+    if (Object.keys(errors).length > 0) {
+      Object.values(errors).forEach((error: any) => {
+        if (typeof error === 'string') {
+          toast.error(error);
+        }
+      });
+    }
+  }, [errors]);
 
   const formatFecha = (fecha: string) => {
     try {
@@ -249,6 +315,11 @@ export default function Calificar({ trabajo }: Props) {
                 )}
               </CardContent>
             </Card>
+
+            {/* Análisis de IA */}
+            {trabajo.respuestas?.archivos && trabajo.respuestas.archivos.some(a => a.nombre.toLowerCase().endsWith('.pdf')) && (
+              <AnalisisIAWidget analisisIA={analisisIA} />
+            )}
 
             {/* Formulario de Calificación */}
             <Card>
