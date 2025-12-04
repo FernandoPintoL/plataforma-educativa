@@ -66,11 +66,18 @@ class Trabajo extends Model
 
     /**
      * Relación con el curso a través del contenido
+     * CORRECCIÓN: Usar hasOneThrough en lugar de ->through() que no existe
      */
-    public function curso(): BelongsTo
+    public function cursoViaContenido()
     {
-        return $this->belongsTo(Curso::class, 'curso_id', 'id')
-            ->through('contenido');
+        return $this->hasOneThrough(
+            Curso::class,
+            Contenido::class,
+            'id',           // FK en contenidos apuntando a...
+            'id',           // FK en cursos apuntando a...
+            'contenido_id', // Foreign key local en trabajos
+            'curso_id'      // Foreign key en contenidos
+        );
     }
 
     /**

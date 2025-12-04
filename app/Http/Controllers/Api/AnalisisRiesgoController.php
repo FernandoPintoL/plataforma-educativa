@@ -280,9 +280,9 @@ class AnalisisRiesgoController extends Controller
             // Validar acceso según rol
             if ($usuario->tipo_usuario === 'profesor') {
                 // Profesor solo ve sus propios cursos
-                $esSuCurso = DB::table('curso_profesor')
+                // CORRECCIÓN: Usar relación directa profesor_id en tabla cursos, no tabla pivot
+                $esSuCurso = Curso::where('id', $cursoId)
                     ->where('profesor_id', $usuario->id)
-                    ->where('curso_id', $cursoId)
                     ->exists();
 
                 if (!$esSuCurso) {

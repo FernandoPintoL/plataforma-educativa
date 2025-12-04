@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\ReportesController::getStudentSynthesis
- * @see app/Http/Controllers/ReportesController.php:636
+ * @see app/Http/Controllers/ReportesController.php:671
  * @route '/api/reportes/student/{studentId}/synthesis'
  */
 export const getStudentSynthesis = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ getStudentSynthesis.definition = {
 
 /**
 * @see \App\Http\Controllers\ReportesController::getStudentSynthesis
- * @see app/Http/Controllers/ReportesController.php:636
+ * @see app/Http/Controllers/ReportesController.php:671
  * @route '/api/reportes/student/{studentId}/synthesis'
  */
 getStudentSynthesis.url = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -44,7 +44,7 @@ getStudentSynthesis.url = (args: { studentId: string | number } | [studentId: st
 
 /**
 * @see \App\Http\Controllers\ReportesController::getStudentSynthesis
- * @see app/Http/Controllers/ReportesController.php:636
+ * @see app/Http/Controllers/ReportesController.php:671
  * @route '/api/reportes/student/{studentId}/synthesis'
  */
 getStudentSynthesis.get = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -53,7 +53,7 @@ getStudentSynthesis.get = (args: { studentId: string | number } | [studentId: st
 })
 /**
 * @see \App\Http\Controllers\ReportesController::getStudentSynthesis
- * @see app/Http/Controllers/ReportesController.php:636
+ * @see app/Http/Controllers/ReportesController.php:671
  * @route '/api/reportes/student/{studentId}/synthesis'
  */
 getStudentSynthesis.head = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -63,7 +63,7 @@ getStudentSynthesis.head = (args: { studentId: string | number } | [studentId: s
 
     /**
 * @see \App\Http\Controllers\ReportesController::getStudentSynthesis
- * @see app/Http/Controllers/ReportesController.php:636
+ * @see app/Http/Controllers/ReportesController.php:671
  * @route '/api/reportes/student/{studentId}/synthesis'
  */
     const getStudentSynthesisForm = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -73,7 +73,7 @@ getStudentSynthesis.head = (args: { studentId: string | number } | [studentId: s
 
             /**
 * @see \App\Http\Controllers\ReportesController::getStudentSynthesis
- * @see app/Http/Controllers/ReportesController.php:636
+ * @see app/Http/Controllers/ReportesController.php:671
  * @route '/api/reportes/student/{studentId}/synthesis'
  */
         getStudentSynthesisForm.get = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -82,7 +82,7 @@ getStudentSynthesis.head = (args: { studentId: string | number } | [studentId: s
         })
             /**
 * @see \App\Http\Controllers\ReportesController::getStudentSynthesis
- * @see app/Http/Controllers/ReportesController.php:636
+ * @see app/Http/Controllers/ReportesController.php:671
  * @route '/api/reportes/student/{studentId}/synthesis'
  */
         getStudentSynthesisForm.head = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -410,7 +410,7 @@ analisisComparativo.head = (options?: RouteQueryOptions): RouteDefinition<'head'
     analisisComparativo.form = analisisComparativoForm
 /**
 * @see \App\Http\Controllers\ReportesController::metricasInstitucionales
- * @see app/Http/Controllers/ReportesController.php:448
+ * @see app/Http/Controllers/ReportesController.php:483
  * @route '/reportes/metricas'
  */
 export const metricasInstitucionales = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -425,7 +425,7 @@ metricasInstitucionales.definition = {
 
 /**
 * @see \App\Http\Controllers\ReportesController::metricasInstitucionales
- * @see app/Http/Controllers/ReportesController.php:448
+ * @see app/Http/Controllers/ReportesController.php:483
  * @route '/reportes/metricas'
  */
 metricasInstitucionales.url = (options?: RouteQueryOptions) => {
@@ -434,7 +434,7 @@ metricasInstitucionales.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\ReportesController::metricasInstitucionales
- * @see app/Http/Controllers/ReportesController.php:448
+ * @see app/Http/Controllers/ReportesController.php:483
  * @route '/reportes/metricas'
  */
 metricasInstitucionales.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -443,7 +443,7 @@ metricasInstitucionales.get = (options?: RouteQueryOptions): RouteDefinition<'ge
 })
 /**
 * @see \App\Http\Controllers\ReportesController::metricasInstitucionales
- * @see app/Http/Controllers/ReportesController.php:448
+ * @see app/Http/Controllers/ReportesController.php:483
  * @route '/reportes/metricas'
  */
 metricasInstitucionales.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -453,7 +453,7 @@ metricasInstitucionales.head = (options?: RouteQueryOptions): RouteDefinition<'h
 
     /**
 * @see \App\Http\Controllers\ReportesController::metricasInstitucionales
- * @see app/Http/Controllers/ReportesController.php:448
+ * @see app/Http/Controllers/ReportesController.php:483
  * @route '/reportes/metricas'
  */
     const metricasInstitucionalesForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -463,7 +463,7 @@ metricasInstitucionales.head = (options?: RouteQueryOptions): RouteDefinition<'h
 
             /**
 * @see \App\Http\Controllers\ReportesController::metricasInstitucionales
- * @see app/Http/Controllers/ReportesController.php:448
+ * @see app/Http/Controllers/ReportesController.php:483
  * @route '/reportes/metricas'
  */
         metricasInstitucionalesForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -472,7 +472,7 @@ metricasInstitucionales.head = (options?: RouteQueryOptions): RouteDefinition<'h
         })
             /**
 * @see \App\Http\Controllers\ReportesController::metricasInstitucionales
- * @see app/Http/Controllers/ReportesController.php:448
+ * @see app/Http/Controllers/ReportesController.php:483
  * @route '/reportes/metricas'
  */
         metricasInstitucionalesForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

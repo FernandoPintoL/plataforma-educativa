@@ -49,6 +49,12 @@ interface EstudianteMayorRiesgo {
   score_riesgo: number;
   confianza: number;
   fecha_prediccion: string;
+  razon?: string;
+  descripcion_riesgo?: string;
+  tipo_riesgo?: string;
+  icono_riesgo?: string;
+  color_riesgo?: string;
+  text_color_riesgo?: string;
 }
 
 interface CarreraRecomendada {
@@ -328,13 +334,16 @@ export default function ReportesRiesgo({
                         Score de Riesgo
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                        Tipo de Riesgo
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                        Razón del Riesgo
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                         Confianza
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                         Fecha Predicción
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                        Estado
                       </th>
                     </tr>
                   </thead>
@@ -365,18 +374,33 @@ export default function ReportesRiesgo({
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border ${est.color_riesgo || 'bg-red-50 border-red-200'}`}>
+                            <span className="text-lg">{est.icono_riesgo || '🔴'}</span>
+                            <span className={`text-xs font-semibold ${est.text_color_riesgo || 'text-red-700'}`}>
+                              {est.tipo_riesgo || 'Riesgo'}
+                            </span>
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-normal max-w-xs">
+                          <div className="space-y-1">
+                            <p className="text-sm font-medium text-gray-900">
+                              {est.razon || 'Riesgo detectado por modelo ML'}
+                            </p>
+                            <p className="text-xs text-gray-500 italic">
+                              {est.descripcion_riesgo || 'Riesgo alto - Intervención recomendada'}
+                            </p>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
                           <span className="text-sm font-medium text-blue-600">
                             {(est.confianza * 100).toFixed(1)}%
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                          {new Date(est.fecha_prediccion).toLocaleDateString('es-ES')}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 border border-red-200">
-                            <div className="h-2 w-2 bg-red-600 rounded-full" />
-                            <span className="text-xs font-semibold text-red-600">Alto</span>
-                          </span>
+                          {est.fecha_prediccion
+                            ? new Date(est.fecha_prediccion + 'T00:00:00').toLocaleDateString('es-ES')
+                            : 'N/A'
+                          }
                         </td>
                       </tr>
                     ))}

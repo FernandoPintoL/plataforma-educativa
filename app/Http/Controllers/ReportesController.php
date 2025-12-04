@@ -313,45 +313,56 @@ class ReportesController extends Controller
         try {
             $modulosSidebar = $this->getMenuItems();
 
-            // Obtener predicciones ML para todos los estudiantes
-            $estudiantes = User::where('tipo_usuario', 'estudiante')->get();
+            // CORRECCIÓN: Leer DIRECTAMENTE de PrediccionRiesgo en lugar de generar on-demand
+            // Obtener todas las predicciones de riesgo con datos del estudiante
+            $predicciones_bd = \App\Models\PrediccionRiesgo::with('estudiante')
+                ->orderBy('score_riesgo', 'desc')
+                ->get();
 
             $predicciones_riesgo = [];
             $estudiantes_mayor_riesgo = [];
-            $anomalias_por_estudiante = [];
 
-            foreach ($estudiantes as $estudiante) {
-                try {
-                    $pred = $this->mlService->predictStudent($estudiante);
+            foreach ($predicciones_bd as $pred) {
+                $estudiante = $pred->estudiante;
 
-                    if ($pred['success'] && isset($pred['predictions']['risk'])) {
-                        $riesgo = $pred['predictions']['risk'];
-                        $score = $riesgo['score_riesgo'] ?? 0;
-                        $nivel = $riesgo['nivel_riesgo'] ?? 'medio';
+                if (!$estudiante) {
+                    continue;
+                }
 
-                        $predicciones_riesgo[] = [
-                            'estudiante_id' => $estudiante->id,
-                            'nombre' => $estudiante->nombre_completo,
-                            'score_riesgo' => round($score, 3),
-                            'nivel_riesgo' => $nivel,
-                            'confianza' => round($riesgo['confianza'] ?? 0, 3),
-                            'escalado_anomalia' => $riesgo['anomaly_escalation'] ?? false,
-                            'razon_escalada' => $riesgo['escalation_reason'] ?? null,
-                        ];
+                $score = $pred->score_riesgo ?? 0;
+                $nivel = $pred->nivel_riesgo ?? 'medio';
 
-                        // Detectar estudiantes de alto riesgo
-                        if ($nivel === 'alto') {
-                            $estudiantes_mayor_riesgo[] = [
-                                'id' => $estudiante->id,
-                                'nombre' => $estudiante->nombre_completo,
-                                'score_riesgo' => round($score, 3),
-                                'confianza' => round($riesgo['confianza'] ?? 0, 3),
-                                'razon' => $riesgo['escalation_reason'] ?? 'Riesgo detectado por modelo supervisado',
-                            ];
-                        }
-                    }
-                } catch (\Exception $e) {
-                    Log::warning("Error prediciendo riesgo para estudiante {$estudiante->id}: {$e->getMessage()}");
+                $predicciones_riesgo[] = [
+                    'estudiante_id' => $estudiante->id,
+                    'nombre' => $estudiante->nombre_completo,
+                    'score_riesgo' => round($score, 3),
+                    'nivel_riesgo' => $nivel,
+                    'confianza' => round($pred->confianza ?? 0, 3),
+                    'escalado_anomalia' => false,
+                    'razon_escalada' => null,
+                ];
+
+                // Detectar estudiantes de alto riesgo
+                if ($nivel === 'alto') {
+                    // Obtener la razón del riesgo basado en el score
+                    $razon_riesgo = $this->obtenerRazonRiesgo($pred, $estudiante);
+
+                    // Determinar el tipo de riesgo
+                    $tipo_riesgo = $this->determinarTipoRiesgo($razon_riesgo, $score);
+
+                    $estudiantes_mayor_riesgo[] = [
+                        'id' => $estudiante->id,
+                        'nombre' => $estudiante->nombre_completo,
+                        'score_riesgo' => round($score, 3),
+                        'confianza' => round($pred->confianza ?? 0, 3),
+                        'fecha_prediccion' => $pred->fecha_prediccion ? $pred->fecha_prediccion->format('Y-m-d') : date('Y-m-d'),
+                        'razon' => $razon_riesgo,
+                        'descripcion_riesgo' => $this->obtenerDescripcionRiesgo($score),
+                        'tipo_riesgo' => $tipo_riesgo['tipo'],
+                        'icono_riesgo' => $tipo_riesgo['icono'],
+                        'color_riesgo' => $tipo_riesgo['color'],
+                        'text_color_riesgo' => $tipo_riesgo['text_color'],
+                    ];
                 }
             }
 
@@ -412,6 +423,28 @@ class ReportesController extends Controller
             // Obtener métricas ML del servicio
             $metricas_ml = $this->metricsService->getPerformanceSummary(30);
 
+            // CORRECCIÓN: Obtener distribución de tendencias para gráfico
+            $tendencias_data = [
+                'mejorando' => 0,
+                'estable' => 0,
+                'declinando' => 0,
+                'fluctuando' => 0,
+            ];
+
+            try {
+                // Intentar obtener datos de PrediccionTendencia si existen
+                $predicciones_tendencia = \App\Models\PrediccionTendencia::selectRaw('tendencia, COUNT(*) as cantidad')
+                    ->groupBy('tendencia')
+                    ->get();
+
+                foreach ($predicciones_tendencia as $pred_tend) {
+                    $tendencias_data[$pred_tend->tendencia] = $pred_tend->cantidad;
+                }
+            } catch (\Exception $e) {
+                Log::info("No se pudieron obtener predicciones de tendencia: {$e->getMessage()}");
+                // Mantener valores por defecto de cero
+            }
+
             return Inertia::render('reportes/ReportesRiesgo', [
                 'estadisticas_riesgo' => [
                     'total_predicciones' => $total_pred,
@@ -423,6 +456,8 @@ class ReportesController extends Controller
                 ],
                 'estudiantes_mayor_riesgo' => $estudiantes_mayor_riesgo,
                 'distribucion_riesgo' => $distribucion,
+                'tendencias' => $tendencias_data, // CORRECCIÓN: Agregar datos de tendencias
+                'carreras_recomendadas' => [], // TODO: Agregar recomendaciones de carreras
                 'metricas_modelo_ml' => $metricas_ml['success'] ? [
                     'accuracy_general' => $metricas_ml['overall_accuracy'] ?? 0,
                     'confianza_promedio' => $metricas_ml['average_confidence'] ?? 0,
@@ -718,6 +753,112 @@ class ReportesController extends Controller
             'patron' => ucfirst($patron_principal),
             'frecuencia' => $palabras_frecuentes[$patron_principal] ?? 0,
             'palabras_clave' => array_slice(array_keys($palabras_frecuentes), 0, 5),
+        ];
+    }
+
+    /**
+     * Obtener la razón específica del riesgo del estudiante
+     */
+    private function obtenerRazonRiesgo($prediccion, $estudiante): string
+    {
+        try {
+            // Obtener rendimiento académico del estudiante
+            $rendimiento = $estudiante->rendimientoAcademico()
+                ->orderBy('created_at', 'desc')
+                ->first();
+
+            if (!$rendimiento) {
+                return 'Datos insuficientes para análisis';
+            }
+
+            $promedio = $rendimiento->promedio ?? 0;
+            $asistencia = $rendimiento->asistencia ?? 0;
+            $tareas_completadas = $rendimiento->tareas_completadas ?? 0;
+
+            // Determinar razón principal basada en métricas
+            $razones = [];
+
+            if ($promedio < 3.0) {
+                $razones[] = 'Promedio muy bajo (' . round($promedio, 2) . ')';
+            } elseif ($promedio < 3.5) {
+                $razones[] = 'Promedio bajo (' . round($promedio, 2) . ')';
+            }
+
+            if ($asistencia < 70) {
+                $razones[] = 'Baja asistencia (' . round($asistencia, 1) . '%)';
+            } elseif ($asistencia < 80) {
+                $razones[] = 'Asistencia insuficiente (' . round($asistencia, 1) . '%)';
+            }
+
+            if ($tareas_completadas < 50) {
+                $razones[] = 'Pocas tareas completadas';
+            }
+
+            if (empty($razones)) {
+                $razones[] = 'Riesgo detectado por modelo de ML';
+            }
+
+            return implode(' | ', array_slice($razones, 0, 2)); // Top 2 razones
+        } catch (\Exception $e) {
+            return 'Riesgo detectado por modelo supervisado';
+        }
+    }
+
+    /**
+     * Obtener descripción clara del nivel de riesgo
+     */
+    private function obtenerDescripcionRiesgo(float $score): string
+    {
+        if ($score >= 0.85) {
+            return 'Riesgo Crítico - Requiere atención inmediata';
+        } elseif ($score >= 0.70) {
+            return 'Riesgo Alto - Intervención recomendada';
+        } elseif ($score >= 0.50) {
+            return 'Riesgo Moderado - Monitoreo necesario';
+        } else {
+            return 'Riesgo Bajo - Seguimiento regular';
+        }
+    }
+
+    /**
+     * Determinar el tipo principal de riesgo basado en las razones detectadas
+     */
+    private function determinarTipoRiesgo(string $razon, float $score): array
+    {
+        // Analizar la razón para determinar tipo
+        $razon_lower = strtolower($razon);
+
+        // Determinamos el tipo y el icono basado en lo que detectamos
+        if (strpos($razon_lower, 'asistencia') !== false) {
+            $tipo = 'Abandono';
+            $icono = '⚠️';
+            $color = 'bg-orange-50 border-orange-200';
+            $text_color = 'text-orange-700';
+        } elseif (strpos($razon_lower, 'promedio') !== false || strpos($razon_lower, 'tareas') !== false) {
+            $tipo = 'Desempeño';
+            $icono = '📈';
+            $color = 'bg-red-50 border-red-200';
+            $text_color = 'text-red-700';
+        } else {
+            // Default: considerar el nivel del score
+            if ($score >= 0.85) {
+                $tipo = 'Crítico';
+                $icono = '🔴';
+                $color = 'bg-red-50 border-red-200';
+                $text_color = 'text-red-700';
+            } else {
+                $tipo = 'Académico';
+                $icono = '📊';
+                $color = 'bg-yellow-50 border-yellow-200';
+                $text_color = 'text-yellow-700';
+            }
+        }
+
+        return [
+            'tipo' => $tipo,
+            'icono' => $icono,
+            'color' => $color,
+            'text_color' => $text_color,
         ];
     }
 }

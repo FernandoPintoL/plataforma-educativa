@@ -419,25 +419,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 // ==================== ANÁLISIS DE RIESGO ====================
 Route::middleware(['auth', 'verified', 'role:director|profesor|admin'])->group(function () {
+    $controller = \App\Http\Controllers\AnalisisRiesgoWebController::class;
+
     // Dashboard principal de Análisis de Riesgo
-    Route::get('analisis-riesgo', function () {
-        return Inertia::render('AnalisisRiesgo/Index');
-    })->name('riesgo.dashboard');
+    Route::get('analisis-riesgo', [$controller, 'dashboard'])->name('riesgo.dashboard');
 
     // Análisis por curso
-    Route::get('analisis-riesgo/cursos', function () {
-        return Inertia::render('AnalisisRiesgo/Cursos');
-    })->name('riesgo.por-curso');
+    Route::get('analisis-riesgo/cursos', [$controller, 'porCursos'])->name('riesgo.por-curso');
 
     // Análisis de tendencias
-    Route::get('analisis-riesgo/tendencias', function () {
-        return Inertia::render('AnalisisRiesgo/Tendencias');
-    })->name('riesgo.tendencias');
+    Route::get('analisis-riesgo/tendencias', [$controller, 'tendencias'])->name('riesgo.tendencias');
 
-    // Análisis individual por estudiante (opcional)
-    Route::get('analisis-riesgo/estudiante/{id}', function ($id) {
-        return Inertia::render('AnalisisRiesgo/Estudiante', ['estudianteId' => $id]);
-    })->name('riesgo.estudiante');
+    // Análisis individual por estudiante
+    Route::get('analisis-riesgo/estudiante/{id}', [$controller, 'estudiante'])->name('riesgo.estudiante');
 });
 
 // ==================== ORIENTACIÓN VOCACIONAL ====================

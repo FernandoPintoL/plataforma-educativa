@@ -49,6 +49,16 @@ class Curso extends Model
     }
 
     /**
+     * Relación con los estudiantes ACTIVOS solamente
+     * CORRECCIÓN: Para filtrar estudiantes por estado 'activo'
+     */
+    public function estudiantesActivos(): BelongsToMany
+    {
+        return $this->estudiantes()
+            ->wherePivot('estado', 'activo');
+    }
+
+    /**
      * Relación con los contenidos del curso
      */
     public function contenidos(): HasMany

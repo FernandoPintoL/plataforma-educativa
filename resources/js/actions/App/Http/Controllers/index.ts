@@ -28,6 +28,7 @@ import LeccionController from './LeccionController'
 import CategoriaTestController from './CategoriaTestController'
 import PreguntaTestController from './PreguntaTestController'
 import RespuestaTestController from './RespuestaTestController'
+import AnalisisRiesgoWebController from './AnalisisRiesgoWebController'
 import VocacionalController from './VocacionalController'
 import DashboardAlertsController from './DashboardAlertsController'
 const Controllers = {
@@ -61,6 +62,7 @@ LeccionController,
 CategoriaTestController,
 PreguntaTestController,
 RespuestaTestController,
+AnalisisRiesgoWebController,
 VocacionalController,
 DashboardAlertsController,
 }

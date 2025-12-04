@@ -20,7 +20,7 @@ interface Curso {
   id: number;
   nombre: string;
   estudiantes_count: number;
-  activo: boolean;
+  estado: 'activo' | 'inactivo' | 'finalizado';
 }
 
 interface TrabajoPendiente {
@@ -195,9 +195,13 @@ export default function DashboardProfesor({
                           </p>
                         </div>
                         <div>
-                          {curso.activo ? (
+                          {curso.estado === 'activo' ? (
                             <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-md">
                               Activo
+                            </span>
+                          ) : curso.estado === 'finalizado' ? (
+                            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-200 text-blue-700">
+                              Finalizado
                             </span>
                           ) : (
                             <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gray-200 text-gray-700">

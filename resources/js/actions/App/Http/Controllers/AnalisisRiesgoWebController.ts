@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\AnalisisRiesgoWebController::dashboard
  * @see app/Http/Controllers/AnalisisRiesgoWebController.php:15
@@ -78,74 +78,74 @@ dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     dashboard.form = dashboardForm
 /**
-* @see \App\Http\Controllers\AnalisisRiesgoWebController::porCurso
+* @see \App\Http\Controllers\AnalisisRiesgoWebController::porCursos
  * @see app/Http/Controllers/AnalisisRiesgoWebController.php:23
  * @route '/analisis-riesgo/cursos'
  */
-export const porCurso = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: porCurso.url(options),
+export const porCursos = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: porCursos.url(options),
     method: 'get',
 })
 
-porCurso.definition = {
+porCursos.definition = {
     methods: ["get","head"],
     url: '/analisis-riesgo/cursos',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see \App\Http\Controllers\AnalisisRiesgoWebController::porCurso
+* @see \App\Http\Controllers\AnalisisRiesgoWebController::porCursos
  * @see app/Http/Controllers/AnalisisRiesgoWebController.php:23
  * @route '/analisis-riesgo/cursos'
  */
-porCurso.url = (options?: RouteQueryOptions) => {
-    return porCurso.definition.url + queryParams(options)
+porCursos.url = (options?: RouteQueryOptions) => {
+    return porCursos.definition.url + queryParams(options)
 }
 
 /**
-* @see \App\Http\Controllers\AnalisisRiesgoWebController::porCurso
+* @see \App\Http\Controllers\AnalisisRiesgoWebController::porCursos
  * @see app/Http/Controllers/AnalisisRiesgoWebController.php:23
  * @route '/analisis-riesgo/cursos'
  */
-porCurso.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: porCurso.url(options),
+porCursos.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: porCursos.url(options),
     method: 'get',
 })
 /**
-* @see \App\Http\Controllers\AnalisisRiesgoWebController::porCurso
+* @see \App\Http\Controllers\AnalisisRiesgoWebController::porCursos
  * @see app/Http/Controllers/AnalisisRiesgoWebController.php:23
  * @route '/analisis-riesgo/cursos'
  */
-porCurso.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
-    url: porCurso.url(options),
+porCursos.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: porCursos.url(options),
     method: 'head',
 })
 
     /**
-* @see \App\Http\Controllers\AnalisisRiesgoWebController::porCurso
+* @see \App\Http\Controllers\AnalisisRiesgoWebController::porCursos
  * @see app/Http/Controllers/AnalisisRiesgoWebController.php:23
  * @route '/analisis-riesgo/cursos'
  */
-    const porCursoForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-        action: porCurso.url(options),
+    const porCursosForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: porCursos.url(options),
         method: 'get',
     })
 
             /**
-* @see \App\Http\Controllers\AnalisisRiesgoWebController::porCurso
+* @see \App\Http\Controllers\AnalisisRiesgoWebController::porCursos
  * @see app/Http/Controllers/AnalisisRiesgoWebController.php:23
  * @route '/analisis-riesgo/cursos'
  */
-        porCursoForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: porCurso.url(options),
+        porCursosForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: porCursos.url(options),
             method: 'get',
         })
             /**
-* @see \App\Http\Controllers\AnalisisRiesgoWebController::porCurso
+* @see \App\Http\Controllers\AnalisisRiesgoWebController::porCursos
  * @see app/Http/Controllers/AnalisisRiesgoWebController.php:23
  * @route '/analisis-riesgo/cursos'
  */
-        porCursoForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: porCurso.url({
+        porCursosForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: porCursos.url({
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
                             ...(options?.query ?? options?.mergeQuery ?? {}),
@@ -154,7 +154,7 @@ porCurso.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
     
-    porCurso.form = porCursoForm
+    porCursos.form = porCursosForm
 /**
 * @see \App\Http\Controllers\AnalisisRiesgoWebController::tendencias
  * @see app/Http/Controllers/AnalisisRiesgoWebController.php:53
@@ -330,11 +330,6 @@ estudiante.head = (args: { id: string | number } | [id: string | number ] | stri
         })
     
     estudiante.form = estudianteForm
-const riesgo = {
-    dashboard,
-porCurso,
-tendencias,
-estudiante,
-}
+const AnalisisRiesgoWebController = { dashboard, porCursos, tendencias, estudiante }
 
-export default riesgo
+export default AnalisisRiesgoWebController
